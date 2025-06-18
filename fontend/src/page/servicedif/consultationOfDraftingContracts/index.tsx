@@ -1,11 +1,35 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import HeroService from '../../../component/service/HeroService';
 import Consultation from '../../../component/Consultation';
 import ContractTypesComponent from './sections/ContractTypesComponent';
 import { UniversalProcess } from '../../../component/service/UniversalProcess';
 import { CheckCheck } from 'lucide-react';
 import ToToBenefitsComponent from './sections/ToToBenefits';
-export default function index() {
+import { useParams } from 'react-router-dom';
+import { getHeroByServiceId } from '../../../service/service';
+import { Hero } from '../../../types/service';
+export default function Index() {
+    const { id } = useParams<{ id: string }>();
+    const [hero, setHero] = useState<Hero>({
+        title: 'Dịch vụ khác',
+        subtitle: 'ToTo Law',
+        description: ''
+      });
+      useEffect(() => {
+        const fetchHero = async () => {
+          try {
+            if (id) {
+              const response = await getHeroByServiceId(id);
+              setHero(response.data);
+            } else {
+              console.error('Service ID is undefined');
+            }
+          } catch (error) {
+            console.error('Failed to fetch hero:', error);
+          }
+        };
+        fetchHero();
+      }, [id]);
     const steps = [
         {
             id: 1,
@@ -32,19 +56,19 @@ export default function index() {
   return (
     <>
       <HeroService
-                title="Dịch vụ Tư vấn soạn thảo Hợp đồng"
-                subtitle="ToTo Law"
-                description="Tư vấn bởi đội ngũ Luật Sư có chuyên môn và kinh nghiệm trong lĩnh vực"
-                showCTA={true}
-                ctaText="Tư vấn miễn phí"
-                onCTAClick={() => {
-                    const contactForm = document.getElementById('contact-form');
-                    if (contactForm) {
-                        contactForm.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }}
-
-            />
+        title={hero.title}
+        subtitle={hero.subtitle}
+        description={hero.description}
+        showCTA={true}
+        ctaText="Tư vấn miễn phí"
+        onCTAClick={() => {
+                const contactForm = document.getElementById('contact-form');
+                if (contactForm) {
+                  contactForm.scrollIntoView({ behavior: 'smooth' });
+                }
+        }}
+        
+      />
             <ContractTypesComponent />
             <UniversalProcess
         title="QUY TRÌNH VÀ THỜI GIAN CUNG CẤP DỊCH VỤ"

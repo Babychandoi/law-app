@@ -10,10 +10,31 @@ import { UniversalProcess } from '../../../component/service/UniversalProcess';
 import PricingComponent from '../../../component/service/UniversalPricing';
 import { Search, FileText, CheckCircle } from 'lucide-react';
 import { useParams } from 'react-router-dom';
-import { getPricingByServiceId } from '../../../service/service';
+import { getPricingByServiceId,getHeroByServiceId } from '../../../service/service';
+import { Hero } from '../../../types/service';
 export default function Index() {
   const { id } = useParams<{ id: string }>();
   const [pricingPlans, setPricingPlans] = useState<any[]>([]);
+  const [hero, setHero] = useState<Hero>({
+    title: 'Dịch vụ sở hữu trí tuệ',
+    subtitle: 'ToTo Law',
+    description: ''
+  });
+  useEffect(() => {
+    const fetchHero = async () => {
+      try {
+        if (id) {
+          const response = await getHeroByServiceId(id);
+          setHero(response.data);
+        } else {
+          console.error('Service ID is undefined');
+        }
+      } catch (error) {
+        console.error('Failed to fetch hero:', error);
+      }
+    };
+    fetchHero();
+  }, [id]);
   useEffect(() => {
       const fetchPricingPlans = async () => {
           try {
@@ -101,9 +122,9 @@ export default function Index() {
   return (
     <>
       <HeroService
-        title="Dịch vụ sở hữu trí tuệ"
-        subtitle="ToTo Law"
-        description="Đội ngũ luật sư chuyên nghiệp, tư vấn và bảo vệ quyền sở hữu trí tuệ cho doanh nghiệp và cá nhân"
+        title={hero.title}
+        subtitle={hero.subtitle}
+        description={hero.description}
         showCTA={true}
         ctaText="Tư vấn miễn phí"
         onCTAClick={() => {

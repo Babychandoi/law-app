@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import HeroService from '../../../component/service/HeroService';
 import Consultation from '../../../component/Consultation';
 import { CheckCheck } from 'lucide-react';
@@ -6,8 +6,32 @@ import { UniversalProcess } from '../../../component/service/UniversalProcess';
 import SocialNetworkDefinition from './sections/SocialNetworkDefinition';
 import SocialNetworkLicenseConditions from './sections/SocialNetworkLicenseConditions';
 import { ProcessTimeline } from '../../../component/service/ProcessTimeLine';
+import { useParams } from 'react-router-dom';
+import { Hero } from '../../../types/service';
+import { getHeroByServiceId } from '../../../service/service';
 
-export default function index() {
+export default function Index() {
+    const { id } = useParams<{ id: string }>();
+    const [hero, setHero] = useState<Hero>({
+        title: 'Dịch vụ khác',
+        subtitle: 'ToTo Law',
+        description: ''
+    });
+    useEffect(() => {
+        const fetchHero = async () => {
+            try {
+                if (id) {
+                    const response = await getHeroByServiceId(id);
+                    setHero(response.data);
+                } else {
+                    console.error('Service ID is undefined');
+                }
+            } catch (error) {
+                console.error('Failed to fetch hero:', error);
+            }
+        };
+        fetchHero();
+    }, [id]);
     const steps = [
         {
             id: 1,
@@ -49,9 +73,9 @@ export default function index() {
     return (
         <>
             <HeroService
-                title="Dịch vụ xin giấy phép mạng xã hội"
-                subtitle="ToTo Law"
-                description="Dịch vụ chuyên nghiêp - nhanh chóng - tiết kiệm chi phí"
+                title={hero.title}
+                subtitle={hero.subtitle}
+                description={hero.description}
                 showCTA={true}
                 ctaText="Tư vấn miễn phí"
                 onCTAClick={() => {
@@ -75,7 +99,7 @@ export default function index() {
                 layout="horizontal"
                 showConnectors={true}
             />
-            
+
             <Consultation />
         </>
     )

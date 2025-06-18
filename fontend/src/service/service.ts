@@ -1,9 +1,9 @@
 
 import axios from "axios";
-import { ServiceResponse } from "../types/service";
+import { Hero, ServiceResponse } from "../types/service";
 import { ChildrenServiceResponse } from "../types/service";
 import { ApiResponse } from "../types/types";
-const API_URL = "http://localhost:8080";
+const API_URL = "http://192.168.137.199:8080";
 
 export const getServices = async (): Promise<ApiResponse<ServiceResponse[]>> => {
 		const response = await axios.get<ApiResponse<ServiceResponse[]>>(`${API_URL}/services`);
@@ -15,5 +15,9 @@ export const getChildrenServiceById = async (id: string): Promise<ApiResponse<Ch
 }
 export const getPricingByServiceId = async (id: string): Promise<ApiResponse<any>> => {
 	const response = await axios.get<ApiResponse<any>>(`${API_URL}/services/fee/${id}`);
+	return response.data;
+}
+export const getHeroByServiceId = async (id: string): Promise<ApiResponse<Hero>> => {
+	const response = await axios.get<ApiResponse<Hero>>(`${API_URL}/service/hero/${id}`);
 	return response.data;
 }

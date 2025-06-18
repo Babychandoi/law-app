@@ -30,4 +30,9 @@ export interface PricingPlan {
     buttonText?: string;
     customContent?: React.ReactNode;
   }
+  export interface Hero {
+    title: string;
+    subtitle: string;
+    description: string;
+  }
   
