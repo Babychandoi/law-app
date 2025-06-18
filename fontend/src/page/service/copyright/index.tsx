@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import HeroService from '../../../component/service/HeroService';
 import ConsultationForm from '../../../component/Consultation';
 import CopyrightServices from './sections/CopyrightServices';
@@ -8,7 +8,26 @@ import ToToBenefitsSection from './sections/ToToBenefitsSection';
 import { UniversalProcess } from '../../../component/service/UniversalProcess';
 import { Users, FileText, CheckCheck } from 'lucide-react';
 import PricingComponent from '../../../component/service/UniversalPricing';
-export default function index() {
+import { useParams } from 'react-router-dom';
+import { getPricingByServiceId } from '../../../service/service';
+export default function Index() {
+    const { id } = useParams<{ id: string }>();
+    const [pricingPlans, setPricingPlans] = useState<any[]>([]);
+    useEffect(() => {
+        const fetchPricingPlans = async () => {
+            try {
+              if (id) {
+                const response = await getPricingByServiceId(id);
+                setPricingPlans(response.data);
+              } else {
+                console.error('Service ID is undefined');
+              }
+            } catch (error) {
+              console.error('Failed to fetch pricing plans:', error);
+            }
+          };
+          fetchPricingPlans();
+    }, [id]);
     const steps = [
         {
             id: 1,
@@ -32,33 +51,6 @@ export default function index() {
             icon: CheckCheck,
         }
     ]
-    const artworkPlans = [
-        {
-            id: 'art-work',
-            name: 'Tác phẩm Mỹ thuật',
-            price: '1.800.000',
-            currency: 'đ',
-            image: 'https://luattaga.vn/wp-content/uploads/2023/07/tac-pham-my-thuat-ung-dung.jpeg',
-            imageAlt: 'tac-pham-my-thuat-ung-dung'
-        },
-        {
-            id: 'computer-program',
-            name: 'Chương trình máy tính',
-            price: '2.500.000',
-            currency: 'đ',
-            image: 'https://luattaga.vn/wp-content/uploads/2023/07/chuong-trinh-may-tinh-la-gi-1-e1690767279710.jpeg',
-            imageAlt: 'chuong-trinh-may-tinh-la-gi-1',
-            featured: true
-        },
-        {
-            id: 'other-types',
-            name: 'Các loại hình khác',
-            price: 'Liên hệ',
-            currency: '',
-            image: 'https://luattaga.vn/wp-content/uploads/2023/07/book-on-wooden-table-1565317730961314739093-e1690767356209.jpeg',
-            imageAlt: 'book-on-wooden-table-1565317730961314739093'
-        }
-    ];
     return (
         <>
             <HeroService
@@ -85,7 +77,7 @@ export default function index() {
             />
             <PricingComponent
                 title="CHI PHÍ ĐĂNG KÝ TẠI TAGA LAW"
-                plans={artworkPlans}
+                plans={pricingPlans}
                 variant="card"
                 backgroundColor="bg-gray-50"
             />

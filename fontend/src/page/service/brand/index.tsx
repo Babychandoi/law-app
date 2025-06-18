@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import HeroService from '../../../component/service/HeroService';
 import TrademarkBrandComparison from "./sections/TrademarkBrandComparison"
 import TrademarkBenefits from './sections/TrademarkBenefits';
@@ -9,7 +9,26 @@ import PartnersCarousel from '../../../component/service/PartnersCarousel';
 import { UniversalProcess } from '../../../component/service/UniversalProcess';
 import PricingComponent from '../../../component/service/UniversalPricing';
 import { Search, FileText, CheckCircle } from 'lucide-react';
-export default function index() {
+import { useParams } from 'react-router-dom';
+import { getPricingByServiceId } from '../../../service/service';
+export default function Index() {
+  const { id } = useParams<{ id: string }>();
+  const [pricingPlans, setPricingPlans] = useState<any[]>([]);
+  useEffect(() => {
+      const fetchPricingPlans = async () => {
+          try {
+            if (id) {
+              const response = await getPricingByServiceId(id);
+              setPricingPlans(response.data);
+            } else {
+              console.error('Service ID is undefined');
+            }
+          } catch (error) {
+            console.error('Failed to fetch pricing plans:', error);
+          }
+        };
+        fetchPricingPlans();
+  }, [id]);
   const steps = [
     {
       id : 1,
@@ -77,54 +96,6 @@ export default function index() {
           time: "01-02 tháng"
         }
       ]
-    }
-  ];
-  const pricingPlans = [
-    {
-      id : "basic-plan",
-      name: "Cơ bản",
-      price: "2.200.000",
-      currency: "VND",
-      description: "Tra cứu sơ bộ và nộp đơn đăng ký nhãn hiệu cho 1 nhóm sản phẩm/dịch vụ (tối đa 6 sản phẩm/dịch vụ).",
-      features: [
-        "Tư vấn quy trình và thủ tục đăng ký",
-        "Tra cứu sơ bộ (tối đa 5 nhãn)",
-        "Tư vấn sửa đổi nhãn hiệu sau tra cứu",
-        "Soạn thảo, nộp hồ sơ đăng ký nhãn hiệu",
-        "Theo dõi hồ sơ sau khi đăng ký",
-        "Tư vấn đặt tên thương hiệu (tối đa 3 thương hiệu)"
-      ],
-      featured: false
-    },
-    {
-      id : "advanced-plan",
-      name: "Nâng cao",
-      price: "2.800.000",
-      currency: "VND",
-      description: "Tra cứu chuyên sâu và nộp đơn đăng ký nhãn hiệu cho 1 nhóm sản phẩm/dịch vụ (tối đa 6 sản phẩm/dịch vụ).",
-      features: [
-        "Bao gồm gói cơ bản",
-        "Tra cứu chuyên sâu khả năng bảo hộ",
-        "Hỗ trợ tra cứu chuyên sâu lần 2 nếu kết quả tra cứu thất bại",
-        "Miễn phí phí dịch vụ lần 2 nếu bị từ chối cấp văn bằng",
-        "Tư vấn sửa nhãn sau tra cứu chuyên sâu nếu có"
-      ],
-      featured: true
-    },
-    {
-      id : "custom-plan",
-      name: "Tùy chỉnh",
-      price: "Liên hệ",
-      currency: "",
-      description: "Tư vấn đăng ký bảo hộ nhãn hiệu theo nhu cầu của Quý khách hàng. Vui lòng liên hệ với Luật Taga để được tư vấn chi tiết.",
-      features: [
-        "Bao gồm gói cơ bản",
-        "Bao gồm gói nâng cao",
-        "Tư vấn thiết kế nhãn hiệu, thiết kế Logo, bộ nhận diện thương hiệu",
-        "Tư vấn tùy theo nhu cầu đặc biệt của quý khách hàng",
-        "Liên hệ với Luật Taga để được tư vấn chi tiết"
-      ],
-      featured: false
     }
   ];
   return (

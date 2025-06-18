@@ -3,9 +3,13 @@ package org.law_app.backend.controller;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import org.law_app.backend.dto.request.PricingRequest;
 import org.law_app.backend.dto.request.ServiceRequest;
 import org.law_app.backend.dto.response.ApiResponse;
+import org.law_app.backend.dto.response.ChildrenServiceResponse;
+import org.law_app.backend.dto.response.PricingResponse;
 import org.law_app.backend.dto.response.ServiceResponse;
+import org.law_app.backend.entity.Pricing;
 import org.law_app.backend.service.ServiceService;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,5 +32,26 @@ public class ServiceController {
     @PostMapping
     public boolean createService(@RequestBody ServiceRequest serviceRequest) {
         return serviceService.createService(serviceRequest);
+    }
+    @GetMapping("/{id}")
+    public ApiResponse<List<ChildrenServiceResponse>> getChildrenServiceById(@PathVariable String id) {
+        return ApiResponse.<List<ChildrenServiceResponse>>builder()
+                .message("Children services retrieved successfully")
+                .data(serviceService.getChildrenServiceById(id))
+                .build();
+    }
+    @PostMapping("/fee/{id}")
+    public ApiResponse<Boolean> createPricingByServiceId(@PathVariable String id, @RequestBody List<PricingRequest> pricingRequests) {
+        return ApiResponse.<Boolean>builder()
+                .message("Pricing created successfully")
+                .data(serviceService.createPricingByServiceId(id, pricingRequests))
+                .build();
+    }
+    @GetMapping("/fee/{id}")
+    public ApiResponse<List<PricingResponse>> getPricingByServiceId(@PathVariable String id) {
+        return ApiResponse.<List<PricingResponse>>builder()
+                .message("Pricing retrieved successfully")
+                .data(serviceService.getPricingByServiceId(id))
+                .build();
     }
 }

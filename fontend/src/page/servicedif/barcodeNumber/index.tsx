@@ -34,7 +34,7 @@ export default function index() {
   const artworkPlans = [
         {
           id: 'art-work',
-          name: 'Gói 10 chữ số',
+          title: 'Gói 10 chữ số',
           price: '2.400.000',
           currency: 'đ',
           image: 'https://luattaga.vn/wp-content/uploads/2023/07/ma-so-ma-vach.jpeg#883',
@@ -46,7 +46,7 @@ export default function index() {
         },
         {
           id: 'computer-program',
-          name: 'Gói 9 chữ số',
+          title: 'Gói 9 chữ số',
           price: '2.700.000',
           currency: 'đ',
           image: 'https://luattaga.vn/wp-content/uploads/2023/07/ma-so-ma-vach.jpeg#883',
@@ -59,7 +59,7 @@ export default function index() {
         },
         {
           id: 'other-types',
-          name: 'Gói 8 chữ số',
+          title: 'Gói 8 chữ số',
           price: '3.400.000',
           currency: 'đ',
           image: 'https://luattaga.vn/wp-content/uploads/2023/07/ma-so-ma-vach.jpeg#883',

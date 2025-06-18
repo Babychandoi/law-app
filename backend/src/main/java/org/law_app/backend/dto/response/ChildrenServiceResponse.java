@@ -15,5 +15,6 @@ public class ChildrenServiceResponse {
     String title;
     String href;
     String description;
+    String image;
     ServiceResponse parentService;
 }

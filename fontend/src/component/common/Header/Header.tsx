@@ -3,6 +3,7 @@ import { Search, Menu, X, ChevronDown, Sparkles, Globe, Phone, Mail } from 'luci
 import { useNavigate } from 'react-router-dom';
 import { getServices } from '../../../service/service';
 import { ServiceResponse } from '../../../types/service';
+
 const Header: React.FC = () => {
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -78,16 +79,36 @@ const Header: React.FC = () => {
     setActiveSubmenu(activeSubmenu === itemId ? null : itemId);
   };
 
-  const handleNavigation = (href: string) => {
-    navigate(href);
+  // Updated navigation function to include ID as path variable
+  const handleNavigation = (item: ServiceResponse | { id: string; href: string; title?: string }) => {
+    // For static menu items, navigate normally
+    if (['home', 'about', 'news', 'qa', 'contact'].includes(item.id)) {
+      navigate(item.href);
+    } else {
+      // For dynamic service items, include ID as path variable
+      navigate(`${item.href}/${item.id}`);
+    }
+    
     setIsMobileMenuOpen(false); // Close mobile menu on navigation
+  };
+
+  // Alternative: If you want to handle navigation differently for different item types
+  const handleNavigationAdvanced = (item: ServiceResponse | { id: string; href: string; title?: string }) => {
+    // For static menu items, navigate normally
+    if (['home', 'about', 'news', 'qa', 'contact'].includes(item.id)) {
+      navigate(item.href);
+    } else {
+      // For dynamic service items, include ID as path variable
+      navigate(`${item.href}/${item.id}`);
+    }
+    setIsMobileMenuOpen(false);
   };
 
   const renderMenuItem = (item: ServiceResponse, isMobile = false) => (
     <li key={item.id} className={`relative ${item.children ? 'group' : ''}`}>
       <div className="flex items-center">
         <button
-          onClick={() => handleNavigation(item.href)}
+          onClick={() => handleNavigation(item)}
           className={`block px-4 py-3 font-medium transition-all duration-300 relative overflow-hidden ${
             isMobile 
               ? 'text-white hover:text-yellow-300 text-base hover:bg-white/10 rounded-lg' 
@@ -130,7 +151,7 @@ const Header: React.FC = () => {
           {item.children.map((child, index) => (
             <li key={child.id} className="relative">
               <button
-                onClick={() => handleNavigation(child.href)}
+                onClick={() => handleNavigation(child)}
                 className={`block w-full text-left px-6 py-3 text-white/90 hover:text-yellow-300 hover:bg-white/10 transition-all duration-300 relative overflow-hidden ${
                   isMobile ? 'text-sm rounded-lg' : 'text-sm border-b border-white/10 last:border-b-0 hover:translate-x-2'
                 }`}
@@ -204,7 +225,7 @@ const Header: React.FC = () => {
           <div className="flex items-center justify-between h-16 lg:h-18">
             {/* Logo with glow effect */}
             <div className="flex-shrink-0 relative group">
-              <button onClick={() => handleNavigation('/')} className="flex items-center space-x-3">
+              <button onClick={() => navigate('/')} className="flex items-center space-x-3">
                 <div className="relative">
                   <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
                   <div className="relative w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-full flex items-center justify-center shadow-xl">

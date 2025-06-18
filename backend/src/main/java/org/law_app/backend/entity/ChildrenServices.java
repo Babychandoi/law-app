@@ -23,4 +23,5 @@ public class ChildrenServices {
     @JoinColumn(name = "parent_service_id")
     Services parentService;
     String description;
+    String image;
 }

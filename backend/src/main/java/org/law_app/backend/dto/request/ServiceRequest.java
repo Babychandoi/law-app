@@ -16,5 +16,6 @@ public class ServiceRequest {
     String title;
     String href;
     String description;
+    String image;
     List<ServiceRequest> children;
 }

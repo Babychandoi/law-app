@@ -10,3 +10,24 @@ export interface ServiceResponse {
     href :string;
     children?: Service[];
 }
+export interface ChildrenServiceResponse{
+    id :string;
+    title :string;
+    href :string;
+    description?: string;
+    image?: string;
+}
+export interface PricingPlan {
+    id: string;
+    title: string;
+    price: string;
+    currency?: string;
+    description?: string;
+    image?: string;
+    imageAlt?: string;
+    features?: (string | { text: string })[];
+    featured?: boolean;
+    buttonText?: string;
+    customContent?: React.ReactNode;
+  }
+  

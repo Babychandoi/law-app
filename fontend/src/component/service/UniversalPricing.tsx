@@ -1,19 +1,6 @@
 import React from 'react';
 import { Check, Star } from 'lucide-react';
-interface PricingPlan {
-  id: string;
-  name: string;
-  price: string;
-  currency?: string;
-  description?: string;
-  image?: string;
-  imageAlt?: string;
-  features?: (string | { text: string })[];
-  featured?: boolean;
-  buttonText?: string;
-  customContent?: React.ReactNode;
-}
-
+import { PricingPlan } from '../../types/service';
 interface PricingComponentProps {
   title: string;
   subtitle?: string;
@@ -22,7 +9,6 @@ interface PricingComponentProps {
   backgroundColor?: string;
   containerClassName?: string;
 }
-
 const PricingComponent: React.FC<PricingComponentProps> = ({
   title,
   subtitle,
@@ -63,7 +49,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
             }}>
               <img
                 src={plan.image}
-                alt={plan.imageAlt || plan.name}
+                alt={plan.imageAlt || plan.title}
                 className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
               />
             </div>
@@ -73,7 +59,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
           <div className="p-6">
             {/* Title */}
             <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
-              {plan.name}
+              {plan.title}
             </h3>
 
             {/* Price */}
@@ -166,7 +152,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
             }`}>
             <h3 className={`text-2xl font-bold mb-4 ${plan.featured ? 'text-white' : 'text-gray-900'
               }`}>
-              {plan.name}
+              {plan.title}
             </h3>
 
             <div className="mb-4">
