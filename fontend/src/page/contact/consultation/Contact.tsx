@@ -3,11 +3,11 @@ import { MapPin, Mail, Phone, MessageCircle } from 'lucide-react';
 
 // Configuration object - Change information here
 const companyInfo = {
-  title: "Dịch vụ Sở hữu trí tuệ - Taga Law",
+  title: "Dịch vụ Sở hữu trí tuệ - ToTo Law",
   subtitle: "Đối tác tuyệt vời cho doanh nghiệp của bạn.",
   description: [
     "Với mục tiêu giúp khách hàng của mình bảo vệ quyền sở hữu trí tuệ, chúng tôi cam kết cung cấp các giải pháp phù hợp và hiệu quả nhất cho từng trường hợp cụ thể. Đội ngũ chuyên viên của chúng tôi luôn đảm bảo giải quyết các thủ tục đăng ký nhanh chóng và chính xác, giúp khách hàng tiết kiệm được thời gian và chi phí.",
-    "Đối với Luật Taga, khách hàng là trung tâm của mọi hoạt động của chúng tôi. Chúng tôi cam kết mang lại cho khách hàng của mình sự hài lòng và một chất lượng dịch tuyệt vời."
+    "Đối với Luật ToTo, khách hàng là trung tâm của mọi hoạt động của chúng tôi. Chúng tôi cam kết mang lại cho khách hàng của mình sự hài lòng và một chất lượng dịch tuyệt vời."
   ],
   addresses: {
     headquarters: {
@@ -20,7 +20,7 @@ const companyInfo = {
     }
   },
   contact: {
-    email: "lienhe@luattaga.vn",
+    email: "lienhe@luatToTo.vn",
     hotline: "0968.856.464",
     zalo: [
       { label: "Zalo 1", number: "0986.488.248" },

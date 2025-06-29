@@ -14,7 +14,7 @@ public class WebConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Áp dụng cho tất cả endpoint
-                        .allowedOrigins("http://192.168.1.7:3000") // Cho phép React app truy cập
+                        .allowedOrigins("http://localhost:3000") // Cho phép React app truy cập
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // Các phương thức được phép
                         .allowedHeaders("*") // Cho phép tất cả header
                         .allowCredentials(true); // Nếu bạn sử dụng cookie, JWT,...

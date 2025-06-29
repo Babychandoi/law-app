@@ -5,10 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.law_app.backend.dto.request.PricingRequest;
 import org.law_app.backend.dto.request.ServiceRequest;
-import org.law_app.backend.dto.response.ApiResponse;
-import org.law_app.backend.dto.response.ChildrenServiceResponse;
-import org.law_app.backend.dto.response.PricingResponse;
-import org.law_app.backend.dto.response.ServiceResponse;
+import org.law_app.backend.dto.request.ToToRequest;
+import org.law_app.backend.dto.response.*;
 import org.law_app.backend.entity.Pricing;
 import org.law_app.backend.service.ServiceService;
 import org.springframework.web.bind.annotation.*;
@@ -52,6 +50,20 @@ public class ServiceController {
         return ApiResponse.<List<PricingResponse>>builder()
                 .message("Pricing retrieved successfully")
                 .data(serviceService.getPricingByServiceId(id))
+                .build();
+    }
+    @GetMapping("/toto")
+    public ApiResponse<ToToResponse> getToTo() {
+        return ApiResponse.<ToToResponse>builder()
+                .message("ToTo retrieved successfully")
+                .data(serviceService.getToTo())
+                .build();
+    }
+    @PostMapping("/toto")
+    public ApiResponse<Boolean> createToTo(@RequestBody ToToRequest toToRequest) {
+        return ApiResponse.<Boolean>builder()
+                .message("ToTo created successfully")
+                .data(serviceService.createToTo(toToRequest))
                 .build();
     }
 }

@@ -28,6 +28,7 @@ export default function Index() {
         };
         fetchHero();
       }, [id]);
+      
   return (
     <>
       <HeroService
@@ -45,6 +46,7 @@ export default function Index() {
         
       />
             <ToToServices />
+            
             <TrademarkOpposition />
         <ConsultationForm />
     </>

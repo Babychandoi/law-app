@@ -1,110 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-
+import { PreviousPartner } from '../../types/service';
+import { getPreviousPartner } from '../../service/service';
 const PartnersCarousel = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
   const intervalRef = useRef<NodeJS.Timer | null>(null);
   const containerRef = useRef(null);
+  const [clients, setClients] = useState<PreviousPartner[]>([]);
+  useEffect(() => {
+    const fetchClients = async () => {
+      try {
+        const response = await getPreviousPartner();
+        if (response.data) {
+          setClients(response.data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch clients:', error);
+      }
+    };
 
-  const clients = [
-    {
-      id: 1,
-      title: "CÔNG TY CỔ PHẦN TẬP ĐOÀN NHỰA ĐÔNG Á",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2024/01/279eeb7cbc2c17724e3d.jpg?fit=150%2C60&ssl=1",
-      shortName: "ĐÔNG Á"
-    },
-    {
-      id: 2,
-      title: "COREXYL",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2023/07/LOGO_VN4201916126.jpg?fit=150%2C50&ssl=1",
-      shortName: "COREXYL"
-    },
-    {
-      id: 3,
-      title: "CÔNG TY TNHH SẢN XUẤT VÀ THƯƠNG MẠI NHỰA KINH BẮC",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2024/01/d76cc5ce939e38c0618f.jpg?fit=150%2C75&ssl=1",
-      shortName: "KINH BẮC"
-    },
-    {
-      id: 4,
-      title: "Sùng Bầu",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2025/02/de5d5ffa-1cb7-4d49-840d-c4300a8400c2.jpeg?fit=150%2C44&ssl=1",
-      shortName: "SÙNG BẦU"
-    },
-    {
-      id: 5,
-      title: "Luật Kiến Hưng",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2023/07/LOGO_VN4202221859.jpg?fit=77%2C75&ssl=1",
-      shortName: "KIẾN HƯNG"
-    },
-    {
-      id: 6,
-      title: "CÔNG TY TNHH DƯỢC PHẨM BV PHARMA",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2024/01/a84f53f207a2acfcf5b3.jpg?fit=150%2C50&ssl=1",
-      shortName: "BV PHARMA"
-    },
-    {
-      id: 7,
-      title: "CÔNG TY CỔ PHẦN CHĂN NUÔI CP VIỆT NAM",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2024/01/390b802bd87b73252a6a-1.jpg?fit=150%2C70&ssl=1",
-      shortName: "CP VIỆT NAM"
-    },
-    {
-      id: 8,
-      title: "HANG PHAN",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2023/07/LOGO_VN4201711726.jpg?fit=66%2C75&ssl=1",
-      shortName: "HANG PHAN"
-    },
-    {
-      id: 9,
-      title: "PIPPER",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2023/07/LOGO_VN4201635411.jpg?fit=150%2C32&ssl=1",
-      shortName: "PIPPER"
-    },
-    {
-      id: 10,
-      title: "UNISKIN",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2023/07/LOGO_VN4201916125.jpg?fit=150%2C30&ssl=1",
-      shortName: "UNISKIN"
-    },
-    {
-      id: 11,
-      title: "Huy Tuấn Food",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2023/07/LOGO_VN4201637077.jpg?fit=77%2C75&ssl=1",
-      shortName: "HUY TUẤN"
-    },
-    {
-      id: 12,
-      title: "CÔNG TY CỔ PHẦN TẬP ĐOÀN PHÚC TRƯỜNG SINH",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2024/01/cbee13e347b3ecedb5a2.jpg?fit=75%2C75&ssl=1",
-      shortName: "PHÚC TRƯỜNG SINH"
-    },
-    {
-      id: 13,
-      title: "CÔNG TY TNHH LOTTE VINA INTERNATIONAL",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2024/01/1c30c09f-ddcb-49fc-9143-1712de29c242.jpeg?fit=75%2C75&ssl=1",
-      shortName: "LOTTE VINA"
-    },
-    {
-      id: 14,
-      title: "Ánh Dương",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2023/07/LOGO_VN4201742231.jpg?fit=100%2C75&ssl=1",
-      shortName: "ÁNH DƯƠNG"
-    },
-    {
-      id: 15,
-      title: "CÔNG TY CỔ PHẦN XUẤT NHẬP KHẨU RAU QUẢ I",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2024/01/68973fda668acdd4949b.jpg?fit=80%2C75&ssl=1",
-      shortName: "RAU QUẢ I"
-    },
-    {
-      id: 16,
-      title: "CÔNG TY CỔ PHẦN TẬP ĐOÀN ASC VIỆT NAM",
-      image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2024/01/46640f245874f32aaa65.jpg?fit=135%2C75&ssl=1",
-      shortName: "ASC VIỆT NAM"
-    }
-  ];
+    fetchClients();
+  }, []);
 
   // Responsive settings
   const getVisibleSlides = () => {
@@ -116,6 +33,7 @@ const PartnersCarousel = () => {
   };
 
   const [visibleSlides, setVisibleSlides] = useState(getVisibleSlides());
+  const totalGroups = Math.ceil(clients.length / visibleSlides);
 
   useEffect(() => {
     const handleResize = () => {
@@ -128,26 +46,25 @@ const PartnersCarousel = () => {
 
   // Auto-play functionality
   useEffect(() => {
-    if (isAutoPlay) {
+    if (isAutoPlay && clients.length > 0) {
       intervalRef.current = setInterval(() => {
-        setCurrentIndex(prev => (prev + 1) % clients.length);
+        setCurrentGroupIndex(prev => (prev + 1) % totalGroups);
       }, 3000);
     }
-
     return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isAutoPlay, clients.length]);
+  }, [isAutoPlay, clients.length, visibleSlides, totalGroups]);
+
 
   const nextSlide = () => {
-    setCurrentIndex(prev => (prev + 1) % clients.length);
+    setCurrentGroupIndex(prev => (prev + 1) % totalGroups);
   };
 
   const prevSlide = () => {
-    setCurrentIndex(prev => (prev - 1 + clients.length) % clients.length);
+    setCurrentGroupIndex(prev => (prev - 1 + totalGroups) % totalGroups);
   };
+
 
   const handleMouseEnter = () => {
     setIsAutoPlay(false);
@@ -167,7 +84,7 @@ const PartnersCarousel = () => {
   };
 
   return (
-    <section className="py-16 bg-white">
+    <section className={`py-${clients.length} bg-white`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-12">
@@ -177,7 +94,7 @@ const PartnersCarousel = () => {
             </h2>
             <div className="w-20 h-1 bg-blue-600"></div>
           </div>
-          
+
           {/* Navigation */}
           <div className="flex items-center space-x-3">
             <button
@@ -198,24 +115,25 @@ const PartnersCarousel = () => {
         </div>
 
         {/* Carousel Container */}
-        <div 
+        <div
           className="relative overflow-hidden"
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           ref={containerRef}
         >
-          <div 
+          <div
             className="flex transition-transform duration-500 ease-in-out"
             style={{
-              transform: `translateX(-${(currentIndex * 100) / visibleSlides}%)`,
+              transform: `translateX(-${currentGroupIndex * 100}%)`,
               width: `${(clients.length * 100) / visibleSlides}%`
             }}
+
           >
             {clients.map((client) => (
               <div
                 key={client.id}
                 className="flex-shrink-0 px-4"
-                style={{ width: `${100 / clients.length}%` }}
+                style={{ width: `${100 / visibleSlides}%` }}
               >
                 <div className="group relative bg-white rounded-xl shadow-sm border border-gray-100 hover:shadow-lg transition-all duration-300 p-6 h-32 flex items-center justify-center">
                   {/* Client Logo */}
@@ -227,7 +145,7 @@ const PartnersCarousel = () => {
                       loading="lazy"
                       onError={fallbackImage}
                     />
-                    
+
                     {/* Hover Overlay */}
                     <div className="absolute inset-0 bg-blue-600 bg-opacity-0 group-hover:bg-opacity-5 rounded-lg transition-all duration-300"></div>
                   </div>
@@ -245,19 +163,20 @@ const PartnersCarousel = () => {
 
         {/* Progress Indicators */}
         <div className="flex justify-center mt-8 space-x-2">
-          {Array.from({ length: Math.ceil(clients.length / visibleSlides) }).map((_, index) => (
+          {Array.from({ length: totalGroups }).map((_, index) => (
             <button
               key={index}
-              onClick={() => setCurrentIndex(index * visibleSlides)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                Math.floor(currentIndex / visibleSlides) === index
+              onClick={() => setCurrentGroupIndex(index)}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${currentGroupIndex === index
                   ? 'bg-blue-600 scale-110'
                   : 'bg-gray-300 hover:bg-gray-400'
-              }`}
+                }`}
               aria-label={`Go to slide group ${index + 1}`}
             />
           ))}
+
         </div>
+
 
         {/* Stats */}
         <div className="text-center mt-12">

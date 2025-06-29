@@ -87,7 +87,7 @@ const DesignProtectionServices: React.FC = () => {
           <div className="space-y-8">
             <div>
               <h2 className="text-2xl font-bold text-gray-900 mb-8">
-                ĐĂNG KÝ BẢO HỘ KIỂU DÁNG TẠI LUẬT TAGA
+                ĐĂNG KÝ BẢO HỘ KIỂU DÁNG TẠI LUẬT TOTO
               </h2>
             </div>
             

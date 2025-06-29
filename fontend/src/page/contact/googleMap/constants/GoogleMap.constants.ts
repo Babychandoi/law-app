@@ -8,14 +8,14 @@ export const DEFAULT_PROPS: Required<Omit<GoogleMapProps, 'className' | 'style' 
   zoom: 14,
   language: 'en',
   mapType: 'roadmap',
-  label: 'Luật TAGA',
+  label: 'Luật TOTO',
   borderRadius: '8px',
   loading: false,
   loadingText: 'Đang tải bản đồ...'
 };
 
 export const FAMOUS_LOCATIONS = {
-  taga: { lat: 21.0036983, lng: 105.7919108, label: 'Luật TAGA' },
+  toto: { lat: 21.0036983, lng: 105.7919108, label: 'Luật ToTo' },
   hoanKiem: { lat: 21.0285, lng: 105.8542, label: 'Hồ Hoàn Kiếm' },
   onePillar: { lat: 21.0368, lng: 105.8344, label: 'Chùa Một Cột' },
   literature: { lat: 21.0227, lng: 105.8356, label: 'Văn Miếu' },

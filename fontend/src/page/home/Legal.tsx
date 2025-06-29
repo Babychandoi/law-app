@@ -15,7 +15,7 @@ const LegalServicesSection: React.FC = () => {
     {
       icon: <Shield className="w-12 h-12 text-yellow-500" />,
       title: "Bảo hộ nhãn hiệu",
-      description: "Luật Taga hỗ trợ đăng ký nhãn hiệu với quy trình đơn giản, nhanh chóng và chi phí hợp lý, giúp doanh nghiệp bảo vệ thương hiệu hiệu quả.",
+      description: "Luật ToTo hỗ trợ đăng ký nhãn hiệu với quy trình đơn giản, nhanh chóng và chi phí hợp lý, giúp doanh nghiệp bảo vệ thương hiệu hiệu quả.",
       href: "/service/brand"
     },
     {
@@ -39,7 +39,7 @@ const LegalServicesSection: React.FC = () => {
     {
       icon: <Sword className="w-12 h-12 text-yellow-500" />,
       title: "Xử lý xâm phạm",
-      description: "Luật Taga giúp giải quyết tranh chấp sở hữu trí tuệ, bảo vệ quyền lợi doanh nghiệp và cá nhân, tránh rủi ro pháp lý.",
+      description: "Luật ToTo giúp giải quyết tranh chấp sở hữu trí tuệ, bảo vệ quyền lợi doanh nghiệp và cá nhân, tránh rủi ro pháp lý.",
       href: "/service/violate"
     },
     {

@@ -2,26 +2,26 @@ import React from 'react';
 import { ArrowRight, Users, FileText, CheckCheck } from 'lucide-react';
 
 const RegistrationProcess = ({ 
-  title = "QUY TRÌNH ĐĂNG KÝ TẠI TAGA LAW",
+  title = "QUY TRÌNH ĐĂNG KÝ TẠI TOTO LAW",
   steps = [
     {
       id: 1,
       title: "BƯỚC 1",
-      description: "Taga Law tiếp nhận yêu cầu dịch vụ và tiến hành tư vấn dịch vụ",
+      description: "ToTo Law tiếp nhận yêu cầu dịch vụ và tiến hành tư vấn dịch vụ",
       icon: Users,
       color: "blue" as "blue" | "green" | "purple" | "red" | "yellow" | "indigo"
     },
     {
       id: 2,
       title: "BƯỚC 2", 
-      description: "Ký kết Hợp đồng và Khách hàng cung cấp giấy tờ theo yêu cầu cho Taga Law",
+      description: "Ký kết Hợp đồng và Khách hàng cung cấp giấy tờ theo yêu cầu cho ToTo Law",
       icon: FileText,
       color: "green" as "blue" | "green" | "purple" | "red" | "yellow" | "indigo"
     },
     {
       id: 3,
       title: "BƯỚC 3",
-      description: "Taga Law tiến hành đăng ký bản quyền và bàn giao kết quả cho Khách hàng", 
+      description: "ToTo Law tiến hành đăng ký bản quyền và bàn giao kết quả cho Khách hàng", 
       icon: CheckCheck,
       color: "purple" as "blue" | "green" | "purple" | "red" | "yellow" | "indigo"
     }

@@ -9,7 +9,7 @@ interface ServiceItem {
   color: 'blue' | 'emerald' | 'purple';
 }
 
-interface TagaServicesProps {
+interface ToToServicesProps {
   title?: string;
   services?: ServiceItem[];
   showNumbering?: boolean;
@@ -131,7 +131,7 @@ const ServiceItemComponent: React.FC<{
 };
 
 // Main Component
-const TagaLawServices: React.FC<TagaServicesProps> = ({
+const ToToLawServices: React.FC<ToToServicesProps> = ({
   title = "CÁC DỊCH VỤ MÀ LUẬT TOTO CUNG CẤP",
   services = defaultServices,
   showNumbering = true
@@ -214,4 +214,4 @@ const TagaLawServices: React.FC<TagaServicesProps> = ({
 };
 
 
-export default TagaLawServices;
+export default ToToLawServices;

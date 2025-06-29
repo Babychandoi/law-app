@@ -5,16 +5,14 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.law_app.backend.dto.request.PricingRequest;
 import org.law_app.backend.dto.request.ServiceRequest;
+import org.law_app.backend.dto.request.ToToRequest;
 import org.law_app.backend.dto.response.ChildrenServiceResponse;
 import org.law_app.backend.dto.response.PricingResponse;
 import org.law_app.backend.dto.response.ServiceResponse;
-import org.law_app.backend.entity.ChildrenServices;
-import org.law_app.backend.entity.Pricing;
-import org.law_app.backend.entity.Services;
+import org.law_app.backend.dto.response.ToToResponse;
+import org.law_app.backend.entity.*;
 import org.law_app.backend.mapper.ServiceMapper;
-import org.law_app.backend.repository.ChildrenServiceRepository;
-import org.law_app.backend.repository.PricingRepository;
-import org.law_app.backend.repository.ServiceRepository;
+import org.law_app.backend.repository.*;
 import org.law_app.backend.service.ServiceService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +28,11 @@ public class ServiceServiceImpl implements ServiceService {
     ChildrenServiceRepository childrenServiceRepository;
     PricingRepository pricingRepository;
     ServiceMapper serviceMapper;
+    CompanyRepository companyRepository;
+    LocationRepository locationRepository;
+    SocialRepository socialRepository;
+    PhoneContactRepository phoneContactRepository;
+    ImportantRepository importantRepository;
     @Override
     public List<ServiceResponse> getServices() {
         List<Services> services = serviceRepository.findAll();
@@ -112,6 +115,75 @@ public class ServiceServiceImpl implements ServiceService {
                 throw  e;
             }
     }
+
+    @Override
+    public ToToResponse getToTo() {
+        Company company = companyRepository.findAll()
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("No company found"));
+        return ToToResponse.builder()
+                .company(serviceMapper.toCompanyResponse(company))
+                .importants(company.getImportants().stream()
+                        .map(serviceMapper::toImportantResponse)
+                        .toList())
+                .locations(company.getLocations().stream()
+                        .map(serviceMapper::toLocationResponse)
+                        .toList())
+                .phoneContacts(company.getPhoneContacts().stream()
+                        .map(serviceMapper::toPhoneContactResponse)
+                        .toList())
+                .socials(company.getSocials().stream()
+                        .map(serviceMapper::toSocialResponse)
+                        .toList())
+                .build();
+    }
+
+    @Override
+    @Transactional
+    public boolean createToTo(ToToRequest toToRequest) {
+        try {
+            // Chuyển từ DTO sang entity
+            Company company = serviceMapper.toCompany(toToRequest.getCompany());
+
+            // Gán danh sách con sau khi ánh xạ và liên kết với company
+            List<Important> importants = toToRequest.getImportants().stream()
+                    .map(serviceMapper::toImportant)
+                    .peek(important -> important.setCompany(company))
+                    .toList();
+
+            List<Location> locations = toToRequest.getLocations().stream()
+                    .map(serviceMapper::toLocation)
+                    .peek(location -> location.setCompany(company))
+                    .toList();
+
+            List<Social> socials = toToRequest.getSocials().stream()
+                    .map(serviceMapper::toSocial)
+                    .peek(social -> social.setCompany(company))
+                    .toList();
+
+            List<PhoneContact> phoneContacts = toToRequest.getPhoneContacts().stream()
+                    .map(serviceMapper::toPhoneContact)
+                    .peek(phone -> phone.setCompany(company))
+                    .toList();
+
+            // Gán lại vào entity cha
+            company.setImportants(importants);
+            company.setLocations(locations);
+            company.setSocials(socials);
+            company.setPhoneContacts(phoneContacts);
+
+            // Lưu tất cả thông qua company (nếu CascadeType.ALL đúng trong entity Company)
+            companyRepository.save(company);
+
+            return true;
+
+        } catch (Exception e) {
+            log.error("Error while creating ToTo: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
 
 
 }

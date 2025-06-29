@@ -9,7 +9,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ title, content, image }) =>
         <div className="order-2 md:order-1">
           <img 
             src={image} 
-            alt="About Taga Law" 
+            alt="About ToTo Law" 
             className="w-full h-80 object-cover rounded-lg shadow-lg"
           />
         </div>

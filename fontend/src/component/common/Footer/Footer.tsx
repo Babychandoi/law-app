@@ -1,84 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapPin, Mail, Phone, Send, Facebook, Linkedin, Shield, FileText, Star, Award, Users, Globe } from 'lucide-react';
+import {TotoCompany} from '../../../types/company';
+import { getCompany } from '../../../service/service';
 
-// ============ CẤU HÌNH DỮ LIỆU - DỄ DÀNG THAY ĐỔI ============
-const COMPANY_CONFIG = {
-  name: "Công Ty TNHH Số Hữu Trí Tuệ ToTo",
-  representative: "LS Nguyễn Thế Giang",
-  taxCode: "0110366670",
-  websiteName: "LustToTo.vn",
-  email: "lienhe@lustToTo.vn"
-};
 
-const LOCATIONS = [
-  {
-    id: 1,
-    type: "Trụ sở chính",
-    address: "Số 12 Ngõ 203, đường Hùng Vương, Phường Thọ, Quận Cầu Giấy, Hà Nội, Việt Nam",
-    color: "blue"
-  },
-  {
-    id: 2,
-    type: "Văn phòng giao dịch",
-    address: "Số 77/3 Lữ Gia, Phường 15, Quận 11, TP. Hồ Chí Minh, Việt Nam",
-    color: "purple"
-  }
-];
-
-const PHONE_CONTACTS = [
-  {
-    id: 1,
-    label: "Hotline",
-    number: "0938.855.646",
-    color: "red"
-  },
-  {
-    id: 2,
-    label: "Zalo 1",
-    number: "0986.148.248",
-    color: "blue"
-  },
-  {
-    id: 3,
-    label: "Zalo 2",
-    number: "0986.148.248",
-    color: "green"
-  }
-];
-
-const IMPORTANT_LINKS = [
-  {
-    id: 1,
-    icon: Shield,
-    text: "Chính sách bảo mật",
-    href: "#privacy",
-    color: "blue"
-  },
-  {
-    id: 2,
-    icon: FileText,
-    text: "Điều khoản sử dụng",
-    href: "#terms",
-    color: "green"
-  }
-];
-
-const SOCIAL_LINKS = [
-  {
-    id: 1,
-    icon: Facebook,
-    href: "#facebook",
-    label: "Facebook",
-    color: "blue-600"
-  },
-  {
-    id: 2,
-    icon: Linkedin,
-    href: "#linkedin",
-    label: "LinkedIn",
-    color: "blue-700"
-  }
-];
 
 const COLORS = {
   blue: {
@@ -115,7 +40,28 @@ const COLORS = {
 const Footer: React.FC = () => {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const [company,setCompany] = useState<TotoCompany>();
+  const iconMap: Record<string, React.ElementType> = {
+    Facebook,
+    Linkedin,
+    Shield,
+    FileText,
+    Star,
+    Award,
+    Users,
+    Globe,
+    MapPin,
+    Mail,
+    Phone,
+    Send
+  };
+  useEffect(()=>{
+    const fetchCompany = async() =>{
+      const response =  await getCompany();
+      setCompany(response.data);
+    }
+    fetchCompany()
+  },[]);
   const handleSubmit = async () => {
     if (!email) return;
     setIsSubmitting(true);
@@ -162,19 +108,19 @@ const Footer: React.FC = () => {
               
               <h2 className="text-3xl md:text-4xl font-bold mb-3">
                 <span className="bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-300 bg-clip-text text-transparent">
-                  {COMPANY_CONFIG.name}
+                  {company?.company.name}
                 </span>
               </h2>
               
               <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-gray-300">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-yellow-400" />
-                  <span>Đại diện bởi: <span className="text-yellow-400 font-semibold">{COMPANY_CONFIG.representative}</span></span>
+                  <span>Đại diện bởi: <span className="text-yellow-400 font-semibold">{company?.company.representative}</span></span>
                 </div>
                 <div className="hidden md:block w-1 h-1 bg-gray-500 rounded-full"></div>
                 <div className="flex items-center gap-2">
                   <Globe className="w-4 h-4 text-yellow-400" />
-                  <span>MST: <span className="text-white font-mono font-semibold">{COMPANY_CONFIG.taxCode}</span></span>
+                  <span>MST: <span className="text-white font-mono font-semibold">{company?.company.taxCode}</span></span>
                 </div>
               </div>
             </div>
@@ -197,7 +143,7 @@ const Footer: React.FC = () => {
               </div>
               
               <div className="space-y-4">
-                {LOCATIONS.map((location) => {
+                {company?.locations.map((location) => {
                   const colorConfig = COLORS[location.color as keyof typeof COLORS];
                   return (
                     <div key={location.id} className={`relative p-6 bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-2xl border border-gray-700/50 hover:${colorConfig.border} transition-all duration-500 hover:shadow-2xl hover:${colorConfig.shadow} backdrop-blur-sm group`}>
@@ -237,11 +183,11 @@ const Footer: React.FC = () => {
                     <div>
                       <h4 className="text-emerald-400 font-semibold mb-1">Email</h4>
                       <a 
-                        href={`mailto:${COMPANY_CONFIG.email}`}
+                        href={`mailto:${company?.company.email}`}
                         className="text-white hover:text-emerald-400 transition-colors duration-300 flex items-center font-medium"
                       >
                         <Mail className="w-4 h-4 mr-2" />
-                        {COMPANY_CONFIG.email}
+                        {company?.company.email}
                       </a>
                     </div>
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -254,7 +200,7 @@ const Footer: React.FC = () => {
                 <div className="p-6 bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-2xl border border-gray-700/50 hover:border-yellow-400/50 transition-all duration-500 hover:shadow-2xl hover:shadow-yellow-500/20 backdrop-blur-sm">
                   <h4 className="text-yellow-400 font-semibold mb-4">Số điện thoại</h4>
                   <div className="space-y-3">
-                    {PHONE_CONTACTS.map((contact) => {
+                    {company?.phoneContacts.map((contact) => {
                       const colorConfig = COLORS[contact.color as keyof typeof COLORS];
                       return (
                         <div key={contact.id} className="flex items-center justify-between p-3 bg-gray-700/50 rounded-xl hover:bg-gray-700/70 transition-all duration-300 group">
@@ -325,7 +271,7 @@ const Footer: React.FC = () => {
                 Liên kết quan trọng
               </h4>
               <div className="space-y-2">
-                {IMPORTANT_LINKS.map((link) => {
+                {company?.importants.map((link) => {
                   const colorConfig = COLORS[link.color as keyof typeof COLORS];
                   return (
                     <a 
@@ -333,7 +279,7 @@ const Footer: React.FC = () => {
                       href={link.href} 
                       className={`flex items-center p-3 text-gray-400 ${colorConfig.hover} transition-all duration-300 rounded-lg hover:bg-gray-700/50 group`}
                     >
-                      <link.icon className="w-4 h-4 mr-3 group-hover:scale-110 transition-transform duration-300" />
+                      {React.createElement(iconMap[link.icon], { className: "w-4 h-4 mr-3 group-hover:scale-110 transition-transform duration-300" })}
                       <span className="group-hover:translate-x-1 transition-transform duration-300">{link.text}</span>
                     </a>
                   );
@@ -350,7 +296,7 @@ const Footer: React.FC = () => {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
             <div className="text-center md:text-left">
               <p className="text-gray-400 text-sm mb-2">
-                © 2025 <span className="text-yellow-400 font-semibold">{COMPANY_CONFIG.websiteName}</span> - All Rights Reserved
+                © 2025 <span className="text-yellow-400 font-semibold">{company?.company.websiteName}</span> - All Rights Reserved
               </p>
               <p className="text-gray-500 text-xs">
                 Được thiết kế với ❤️ cho sự thành công của bạn
@@ -359,14 +305,14 @@ const Footer: React.FC = () => {
             
             <div className="flex items-center space-x-4">
               <span className="text-gray-500 text-sm mr-2">Theo dõi chúng tôi:</span>
-              {SOCIAL_LINKS.map((social) => (
+              {company?.socials.map((social) => (
                 <a
                   key={social.id}
                   href={social.href}
                   aria-label={social.label}
                   className={`p-3 bg-gray-800/50 rounded-xl border border-gray-700/50 text-gray-400 hover:text-white hover:bg-${social.color} hover:border-transparent transition-all duration-300 hover:scale-110 hover:shadow-lg transform`}
                 >
-                  <social.icon className="w-5 h-5" />
+                 {React.createElement(iconMap[social.icon], { className: "w-5 h-5" })}
                 </a>
               ))}
             </div>

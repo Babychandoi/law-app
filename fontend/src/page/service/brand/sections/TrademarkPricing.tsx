@@ -36,13 +36,13 @@ const TrademarkPricing = () => {
       name: "Tùy chỉnh",
       price: "Liên hệ",
       currency: "",
-      description: "Tư vấn đăng ký bảo hộ nhãn hiệu theo nhu cầu của Quý khách hàng. Vui lòng liên hệ với Luật Taga để được tư vấn chi tiết.",
+      description: "Tư vấn đăng ký bảo hộ nhãn hiệu theo nhu cầu của Quý khách hàng. Vui lòng liên hệ với Luật ToTo để được tư vấn chi tiết.",
       features: [
         "Bao gồm gói cơ bản",
         "Bao gồm gói nâng cao",
         "Tư vấn thiết kế nhãn hiệu, thiết kế Logo, bộ nhận diện thương hiệu",
         "Tư vấn tùy theo nhu cầu đặc biệt của quý khách hàng",
-        "Liên hệ với Luật Taga để được tư vấn chi tiết"
+        "Liên hệ với Luật ToTo để được tư vấn chi tiết"
       ],
       featured: false
     }
@@ -61,7 +61,7 @@ const TrademarkPricing = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
-            CHI PHÍ ĐĂNG KÝ BẢO HỘ NHÃN HIỆU TẠI TAGA
+            CHI PHÍ ĐĂNG KÝ BẢO HỘ NHÃN HIỆU TẠI TOTO
           </h2>
           <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto rounded-full"></div>
         </div>

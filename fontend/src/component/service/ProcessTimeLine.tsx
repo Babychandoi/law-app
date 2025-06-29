@@ -1,14 +1,9 @@
 import React from 'react';
 import { Clock, Search, FileText, Upload, Cog, LucideIcon } from 'lucide-react';
+import { ProcessStep } from '../../types/service';
 
 // Define types for better reusability
-interface ProcessStep {
-  title: string;
-  description: string;
-  icon: string;
-  color: 'blue' | 'emerald' | 'purple' | 'orange';
-  duration?: string;
-}
+
 
 interface ProcessTimelineProps {
   title?: string;
@@ -40,7 +35,7 @@ const getColorClasses = (color: 'blue' | 'emerald' | 'purple' | 'orange') => {
     },
     emerald: {
       bg: "bg-emerald-50",
-      border: "border-emerald-200", 
+      border: "border-emerald-200",
       icon: "text-emerald-600",
       accent: "bg-emerald-600",
       gradient: "from-emerald-500 to-emerald-600",
@@ -67,14 +62,14 @@ const getColorClasses = (color: 'blue' | 'emerald' | 'purple' | 'orange') => {
 };
 
 // Step Card Component
-const StepCard: React.FC<{ 
-  step: ProcessStep; 
-  index: number; 
+const StepCard: React.FC<{
+  step: ProcessStep;
+  index: number;
   showConnector?: boolean;
   isLast?: boolean;
 }> = ({ step, index, showConnector = false, isLast = false }) => {
-  const IconComponent = iconMap[step.icon] || Clock;
-  const colorClasses = getColorClasses(step.color);
+  const IconComponent = iconMap[step?.icon ?? 'clock'] || Clock;
+  const colorClasses = getColorClasses(step?.color || 'blue');
 
   return (
     <div className="relative flex flex-col items-center">
@@ -96,13 +91,13 @@ const StepCard: React.FC<{
           <h4 className="text-lg font-bold text-gray-800 mb-3 leading-tight group-hover:text-gray-900 transition-colors duration-200">
             {step.title}
           </h4>
-          
+
           {step.duration && (
             <div className={`inline-block px-3 py-1 rounded-full text-xs font-semibold mb-3 ${colorClasses.accent} text-white`}>
               {step.duration}
             </div>
           )}
-          
+
           <p className="text-gray-600 text-sm leading-relaxed group-hover:text-gray-700 transition-colors duration-200">
             {step.description}
           </p>
@@ -149,30 +144,29 @@ const ProcessTimeline: React.FC<ProcessTimelineProps> = ({
               <Clock className="w-12 h-12 text-white" />
             </div>
           </div>
-          
+
           <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
             {title}
           </h2>
-          
+
           {subtitle && (
             <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
               {subtitle}
             </p>
           )}
-          
+
           <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto rounded-full mt-6"></div>
         </div>
 
         {/* Timeline Grid */}
-        <div className={`grid gap-8 ${
-          layout === 'horizontal' 
-            ? `grid-cols-1 md:grid-cols-${steps.length} lg:grid-cols-${steps.length}` 
+        <div className={`grid gap-8 ${layout === 'horizontal'
+            ? `grid-cols-1 md:grid-cols-${steps.length} lg:grid-cols-${steps.length}`
             : 'grid-cols-1 max-w-2xl mx-auto'
-        }`}>
+          }`}>
           {steps.map((step, index) => (
-            <StepCard 
-              key={index} 
-              step={step} 
+            <StepCard
+              key={index}
+              step={step}
               index={index}
               showConnector={showConnectors && layout === 'horizontal'}
               isLast={index === steps.length - 1}
@@ -187,7 +181,7 @@ const ProcessTimeline: React.FC<ProcessTimelineProps> = ({
               Quy trình chuyên nghiệp
             </h3>
             <p className="text-gray-600 leading-relaxed">
-              Chúng tôi cam kết thực hiện quy trình một cách minh bạch, 
+              Chúng tôi cam kết thực hiện quy trình một cách minh bạch,
               chuyên nghiệp và đúng thời hạn đã cam kết.
             </p>
           </div>
@@ -198,4 +192,4 @@ const ProcessTimeline: React.FC<ProcessTimelineProps> = ({
 };
 
 
-export { ProcessTimeline};
+export { ProcessTimeline };

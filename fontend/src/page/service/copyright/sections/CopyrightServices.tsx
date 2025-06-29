@@ -78,7 +78,7 @@ const CopyrightServices: React.FC = () => {
             <TrendingUp className="w-8 h-8 text-blue-600" />
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-            LUẬT TAGA CUNG CẤP DỊCH VỤ ĐĂNG KÝ BẢO HỘ BẢN QUYỀN TÁC GIẢ VỚI CÁC LOẠI HÌNH SAU
+            LUẬT TOTO CUNG CẤP DỊCH VỤ ĐĂNG KÝ BẢO HỘ BẢN QUYỀN TÁC GIẢ VỚI CÁC LOẠI HÌNH SAU
           </h2>
         </div>
       </div>

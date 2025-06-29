@@ -41,7 +41,7 @@ const BarcodeInfoSection: React.FC<BarcodeInfoSectionProps> = ({ className = '' 
             <p className="text-gray-700 leading-relaxed text-justify pl-5">
               Mã số mã vạch là một thẻ chứng minh xuất xứ và lưu thông của sản phẩm trên các thị trường quốc tế. Mỗi sản phẩm được gắn một mã số duy nhất, tương tự như mã số điện thoại trong viễn thông. Mã vạch là dãy số dưới dạng vạch đặc biệt để máy đọc được.
               <br /><br />
-              Hiện nay, có hai loại chính là mã số 1 chiều và mã số hai chiều. Các hệ thống mã vạch phổ biến bao gồm EAN-13, CODE 39, và QR CODE. Luật Taga cung cấp dịch vụ đăng ký mã EAN-13 cho khách hàng.
+              Hiện nay, có hai loại chính là mã số 1 chiều và mã số hai chiều. Các hệ thống mã vạch phổ biến bao gồm EAN-13, CODE 39, và QR CODE. Luật ToTo cung cấp dịch vụ đăng ký mã EAN-13 cho khách hàng.
             </p>
             <div className="mt-6 flex justify-end">
               <a href='https://thuvienphapluat.vn/chinh-sach-phap-luat-moi/vn/ho-tro-phap-luat/tu-van-phap-luat/55245/ma-so-ma-vach-la-gi-huong-dan-thu-tuc-cap-giay-chung-nhan-quyen-su-dung-ma-so-ma-vach-tren-san-pham' className="px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition duration-300"

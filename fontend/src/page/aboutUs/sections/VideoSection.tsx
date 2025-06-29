@@ -9,7 +9,7 @@ const VideoSection: React.FC = () => (
             <iframe
               className="w-full h-96"
               src="https://www.youtube.com/embed/NF2lGpFjJ7Q"
-              title="Taga Law Introduction Video"
+              title ="ToTo Law Introduction Video"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             ></iframe>

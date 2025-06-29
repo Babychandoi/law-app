@@ -17,8 +17,8 @@ const Slider: React.FC = () => {
   const slides: SlideData[] = [
     {
       id: 'slide-1',
-      title: 'DỊCH VỤ SỞ HỮU TRÍ TUỆ - TAGA LAW',
-      description: `Công ty TNHH Sở hữu trí tuệ Taga là tổ chức Đại Diện Sở
+      title: 'DỊCH VỤ SỞ HỮU TRÍ TUỆ - TOTO LAW',
+      description: `Công ty TNHH Sở hữu trí tuệ ToTo là tổ chức Đại Diện Sở
 Hữu Công Nghiệp uy tín tại Việt Nam, có đầy đủ năng lực
 tư vấn và thực thi xác lập quyền Sở Hữu Công Nghiệp cho
 khách hàng trong và ngoài nước.`,

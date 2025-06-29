@@ -210,7 +210,7 @@ const Header: React.FC = () => {
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail size={14} className="text-yellow-400" />
-                  <span>info@taga.vn</span>
+                  <span>info@toto.vn</span>
                 </div>
               </div>
               <div className="flex items-center space-x-4">

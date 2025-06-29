@@ -1,43 +1,17 @@
 import React from 'react';
-import {  ArrowRight, Clock,  } from 'lucide-react';
-
-// Define types for data
-type DetailItem = {
-  type: string;
-  desc: string;
-  accuracy?: string;
-  time?: string;
-};
-
-type StepItem = {
-  id: number;
-  step: string;
-  title: string;
-  icon: any;
-  description: string;
-  details?: DetailItem[];
-};
-
-type StatItem = {
-  icon: any;
-  value: string;
-  label: string;
-};
+import { ArrowRight, Clock, } from 'lucide-react';
+import { Process } from '../../types/service';
 
 const UniversalProcess = ({
   title,
   subtitle = "",
   layout = "simple", // "simple" or "detailed"
   steps,
-  statistics = [],
-  statisticsTitle = "Tại sao chọn chúng tôi?"
 }: {
   title: string; // Bắt buộc phải truyền
   subtitle?: string;
   layout?: "simple" | "detailed";
-  steps: StepItem[]; // Bắt buộc phải truyền
-  statistics?: StatItem[];
-  statisticsTitle?: string;
+  steps: Process[]; // Bắt buộc phải truyền
 }) => {
   const getColorClasses = (color: keyof typeof colors) => {
     const colors = {
@@ -76,9 +50,9 @@ const UniversalProcess = ({
         <div className="container mx-auto px-4">
           <div className={`grid grid-cols-1 md:grid-cols-${steps.length} gap-8`}>
             {steps.map((step) => {
-              const IconComponent = step.icon;
+              const IconComponent = ArrowRight; // Default icon if none provided
               const colorClasses = getColorClasses("blue");
-              
+
               return (
                 <div key={step.id} className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow duration-300">
                   <div className="flex items-start space-x-4">
@@ -91,6 +65,12 @@ const UniversalProcess = ({
                       <h4 className="text-xl font-semibold text-gray-800 mb-3">
                         {step.step}
                       </h4>
+                      { step.title && step.title !== step.step  &&
+                        <h3 className="text-lg font-bold text-gray-800 mb-2">
+                        {step.title}
+                        </h3>
+                      }
+                      
                       <p className="text-gray-600 leading-relaxed">
                         {step.description}
                       </p>
@@ -102,28 +82,6 @@ const UniversalProcess = ({
           </div>
         </div>
 
-        {/* Statistics Section */}
-        {statistics.length > 0 && (
-          <div className="container mx-auto px-4 mt-16">
-            <div className="bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
-              <h3 className="text-2xl font-bold text-center mb-8">{statisticsTitle}</h3>
-              <div className="grid md:grid-cols-3 gap-8 text-center">
-                {statistics.map((stat, index) => {
-                  const StatIcon = stat.icon;
-                  return (
-                    <div key={index} className="space-y-2">
-                      <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto">
-                        <StatIcon className="w-8 h-8" />
-                      </div>
-                      <div className="text-3xl font-bold">{stat.value}</div>
-                      <div className="text-blue-100">{stat.label}</div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     );
   }
@@ -148,16 +106,17 @@ const UniversalProcess = ({
         {/* Process Steps */}
         <div className="space-y-12">
           {steps.map((step, index) => {
-            const IconComponent = step.icon;
+            const IconComponent = ArrowRight; // Default icon if none provided
+
             const colorClasses = getColorClasses("blue");
-            
+
             return (
               <div key={step.id} className="relative">
                 {/* Connector Line */}
                 {index < steps.length - 1 && (
                   <div className="absolute left-1/2 transform -translate-x-1/2 top-full w-1 h-12 bg-gradient-to-b from-blue-400 to-transparent z-0 hidden lg:block"></div>
                 )}
-                
+
                 <div className="grid lg:grid-cols-3 gap-8 items-start">
                   {/* Step Header */}
                   <div className="lg:col-span-1">
@@ -214,26 +173,6 @@ const UniversalProcess = ({
           })}
         </div>
 
-        {/* Statistics Section */}
-        {statistics.length > 0 && (
-          <div className="mt-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl p-8 text-white">
-            <h3 className="text-2xl font-bold text-center mb-8">{statisticsTitle}</h3>
-            <div className="grid md:grid-cols-3 gap-8 text-center">
-              {statistics.map((stat, index) => {
-                const StatIcon = stat.icon;
-                return (
-                  <div key={index} className="space-y-2">
-                    <div className="w-16 h-16 bg-white bg-opacity-20 rounded-full flex items-center justify-center mx-auto">
-                      <StatIcon className="w-8 h-8" />
-                    </div>
-                    <div className="text-3xl font-bold">{stat.value}</div>
-                    <div className="text-blue-100">{stat.label}</div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );

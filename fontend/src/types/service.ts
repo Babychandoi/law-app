@@ -35,4 +35,29 @@ export interface PricingPlan {
     subtitle: string;
     description: string;
   }
-  
+export interface Process {
+    id: number;
+    step: string;
+    title: string;
+    description: string;
+    details?: ProcessDetail[];
+}
+export interface ProcessDetail {
+    desc : string;
+    type: string;
+    accuracy?: string;
+    time?: string;
+}
+export interface PreviousPartner{
+    id: string;
+    title : string;
+    image :string;
+    shortName : string;
+}
+export interface ProcessStep {
+    title: string;
+    description: string;
+    icon?: string;
+    color?: 'blue' | 'emerald' | 'purple' | 'orange';
+    duration?: string;
+  }

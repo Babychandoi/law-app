@@ -19,7 +19,7 @@ const ArticleHeader: React.FC = () => {
       <div className="flex flex-wrap items-center gap-6 text-sm text-gray-600 border-t pt-4">
         <div className="flex items-center gap-2">
           <User className="w-4 h-4" />
-          <span>Đăng bởi <strong>Luật Taga</strong></span>
+          <span>Đăng bởi <strong>Luật ToTo</strong></span>
         </div>
         <div className="flex items-center gap-2">
           <Calendar className="w-4 h-4" />

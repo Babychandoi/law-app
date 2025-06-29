@@ -7,7 +7,7 @@ const CustomerTestimonials = () => {
       id: 1,
       companyName: "CÔNG TY TNHH LOTTE VINA INTERNATIONAL",
       image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2024/01/1c30c09f-ddcb-49fc-9143-1712de29c242-1.jpeg?w=200&ssl=1",
-      review: "Tôi cảm thấy yên tâm với việc TAGA có đội ngũ luật sư giàu kinh nghiệm và hiểu biết sâu rộng về pháp lý liên quan đến việc đăng ký nhãn hiệu. Họ đã giúp tôi hiểu rõ quy trình và đảm bảo mọi thủ tục được thực hiện đúng cách.",
+      review: "Tôi cảm thấy yên tâm với việc TOTO có đội ngũ luật sư giàu kinh nghiệm và hiểu biết sâu rộng về pháp lý liên quan đến việc đăng ký nhãn hiệu. Họ đã giúp tôi hiểu rõ quy trình và đảm bảo mọi thủ tục được thực hiện đúng cách.",
       rating: 5
     },
     {
@@ -21,7 +21,7 @@ const CustomerTestimonials = () => {
       id: 3,
       companyName: "CÔNG TY CỔ PHẦN TẬP ĐOÀN NHỰA ĐÔNG Á",
       image: "https://i0.wp.com/luattaga.vn/wp-content/uploads/2024/01/279eeb7cbc2c17724e3d.jpg?w=766&ssl=1",
-      review: "Tôi đánh giá cao khả năng giao tiếp linh hoạt của TAGA. Họ luôn sẵn sàng lắng nghe ý kiến của tôi và điều chỉnh theo nhu cầu cụ thể của dự án.",
+      review: "Tôi đánh giá cao khả năng giao tiếp linh hoạt của TOTO. Họ luôn sẵn sàng lắng nghe ý kiến của tôi và điều chỉnh theo nhu cầu cụ thể của dự án.",
       rating: 5
     }
   ];
