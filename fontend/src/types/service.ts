@@ -61,3 +61,49 @@ export interface ProcessStep {
     color?: 'blue' | 'emerald' | 'purple' | 'orange';
     duration?: string;
   }
+export interface ServiceItem {
+    icon: string;
+    title: string;
+    description: string;
+    href: string;
+    id : string;
+  }
+  export interface CustomerService {
+    name: string;
+    email: string;
+    phone: string;
+    serviceId: string;
+    description: string;
+  }
+  export interface Job {
+    id: string;
+    title: string;
+    company?: string;
+    jobType: string;
+    location: string;
+    postedDate: string;
+    description: string[];
+    requirements: string[];
+    benefits: string[];
+    category: string;
+  }
+  export interface News {
+    id?: string;
+    title: string;
+    subtitle: string;
+    createdAt?: Date;
+    author: string;
+    image? : string;
+    sections? : SectionNews[];
+  }
+  export interface SectionNews{
+    id?: string;
+    title: string;
+    content: string;
+    icon: string;
+  }
+export interface BreadcrumbItem {
+  name: string;
+  href: string;
+}
+

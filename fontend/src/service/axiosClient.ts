@@ -1,0 +1,62 @@
+import axios from "axios";
+import { ApiResponse, LoginResponse } from "../types/admin";
+
+const axiosClient = axios.create({
+  baseURL: "http://localhost:8080",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+axiosClient.interceptors.request.use((config) => {
+  const token = sessionStorage.getItem("accessToken");
+  if (token && config.headers) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+axiosClient.interceptors.response.use(
+  (response) => response,
+  async (error) => {
+    const originalRequest = error.config;
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      sessionStorage.getItem("refreshToken")
+    ) {
+      originalRequest._retry = true;
+      const refreshed = await tryRefreshToken();
+      if (refreshed) {
+        originalRequest.headers.Authorization = `Bearer ${sessionStorage.getItem("accessToken")}`;
+        return axiosClient(originalRequest);
+      } else {
+        sessionStorage.clear();
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
+export default axiosClient;
+export async function tryRefreshToken(): Promise<boolean> {
+    const refreshToken = sessionStorage.getItem("refreshToken");
+    if (!refreshToken) return false;
+    try {
+      const response = await axios.post<ApiResponse<LoginResponse>>("http://localhost:8080/auth/refresh", {
+        refreshToken,
+      });
+  
+      const data = response.data.data;
+      if (!data?.token || !data?.refreshToken) return false;
+  
+      sessionStorage.setItem("accessToken", data.token);
+      sessionStorage.setItem("refreshToken", data.refreshToken);
+  
+      return true;
+    } catch (error) {
+      console.error("Refresh token failed:", error);
+      return false;
+    }
+  }

@@ -1,7 +1,7 @@
 // src/components/layout/Breadcrumb.tsx
 import { ChevronRight, Home } from 'lucide-react';
-import { BreadcrumbItem } from '../../types';
 import { cn } from '../../lib/utils';
+import { BreadcrumbItem } from '../../types/service';
 
 interface BreadcrumbProps {
   items: BreadcrumbItem[];
@@ -10,7 +10,10 @@ interface BreadcrumbProps {
 export const Breadcrumb = ({ items }: BreadcrumbProps) => (
   <nav className="bg-gray-50 py-4" aria-label="Breadcrumb">
     <div className="container mx-auto px-4">
-      <ol className="flex items-center space-x-2 text-sm">
+      <ol className="flex items-center space-x-2 text-sm" style={{
+        fontFamily: 'Arial, sans-serif',
+        fontSize : '1.5rem'
+      }}>
         {items.map((item, index) => (
           <li key={item.href} className="flex items-center">
             {index > 0 && <ChevronRight className="h-4 w-4 text-gray-400 mx-2" />}

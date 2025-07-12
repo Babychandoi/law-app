@@ -1,10 +1,9 @@
 // src/components/news/NewsPage.tsx
 import { Banner } from '../layout/Banner';
 import { Breadcrumb } from '../layout/Breadcrumb';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '../ui/Tabs';
 import { NewsGrid } from './NewsGrid';
 import { useNews } from '../../hooks/useNews';
-import { BreadcrumbItem, NewsCategory } from '../../types';
+import { BreadcrumbItem } from '../../types/service';
 
 interface NewsPageProps {
   bannerImage: string;
@@ -13,12 +12,9 @@ interface NewsPageProps {
 
 export const NewsPage = ({ bannerImage, bannerAlt }: NewsPageProps) => {
   const {
-    highlightNews,
-    caseStudies,
-    activeTab,
+    news,
     loading,
     error,
-    handleTabChange,
     handleItemClick
   } = useNews();
 
@@ -27,10 +23,6 @@ export const NewsPage = ({ bannerImage, bannerAlt }: NewsPageProps) => {
     { name: 'News', href: '/news' }
   ];
 
-  const tabs: { value: NewsCategory; label: string }[] = [
-    { value: 'highlight-news', label: 'Highlight News' },
-    { value: 'case-studies', label: 'Case Studies' }
-  ];
 
   if (error) {
     return (
@@ -49,38 +41,11 @@ export const NewsPage = ({ bannerImage, bannerAlt }: NewsPageProps) => {
       <Breadcrumb items={breadcrumbItems} />
       
       <main className="container mx-auto px-4 py-8">
-        <Tabs value={activeTab as string} onValueChange={(value) => handleTabChange(value as NewsCategory)}>
-          <div className="flex justify-center mb-8">
-            <TabsList>
-              {tabs.map((tab) => (
-                <TabsTrigger
-                  key={tab.value}
-                  value={tab.value}
-                  isActive={activeTab === tab.value}
-                  onClick={() => handleTabChange(tab.value)}
-                >
-                  {tab.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
-
-          <TabsContent value="highlight-news" isActive={activeTab === 'highlight-news'}>
             <NewsGrid 
-              items={highlightNews} 
+              items={news} 
               loading={loading}
               onItemClick={handleItemClick}
             />
-          </TabsContent>
-
-          <TabsContent value="case-studies" isActive={activeTab === 'case-studies'}>
-            <NewsGrid 
-              items={caseStudies} 
-              loading={loading}
-              onItemClick={handleItemClick}
-            />
-          </TabsContent>
-        </Tabs>
       </main>
     </div>
   );

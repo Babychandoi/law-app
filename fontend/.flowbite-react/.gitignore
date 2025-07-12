@@ -1,2 +1,6 @@
+# Bỏ qua node_modules
+node_modules/
+
+# Bỏ qua file riêng bạn đã có
 class-list.json
 pid

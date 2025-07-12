@@ -4,7 +4,7 @@ import { GoogleMapProps } from '../types/GoogleMap.types';
 export const DEFAULT_PROPS: Required<Omit<GoogleMapProps, 'className' | 'style' | 'ariaLabel'>> = {
   width: '100%',
   height: 600,
-  coordinates: { lat: 21.0036983, lng: 105.7919108 },
+  coordinates: { lat: 20.951164, lng: 105.8095075 },
   zoom: 14,
   language: 'en',
   mapType: 'roadmap',
@@ -15,7 +15,7 @@ export const DEFAULT_PROPS: Required<Omit<GoogleMapProps, 'className' | 'style' 
 };
 
 export const FAMOUS_LOCATIONS = {
-  toto: { lat: 21.0036983, lng: 105.7919108, label: 'Luật ToTo' },
+  toto: { lat: 20.951164, lng: 105.8095075, label: 'Luật ToTo' },
   hoanKiem: { lat: 21.0285, lng: 105.8542, label: 'Hồ Hoàn Kiếm' },
   onePillar: { lat: 21.0368, lng: 105.8344, label: 'Chùa Một Cột' },
   literature: { lat: 21.0227, lng: 105.8356, label: 'Văn Miếu' },

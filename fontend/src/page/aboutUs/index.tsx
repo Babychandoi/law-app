@@ -3,7 +3,7 @@ import HeroSection from '../../component/sections/HeroSection';
 import AboutSection from './sections/AboutSection';
 import ServicesSection from './sections/ServicesSection';
 import TeamSection from './sections/TeamSection';
-import VideoSection from './sections/VideoSection';
+import VideoSection from '../../component/VideoSection';
 import ContactSection from './sections/ContactSection';
 import { Service } from './types';
 

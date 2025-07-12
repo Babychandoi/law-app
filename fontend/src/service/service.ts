@@ -1,9 +1,10 @@
 
 import axios from "axios";
-import { Hero, PreviousPartner, Process, ProcessStep, ServiceResponse } from "../types/service";
+import { CustomerService,  Hero, Job, News, PreviousPartner, Process, ProcessStep, ServiceItem, ServiceResponse } from "../types/service";
 import { ChildrenServiceResponse } from "../types/service";
 import { ApiResponse } from "../types/types";
 import { TotoCompany } from "../types/company";
+
 const API_URL = "http://localhost:8080";
 
 export const getServices = async (): Promise<ApiResponse<ServiceResponse[]>> => {
@@ -38,3 +39,32 @@ export const getCompany = async() : Promise<ApiResponse<TotoCompany>> => {
 	const response = await axios.get<ApiResponse<TotoCompany>>(`${API_URL}/services/toto`);
 	return response.data;
 }
+export const getServiceHome = async (): Promise<ApiResponse<ServiceItem[]>> => {
+	const response = await axios.get<ApiResponse<ServiceItem[]>>(`${API_URL}/services/home`);
+	return response.data;
+}
+export const createCustomerService = async (data: CustomerService): Promise<ApiResponse<any>> => {
+	const response = await axios.post<ApiResponse<any>>(`${API_URL}/customer`, data);
+	return response.data;
+}
+export const getJobs = async (): Promise<ApiResponse<Job[]>> => {
+	const response = await axios.get<ApiResponse<Job[]>>(`${API_URL}/jobs`);
+	return response.data;
+}
+export const getJobById = async (id: string): Promise<ApiResponse<Job>> => {
+	const response = await axios.get<ApiResponse<Job>>(`${API_URL}/jobs/${id}`);
+	return response.data;
+}
+export const searchJobs = async (filters: { keywords: string; category: string; jobType: string; location: string }) =>{
+	const response = await axios.get<ApiResponse<Job[]>>(`${API_URL}/jobs/search`, { params: filters });
+	return response.data;
+}
+export const getNew = async (id : string): Promise<ApiResponse<News>> => {
+	const response = await axios.get<ApiResponse<News>>(`${API_URL}/news/${id}`);
+	return response.data;
+}
+export const getNews = async (): Promise<ApiResponse<News[]>> => {
+	const response = await axios.get<ApiResponse<News[]>>(`${API_URL}/news`);
+	return response.data;
+}
+

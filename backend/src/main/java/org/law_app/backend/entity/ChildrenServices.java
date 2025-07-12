@@ -3,6 +3,7 @@ package org.law_app.backend.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+import org.law_app.backend.common.Icon;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Getter
@@ -23,5 +24,7 @@ public class ChildrenServices {
     @JoinColumn(name = "parent_service_id")
     Services parentService;
     String description;
+    String icon;
     String image;
+    String descriptionHome;
 }

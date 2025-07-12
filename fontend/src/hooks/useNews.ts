@@ -1,12 +1,10 @@
 // src/hooks/useNews.ts
 import { useState, useEffect } from 'react';
-import { NewsItem, NewsCategory } from '../types';
-import { fetchNews} from '../lib/api';
+import { getNews } from '../service/service';
 import { useNavigate } from 'react-router-dom';
+import { News } from '../types/service';
 export const useNews = () => {
-  const [highlightNews, setHighlightNews] = useState<NewsItem[]>([]);
-  const [caseStudies, setCaseStudies] = useState<NewsItem[]>([]);
-  const [activeTab, setActiveTab] = useState<NewsCategory>('highlight-news');
+  const [news, setNews] = useState<News[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -14,11 +12,14 @@ export const useNews = () => {
     const loadNews = async () => {
       setLoading(true);
       try {
-        const response = await fetchNews();
-        setHighlightNews(response.data.items.filter(item => item.category === 'highlight-news'));
-        setCaseStudies(response.data.items.filter(item => item.category === 'case-studies'));
+        const response = await getNews();
+        if (response && response.data) {
+          setNews(response.data);
+        } else {
+          console.error("No data found in response");
+        }
       } catch (err) {
-        setError('Failed to load news');
+        setError('Failed to load news');  
       } finally {
         setLoading(false);
       }
@@ -27,21 +28,14 @@ export const useNews = () => {
     loadNews();
   }, []);
 
-  const handleTabChange = (value: NewsCategory) => {
-    setActiveTab(value);
-  };
-
-  const handleItemClick = (item: NewsItem) => {
+  const handleItemClick = (item: News) => {
     navigate(`/news/${item.id}`)
   };
 
   return {
-    highlightNews,
-    caseStudies,
-    activeTab,
+    news,
     loading,
     error,
-    handleTabChange,
     handleItemClick
   };
 };

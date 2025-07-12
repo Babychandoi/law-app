@@ -1,35 +1,22 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { MapPin, Mail, Phone, MessageCircle } from 'lucide-react';
-
-// Configuration object - Change information here
-const companyInfo = {
-  title: "Dịch vụ Sở hữu trí tuệ - ToTo Law",
-  subtitle: "Đối tác tuyệt vời cho doanh nghiệp của bạn.",
-  description: [
-    "Với mục tiêu giúp khách hàng của mình bảo vệ quyền sở hữu trí tuệ, chúng tôi cam kết cung cấp các giải pháp phù hợp và hiệu quả nhất cho từng trường hợp cụ thể. Đội ngũ chuyên viên của chúng tôi luôn đảm bảo giải quyết các thủ tục đăng ký nhanh chóng và chính xác, giúp khách hàng tiết kiệm được thời gian và chi phí.",
-    "Đối với Luật ToTo, khách hàng là trung tâm của mọi hoạt động của chúng tôi. Chúng tôi cam kết mang lại cho khách hàng của mình sự hài lòng và một chất lượng dịch tuyệt vời."
-  ],
-  addresses: {
-    headquarters: {
-      label: "Địa chỉ trụ sở",
-      address: "Số 12 Ngõ 203 đường Hữu Hưng, Phường Tây Mỗ, Quận Nam Từ Liêm, Thành phố Hà Nội, Việt Nam"
-    },
-    office: {
-      label: "Văn phòng giao dịch",
-      address: "Số 7 Đại Lộ Thăng Long, Phường Trung Hoà, Quận Cầu Giấy, Thành phố Hà Nội, Việt Nam"
-    }
-  },
-  contact: {
-    email: "lienhe@luatToTo.vn",
-    hotline: "0968.856.464",
-    zalo: [
-      { label: "Zalo 1", number: "0986.488.248" },
-      { label: "Zalo 2", number: "0986.400.248" }
-    ]
-  }
-};
-
+import { getCompany } from '../../../service/service';
+import { TotoCompany } from '../../../types/company';
 const Contact: React.FC = () => {
+  const [contact,setContact] = useState<TotoCompany>()
+  useEffect(() => {
+    const fetchCompanyInfo = async () => {
+      try {
+        const response = await getCompany();
+        console.log(response)
+        setContact(response.data);
+      } catch (error) {
+        console.error("Error fetching company information:", error);
+      }
+    };
+
+    fetchCompanyInfo();
+  }, []);
   return (
     <div className="bg-gray-50 py-20 px-4">
       <div className="max-w-6xl mx-auto">
@@ -38,16 +25,17 @@ const Contact: React.FC = () => {
           <div >
             <div className="bg-white rounded-lg p-8 shadow-lg">
               <h2 className="text-2xl font-bold text-gray-800 mb-6">
-                {companyInfo.title}
+                {contact?.company.name}
               </h2>
               <p className="text-gray-600 leading-relaxed mb-4">
-                {companyInfo.subtitle}
+                  Đối tác tuyệt vời cho doanh nghiệp của bạn.
               </p>
-              {companyInfo.description.map((paragraph, index) => (
-                <p key={index} className="text-gray-600 leading-relaxed mb-4 last:mb-0">
-                  {paragraph}
+                <p className="text-gray-600 leading-relaxed mb-4 last:mb-0">
+                  Với mục tiêu giúp khách hàng của mình bảo vệ quyền sở hữu trí tuệ, chúng tôi cam kết cung cấp các giải pháp phù hợp và hiệu quả nhất cho từng trường hợp cụ thể. Đội ngũ chuyên viên của chúng tôi luôn đảm bảo giải quyết các thủ tục đăng ký nhanh chóng và chính xác, giúp khách hàng tiết kiệm được thời gian và chi phí.
                 </p>
-              ))}
+                <p className="text-gray-600 leading-relaxed mb-4 last:mb-0">
+                  Đối với Luật ToTo, khách hàng là trung tâm của mọi hoạt động của chúng tôi. Chúng tôi cam kết mang lại cho khách hàng của mình sự hài lòng và một chất lượng dịch tuyệt vời.
+                </p>
             </div>
             {/* Address Section */}
             <div className="bg-white rounded-lg p-8 shadow-lg">
@@ -57,19 +45,14 @@ const Contact: React.FC = () => {
               </div>
               
               <div className="space-y-4">
-                <div>
-                  <h4 className="font-semibold text-gray-700 mb-2">{companyInfo.addresses.headquarters.label}</h4>
+                {contact?.locations.map((location,index) =>(
+                  <div>
+                  <h4 className="font-semibold text-gray-700 mb-2">{location.type}</h4>
                   <p className="text-gray-600">
-                    {companyInfo.addresses.headquarters.address}
+                    {location.address}
                   </p>
                 </div>
-                
-                <div>
-                  <h4 className="font-semibold text-gray-700 mb-2">{companyInfo.addresses.office.label}</h4>
-                  <p className="text-gray-600">
-                    {companyInfo.addresses.office.address}
-                  </p>
-                </div>
+                ))}
               </div>
             </div>
 
@@ -82,10 +65,10 @@ const Contact: React.FC = () => {
                 <div className="flex items-center">
                   <Mail className="w-5 h-5 text-blue-500 mr-3" />
                   <a 
-                    href={`mailto:${companyInfo.contact.email}`}
+                    href={`mailto:${contact?.company.email}`}
                     className="text-blue-600 hover:text-blue-800 transition-colors"
                   >
-                    {companyInfo.contact.email}
+                    {contact?.company.email}
                   </a>
                 </div>
 
@@ -95,30 +78,32 @@ const Contact: React.FC = () => {
                   <div>
                     <span className="text-gray-600 mr-2">Hotline:</span>
                     <a 
-                      href={`tel:${companyInfo.contact.hotline.replace(/\./g, '')}`}
+                      href={`tel:${contact?.phoneContacts[2].number.replace(/\./g, '')}`}
                       className="text-green-600 hover:text-green-800 transition-colors font-semibold"
                     >
-                      {companyInfo.contact.hotline}
+                      {contact?.phoneContacts[2].number}
                     </a>
                   </div>
                 </div>
 
                 {/* Zalo contacts */}
                 <div className="space-y-2">
-                  {companyInfo.contact.zalo.map((zalo, index) => (
-                    <div key={index} className={`flex items-center ${index > 0 ? 'ml-8' : ''}`}>
-                      {index === 0 && <MessageCircle className="w-5 h-5 text-blue-400 mr-3" />}
-                      {index > 0 && <div className="w-5 mr-3"></div>}
-                      <div>
-                        <span className="text-gray-600 mr-2">{zalo.label}:</span>
-                        <a 
-                          href={`tel:${zalo.number.replace(/\./g, '')}`}
-                          className="text-blue-600 hover:text-blue-800 transition-colors"
-                        >
-                          {zalo.number}
-                        </a>
+                {contact?.phoneContacts
+                    .filter(zalo => zalo.label.includes("Zalo"))
+                    .map((zalo, index) => (
+                      <div key={index} className={`flex items-center ${index > 0 ? 'ml-8' : ''}`}>
+                        {index === 0 && <MessageCircle className="w-5 h-5 text-blue-400 mr-3" />}
+                        {index > 0 && <div className="w-5 mr-3"></div>}
+                        <div>
+                          <span className="text-gray-600 mr-2">{zalo.label}:</span>
+                          <a 
+                            href={`tel:${zalo.number.replace(/\./g, '')}`}
+                            className="text-blue-600 hover:text-blue-800 transition-colors"
+                          >
+                            {zalo.number}
+                          </a>
+                        </div>
                       </div>
-                    </div>
                   ))}
                 </div>
               </div>

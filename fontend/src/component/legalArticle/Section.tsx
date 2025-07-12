@@ -1,5 +1,4 @@
 import React from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
 
 interface SectionProps {
   id: string;
@@ -19,7 +18,7 @@ const Section: React.FC<SectionProps> = ({
   onToggle,
 }) => {
   return (
-    <div className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl">
+    <div id ={id} className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl">
       <button
         onClick={() => onToggle(id)}
         className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
@@ -32,16 +31,7 @@ const Section: React.FC<SectionProps> = ({
             {title}
           </h2>
         </div>
-        <div className="text-gray-400">
-          {isExpanded ? (
-            <ChevronUp className="w-5 h-5" />
-          ) : (
-            <ChevronDown className="w-5 h-5" />
-          )}
-        </div>
       </button>
-      
-      {isExpanded && (
         <div className="px-6 pb-6 border-t border-gray-100">
           <div className="pt-6">
             <p className="text-gray-700 leading-relaxed text-justify">
@@ -49,7 +39,6 @@ const Section: React.FC<SectionProps> = ({
             </p>
           </div>
         </div>
-      )}
     </div>
   );
 };

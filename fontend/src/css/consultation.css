@@ -1,0 +1,64 @@
+/* phoneInput.css */
+
+/* Container for the phone input */
+.phone-input {
+  position: relative;
+  width: 100%;
+}
+
+/* Input field styles */
+.phone-input input {
+  width: 100%;
+  padding: 10px 40px 10px 15px; /* Adjust padding for the flag */
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: border-color 0.3s;
+}
+
+/* Input field focus styles */
+.phone-input input:focus {
+  border-color: #007bff; /* Change border color on focus */
+  outline: none;
+}
+
+/* Dropdown styles */
+.phone-input .react-tel-input .flag-dropdown {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 40px; /* Adjust width for the flag */
+  height: 100%;
+  background-color: #fff;
+  border-right: 2px solid #ccc;
+  border-radius: 5px 0 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Flag styles */
+.phone-input .react-tel-input .flag-dropdown .flag {
+  width: 20px; /* Adjust flag size */
+  height: 15px; /* Adjust flag size */
+}
+
+/* Dropdown menu styles */
+.phone-input .react-tel-input .country-list {
+  max-height: 200px; /* Limit dropdown height */
+  overflow-y: auto; /* Enable scrolling */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+/* Country option styles */
+.phone-input .react-tel-input .country-option {
+  padding: 10px;
+  cursor: pointer;
+}
+
+/* Country option hover styles */
+.phone-input .react-tel-input .country-option:hover {
+  background-color: #f0f0f0; /* Change background on hover */
+}

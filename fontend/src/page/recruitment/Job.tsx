@@ -1,32 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Briefcase, MapPin, Calendar } from 'lucide-react';
-import { jobs } from './jobData';
-
-interface JobPostingProps {
-    jobData?: {
-        id: number;
-        title: string;
-        company?: string;
-        jobType: string;
-        location: string;
-        postedDate: string;
-        description: string[];
-        requirements: string[];
-        benefits: string[];
-        category: string;
-    };
-}
-
-const Job: React.FC<JobPostingProps> = ({ jobData }) => {
+import { Job } from '../../types/service';
+import { getJobById } from '../../service/service';
+const JobComponent : React.FC = () => {
     const navigate = useNavigate();
     const { id } = useParams();
-    console.log('Job ID:', id);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
-    const currentJob = jobData || jobs.find(job => job.id.toString() === id);
-
-    if (!currentJob) {
+    const [job,setJob] = useState<Job>();
+    useEffect(() => {
+        const fetchJob = async () => {
+        if (id) {
+                try {
+                    const response = await getJobById(id);
+                    setJob(response.data);
+                } catch (error) {
+                    console.error('Error fetching job:', error);
+                }
+            }
+        };
+        fetchJob();
+    },[id])
+    if (!job) {
         return (
             <div className="max-w-4xl mx-auto p-6 bg-white">
                 <h1 className="text-2xl font-bold text-red-500">Không tìm thấy công việc</h1>
@@ -52,7 +47,7 @@ const Job: React.FC<JobPostingProps> = ({ jobData }) => {
             alert('Vui lòng đính kèm CV của bạn');
             return;
         }
-        alert(`Đã nộp đơn ứng tuyển thành công cho vị trí ${currentJob.title}!`);
+        alert(`Đã nộp đơn ứng tuyển thành công cho vị trí ${job.title}!`);
         navigate('/jobs');
     };
 
@@ -73,21 +68,21 @@ const Job: React.FC<JobPostingProps> = ({ jobData }) => {
             <header className="mb-8">
                 <div className="border-b pb-6">
                     <h1 className="text-3xl font-bold text-gray-900 mb-4">
-                        {currentJob.title}
+                        {job.title}
                     </h1>
 
                     <div className="flex flex-wrap gap-6 text-gray-600">
                         <div className="flex items-center gap-2">
                             <Briefcase className="w-5 h-5" />
-                            <span>{currentJob.jobType}</span>
+                            <span>{job.jobType}</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <MapPin className="w-5 h-5" />
-                            <span>{currentJob.location}</span>
+                            <span>{job.location}</span>
                         </div>
                         <div className="flex items-center gap-2">
                             <Calendar className="w-5 h-5" />
-                            <span>{currentJob.postedDate}</span>
+                            <span>{job.postedDate}</span>
                         </div>
                     </div>
                 </div>
@@ -95,17 +90,17 @@ const Job: React.FC<JobPostingProps> = ({ jobData }) => {
 
             <section className="mb-8">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4">Mô tả công việc</h2>
-                <ListWithBullets items={currentJob.description} />
+                <ListWithBullets items={job.description} />
             </section>
 
             <section className="mb-8">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4">Yêu cầu công việc</h2>
-                <ListWithBullets items={currentJob.requirements} bulletColor="bg-red-500" />
+                <ListWithBullets items={job.requirements} bulletColor="bg-red-500" />
             </section>
 
             <section className="mb-8">
                 <h2 className="text-xl font-semibold text-gray-800 mb-4">Phúc lợi</h2>
-                <ListWithBullets items={currentJob.benefits} bulletColor="bg-green-500" />
+                <ListWithBullets items={job.benefits} bulletColor="bg-green-500" />
             </section>
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-4">
@@ -129,4 +124,4 @@ const Job: React.FC<JobPostingProps> = ({ jobData }) => {
     );
 };
 
-export default Job;
+export default JobComponent;

@@ -6,21 +6,6 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }   
 
-export const formatDate = (dateString: string): string => {
-  try {
-    // Handle DD/MM/YYYY format
-    const [day, month, year] = dateString.split('/');
-    const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day));
-    
-    return new Intl.DateTimeFormat('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    }).format(date);
-  } catch {
-    return dateString;
-  }
-};
 
 export const truncateText = (text: string, maxLength: number): string => {
   if (text.length <= maxLength) return text;

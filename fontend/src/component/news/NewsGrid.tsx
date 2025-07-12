@@ -1,12 +1,12 @@
 // src/components/news/NewsGrid.tsx
 import { Loader2 } from 'lucide-react';
 import { NewsCard } from './NewsCard';
-import { NewsItem } from '../../types';
+import { News } from '../../types/service';
 
 interface NewsGridProps {
-  items: NewsItem[];
+  items: News[];
   loading?: boolean;
-  onItemClick?: (item: NewsItem) => void;
+  onItemClick?: (item: News) => void;
 }
 
 export const NewsGrid = ({ items, loading, onItemClick }: NewsGridProps) => {

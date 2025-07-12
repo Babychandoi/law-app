@@ -6,10 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.law_app.backend.dto.request.PricingRequest;
 import org.law_app.backend.dto.request.ServiceRequest;
 import org.law_app.backend.dto.request.ToToRequest;
-import org.law_app.backend.dto.response.ChildrenServiceResponse;
-import org.law_app.backend.dto.response.PricingResponse;
-import org.law_app.backend.dto.response.ServiceResponse;
-import org.law_app.backend.dto.response.ToToResponse;
+import org.law_app.backend.dto.response.*;
 import org.law_app.backend.entity.*;
 import org.law_app.backend.mapper.ServiceMapper;
 import org.law_app.backend.repository.*;
@@ -180,6 +177,24 @@ public class ServiceServiceImpl implements ServiceService {
 
         } catch (Exception e) {
             log.error("Error while creating ToTo: {}", e.getMessage(), e);
+            throw e;
+        }
+    }
+
+    @Override
+    public List<ServicesHomeResponse> getServicesHome() {
+        try {
+            List<ChildrenServices> childrenServices = childrenServiceRepository.findAll();
+            List<ServicesHomeResponse> servicesHomeResponses = new ArrayList<>();
+            for(ChildrenServices childrenService : childrenServices) {
+                if(childrenService.getDescriptionHome() !=null) {
+                    ServicesHomeResponse response = serviceMapper.toServicesHomeResponse(childrenService);
+                    servicesHomeResponses.add(response);
+                }
+            }
+            return servicesHomeResponses;
+        }catch (Exception e) {
+            log.error("Error while getting services home: {}", e.getMessage());
             throw e;
         }
     }

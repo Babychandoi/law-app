@@ -15,6 +15,15 @@ public interface ServiceMapper {
                 .href(services.getHref())
                 .build();
     }
+    default ServicesHomeResponse toServicesHomeResponse(ChildrenServices services) {
+        return ServicesHomeResponse.builder()
+                .id(services.getId())
+                .icon(services.getIcon())
+                .title(services.getTitle())
+                .href(services.getHref())
+                .description(services.getDescriptionHome())
+                .build();
+    }
     default ServiceResponse toChildServiceResponse(ChildrenServices services) {
 
         return ServiceResponse.builder()

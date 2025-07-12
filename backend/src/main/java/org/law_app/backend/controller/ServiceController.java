@@ -66,4 +66,11 @@ public class ServiceController {
                 .data(serviceService.createToTo(toToRequest))
                 .build();
     }
+    @GetMapping("/home")
+    public ApiResponse<List<ServicesHomeResponse>> getServicesHome() {
+        return ApiResponse.<List<ServicesHomeResponse>>builder()
+                .message("Services home retrieved successfully")
+                .data(serviceService.getServicesHome())
+                .build();
+    }
 }
