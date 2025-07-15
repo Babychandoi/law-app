@@ -27,7 +27,7 @@ const JobListing: React.FC = () => {
   }, []);
 
   const navigateToJobDetail = (jobId: string) => {
-    navigate(`/recruitment/${jobId}`);
+    navigate("job", {state : { id: jobId }});
   };
 
   const [filters, setFilters] = useState({

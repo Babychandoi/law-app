@@ -29,7 +29,7 @@ export const useNews = () => {
   }, []);
 
   const handleItemClick = (item: News) => {
-    navigate(`/news/${item.id}`)
+    navigate("/new",{state:{id : item.id}})
   };
 
   return {

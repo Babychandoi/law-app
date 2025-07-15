@@ -23,7 +23,7 @@ const LegalServicesSection: React.FC = () => {
     fetchServices();
   } ,[]);
   const handleServiceClick = (link: string,id : string) => {
-    navigate(`${link}/${id}`);
+    navigate(link, { state: { id } });
   };
   const icon  = (iconName: string) => {
     switch (iconName) {

@@ -43,6 +43,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.POST,AuthorizedUrls).permitAll()
                 .requestMatchers(HttpMethod.GET, AuthorizedUrlsPublic)
                 .permitAll()
+                .requestMatchers("/ws/**").permitAll()
                 .anyRequest()
                 .authenticated());
         http.oauth2ResourceServer(oauth2 ->

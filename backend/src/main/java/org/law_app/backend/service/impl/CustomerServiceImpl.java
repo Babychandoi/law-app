@@ -10,11 +10,13 @@ import org.law_app.backend.dto.response.CustomerDetailResponse;
 import org.law_app.backend.entity.ChildrenServices;
 import org.law_app.backend.entity.Customer;
 import org.law_app.backend.entity.CustomerService;
+import org.law_app.backend.entity.Notification;
 import org.law_app.backend.mapper.CustomerMapper;
 import org.law_app.backend.repository.ChildrenServiceRepository;
 import org.law_app.backend.repository.CustomerRepository;
 import org.law_app.backend.repository.CustomerServiceRepository;
 import org.law_app.backend.service.CustomerServices;
+import org.law_app.backend.service.NotificationService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,7 @@ public class CustomerServiceImpl implements CustomerServices {
     CustomerServiceRepository customerServiceRepository;
     ChildrenServiceRepository childrenServiceRepository;
     CustomerMapper customerMapper;
+    NotificationService notificationService;
     @Transactional
     @Override
     public Boolean createCustomerService(CustomerRequest customerRequest) {
@@ -44,8 +47,11 @@ public class CustomerServiceImpl implements CustomerServices {
             CustomerService customerService = customerMapper.toCustomerService(customerRequest, service);
             customerService.setCustomer(customer);
             customerService.setStatus(Status.NEW);// Set default status to ACTIVE
-            customerServiceRepository.save(customerService);
-
+            customerService = customerServiceRepository.save(customerService);
+            Notification notification = Notification.builder()
+                    .customerService(customerService)
+                    .build();
+            notificationService.createNotification(notification);
             return true; // Return true if creation is successful
         } catch (Exception e) {
             log.error("Error creating customer service: {}", e.getMessage());

@@ -29,8 +29,8 @@ export default function New() {
     fetchNews();
   }, []);
 
-  const handleItemClick = (item: News) => {
-    navigate(`/news/${item.id}`);
+  const handleItemClick = (id : string) => {
+    navigate("new",{state : {id : id}});
   };
 
   if (loading) {
@@ -69,7 +69,11 @@ export default function New() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {news.map((item) => {
           return (
-            <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 cursor-pointer">
+            <div key={item.id} 
+            className="bg-white rounded-lg shadow-md overflow-hidden 
+            hover:shadow-lg transition-shadow duration-300 cursor-pointer"
+            onClick={() => handleItemClick(item.id ?? '')}
+            >
               {/* Image */}
               <div className={`h-48 bg-gradient-to-br from-blue-100 to-blue-200 relative overflow-hidden`}>
                 <div className="absolute inset-0 flex items-center justify-center">

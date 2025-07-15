@@ -56,3 +56,11 @@ export interface UserCreate {
     role?: 'ADMIN' | 'USER';
     position : string;
 }
+export interface Notification {
+    id: string;
+    customerServiceName: string;
+    serviceName: string;
+    createdAt: string;
+    isRead: boolean;
+  }
+  

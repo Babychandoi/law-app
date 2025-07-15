@@ -10,6 +10,8 @@ import org.law_app.backend.entity.SectionNews;
 import org.law_app.backend.mapper.NewsMapper;
 import org.law_app.backend.repository.NewsRepository;
 import org.law_app.backend.repository.SectionNewsRepository;
+import org.law_app.backend.security.MinioConfig;
+import org.law_app.backend.service.MinioService;
 import org.law_app.backend.service.NewsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,12 +27,16 @@ public class NewsServiceImpl implements NewsService {
     NewsRepository newsRepository;
     SectionNewsRepository sectionNewsRepository;
     NewsMapper newsMapper;
+    MinioService minioService;
+    MinioConfig minioConfig;
     @Override
     @Transactional
     public NewsResponse createNews(NewsRequest newsRequest) {
         try{
             News news = newsRepository.save(newsMapper.toNews(newsRequest));
-            return newsMapper.toNewsResponse(news);
+            NewsResponse newsResponse = newsMapper.toNewsResponse(news);
+            newsResponse.setImage(minioService.generateFileUrl(minioConfig.getImagesBucket(), news.getImage()));
+            return newsResponse;
         } catch (Exception e) {
             log.error("Error creating news: {}", e.getMessage());
             throw new RuntimeException("Failed to create news", e);
@@ -47,7 +53,7 @@ public class NewsServiceImpl implements NewsService {
                             .title(n.getTitle())
                             .subtitle(n.getSubtitle())
                             .author(n.getAuthor())
-                            .image(n.getImage())
+                            .image(minioService.generateFileUrl(minioConfig.getImagesBucket(),n.getImage()))
                             .createdAt(n.getCreatedAt())
                             .build())
                     .collect(Collectors.toList());
@@ -62,7 +68,9 @@ public class NewsServiceImpl implements NewsService {
         try {
             News news = newsRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("News not found with id: " + id));
-            return newsMapper.toNewsResponse(news);
+            NewsResponse newsResponse = newsMapper.toNewsResponse(news);
+            newsResponse.setImage(minioService.generateFileUrl(minioConfig.getImagesBucket(), news.getImage()));
+            return newsResponse;
         } catch (Exception e) {
             log.error("Error fetching news by id: {}", e.getMessage());
             throw new RuntimeException("Failed to fetch news by id", e);
@@ -81,7 +89,9 @@ public class NewsServiceImpl implements NewsService {
             newsMapper.updateNewsFromRequest(existingNews, newsRequest);
 
             // ✅ Không còn lỗi detached entity
-            return newsMapper.toNewsResponse(existingNews);
+            NewsResponse newsResponse = newsMapper.toNewsResponse(existingNews);
+            newsResponse.setImage(minioService.generateFileUrl(minioConfig.getImagesBucket(), existingNews.getImage()));
+            return newsResponse;
         } catch (Exception e) {
             log.error("Error updating news: {}", e.getMessage());
             throw new RuntimeException("Failed to update news", e);

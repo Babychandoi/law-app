@@ -34,7 +34,7 @@ const CopyrightBenefits: React.FC = () => {
           <div className="lg:col-span-2">
             <div className="relative">
               <img
-                src="https://i0.wp.com/luattaga.vn/wp-content/uploads/2023/07/giay-chung-nhan-dang-ky-quyen-tac-gia-1.jpg?w=611&ssl=1"
+                src="/assets/images/dangkybanquyentacgia.webp"
                 alt="Giấy chứng nhận đăng ký quyền tác giả"
                 className="w-full h-auto rounded-lg shadow-lg"
                 loading="lazy"

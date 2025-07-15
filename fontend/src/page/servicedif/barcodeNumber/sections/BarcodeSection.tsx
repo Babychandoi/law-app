@@ -27,7 +27,7 @@ const BarcodeInfoSection: React.FC<BarcodeInfoSectionProps> = ({ className = '' 
         <div className="w-full lg:w-2/5 max-w-md group relative">
           <div className="absolute -inset-2 bg-gradient-to-r from-blue-400 to-blue-600 rounded-lg blur opacity-25 group-hover:opacity-50 transition duration-500"></div>
           <img
-            src="https://i0.wp.com/luattaga.vn/wp-content/uploads/2023/04/10_Jan_2019_163247_GMTbai-viet-ma-so-ma-vach-hao.jpg?fit=293%2C317&ssl=1"
+            src="/assets/images/masomavach.webp"
             alt="Mã số mã vạch"
             className="relative w-full h-auto object-cover rounded-lg shadow-xl transform group-hover:-translate-y-1 transition duration-300"
             loading="lazy"

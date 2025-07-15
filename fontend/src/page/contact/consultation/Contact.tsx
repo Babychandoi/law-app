@@ -78,10 +78,10 @@ const Contact: React.FC = () => {
                   <div>
                     <span className="text-gray-600 mr-2">Hotline:</span>
                     <a 
-                      href={`tel:${contact?.phoneContacts[2].number.replace(/\./g, '')}`}
+                      href={`tel:${contact?.phoneContacts.find(contact => contact.label === "Hotline")?.number}`}
                       className="text-green-600 hover:text-green-800 transition-colors font-semibold"
                     >
-                      {contact?.phoneContacts[2].number}
+                      {contact?.phoneContacts.find(contact => contact.label === "Hotline")?.number}
                     </a>
                   </div>
                 </div>

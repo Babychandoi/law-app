@@ -3,11 +3,12 @@ import HeroService from '../../../component/service/HeroService';
 import ConsultationForm from '../../../component/Consultation';
 import ToToServices from './sections/ToToService';
 import TrademarkOpposition from './sections/TrademarkOpposition';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Hero } from '../../../types/service';
 import { getHeroByServiceId } from '../../../service/service';
 export default function Index() {
-  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const id = location.state?.id;
     const [hero, setHero] = useState<Hero>({
         title: 'Dịch vụ sở hữu trí tuệ',
         subtitle: 'ToTo Law',

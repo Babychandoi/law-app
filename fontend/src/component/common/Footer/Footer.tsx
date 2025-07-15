@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapPin, Mail, Phone, Send, Facebook, Linkedin, Shield, FileText, Star, Award, Users, Globe } from 'lucide-react';
 import {TotoCompany} from '../../../types/company';
 import { getCompany } from '../../../service/service';
-
+import { useNavigate } from 'react-router-dom';
 
 
 const COLORS = {
@@ -55,6 +55,7 @@ const Footer: React.FC = () => {
     Phone,
     Send
   };
+  const navigate = useNavigate();
   useEffect(()=>{
     const fetchCompany = async() =>{
       const response =  await getCompany();
@@ -76,7 +77,9 @@ const Footer: React.FC = () => {
   const formatPhoneNumber = (number: string) => {
     return number.replace(/\./g, '');
   };
-
+  const hanldeNagivate = (href: string) => {
+    navigate("/new",{state : {id : href}});
+  };
   return (
     <footer className="relative bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white overflow-hidden">
       {/* Animated Background Elements */}
@@ -115,12 +118,12 @@ const Footer: React.FC = () => {
               <div className="flex flex-col md:flex-row items-center justify-center gap-4 text-gray-300">
                 <div className="flex items-center gap-2">
                   <Users className="w-4 h-4 text-yellow-400" />
-                  <span>Đại diện bởi: <span className="text-yellow-400 font-semibold">{company?.company.representative}</span></span>
+                  <span>Đại diện bởi: <span className="text-yellow-400 font-semibold"> {company?.company.representative}</span></span>
                 </div>
                 <div className="hidden md:block w-1 h-1 bg-gray-500 rounded-full"></div>
                 <div className="flex items-center gap-2">
                   <Globe className="w-4 h-4 text-yellow-400" />
-                  <span>MST: <span className="text-white font-mono font-semibold">{company?.company.taxCode}</span></span>
+                  <span>MST: <span className="text-white font-mono font-semibold"> {company?.company.taxCode}</span></span>
                 </div>
               </div>
             </div>
@@ -274,14 +277,14 @@ const Footer: React.FC = () => {
                 {company?.importants.map((link) => {
                   const colorConfig = COLORS[link.color as keyof typeof COLORS];
                   return (
-                    <a 
+                    <button 
                       key={link.id}
-                      href={link.href} 
+                      onClick={() => hanldeNagivate(link.href)}
                       className={`flex items-center p-3 text-gray-400 ${colorConfig.hover} transition-all duration-300 rounded-lg hover:bg-gray-700/50 group`}
                     >
                       {React.createElement(iconMap[link.icon], { className: "w-4 h-4 mr-3 group-hover:scale-110 transition-transform duration-300" })}
                       <span className="group-hover:translate-x-1 transition-transform duration-300">{link.text}</span>
-                    </a>
+                    </button>
                   );
                 })}
               </div>

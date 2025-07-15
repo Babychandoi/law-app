@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Briefcase, MapPin, Calendar } from 'lucide-react';
 import { Job } from '../../types/service';
 import { getJobById } from '../../service/service';
 const JobComponent : React.FC = () => {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const location = useLocation();
+  const id = location.state?.id;
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [job,setJob] = useState<Job>();
     useEffect(() => {

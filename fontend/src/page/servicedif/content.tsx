@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { FileText, ZoomIn, ExternalLink, } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getChildrenServiceById } from '../../service/service';
 import { ChildrenServiceResponse } from '../../types/service';
-import { useParams } from 'react-router-dom';
 const LuatBlog: React.FC = () => {
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const id = location.state?.id;
   console.log(id)
   const [posts, setPosts] = useState<ChildrenServiceResponse[]>();
   
@@ -40,7 +40,7 @@ const LuatBlog: React.FC = () => {
   };
 
   const handleNagivate = (link: string,id : string) => {
-    navigate(`${link}/${id}`);
+    navigate(link, { state: { id : id } });
   };
 
   return (

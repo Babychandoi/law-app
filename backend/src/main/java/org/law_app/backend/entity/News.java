@@ -22,6 +22,7 @@ public class News {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id; // Unique identifier for the news article
     String title; // Title of the news article
+    @Column(length = 10000)
     String subtitle; // Subtitle of the news article
     String author; // Author of the news article
     @CreationTimestamp

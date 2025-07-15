@@ -12,11 +12,14 @@ import TableOfContents from '../../../component/legalArticle/TableOfContents';
 import LegalSection from '../../../component/legalArticle/Section';
 import { getNew } from '../../../service/service';
 import { News } from '../../../types/service';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+
 const LegalArticle: React.FC = () => {
   const [expandedSections] = useState<string[]>(['intro']);
   const [news, setNews] = useState<News | null>(null);
-  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const id = location.state?.id;
+  console.log(id);
   useEffect(() => {
     const fetchNews = async () => {
       try {
@@ -43,13 +46,6 @@ const LegalArticle: React.FC = () => {
     }
   };
   
-  const headerNews = {
-    title: news?.title,
-    date: news?.createdAt,
-    subtitle : news?.subtitle,
-    author : news?.author,
-    id : news?.id
-  }
   const renderIcon = (icon: string) => {
     switch (icon) {
       case 'BOOKOPEN': return <BookOpen className="w-5 h-5" />;
@@ -66,10 +62,18 @@ const LegalArticle: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
+      {news && (
         <ArticleHeader
-          headerNew = {headerNews}
+          headerNew={{
+            title: news?.title,
+            createdAt: news?.createdAt,
+            subtitle: news?.subtitle,
+            author: news?.author,
+            id: news?.id
+          }}
         />
-        
+      )}
+              
         <TableOfContents 
           sections={news?.sections
             ?.filter((section) => section.id !== undefined)

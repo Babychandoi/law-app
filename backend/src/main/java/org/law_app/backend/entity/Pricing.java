@@ -34,6 +34,4 @@ public class Pricing {
     ChildrenServices service;
     boolean featured;
 
-
-
 }

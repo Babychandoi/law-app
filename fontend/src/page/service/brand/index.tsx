@@ -4,15 +4,15 @@ import TrademarkBrandComparison from "./sections/TrademarkBrandComparison"
 import TrademarkBenefits from './sections/TrademarkBenefits';
 import ToToBenefits from './sections/ToToBenefits';
 import ConsultationForm from '../../../component/Consultation';
-import CustomerTestimonials from './sections/CustomerTestimonials';
 import PartnersCarousel from '../../../component/service/PartnersCarousel';
 import { UniversalProcess } from '../../../component/service/UniversalProcess';
 import PricingComponent from '../../../component/service/UniversalPricing';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { getPricingByServiceId, getHeroByServiceId, getProcessByServiceId } from '../../../service/service';
 import { Hero, Process } from '../../../types/service';
 export default function Index() {
-  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const id = location.state?.id;
   const [pricingPlans, setPricingPlans] = useState<any[]>([]);
   const [hero, setHero] = useState<Hero>({
     title: 'Dịch vụ sở hữu trí tuệ',
@@ -102,7 +102,6 @@ export default function Index() {
       />
       <ConsultationForm />
       <PartnersCarousel />
-      <CustomerTestimonials />
     </>
   )
 }

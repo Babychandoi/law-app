@@ -4,7 +4,7 @@ import { UniversalProcess } from '../../../../component/service/UniversalProcess
 import { ProcessTimeline } from '../../../../component/service/ProcessTimeLine';
 import { Process, ProcessStep } from '../../../../types/service';
 import { getProcessByServiceId, getProcessTimeLineByServiceId } from '../../../../service/service';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const TrademarkOpposition: React.FC = () => {
 
@@ -16,7 +16,8 @@ const TrademarkOpposition: React.FC = () => {
       iconBgClass: 'bg-gradient-to-r from-indigo-500 to-purple-500'
     }
   ]
-  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const id = location.state?.id;
   const [process, setProcess] = useState<Process[]>([]);
   const [processTineLine, setProcessTimeLine] = useState<ProcessStep[]>([]);
   useEffect(() => {

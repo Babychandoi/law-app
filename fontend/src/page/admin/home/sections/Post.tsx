@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import Swal from 'sweetalert2';
 import { getNews, getNew } from "../../../../service/service";
-import { createNews,deleteNews,updateNews,uploadFile } from "../../../../service/admin";
-import { News} from "../../../../types/service";
+import { createNews, deleteNews, updateNews, uploadFile } from "../../../../service/admin";
+import { News } from "../../../../types/service";
 import AddNews from "./News/AddNews";
 import EditNews from "./News/EditNews";
 import { BookOpen, FileText, Shield, Globe, Award, AlertTriangle } from "lucide-react";
@@ -39,7 +39,7 @@ const NewsManagement: React.FC = () => {
   };
 
   const handleEdit = async (id: string) => {
-    try{
+    try {
       const response = await getNew(id);
       if (response.code === 200) {
         setEditingNews(response.data);
@@ -47,50 +47,50 @@ const NewsManagement: React.FC = () => {
       } else {
         setError("Failed to fetch news for editing: " + response.message);
       }
-    }catch(error){
+    } catch (error) {
       setError("Error fetching news for editing: " + (error as Error).message);
     }
   };
 
-  
 
-const handleDelete = async (id: string) => {
-  const result = await Swal.fire({
-    title: 'Bạn có chắc chắn?',
-    text: 'Tin tức này sẽ bị xóa vĩnh viễn!',
-    icon: 'warning',
-    showCancelButton: true,
-    confirmButtonColor: '#d33',
-    cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Xóa',
-    cancelButtonText: 'Hủy'
-  });
 
-  if (result.isConfirmed) {
-    try {
-      setLoading(true);
-      const response = await deleteNews(id);
-      if (response.code === 200) {
-        setNewsList(prev => prev.filter(news => news.id !== id));
-        if (selectedNews?.id === id) {
-          setSelectedNews(null);
+  const handleDelete = async (id: string) => {
+    const result = await Swal.fire({
+      title: 'Bạn có chắc chắn?',
+      text: 'Tin tức này sẽ bị xóa vĩnh viễn!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#3085d6',
+      confirmButtonText: 'Xóa',
+      cancelButtonText: 'Hủy'
+    });
+
+    if (result.isConfirmed) {
+      try {
+        setLoading(true);
+        const response = await deleteNews(id);
+        if (response.code === 200) {
+          setNewsList(prev => prev.filter(news => news.id !== id));
+          if (selectedNews?.id === id) {
+            setSelectedNews(null);
+          }
+
+          // ✅ Thông báo xóa thành công
+          Swal.fire('Đã xóa!', 'Tin tức đã được xóa.', 'success');
+        } else {
+          setError("Failed to delete news: " + response.message);
+          Swal.fire('Lỗi!', response.message, 'error');
         }
-
-        // ✅ Thông báo xóa thành công
-        Swal.fire('Đã xóa!', 'Tin tức đã được xóa.', 'success');
-      } else {
-        setError("Failed to delete news: " + response.message);
-        Swal.fire('Lỗi!', response.message, 'error');
+      } catch (error) {
+        const message = (error as Error).message;
+        setError("Error deleting news: " + message);
+        Swal.fire('Lỗi!', message, 'error');
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      const message = (error as Error).message;
-      setError("Error deleting news: " + message);
-      Swal.fire('Lỗi!', message, 'error');
-    } finally {
-      setLoading(false);
     }
-  }
-};
+  };
 
 
   const handleAddNew = () => {
@@ -117,10 +117,10 @@ const handleDelete = async (id: string) => {
     setSelectedNews(null);
   };
 
-  const handleSaveNewNews = async (newsData: News ,file :File) => {
+  const handleSaveNewNews = async (newsData: News, file: File) => {
     try {
       setLoading(true);
-      if(newsData.image === "" && file !== null){
+      if (newsData.image === "" && file !== null) {
         const uploadResponse = await uploadFile(file);
         if (uploadResponse.code === 200) {
           newsData.image = uploadResponse.data;
@@ -145,36 +145,36 @@ const handleDelete = async (id: string) => {
     }
   };
 
-  const handleSaveEditNews = async (updatedNews: News , file? : File) => {
+  const handleSaveEditNews = async (updatedNews: News, file?: File) => {
     try {
       setLoading(true);
-      if(updatedNews.image === "" && file !== null && file !== undefined){
+      if (updatedNews.image === "" && file !== null && file !== undefined) {
         const uploadResponse = await uploadFile(file);
         if (uploadResponse.code === 200) {
           updatedNews.image = uploadResponse.data;
         } else {
           setError("Failed to upload image: " + uploadResponse.message);
           return;
+        }
       }
-    }
-    if(updatedNews.id === undefined){
+      if (updatedNews.id === undefined) {
         setError("News ID is required for update.");
         return;
       }
       console.log(updatedNews);
-      const response = await updateNews(updatedNews.id , updatedNews);
+      const response = await updateNews(updatedNews.id, updatedNews);
       console.log(response);
       if (response.code === 200) {
         // Update local state
-        setNewsList(prev => prev.map(news => 
+        setNewsList(prev => prev.map(news =>
           news.id === updatedNews.id ? response.data : news
         ));
-        
+
         // Update selected news if it's the one being edited
         if (selectedNews?.id === updatedNews.id) {
           setSelectedNews(response.data);
         }
-        
+
         setShowEditNews(false);
         setEditingNews(null);
         setError(null);
@@ -214,7 +214,7 @@ const handleDelete = async (id: string) => {
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Quản lý tin tức</h2>
-        <button 
+        <button
           onClick={handleAddNew}
           disabled={loading}
           className="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white px-4 py-2 rounded-lg transition-colors"
@@ -256,7 +256,6 @@ const handleDelete = async (id: string) => {
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Tiêu đề</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Tác giả</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Ngày tạo</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Số phần</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Thao tác</th>
             </tr>
           </thead>
@@ -270,9 +269,9 @@ const handleDelete = async (id: string) => {
             ) : (
               newsList.map(news => (
                 <tr key={news.id} className="border-b border-gray-200 hover:bg-gray-50">
-                  <td className="px-4 py-3">
-                    <img 
-                      src={news.image} 
+                  <td className="px-4 py-3 w-24">
+                    <img
+                      src={news.image}
                       alt={news.title}
                       className="w-16 h-12 object-cover rounded"
                       onError={(e) => {
@@ -281,35 +280,30 @@ const handleDelete = async (id: string) => {
                       }}
                     />
                   </td>
-                  <td className="px-4 py-3">
-                    <div className="text-sm text-gray-900 font-medium">{news.title}</div>
-                    <div className="text-xs text-gray-500 mt-1">{news.subtitle}</div>
+                  <td className="px-4 py-3 max-w-[300px]">
+                    <div className="text-sm text-gray-900 font-medium truncate">{news.title}</div>
+                    <div className="text-xs text-gray-500 mt-1 line-clamp-2">{news.subtitle}</div>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-700">{news.author}</td>
-                  <td className="px-4 py-3 text-sm text-gray-700">
+                  <td className="px-4 py-3 max-w-[150px] text-sm text-gray-700 truncate">{news.author}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
                     {news.createdAt?.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3">
-                    <span className="px-2 py-1 text-xs font-medium rounded-full bg-blue-100 text-blue-800">
-                      {news.sections?.length || 0} phần
-                    </span>
-                  </td>
-                  <td className="px-4 py-3">
-                    <button 
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <button
                       onClick={() => news.id && handleViewDetails(news.id)}
                       disabled={loading}
                       className="text-purple-600 hover:text-purple-800 disabled:text-gray-400 text-sm font-medium mr-3"
                     >
                       Xem chi tiết
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleEdit(news.id ?? "")}
                       disabled={loading}
                       className="text-blue-600 hover:text-blue-800 disabled:text-gray-400 text-sm font-medium mr-3"
                     >
                       Sửa
                     </button>
-                    <button 
+                    <button
                       onClick={() => handleDelete(news.id ?? "")}
                       disabled={loading}
                       className="text-red-600 hover:text-red-800 disabled:text-gray-400 text-sm font-medium"
@@ -324,6 +318,7 @@ const handleDelete = async (id: string) => {
         </table>
       </div>
 
+
       {/* News Detail Modal */}
       {selectedNews && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -337,11 +332,11 @@ const handleDelete = async (id: string) => {
                 ×
               </button>
             </div>
-            
+
             <div className="p-6">
               <div className="mb-6">
-                <img 
-                  src={selectedNews.image} 
+                <img
+                  src={selectedNews.image}
                   alt={selectedNews.title}
                   className="w-full h-48 object-cover rounded-lg mb-4"
                   onError={(e) => {
@@ -356,7 +351,7 @@ const handleDelete = async (id: string) => {
                   <span>Ngày tạo: {selectedNews.createdAt?.toLocaleString()}</span>
                 </div>
               </div>
-              
+
               {selectedNews.sections && selectedNews.sections.length > 0 && (
                 <div>
                   <h5 className="text-lg font-semibold text-gray-800 mb-4">Các phần nội dung:</h5>

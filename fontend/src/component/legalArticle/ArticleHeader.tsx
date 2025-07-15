@@ -11,20 +11,21 @@ interface HeaderNews {
   id?: string;
 }
 const ArticleHeader: React.FC <HeaderProps> = ({headerNew}) => {
-  const [headers, setHeaders] = useState<HeaderNews>(headerNew || {});
+  console.log(headerNew);
+  const [headers] = useState<HeaderNews>(headerNew || {});
   const data: HeaderNews = {
     id : "1",
-    title: "Những điểm mới của Nghị định 65/2023/NĐ-CP",
-    subtitle: "Hướng dẫn thực thi Luật Sở hữu Trí tuệ",
-    author: "Luật ToTo",
-    createdAt: new Date("2025-07-01T22:51:40.978+00:00"),
+    title: "",
+    subtitle: "",
+    author: "",
+    createdAt: new Date(),
 
   };
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
           <div className="flex items-center gap-3 mb-4">
             <div className="h-12 w-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center">
-              <FileText className="w-6 h-6 text-white" />
+              <FileText className="w-14 h-6 text-white" />
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900 leading-tight">

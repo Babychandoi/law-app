@@ -41,10 +41,19 @@ export const uploadFile = async (file: File): Promise<ApiResponse<string>> => {
 	const formData = new FormData();
 	formData.append('file', file);
   
-	const response = await axiosClient.post<ApiResponse<string>>(`/upload`, formData);
+	const response = await axiosClient.post<ApiResponse<string>>(
+		`/upload`,
+		formData,
+		{
+			headers: {
+				'Content-Type': 'multipart/form-data',
+			}
+		}
+	);
   
 	return response.data;
-  };
+};
+
   
 export const createNews = async(news :News) : Promise<ApiResponse<News>> => {
 	const response = await axiosClient.post<ApiResponse<News>>(`/news`, news);
@@ -93,5 +102,9 @@ export const logout = async (token : string): Promise<ApiResponse<void>> => {
 	}
 	const response = await axiosClient.post<ApiResponse<void>>(`/auth/logout`,form);
 	sessionStorage.clear();
+	return response.data;
+}
+export const getNotificationById = async (): Promise<ApiResponse<Notification[]>> => {
+	const response = await axiosClient.get<ApiResponse<Notification[]>>(`/notifications`);
 	return response.data;
 }

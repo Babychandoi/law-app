@@ -10,6 +10,8 @@ import org.law_app.backend.entity.Notification;
 import org.law_app.backend.entity.NotificationUser;
 import org.law_app.backend.repository.NotificationUserRepository;
 import org.law_app.backend.service.NotificationService;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,8 +24,10 @@ import java.util.stream.Collectors;
 public class NotificationController {
     NotificationService notificationService;
 
-    @GetMapping("/{userId}")
-    public ApiResponse<List<NotificationResponse>> getNotifications(@PathVariable String userId) {
+    @GetMapping
+    public ApiResponse<List<NotificationResponse>> getNotifications() {
+        var context = SecurityContextHolder.getContext();
+        String userId = context.getAuthentication().getName();
         return ApiResponse.<List<NotificationResponse>>builder()
                 .message("Notifications retrieved successfully")
                 .data(notificationService.getNotificationsByUserId(userId))

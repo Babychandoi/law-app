@@ -1,16 +1,11 @@
 // src/components/news/NewsPage.tsx
-import { Banner } from '../layout/Banner';
 import { Breadcrumb } from '../layout/Breadcrumb';
 import { NewsGrid } from './NewsGrid';
 import { useNews } from '../../hooks/useNews';
 import { BreadcrumbItem } from '../../types/service';
 
-interface NewsPageProps {
-  bannerImage: string;
-  bannerAlt: string;
-}
 
-export const NewsPage = ({ bannerImage, bannerAlt }: NewsPageProps) => {
+export const NewsPage = () => {
   const {
     news,
     loading,
@@ -37,9 +32,7 @@ export const NewsPage = ({ bannerImage, bannerAlt }: NewsPageProps) => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Banner imageUrl={bannerImage} alt={bannerAlt} />
       <Breadcrumb items={breadcrumbItems} />
-      
       <main className="container mx-auto px-4 py-8">
             <NewsGrid 
               items={news} 

@@ -1,13 +1,15 @@
 import React from 'react'
 import { NewsPage } from '../../component/news/NewsPage'
+import HeroSection from '../../component/service/HeroService'
 
 export default function index() {
   return (
     <div>
-      <NewsPage 
-        bannerImage="https://example.com/banner.jpg" 
-        bannerAlt="News Banner"
+      <HeroSection
+        title="Bản tin pháp luật"
+        subtitle="ToTo Law"
       />
+      <NewsPage />
     </div>
   )
 }

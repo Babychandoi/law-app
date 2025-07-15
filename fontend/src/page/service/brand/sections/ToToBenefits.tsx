@@ -76,7 +76,7 @@ const ToToBenefits = () => {
                 {/* Certificate placeholder */}
                 <div className="text-center p-8">
                     <img
-                    src="https://i0.wp.com/luattaga.vn/wp-content/uploads/2023/08/GCN-DKNH-281977_001.jpg?w=1246&ssl=1"
+                    src="/assets/images/dangkynhanhieu.webp"
                     alt="Giấy chứng nhận đăng ký nhãn hiệu"
                     className="w-full h-auto rounded-lg shadow-lg"
                     loading="lazy"

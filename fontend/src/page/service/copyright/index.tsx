@@ -7,11 +7,12 @@ import CopyrightBenefits from './sections/CopyrightBenefits'
 import ToToBenefitsSection from './sections/ToToBenefitsSection';
 import { UniversalProcess } from '../../../component/service/UniversalProcess';
 import PricingComponent from '../../../component/service/UniversalPricing';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { getHeroByServiceId, getPricingByServiceId, getProcessByServiceId } from '../../../service/service';
 import { Hero, Process } from '../../../types/service';
 export default function Index() {
-  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const id = location.state?.id;
   const [pricingPlans, setPricingPlans] = useState<any[]>([]);
   const [hero, setHero] = useState<Hero>({
     title: 'Dịch vụ sở hữu trí tuệ',

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Menu, X, ChevronDown, Sparkles, Globe, Phone, Mail } from 'lucide-react';
+import {  Menu, X, ChevronDown, Sparkles, Globe, Phone, Mail } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { getServices } from '../../../service/service';
 import { ServiceResponse } from '../../../types/service';
 
 const Header: React.FC = () => {
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeSubmenu, setActiveSubmenu] = useState<string | null>(null);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -86,22 +85,10 @@ const Header: React.FC = () => {
       navigate(item.href);
     } else {
       // For dynamic service items, include ID as path variable
-      navigate(`${item.href}/${item.id}`);
+      navigate(item.href, { state: { id: item.id } });
     }
     
     setIsMobileMenuOpen(false); // Close mobile menu on navigation
-  };
-
-  // Alternative: If you want to handle navigation differently for different item types
-  const handleNavigationAdvanced = (item: ServiceResponse | { id: string; href: string; title?: string }) => {
-    // For static menu items, navigate normally
-    if (['home', 'about', 'news', 'qa', 'contact'].includes(item.id)) {
-      navigate(item.href);
-    } else {
-      // For dynamic service items, include ID as path variable
-      navigate(`${item.href}/${item.id}`);
-    }
-    setIsMobileMenuOpen(false);
   };
 
   const renderMenuItem = (item: ServiceResponse, isMobile = false) => (
@@ -206,11 +193,11 @@ const Header: React.FC = () => {
               <div className="flex items-center space-x-6 text-white/70">
                 <div className="flex items-center space-x-2">
                   <Phone size={14} className="text-yellow-400" />
-                  <span>Hotline: 0123.456.789</span>
+                  <span>Hotline: 0346.903.548</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Mail size={14} className="text-yellow-400" />
-                  <span>info@toto.vn</span>
+                  <span>lienhe@luattoto.vn</span>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
@@ -222,46 +209,64 @@ const Header: React.FC = () => {
         </div>
 
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16 lg:h-18">
-            {/* Logo with glow effect */}
-            <div className="flex-shrink-0 relative group">
-              <button onClick={() => navigate('/')} className="flex items-center space-x-3">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full blur-lg opacity-30 group-hover:opacity-50 transition-opacity duration-300"></div>
-                  <div className="relative w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-full flex items-center justify-center shadow-xl">
-                    <Sparkles className="w-6 h-6 text-white animate-pulse" />
+          {/* Điều chỉnh layout để logo gần navigation hơn */}
+          <div className="flex items-center justify-between lg:justify-center h-16 lg:h-18">
+            {/* Logo Section - Giảm flex-shrink và margin */}
+            <div className="flex items-center space-x-8"
+            >
+              {/* Enhanced Logo with glow effect */}
+              <div className="relative group">
+                <button onClick={() => navigate('/')} className="flex items-center space-x-3 p-2 rounded-xl transition-all duration-300 hover:bg-white/5">
+                  <div className="hidden md:block relative">
+                    {/* Main logo container */}
+                    <div className="relative">
+                      <div className="w-[50px] h-[50px] rounded-full overflow-hidden ring-2 ring-yellow-400/50 group-hover:ring-yellow-400 transition-all duration-300 transform group-hover:scale-110 group-hover:rotate-3">
+                        <img 
+                          src="/assets/images/20250701_0807_Tấm Khiên Luật Pháp_remix_01jz1rafq0eyx97r1jqa9nrfra.png"
+                          alt="Logo"
+                          className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-110 group-hover:contrast-110"
+                        />
+                        {/* Shine effect overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                      </div>
+                      
+                      {/* Floating sparkles */}
+                      <div className="absolute -top-1 -right-1 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <Sparkles size={12} className="text-yellow-400 animate-pulse" />
+                      </div>
+                      <div className="absolute -bottom-1 -left-1 opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-200">
+                        <Sparkles size={8} className="text-orange-400 animate-pulse" />
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="hidden md:block">
-                  <h1 className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                    TOTO LAW
-                  </h1>
-                  <p className="text-xs text-white/60 -mt-1">Legal Excellence</p>
-                </div>
-              </button>
+                  
+                  {/* Mobile version */}
+                  <div className="md:hidden relative">
+                    <div className="w-[40px] h-[40px] rounded-full overflow-hidden ring-2 ring-yellow-400/50 group-hover:ring-yellow-400 transition-all duration-300 transform group-hover:scale-110">
+                      <img 
+                        src="/assets/images/channels4_profile.jpg"
+                        alt="Logo"
+                        className="w-full h-full object-cover transition-all duration-300 group-hover:brightness-110"
+                      />
+                      {/* Mobile shine effect */}
+                      <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent transform -skew-x-12 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                    </div>
+                  </div>
+                </button>
+              </div>
+
+              {/* Desktop Navigation - Đặt ngay bên cạnh logo */}
+              {isLoading ? renderLoadingSkeleton() : (
+                <nav className="hidden lg:block">
+                  <ul className="flex space-x-1">
+                    {menuItems.map(item => renderMenuItem(item))}
+                  </ul>
+                </nav>
+              )}
             </div>
 
-            {/* Desktop Navigation */}
-            {isLoading ? renderLoadingSkeleton() : (
-              <nav className="hidden lg:block">
-                <ul className="flex space-x-1">
-                  {menuItems.map(item => renderMenuItem(item))}
-                </ul>
-              </nav>
-            )}
-
-            {/* Right Side Icons */}
+            {/* Right Side Icons - Giữ nguyên */}
             <div className="flex items-center space-x-3">
-              {/* Search Button */}
-              <button
-                onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="p-3 text-white hover:text-yellow-300 hover:bg-white/10 rounded-xl transition-all duration-300 transform hover:scale-110 group relative"
-                aria-label="Search"
-              >
-                <Search size={20} className="group-hover:animate-pulse" />
-                <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-xl scale-0 group-hover:scale-100 transition-transform duration-300"></div>
-              </button>
-
               {/* Mobile Menu Button */}
               <button
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -276,28 +281,6 @@ const Header: React.FC = () => {
             </div>
           </div>
 
-          {/* Search Bar */}
-          {isSearchOpen && (
-            <div className="border-t border-white/10 py-4 animate-fadeIn">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Nhập từ khóa tìm kiếm..."
-                  className="w-full px-6 py-3 pr-12 bg-white/10 backdrop-blur-xl border border-white/20 rounded-2xl focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:border-transparent text-white placeholder-white/60 transition-all duration-300"
-                  autoFocus
-                />
-                <div className="absolute right-4 top-1/2 transform -translate-y-1/2 flex items-center space-x-2">
-                  <Search size={18} className="text-white/60" />
-                  <button
-                    onClick={() => setIsSearchOpen(false)}
-                    className="text-white/60 hover:text-white transition-colors duration-200"
-                  >
-                    <X size={18} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
 
           {/* Mobile Navigation */}
           {isMobileMenuOpen && (
@@ -342,6 +325,13 @@ const Header: React.FC = () => {
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
+        }
+        @keyframes spin-slow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .animate-spin-slow {
+          animation: spin-slow 3s linear infinite;
         }
       `}</style>
     </div>

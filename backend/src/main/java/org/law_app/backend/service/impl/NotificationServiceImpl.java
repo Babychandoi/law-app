@@ -6,9 +6,11 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.law_app.backend.dto.response.NotificationMessage;
 import org.law_app.backend.dto.response.NotificationResponse;
+import org.law_app.backend.entity.Notification;
 import org.law_app.backend.entity.NotificationUser;
 import org.law_app.backend.entity.User;
 import org.law_app.backend.mapper.NotificationMapper;
+import org.law_app.backend.repository.NotificationRepository;
 import org.law_app.backend.repository.NotificationUserRepository;
 import org.law_app.backend.repository.UserRepository;
 import org.law_app.backend.service.NotificationService;
@@ -27,13 +29,35 @@ public class NotificationServiceImpl implements NotificationService {
     StringRedisTemplate redisTemplate;
     NotificationMapper notificationMapper;
     NotificationUserRepository notificationUserRepository;
+    NotificationRepository notificationRepository;
     UserRepository userRepository;
-    public void notifyUser(NotificationUser notificationUser) {
+    private void notifyUser(NotificationUser notificationUser) {
         try {
             NotificationMessage msg = notificationMapper.toNotificationMessage(notificationUser);
             redisTemplate.convertAndSend("notifications", new ObjectMapper().writeValueAsString(msg));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Error notifying user: {}", e.getMessage());
+        }
+    }
+
+    @Override
+    public void createNotification(Notification notification) {
+        try{
+            notification = notificationRepository.save(notification);
+            List<User> users = userRepository.findAll();
+            for (User user : users) {
+                NotificationUser notificationUser = NotificationUser.builder()
+                        .notification(notification)
+                        .user(user)
+                        .read(false)
+                        .build();
+                notificationUserRepository.save(notificationUser);
+                notificationUserRepository.flush();
+                notifyUser(notificationUser);
+            }
+
+        } catch (Exception e) {
+            log.error("Error creating notification: {}", e.getMessage());
         }
     }
 

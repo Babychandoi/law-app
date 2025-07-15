@@ -7,7 +7,7 @@ const ScienceAndTechnologyBusiness: React.FC = () => {
                 <div className="relative">
                     <img 
                         className="w-full h-64 object-cover" 
-                        src="http://127.0.0.1:5500/luattaga.vn/wp-content/uploads/2023/04/103732q2-scaled.jpg" 
+                        src="/assets/images/doanh-nghiep-khoa-hoc-va-cong-nghe.jpg" 
                         alt="Technology in the hands" 
                     />
                     <div className="absolute inset-0 bg-black opacity-40"></div>

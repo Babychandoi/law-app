@@ -6,11 +6,13 @@ import BarcodeBenefits from './sections/BarcodeBenefits';
 import { UniversalProcess } from '../../../component/service/UniversalProcess';
 import PricingComponent from '../../../component/service/UniversalPricing';
 import PartnersCarousel from '../../../component/service/PartnersCarousel';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Hero, Process } from '../../../types/service';
-import { getHeroByServiceId, getProcessByServiceId } from '../../../service/service';
+import { getHeroByServiceId, getProcessByServiceId,getPricingByServiceId } from '../../../service/service';
 export default function Index() {
-  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const id = location.state?.id;
+  console.log(id);
   const [hero, setHero] = useState<Hero>({
     title: 'Dịch vụ khác',
     subtitle: 'ToTo Law',
@@ -50,45 +52,28 @@ export default function Index() {
     };
     fetchHero();
   }, [id]);
-  const artworkPlans = [
-    {
-      id: 'art-work',
-      title: 'Gói 10 chữ số',
-      price: '2.400.000',
-      currency: 'đ',
-      image: 'https://luattaga.vn/wp-content/uploads/2023/07/ma-so-ma-vach.jpeg#883',
-      imageAlt: 'goi-10-chu-so',
-      description: "Phân bổ được cho 100 loại sản phẩm",
-      features: [
-        "Phí duy trì hàng năm: 500.000đ/năm",
-      ],
-    },
-    {
-      id: 'computer-program',
-      title: 'Gói 9 chữ số',
-      price: '2.700.000',
-      currency: 'đ',
-      image: 'https://luattaga.vn/wp-content/uploads/2023/07/ma-so-ma-vach.jpeg#883',
-      imageAlt: 'goi-9-chu-so',
-      featured: true,
-      description: "Phân bổ được cho 1.000 loại sản phẩm",
-      features: [
-        "Phí duy trì hàng năm: 800.000đ/năm",
-      ],
-    },
-    {
-      id: 'other-types',
-      title: 'Gói 8 chữ số',
-      price: '3.400.000',
-      currency: 'đ',
-      image: 'https://luattaga.vn/wp-content/uploads/2023/07/ma-so-ma-vach.jpeg#883',
-      imageAlt: 'goi-8-chu-so',
-      description: "Phân bổ được cho 10.000 loại sản phẩm",
-      features: [
-        "Phí duy trì hàng năm: 1.500.000đ/năm",
-      ],
-    }
-  ];
+  const [pricingPlans, setPricingPlans] = useState<any[]>([]);
+  useEffect(() => {
+    const fetchPricingPlans = async () => {
+      try {
+        if (id) {
+          const response = await getPricingByServiceId(id);
+          const sorted = [...response.data].sort((a, b) => {
+            const numA = parseInt(a.title.match(/\d+/)?.[0] || "0");
+            const numB = parseInt(b.title.match(/\d+/)?.[0] || "0");
+            return numA - numB;
+          });
+          
+          setPricingPlans(sorted);
+        } else {
+          console.error('Service ID is undefined');
+        }
+      } catch (error) {
+        console.error('Failed to fetch pricing plans:', error);
+      }
+    };
+    fetchPricingPlans();
+  }, [id]);
   return (
     <>
       <HeroService
@@ -113,7 +98,7 @@ export default function Index() {
       />
       <PricingComponent
         title="CHI PHÍ ĐĂNG KÝ MÃ SỐ MÃ VẠCH TẠI TOTO"
-        plans={artworkPlans}
+        plans={pricingPlans}
         variant="card"
         backgroundColor="bg-gray-50"
       />

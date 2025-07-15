@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react';
-
+import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react'
+import { useNavigate } from 'react-router-dom';
 interface SlideData {
   id: string;
   title: string;
@@ -13,7 +13,7 @@ interface SlideData {
 const Slider: React.FC = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-
+  const navigate = useNavigate();
   const slides: SlideData[] = [
     {
       id: 'slide-1',
@@ -22,13 +22,13 @@ const Slider: React.FC = () => {
 Hữu Công Nghiệp uy tín tại Việt Nam, có đầy đủ năng lực
 tư vấn và thực thi xác lập quyền Sở Hữu Công Nghiệp cho
 khách hàng trong và ngoài nước.`,
-      backgroundImage: 'https://luattaga.vn/wp-content/uploads/2023/08/Dark-Green-and-Gold-Professional-Lawyer-Presentation-2.jpg',
+      backgroundImage: '/assets/images/slide.webp',
       buttonText: 'Đăng ký tư vấn miễn phí',
       buttonAction: () => {
         // Scroll to consultation form
-        const element = document.getElementById('form-tu-van-bao-ho-nhan-hieu');
-        if (element) {
-          element.scrollIntoView({ behavior: 'smooth' });
+        const contactForm = document.getElementById('contact-form');
+        if (contactForm) {
+            contactForm.scrollIntoView({ behavior: 'smooth' });
         }
       }
     },
@@ -38,10 +38,10 @@ khách hàng trong và ngoài nước.`,
       description: `Dịch vụ đăng ký bảo hộ nhãn hiệu thương hiệu chuyên nghiệp
 với đội ngũ luật sư giàu kinh nghiệm. Cam kết thời gian nhanh chóng
 và tỷ lệ thành công cao cho mọi khách hàng.`,
-      backgroundImage: 'https://luattaga.vn/wp-content/uploads/2023/08/Dark-Green-and-Gold-Professional-Lawyer-Presentation-2.jpg',
+      backgroundImage: '/assets/images/slide.webp',
       buttonText: 'Tìm hiểu thêm',
       buttonAction: () => {
-        window.location.href = '/dang-ky-bao-ho-nhan-hieu';
+        handleNavigate("service/brand","85b4089a-4bb7-4c03-aca0-a3512d564f38");
       }
     },
     {
@@ -50,10 +50,10 @@ và tỷ lệ thành công cao cho mọi khách hàng.`,
       description: `Với hơn 10 năm kinh nghiệm trong lĩnh vực sở hữu trí tuệ,
 chúng tôi cam kết mang đến dịch vụ tư vấn pháp lý tốt nhất
 cho doanh nghiệp và cá nhân.`,
-      backgroundImage: 'https://luattaga.vn/wp-content/uploads/2023/08/Dark-Green-and-Gold-Professional-Lawyer-Presentation-2.jpg',
+      backgroundImage: '/assets/images/slide.webp',
       buttonText: 'Liên hệ ngay',
       buttonAction: () => {
-        window.location.href = '/lien-he';
+        window.location.href = '/contact';
       }
     }
   ];
@@ -83,7 +83,9 @@ cho doanh nghiệp và cá nhân.`,
   const prevSlide = () => {
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
-
+  const handleNavigate = (href: string, id : string) => {
+    navigate(href,{state : { id: id }});
+  }
   const goToSlide = (index: number) => {
     setCurrentSlide(index);
   };

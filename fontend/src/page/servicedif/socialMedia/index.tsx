@@ -5,12 +5,13 @@ import { UniversalProcess } from '../../../component/service/UniversalProcess';
 import SocialNetworkDefinition from './sections/SocialNetworkDefinition';
 import SocialNetworkLicenseConditions from './sections/SocialNetworkLicenseConditions';
 import { ProcessTimeline } from '../../../component/service/ProcessTimeLine';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Hero, Process, ProcessStep } from '../../../types/service';
 import { getHeroByServiceId, getProcessByServiceId, getProcessTimeLineByServiceId } from '../../../service/service';
 
 export default function Index() {
-    const { id } = useParams<{ id: string }>();
+    const location = useLocation();
+    const id = location.state?.id;
     const [hero, setHero] = useState<Hero>({
         title: 'Dịch vụ khác',
         subtitle: 'ToTo Law',

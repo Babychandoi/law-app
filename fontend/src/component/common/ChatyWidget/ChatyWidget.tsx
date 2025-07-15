@@ -19,7 +19,7 @@ const ChatyWidget: React.FC = () => {
     {
       id: 'email',
       name: 'Email',
-      href: 'mailto:lienhe@luattaga.vn',
+      href: 'mailto:lienhe@luattoto.vn',
       ariaLabel: 'Email',
       hoverText: 'Email',
       color: '#FF485F',
@@ -36,7 +36,7 @@ const ChatyWidget: React.FC = () => {
     {
       id: 'google_maps',
       name: 'Google Maps',
-      href: 'https://www.google.com/maps/place/C%C3%B4ng+ty+TNHH+S%E1%BB%9F+H%E1%BB%AFu+Tr%C3%AD+Tu%E1%BB%87+Taga/@21.021079,105.8135092,17z/data=!3m1!4b1!4m6!3m5!1s0x3135add0e2391c21:0xf4ad84364383812c!8m2!3d21.021079!4d105.8160841!16s%2Fg%2F11ssvfztjq?hl=vi-VN&entry=tts&shorturl=1',
+      href: 'https://maps.app.goo.gl/JgpZ9sgqkDv3Y9NU7',
       target: '_blank',
       ariaLabel: 'Google Maps',
       hoverText: 'Google Maps',
@@ -51,7 +51,7 @@ const ChatyWidget: React.FC = () => {
     {
       id: 'sms',
       name: 'SMS',
-      href: 'sms:+84986488248',
+      href: 'sms:+84346903548',
       ariaLabel: 'SMS',
       hoverText: 'SMS',
       color: '#FF549C',
@@ -65,7 +65,7 @@ const ChatyWidget: React.FC = () => {
     {
       id: 'facebook_messenger',
       name: 'Facebook Messenger',
-      href: 'https://m.me/108815868839327',
+      href: 'https://m.me/61577813197981',
       target: '_blank',
       ariaLabel: 'Facebook Messenger',
       hoverText: 'Facebook Messenger',
@@ -80,7 +80,7 @@ const ChatyWidget: React.FC = () => {
     {
       id: 'zalo',
       name: 'Zalo',
-      href: 'https://zalo.me/1991225575693015758',
+      href: 'https://zalo.me/0346903548',
       target: '_blank',
       ariaLabel: 'Zalo',
       hoverText: 'Zalo',
@@ -94,7 +94,7 @@ const ChatyWidget: React.FC = () => {
     {
       id: 'phone',
       name: 'Phone',
-      href: 'tel:0968856464',
+      href: 'tel:0868193345',
       ariaLabel: 'Phone',
       hoverText: 'Phone',
       color: '#03E78B',

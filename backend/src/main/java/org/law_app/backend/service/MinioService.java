@@ -4,4 +4,5 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface MinioService {
     String uploadImage(MultipartFile file);
+    String generateFileUrl(String bucket, String objectName);
 }

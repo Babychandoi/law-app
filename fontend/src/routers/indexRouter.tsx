@@ -35,47 +35,47 @@ export const indexRouter: any = {
             path : '/recruitment',
             element: (<Recruitment />)
         },{
-            path : '/recruitment/:id',
+            path : '/recruitment/job',
             element: (<Job />),
         },{
-            path: '/service/brand/:id',
+            path: '/service/brand',
             element: (<Brand />)
         },{
-            path: '/service/:id',
+            path: '/service',
             element: (<Service />)
         },{
-            path: '/service/copyright/:id',
+            path: '/service/copyright',
             element: (<CopyRight />)
         },{
-            path :"/service/design/:id",
+            path :"/service/design",
             element : (<Design />)
         },{
-            path :"/service/invention/:id",
+            path :"/service/invention",
             element : (<Invention />)
         },{
-            path : "/service/violate/:id",
+            path : "/service/violate",
             element : (<Violate />)
         },{
-            path :"/serviceDif/:id",
+            path :"/serviceDif",
             element : (<ServiceDif />)
         },{
-            path : "/serviceDif/barcodeNumber/:id",
+            path : "/serviceDif/barcodeNumber",
             element : (<BarcodeNumber />)
         },{
-            path : "/serviceDif/scienceTechnologyEnterprises/:id",
+            path : "/serviceDif/scienceTechnologyEnterprises",
             element : (<ScienceTechnologyEnterprises />)
         },{
-            path : "/serviceDif/socialMedia/:id",
+            path : "/serviceDif/socialMedia",
             element : (<SocialMedia />)
         },
         {
-            path : "/serviceDif/consultationOfDraftingContracts/:id",
+            path : "/serviceDif/consultationOfDraftingContracts",
             element : (<ConsultationOfDraftingContracts />)
         },{
             path : "/news",
             element : (<News />)
         },{
-            path : "/news/:id",
+            path : "/new",
             element : (<NewsDetail />)
         }
             

@@ -5,14 +5,7 @@ import { Outlet } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { checkToken } from '../../../service/admin';
 import { tryRefreshToken } from '../../../service/axiosClient';
-interface ContactRequest {
-    id: number;
-    name: string;
-    email: string;
-    message: string;
-    date: string;
-    isRead: boolean;
-  }
+
 
 const AdminDashboard: React.FC = () => {
 
@@ -46,32 +39,6 @@ const AdminDashboard: React.FC = () => {
     
       fetchData();
     }, [navigate]);
-    const [notifications, setNotifications] = useState<ContactRequest[]>([
-      {
-        id: 1,
-        name: "Nguyễn Văn An",
-        email: "nguyenvana@email.com",
-        message: "Tôi muốn hỏi về sản phẩm của công ty, có thể tư vấn không?",
-        date: "2025-01-15",
-        isRead: false
-      },
-      {
-        id: 2,
-        name: "Trần Thị Bình",
-        email: "tranthib@email.com",
-        message: "Làm thế nào để đăng ký dịch vụ premium?",
-        date: "2025-01-14",
-        isRead: false
-      },
-      {
-        id: 3,
-        name: "Lê Văn Cường",
-        email: "levanc@email.com",
-        message: "Tôi gặp vấn đề khi sử dụng hệ thống, cần hỗ trợ.",
-        date: "2025-01-13",
-        isRead: true
-      }
-    ]);
     return (
       <div className="flex h-screen bg-gray-100">
         <Sidebar 
@@ -81,8 +48,6 @@ const AdminDashboard: React.FC = () => {
   
         <div className="flex-1 flex flex-col overflow-hidden">
           <Navbar 
-            notifications={notifications}
-            setNotifications={setNotifications}
           />
   
           <main className="flex-1 overflow-y-auto p-6">

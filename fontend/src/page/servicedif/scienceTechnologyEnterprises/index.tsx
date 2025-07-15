@@ -5,11 +5,12 @@ import { UniversalProcess } from '../../../component/service/UniversalProcess';
 import ScienceAndTechnologyBusiness from './sections/ScienceAndTechnologyBusiness';
 import ScienceTechEnterpriseConditions from './sections/ScienceTechEnterpriseConditions';
 import ToToLawServices from './sections/ScienceToToService';
-import { useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Hero, Process } from '../../../types/service';
 import { getHeroByServiceId, getProcessByServiceId } from '../../../service/service';
 export default function Index() {
-  const { id } = useParams<{ id: string }>();
+  const location = useLocation();
+  const id = location.state?.id;
   const [hero, setHero] = useState<Hero>({
     title: 'Dịch vụ khác',
     subtitle: 'ToTo Law',
