@@ -1,6 +1,7 @@
 import React from 'react';
 import { Check, Star } from 'lucide-react';
 import { PricingPlan } from '../../types/service';
+import { toast } from 'react-toastify';
 interface PricingComponentProps {
   title: string;
   subtitle?: string;
@@ -17,15 +18,16 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
   backgroundColor = 'bg-gray-50',
   containerClassName = ''
 }) => {
-  const handlePlanClick = (planId: string) => {
 
+  const handlePlanClick = (planId: string) => {
     const contactForm = document.getElementById('contact-form');
     if (contactForm) {
       contactForm.scrollIntoView({ behavior: 'smooth' });
     } else {
-      console.log(`Plan selected: ${planId}`);
+      toast.error('Có lỗi xảy ra. Vui lòng thử lại sau.');
     }
   };
+
 
   const renderCardVariant = () => (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
@@ -114,8 +116,8 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
               <button
                 onClick={() => handlePlanClick(plan.id)}
                 className={`w-full px-6 py-3 rounded-lg font-semibold text-white transition-colors duration-300 ${plan.featured
-                    ? 'bg-blue-600 hover:bg-blue-700'
-                    : 'bg-gray-800 hover:bg-gray-900'
+                  ? 'bg-blue-600 hover:bg-blue-700'
+                  : 'bg-gray-800 hover:bg-gray-900'
                   }`}
               >
                 {plan.buttonText || 'Đăng ký tư vấn'}
@@ -133,8 +135,8 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
         <div
           key={plan.id}
           className={`relative bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl ${plan.featured
-              ? 'ring-4 ring-blue-500 ring-opacity-50'
-              : ''
+            ? 'ring-4 ring-blue-500 ring-opacity-50'
+            : ''
             }`}
         >
           {/* Featured Badge */}
@@ -147,8 +149,8 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
 
           {/* Header */}
           <div className={`px-8 py-8 text-center ${plan.featured
-              ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
-              : 'bg-gray-50'
+            ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
+            : 'bg-gray-50'
             }`}>
             <h3 className={`text-2xl font-bold mb-4 ${plan.featured ? 'text-white' : 'text-gray-900'
               }`}>
@@ -169,8 +171,8 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
             </div>
 
             <div className={`w-16 h-1 mx-auto rounded-full ${plan.featured
-                ? 'bg-white bg-opacity-50'
-                : 'bg-gradient-to-r from-blue-500 to-indigo-600'
+              ? 'bg-white bg-opacity-50'
+              : 'bg-gradient-to-r from-blue-500 to-indigo-600'
               }`}></div>
           </div>
 
@@ -213,8 +215,8 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
             <button
               onClick={() => handlePlanClick(plan.id)}
               className={`w-full py-4 px-6 rounded-xl font-semibold text-center transition-all duration-300 transform hover:scale-105 ${plan.featured
-                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg hover:shadow-xl'
-                  : 'bg-gray-100 text-gray-900 hover:bg-gray-200 border-2 border-transparent hover:border-blue-500'
+                ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg hover:shadow-xl'
+                : 'bg-gray-100 text-gray-900 hover:bg-gray-200 border-2 border-transparent hover:border-blue-500'
                 }`}
             >
               {plan.buttonText || 'Đăng ký tư vấn'}

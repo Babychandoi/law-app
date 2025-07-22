@@ -2,7 +2,7 @@ import axios from "axios";
 import { ApiResponse, LoginResponse } from "../types/admin";
 
 const axiosClient = axios.create({
-  baseURL: "http://localhost:8080",
+  baseURL:"https://luattoto.uk" ,
   headers: {
     "Content-Type": "application/json",
   },
@@ -44,7 +44,7 @@ export async function tryRefreshToken(): Promise<boolean> {
     const refreshToken = sessionStorage.getItem("refreshToken");
     if (!refreshToken) return false;
     try {
-      const response = await axios.post<ApiResponse<LoginResponse>>("http://localhost:8080/auth/refresh", {
+      const response = await axios.post<ApiResponse<LoginResponse>>(`https://luattoto.uk/auth/refresh`, {
         refreshToken,
       });
   

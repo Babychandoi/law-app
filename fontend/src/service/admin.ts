@@ -3,7 +3,7 @@ import { ApiResponse, Customer, CustomerDetail, IntrospectResponse, Login, Login
 import axiosClient from "./axiosClient";
 import axios from "axios"; 
 import { News } from "../types/service";
-const API_URL = "http://localhost:8080";
+const API_URL = "https://luattoto.uk";
 export const login = async (login : Login): Promise<ApiResponse<LoginResponse>> => {
 	const response = await axiosClient.post<ApiResponse<any>>(`/auth/login`,login);
 	return response.data;
@@ -106,5 +106,17 @@ export const logout = async (token : string): Promise<ApiResponse<void>> => {
 }
 export const getNotificationById = async (): Promise<ApiResponse<Notification[]>> => {
 	const response = await axiosClient.get<ApiResponse<Notification[]>>(`/notifications`);
+	return response.data;
+}
+export const sendMail = async (id : string): Promise<ApiResponse<boolean>> => {
+	const response =  await axiosClient.post<ApiResponse<boolean>>(`/news/notificationNews/${id}`);
+	return response.data;
+}
+export const markAsRead = async (notificationId: string): Promise<ApiResponse<boolean>> => {
+	const response = await axiosClient.put<ApiResponse<boolean>>(`/notifications/${notificationId}/read`);
+	return response.data;
+}
+export const markAllRead = async (): Promise<ApiResponse<boolean>> => {
+	const response = await axiosClient.put<ApiResponse<boolean>>(`/notifications/read`);
 	return response.data;
 }

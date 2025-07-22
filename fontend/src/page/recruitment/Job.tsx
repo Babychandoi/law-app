@@ -1,19 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { Briefcase, MapPin, Calendar } from 'lucide-react';
 import { Job } from '../../types/service';
 import { getJobById } from '../../service/service';
 const JobComponent : React.FC = () => {
     const navigate = useNavigate();
-    const location = useLocation();
-  const id = location.state?.id;
+    const { id } = useParams<{ id: string }>();
+    const decodedId = id ? atob(id) : undefined;
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [job,setJob] = useState<Job>();
     useEffect(() => {
         const fetchJob = async () => {
-        if (id) {
+        if (decodedId) {
                 try {
-                    const response = await getJobById(id);
+                    const response = await getJobById(decodedId);
                     setJob(response.data);
                 } catch (error) {
                     console.error('Error fetching job:', error);
@@ -21,7 +21,7 @@ const JobComponent : React.FC = () => {
             }
         };
         fetchJob();
-    },[id])
+    },[decodedId])
     if (!job) {
         return (
             <div className="max-w-4xl mx-auto p-6 bg-white">

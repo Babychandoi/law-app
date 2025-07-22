@@ -84,7 +84,7 @@ cho doanh nghiệp và cá nhân.`,
     setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
   };
   const handleNavigate = (href: string, id : string) => {
-    navigate(href,{state : { id: id }});
+    navigate(`${href}/${btoa(id)}`);
   }
   const goToSlide = (index: number) => {
     setCurrentSlide(index);

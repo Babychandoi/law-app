@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import Swal from 'sweetalert2';
 import { getNews, getNew } from "../../../../service/service";
-import { createNews, deleteNews, updateNews, uploadFile } from "../../../../service/admin";
+import { createNews, deleteNews, updateNews, uploadFile, sendMail } from "../../../../service/admin";
 import { News } from "../../../../types/service";
 import AddNews from "./News/AddNews";
 import EditNews from "./News/EditNews";
-import { BookOpen, FileText, Shield, Globe, Award, AlertTriangle } from "lucide-react";
+import { BookOpen, FileText, Shield, Globe, Award, AlertTriangle, Eye, Pencil, Trash2, Send } from "lucide-react";
 
 const NewsManagement: React.FC = () => {
   const [newsList, setNewsList] = useState<News[]>([]);
@@ -39,18 +39,41 @@ const NewsManagement: React.FC = () => {
   };
 
   const handleEdit = async (id: string) => {
+    // Hiển thị loading
+    Swal.fire({
+      title: 'Đang tải dữ liệu...',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      }
+    });
+
     try {
       const response = await getNew(id);
+
       if (response.code === 200) {
+        Swal.close();
         setEditingNews(response.data);
         setShowEditNews(true);
       } else {
-        setError("Failed to fetch news for editing: " + response.message);
+
+        // Hiển thị lỗi phản hồi
+        Swal.fire({
+          icon: 'error',
+          title: 'Không thể tải tin tức',
+          text: response.message || 'Có lỗi xảy ra!',
+        });
       }
     } catch (error) {
-      setError("Error fetching news for editing: " + (error as Error).message);
+      // Hiển thị lỗi ngoại lệ
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi khi gọi API',
+        text: (error as Error).message || 'Lỗi không xác định!',
+      });
     }
   };
+
 
 
 
@@ -96,22 +119,41 @@ const NewsManagement: React.FC = () => {
   const handleAddNew = () => {
     setShowAddNews(true);
   };
-
   const handleViewDetails = async (newId: string) => {
     try {
-      setLoading(true);
+      // Hiển thị loading
+      Swal.fire({
+        title: 'Đang tải chi tiết tin...',
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        }
+      });
+
       const response = await getNew(newId);
+
       if (response.code === 200) {
+        // Đóng loading
+        Swal.close();
         setSelectedNews(response.data);
       } else {
-        setError("Failed to fetch news details: " + response.message);
+        // Lỗi từ server
+        Swal.fire({
+          icon: 'error',
+          title: 'Không thể tải chi tiết tin',
+          text: response.message || 'Có lỗi xảy ra!',
+        });
       }
     } catch (error) {
-      setError("Error viewing news details: " + (error as Error).message);
-    } finally {
-      setLoading(false);
+      // Lỗi hệ thống
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi khi gọi API',
+        text: (error as Error).message || 'Lỗi không xác định!',
+      });
     }
   };
+
 
   const handleCloseDetails = () => {
     setSelectedNews(null);
@@ -119,72 +161,122 @@ const NewsManagement: React.FC = () => {
 
   const handleSaveNewNews = async (newsData: News, file: File) => {
     try {
-      setLoading(true);
+      // Hiển thị loading spinner
+      Swal.fire({
+        title: 'Đang lưu tin tức...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      // Nếu chưa có ảnh và có file, thì upload
       if (newsData.image === "" && file !== null) {
         const uploadResponse = await uploadFile(file);
         if (uploadResponse.code === 200) {
           newsData.image = uploadResponse.data;
         } else {
-          setError("Failed to upload image: " + uploadResponse.message);
+          Swal.fire({
+            icon: 'error',
+            title: 'Tải ảnh thất bại',
+            text: uploadResponse.message || 'Không thể tải ảnh lên!',
+          });
           return;
         }
       }
+
       const response = await createNews(newsData);
       if (response.code === 200) {
-        // Add to local state
+        // Thêm vào local state
         setNewsList(prev => [response.data, ...prev]);
         setShowAddNews(false);
-        setError(null);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Tạo tin tức thành công!',
+          showConfirmButton: false,
+          timer: 1500,
+        });
       } else {
-        setError("Failed to create news: " + response.message);
+        Swal.fire({
+          icon: 'error',
+          title: 'Không thể tạo tin tức',
+          text: response.message || 'Lỗi không xác định!',
+        });
       }
     } catch (error) {
-      setError("Error creating news: " + (error as Error).message);
-    } finally {
-      setLoading(false);
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi khi tạo tin tức',
+        text: (error as Error).message || 'Đã xảy ra lỗi!',
+      });
     }
   };
 
+
   const handleSaveEditNews = async (updatedNews: News, file?: File) => {
     try {
-      setLoading(true);
-      if (updatedNews.image === "" && file !== null && file !== undefined) {
+      // Hiển thị loading
+      Swal.fire({
+        title: 'Đang cập nhật tin tức...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      if (updatedNews.image === "" && file != null) {
         const uploadResponse = await uploadFile(file);
         if (uploadResponse.code === 200) {
           updatedNews.image = uploadResponse.data;
         } else {
-          setError("Failed to upload image: " + uploadResponse.message);
+          Swal.fire({
+            icon: 'error',
+            title: 'Tải ảnh thất bại',
+            text: uploadResponse.message || 'Không thể tải ảnh lên!',
+          });
           return;
         }
       }
-      if (updatedNews.id === undefined) {
-        setError("News ID is required for update.");
+
+      if (!updatedNews.id) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Thiếu ID',
+          text: 'Không tìm thấy ID của tin tức để cập nhật.',
+        });
         return;
       }
-      console.log(updatedNews);
+
       const response = await updateNews(updatedNews.id, updatedNews);
-      console.log(response);
       if (response.code === 200) {
-        // Update local state
+        // Cập nhật local state
         setNewsList(prev => prev.map(news =>
           news.id === updatedNews.id ? response.data : news
         ));
 
-        // Update selected news if it's the one being edited
         if (selectedNews?.id === updatedNews.id) {
           setSelectedNews(response.data);
         }
 
         setShowEditNews(false);
         setEditingNews(null);
-        setError(null);
+
+        Swal.fire({
+          icon: 'success',
+          title: 'Cập nhật thành công!',
+          showConfirmButton: false,
+          timer: 1500,
+        });
       } else {
-        setError("Failed to update news: " + response.message);
+        Swal.fire({
+          icon: 'error',
+          title: 'Cập nhật thất bại',
+          text: response.message || 'Lỗi không xác định!',
+        });
       }
     } catch (error) {
-      setError("Error updating news: " + (error as Error).message);
-    } finally {
-      setLoading(false);
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi khi cập nhật',
+        text: (error as Error).message || 'Đã xảy ra lỗi!',
+      });
     }
   };
 
@@ -208,7 +300,18 @@ const NewsManagement: React.FC = () => {
       default: return null;
     }
   };
-
+  const handleSendEmail = async (id: string) => {
+    try {
+      const response = await sendMail(id);
+      if (response.data === true) {
+        Swal.fire('Success!', 'Email sent successfully.', 'success');
+      } else {
+        Swal.fire('Error!', response.message || 'Failed to send email.', 'error');
+      }
+    } catch (error) {
+      Swal.fire('Error!', (error as Error).message, 'error');
+    }
+  }
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       {/* Header */}
@@ -288,27 +391,41 @@ const NewsManagement: React.FC = () => {
                   <td className="px-4 py-3 text-sm text-gray-700 whitespace-nowrap">
                     {news.createdAt?.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 whitespace-nowrap">
+                  <td className="px-4 py-3 whitespace-nowrap flex gap-2">
                     <button
                       onClick={() => news.id && handleViewDetails(news.id)}
                       disabled={loading}
-                      className="text-purple-600 hover:text-purple-800 disabled:text-gray-400 text-sm font-medium mr-3"
+                      title="Xem chi tiết"
+                      className="text-purple-600 hover:text-purple-800 disabled:text-gray-400"
                     >
-                      Xem chi tiết
+                      <Eye size={18} />
                     </button>
+
                     <button
                       onClick={() => handleEdit(news.id ?? "")}
                       disabled={loading}
-                      className="text-blue-600 hover:text-blue-800 disabled:text-gray-400 text-sm font-medium mr-3"
+                      title="Sửa"
+                      className="text-blue-600 hover:text-blue-800 disabled:text-gray-400"
                     >
-                      Sửa
+                      <Pencil size={18} />
                     </button>
+
                     <button
                       onClick={() => handleDelete(news.id ?? "")}
                       disabled={loading}
-                      className="text-red-600 hover:text-red-800 disabled:text-gray-400 text-sm font-medium"
+                      title="Xóa"
+                      className="text-red-600 hover:text-red-800 disabled:text-gray-400"
                     >
-                      Xóa
+                      <Trash2 size={18} />
+                    </button>
+
+                    <button
+                      onClick={() => handleSendEmail(news.id ?? "")}
+                      disabled={loading}
+                      title="Gửi email"
+                      className="text-green-600 hover:text-green-800 disabled:text-gray-400"
+                    >
+                      <Send size={18} />
                     </button>
                   </td>
                 </tr>

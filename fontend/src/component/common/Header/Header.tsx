@@ -55,8 +55,7 @@ const Header: React.FC = () => {
 
         setMenuItems(combinedMenuItems);
       } catch (error) {
-        console.error('Error fetching services:', error);
-        // Fallback to static menu if API fails
+        console.error('Failed to fetch services:', error);
         setMenuItems(staticMenuItems);
       } finally {
         setIsLoading(false);
@@ -85,7 +84,7 @@ const Header: React.FC = () => {
       navigate(item.href);
     } else {
       // For dynamic service items, include ID as path variable
-      navigate(item.href, { state: { id: item.id } });
+      navigate(`${item.href}/${btoa(item.id)}`);
     }
     
     setIsMobileMenuOpen(false); // Close mobile menu on navigation

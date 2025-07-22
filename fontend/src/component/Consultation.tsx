@@ -6,7 +6,8 @@ import PhoneInput from "react-phone-input-2";
 import { CustomerService } from "../types/service";
 import { createCustomerService } from "../service/service";
 import "react-phone-input-2/lib/style.css";
-
+import Swal from "sweetalert2";
+import { toast } from 'react-toastify';
 const ConsultationForm = () => {
   const [formData, setFormData] = useState<CustomerService>({
     name: "",
@@ -30,7 +31,7 @@ const ConsultationForm = () => {
           setFormData(prev => ({ ...prev, service: response.data[0].id }));
         }
       } catch (error) {
-        console.error("Error fetching services:", error);
+        toast.error('Không thể tải danh sách dịch vụ. Vui lòng thử lại!');
       }
     };
     fetchServices();
@@ -89,16 +90,41 @@ const ConsultationForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
-
+  
     setIsSubmitting(true);
+  
+    // Hiển thị loading
+    Swal.fire({
+      title: 'Đang gửi...',
+      text: 'Vui lòng chờ trong giây lát.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  
     try {
-      console.log(formData);
       const response = await createCustomerService(formData);
-      alert(response.message);
-      setFormData({ name: "", phone: "+84", email: "", serviceId: serviceOptions[0]?.id || "", description: "" });
+  
+      Swal.fire({
+        icon: 'success',
+        title: 'Gửi thành công!',
+        text: response.message || 'Chúng tôi đã nhận được thông tin của bạn.',
+      });
+  
+      setFormData({
+        name: "",
+        phone: "+84",
+        email: "",
+        serviceId: serviceOptions[0]?.id || "",
+        description: "",
+      });
     } catch (error) {
-      console.error("Error submitting form:", error);
-      alert("Có lỗi xảy ra. Vui lòng thử lại!");
+      Swal.fire({
+        icon: 'error',
+        title: 'Đã xảy ra lỗi!',
+        text: 'Vui lòng thử lại sau.',
+      });
     } finally {
       setIsSubmitting(false);
     }

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { MapPin, Mail, Phone, Send, Facebook, Linkedin, Shield, FileText, Star, Award, Users, Globe } from 'lucide-react';
 import {TotoCompany} from '../../../types/company';
-import { getCompany } from '../../../service/service';
+import { getCompany,addUserNew } from '../../../service/service';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 
 const COLORS = {
@@ -65,20 +66,55 @@ const Footer: React.FC = () => {
   },[]);
   const handleSubmit = async () => {
     if (!email) return;
+  
     setIsSubmitting(true);
-    // Simulate API call
-    setTimeout(() => {
-      console.log('Email submitted:', email);
-      setEmail('');
-      setIsSubmitting(false);
-    }, 1000);
+  
+    // Hiển thị loading
+    Swal.fire({
+      title: 'Đang xử lý...',
+      text: 'Vui lòng chờ trong giây lát.',
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+  
+    try {
+      const response = await addUserNew(email);
+      Swal.close(); // Tắt loading sau khi nhận phản hồi
+  
+      if (response.data === true) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Đăng ký thành công!',
+          text: 'Cảm ơn bạn đã đăng ký nhận bản tin.',
+        });
+        setEmail('');
+      } else {
+        Swal.fire({
+          icon: 'info',
+          title: 'Email đã đăng ký!',
+          text: 'Email này đã được đăng ký nhận tin trước đó.',
+        });
+        setEmail('');
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Lỗi!',
+        text: 'Đăng ký không thành công, vui lòng thử lại sau.',
+      });
+    }
+  
+    setIsSubmitting(false);
   };
+  
 
   const formatPhoneNumber = (number: string) => {
     return number.replace(/\./g, '');
   };
   const hanldeNagivate = (href: string) => {
-    navigate("/new",{state : {id : href}});
+    navigate(`/new/${btoa(href)}`);
   };
   return (
     <footer className="relative bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white overflow-hidden">

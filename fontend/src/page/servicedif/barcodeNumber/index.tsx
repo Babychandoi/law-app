@@ -6,13 +6,12 @@ import BarcodeBenefits from './sections/BarcodeBenefits';
 import { UniversalProcess } from '../../../component/service/UniversalProcess';
 import PricingComponent from '../../../component/service/UniversalPricing';
 import PartnersCarousel from '../../../component/service/PartnersCarousel';
-import { useLocation } from 'react-router-dom';
+import {  useParams } from 'react-router-dom';
 import { Hero, Process } from '../../../types/service';
 import { getHeroByServiceId, getProcessByServiceId,getPricingByServiceId } from '../../../service/service';
 export default function Index() {
-  const location = useLocation();
-  const id = location.state?.id;
-  console.log(id);
+  const { id } = useParams<{ id: string }>();
+  const decodedId = id ? atob(id) : undefined;
   const [hero, setHero] = useState<Hero>({
     title: 'Dịch vụ khác',
     subtitle: 'ToTo Law',
@@ -22,8 +21,8 @@ export default function Index() {
   useEffect(() => {
     const fetchProcess = async () => {
       try {
-        if (id) {
-          const response = await getProcessByServiceId(id);
+        if (decodedId) {
+          const response = await getProcessByServiceId(decodedId);
           response.data.sort(
             (a, b) => a.step.localeCompare(b.step)
           )
@@ -36,12 +35,12 @@ export default function Index() {
       }
     };
     fetchProcess();
-  }, [id]);
+  }, [decodedId]);
   useEffect(() => {
     const fetchHero = async () => {
       try {
-        if (id) {
-          const response = await getHeroByServiceId(id);
+        if (decodedId) {
+          const response = await getHeroByServiceId(decodedId);
           setHero(response.data);
         } else {
           console.error('Service ID is undefined');
@@ -51,13 +50,13 @@ export default function Index() {
       }
     };
     fetchHero();
-  }, [id]);
+  }, [decodedId]);
   const [pricingPlans, setPricingPlans] = useState<any[]>([]);
   useEffect(() => {
     const fetchPricingPlans = async () => {
       try {
-        if (id) {
-          const response = await getPricingByServiceId(id);
+        if (decodedId) {
+          const response = await getPricingByServiceId(decodedId);
           const sorted = [...response.data].sort((a, b) => {
             const numA = parseInt(a.title.match(/\d+/)?.[0] || "0");
             const numB = parseInt(b.title.match(/\d+/)?.[0] || "0");
@@ -73,7 +72,7 @@ export default function Index() {
       }
     };
     fetchPricingPlans();
-  }, [id]);
+  }, [decodedId]);
   return (
     <>
       <HeroService

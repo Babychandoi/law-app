@@ -5,7 +5,7 @@ import { ChildrenServiceResponse } from "../types/service";
 import { ApiResponse } from "../types/types";
 import { TotoCompany } from "../types/company";
 
-const API_URL = "http://localhost:8080";
+const API_URL = "https://luattoto.uk";
 
 export const getServices = async (): Promise<ApiResponse<ServiceResponse[]>> => {
 		const response = await axios.get<ApiResponse<ServiceResponse[]>>(`${API_URL}/services`);
@@ -67,4 +67,7 @@ export const getNews = async (): Promise<ApiResponse<News[]>> => {
 	const response = await axios.get<ApiResponse<News[]>>(`${API_URL}/news`);
 	return response.data;
 }
-
+export const addUserNew = async (email: string): Promise<ApiResponse<Boolean>> => {
+	const response = await axios.post<ApiResponse<Boolean>> (`${API_URL}/news/subscribe?email=${email}`);
+	return response.data;
+}

@@ -7,12 +7,12 @@ import PatentBenefits from './sections/Benefits';
 import ToToBenefits from './sections/ToToBenefits';
 import { UniversalProcess } from '../../../component/service/UniversalProcess';
 import { ProcessTimeline } from '../../../component/service/ProcessTimeLine';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Hero, Process, ProcessStep } from '../../../types/service';
 import { getHeroByServiceId, getProcessByServiceId, getProcessTimeLineByServiceId } from '../../../service/service';
 export default function Index() {
-  const location = useLocation();
-  const id = location.state?.id;
+  const { id } = useParams<{ id: string }>();
+  const decodedId = id ? atob(id) : undefined;
   const [hero, setHero] = useState<Hero>({
     title: 'Dịch vụ sở hữu trí tuệ',
     subtitle: 'ToTo Law',
@@ -23,8 +23,8 @@ export default function Index() {
   useEffect(() => {
     const fetchProcessTimeLine = async () => {
       try {
-        if (id) {
-          const response = await getProcessTimeLineByServiceId(id);
+        if (decodedId) {
+          const response = await getProcessTimeLineByServiceId(decodedId);
           setProcessTimeLine(response.data);
         } else {
           console.error('Service ID is undefined');
@@ -34,12 +34,12 @@ export default function Index() {
       }
     }
     fetchProcessTimeLine()
-  }, [id]);
+  }, [decodedId]);
   useEffect(() => {
     const fetchProcess = async () => {
       try {
-        if (id) {
-          const response = await getProcessByServiceId(id);
+        if (decodedId) {
+          const response = await getProcessByServiceId(decodedId);
           response.data.sort(
             (a, b) => a.step.localeCompare(b.step)
           )
@@ -52,12 +52,12 @@ export default function Index() {
       }
     };
     fetchProcess();
-  }, [id]);
+  }, [decodedId]);
   useEffect(() => {
     const fetchHero = async () => {
       try {
-        if (id) {
-          const response = await getHeroByServiceId(id);
+        if (decodedId) {
+          const response = await getHeroByServiceId(decodedId);
           setHero(response.data);
         } else {
           console.error('Service ID is undefined');
@@ -67,7 +67,7 @@ export default function Index() {
       }
     };
     fetchHero();
-  }, [id]);
+  }, [decodedId]);
 
   return (
     <>

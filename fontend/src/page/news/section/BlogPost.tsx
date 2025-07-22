@@ -12,22 +12,20 @@ import TableOfContents from '../../../component/legalArticle/TableOfContents';
 import LegalSection from '../../../component/legalArticle/Section';
 import { getNew } from '../../../service/service';
 import { News } from '../../../types/service';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const LegalArticle: React.FC = () => {
   const [expandedSections] = useState<string[]>(['intro']);
   const [news, setNews] = useState<News | null>(null);
-  const location = useLocation();
-  const id = location.state?.id;
-  console.log(id);
+  const { id } = useParams<{ id: string }>();
+  const decodedId = id ? atob(id) : undefined;
   useEffect(() => {
     const fetchNews = async () => {
       try {
-        if (!id) {
+        if (!decodedId) {
           return;
         }
-        const response = await getNew(id);
-        console.log(response.data)
+        const response = await getNew(decodedId);
         if (response && response.data) {
           setNews(response.data);
         } else {
@@ -38,7 +36,7 @@ const LegalArticle: React.FC = () => {
       }
     };
     fetchNews();
-  }, [id]);
+  }, [decodedId]);
   const toggleSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
     if (element) {

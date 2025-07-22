@@ -8,7 +8,6 @@ const Contact: React.FC = () => {
     const fetchCompanyInfo = async () => {
       try {
         const response = await getCompany();
-        console.log(response)
         setContact(response.data);
       } catch (error) {
         console.error("Error fetching company information:", error);
@@ -45,13 +44,13 @@ const Contact: React.FC = () => {
               </div>
               
               <div className="space-y-4">
-                {contact?.locations.map((location,index) =>(
-                  <div>
-                  <h4 className="font-semibold text-gray-700 mb-2">{location.type}</h4>
-                  <p className="text-gray-600">
-                    {location.address}
-                  </p>
-                </div>
+                {contact?.locations.map((location, index) => (
+                  <div key={location.id || index}>
+                    <h4 className="font-semibold text-gray-700 mb-2">{location.type}</h4>
+                    <p className="text-gray-600">
+                      {location.address}
+                    </p>
+                  </div>
                 ))}
               </div>
             </div>

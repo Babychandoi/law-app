@@ -3,6 +3,7 @@ import { Scale, Shield, Lightbulb, Palette, Sword, BarChart3, FileText, Users } 
 import { useNavigate } from 'react-router-dom';
 import { ServiceItem } from '../../types/service';
 import { getServiceHome } from '../../service/service';
+import { toast } from 'react-toastify';
 const LegalServicesSection: React.FC = () => {
   const [services , setServices] = React.useState<ServiceItem[]>([]);
   const navigate = useNavigate();
@@ -10,20 +11,20 @@ const LegalServicesSection: React.FC = () => {
     const fetchServices = async () => {
       try {
         const response = await getServiceHome();
-        console.log(response.data)
         if (response && response.data) {
           setServices(response.data);
         } else {
-          console.error("No data found in response");
+          toast.warning('Không có dữ liệu dịch vụ nào được trả về!');
         }
       } catch (error) {
-        console.error("Error fetching services:", error);
+        toast.error('Lỗi khi tải danh sách dịch vụ. Vui lòng thử lại!');
       }
     };
     fetchServices();
-  } ,[]);
+  }, []);
+  
   const handleServiceClick = (link: string,id : string) => {
-    navigate(link, { state: { id } });
+    navigate(`${link}/${btoa(id)}`);
   };
   const icon  = (iconName: string) => {
     switch (iconName) {

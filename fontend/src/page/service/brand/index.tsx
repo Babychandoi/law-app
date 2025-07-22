@@ -7,12 +7,12 @@ import ConsultationForm from '../../../component/Consultation';
 import PartnersCarousel from '../../../component/service/PartnersCarousel';
 import { UniversalProcess } from '../../../component/service/UniversalProcess';
 import PricingComponent from '../../../component/service/UniversalPricing';
-import { useLocation } from 'react-router-dom';
+import {useParams } from 'react-router-dom';
 import { getPricingByServiceId, getHeroByServiceId, getProcessByServiceId } from '../../../service/service';
 import { Hero, Process } from '../../../types/service';
 export default function Index() {
-  const location = useLocation();
-  const id = location.state?.id;
+  const { id } = useParams<{ id: string }>();
+  const decodedId = id ? atob(id) : undefined;
   const [pricingPlans, setPricingPlans] = useState<any[]>([]);
   const [hero, setHero] = useState<Hero>({
     title: 'Dịch vụ sở hữu trí tuệ',
@@ -23,8 +23,8 @@ export default function Index() {
   useEffect(() => {
     const fetchProcess = async () => {
       try {
-        if (id) {
-          const response = await getProcessByServiceId(id);
+        if (decodedId) {
+          const response = await getProcessByServiceId(decodedId);
           response.data.sort(
             (a, b) => a.step.localeCompare(b.step)
           )
@@ -37,13 +37,13 @@ export default function Index() {
       }
     };
     fetchProcess();
-  }, [id]);
+  }, [decodedId]);
 
   useEffect(() => {
     const fetchHero = async () => {
       try {
-        if (id) {
-          const response = await getHeroByServiceId(id);
+        if (decodedId) {
+          const response = await getHeroByServiceId(decodedId);
           setHero(response.data);
         } else {
           console.error('Service ID is undefined');
@@ -53,12 +53,12 @@ export default function Index() {
       }
     };
     fetchHero();
-  }, [id]);
+  }, [decodedId]);
   useEffect(() => {
     const fetchPricingPlans = async () => {
       try {
-        if (id) {
-          const response = await getPricingByServiceId(id);
+        if (decodedId) {
+          const response = await getPricingByServiceId(decodedId);
           setPricingPlans(response.data);
         } else {
           console.error('Service ID is undefined');
@@ -68,7 +68,7 @@ export default function Index() {
       }
     };
     fetchPricingPlans();
-  }, [id]);
+  }, [decodedId]);
   return (
     <>
       <HeroService

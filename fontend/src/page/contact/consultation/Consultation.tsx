@@ -1,11 +1,14 @@
 import React from 'react'
 import ConsultationForm from '../../../component/Consultation'
 import Contact from './Contact'
+
 export default function Consultation() {
   return (
-    <div style={{
+    <div
+      style={{
         display: 'flex',
-        alignItems: 'center',
+        flexDirection: 'row', // default desktop
+        flexWrap: 'wrap', // để auto xuống dòng nếu không đủ
         justifyContent: 'center',
         padding: '20px',
         backgroundColor: '#f5f5f5',
@@ -16,32 +19,37 @@ export default function Consultation() {
         margin: '0 auto',
         borderRadius: '8px',
         boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-
-    }}>
-        <div style={{
-            maxWidth: '600px',
-            width: '100%',
-            padding: '20px',
-            backgroundColor: '#fff',
-            borderRadius: '8px',
-            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-            margin: '20px auto'
-        }}>
-            <ConsultationForm />
-        </div>
-      <div style={{
-        maxWidth: '600px',
-        width: '100%',
-        padding: '20px',
-        backgroundColor: '#fff',
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-        margin: '20px auto'
-      }}>
+      }}
+    >
+      <div
+        style={{
+          flex: '1 1 300px', // grow-shrink-basis
+          maxWidth: '600px',
+          minWidth: '280px',
+          padding: '20px',
+          backgroundColor: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+          margin: '20px',
+        }}
+      >
+        <ConsultationForm />
+      </div>
+      <div
+        style={{
+          flex: '1 1 300px',
+          maxWidth: '600px',
+          minWidth: '280px',
+          padding: '20px',
+          backgroundColor: '#fff',
+          borderRadius: '8px',
+          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
+          margin: '20px',
+        }}
+      >
         <Contact />
       </div>
-
-      
     </div>
   )
 }
+

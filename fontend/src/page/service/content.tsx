@@ -1,28 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { FileText, ZoomIn, ExternalLink, } from 'lucide-react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import {  useNavigate, useParams } from 'react-router-dom';
 import { getChildrenServiceById } from '../../service/service';
 import { ChildrenServiceResponse } from '../../types/service';
 const LuatBlog: React.FC = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const id = location.state?.id;
+  const { id } = useParams<{ id: string }>();
+  const decodedId = id ? atob(id) : undefined;
   const [posts, setPosts] = useState<ChildrenServiceResponse[]>();
   
   useEffect(() => {
-    const fetchPosts = async (id : string) => {
+    const fetchPosts = async (decodedId : string) => {
       try {
-        const response = await getChildrenServiceById(id);
+        const response = await getChildrenServiceById(decodedId);
         setPosts(response.data);
-        console.log(response.data);
       } catch (error) {
         console.error('Failed to fetch posts:', error);
       }
     };
-    if (id) {
-      fetchPosts(id);
+    if (decodedId) {
+      fetchPosts(decodedId);
     }
-  }, [id]);
+  }, [decodedId]);
 
   const handleImageHover = (e: React.MouseEvent<HTMLDivElement>) => {
     const mask = e.currentTarget.querySelector('.mask') as HTMLElement;
@@ -39,7 +38,7 @@ const LuatBlog: React.FC = () => {
   };
 
   const handleNagivate = (link: string , id : string) => {
-    navigate(link, { state: { id : id } })
+    navigate(`${link}/${btoa(id)}`);
   };
 
   return (

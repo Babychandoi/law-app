@@ -73,7 +73,6 @@ const LoginForm: React.FC = () => {
       
       // Simulate API call
       setTimeout(async () => {
-        console.log(formData)
         const response = await login(formData);
         if (response.code === 200) {
           const token = response.data;

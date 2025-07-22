@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { getNews } from '../service/service';
 import { useNavigate } from 'react-router-dom';
 import { News } from '../types/service';
+import { toast } from 'react-toastify';
 export const useNews = () => {
   const [news, setNews] = useState<News[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -16,7 +17,7 @@ export const useNews = () => {
         if (response && response.data) {
           setNews(response.data);
         } else {
-          console.error("No data found in response");
+          toast.error( 'Không có dữ liệu tin tức nào được trả về!');
         }
       } catch (err) {
         setError('Failed to load news');  
@@ -29,7 +30,7 @@ export const useNews = () => {
   }, []);
 
   const handleItemClick = (item: News) => {
-    navigate("/new",{state:{id : item.id}})
+    navigate(`/new/${btoa(item.id || '')}`)
   };
 
   return {

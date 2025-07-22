@@ -5,6 +5,7 @@ import UserForm from "./Employee/User";
 import PasswordChangeForm from "./Employee/ChangePassword";
 import UserEdit from "./Employee/EditUser";
 import { getUsers, changeActive, changePassword, changeRole, createUser, editUser} from "../../../../service/admin";
+import Swal from "sweetalert2";
 
 const UserManagement: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
@@ -46,64 +47,132 @@ const UserManagement: React.FC = () => {
 
     // Handle creating new user
     const handleSaveUser = async (formData: UserCreate) => {
-        console.log(formData)
         try {
-            setIsLoading(true);
-
-            const response = await createUser(formData);
-            if (response.data) {
-                setUsers(prev => [...prev, response.data]);
-                setIsUserFormOpen(false);
-                setError(null);
-            } else {
-                setError('Không thể tạo người dùng mới');
-            }
+          // Hiển thị loading UI
+          Swal.fire({
+            title: 'Đang tạo người dùng...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading(),
+          });
+      
+          const response = await createUser(formData);
+      
+          if (response.data) {
+            setUsers(prev => [...prev, response.data]);
+            setIsUserFormOpen(false);
+            setError(null);
+      
+            Swal.fire({
+              icon: 'success',
+              title: 'Tạo người dùng thành công!',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Không thể tạo người dùng',
+              text: response.message || 'Đã có lỗi xảy ra.',
+            });
+          }
         } catch (error) {
-            setError('Không thể tạo người dùng mới');
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi khi tạo người dùng',
+            text: (error as Error).message || 'Đã xảy ra lỗi không xác định.',
+          });
         } finally {
-            setIsLoading(false);
+          setIsLoading(false); // Nếu bạn vẫn cần quản lý isLoading cho UI ngoài Swal
         }
-    };
+      };
 
     // Handle updating existing user
     const handleUpdateUser = async (formData: UserCreate, userId: string) => {
         try {
-            setIsLoading(true);
-            const response = await editUser(userId, formData);
-            if (response.data) {
-                setUsers(prev => prev.map(user => 
-                    user.id === userId ? { ...user, ...response.data } : user
-                ));
-                setEditingUser(null);
-                setError(null);
-            } else {
-                setError('Không thể cập nhật thông tin người dùng');
-            }
+          // Hiển thị loading SweetAlert
+          Swal.fire({
+            title: 'Đang cập nhật người dùng...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading(),
+          });
+      
+          const response = await editUser(userId, formData);
+      
+          if (response.data) {
+            // Cập nhật state người dùng
+            setUsers(prev =>
+              prev.map(user => user.id === userId ? { ...user, ...response.data } : user)
+            );
+      
+            setEditingUser(null);
+            setError(null);
+      
+            // Thông báo thành công
+            Swal.fire({
+              icon: 'success',
+              title: 'Cập nhật thành công!',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Không thể cập nhật người dùng',
+              text: response.message || 'Có lỗi xảy ra.',
+            });
+          }
         } catch (error) {
-            setError('Không thể cập nhật thông tin người dùng');
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi khi cập nhật người dùng',
+            text: (error as Error).message || 'Đã xảy ra lỗi không xác định.',
+          });
         } finally {
-            setIsLoading(false);
+          setIsLoading(false);
         }
-    };
+      };
 
-    const handleSavePassword = async (userId: string, newPassword: string) => {
+      const handleSavePassword = async (userId: string, newPassword: string) => {
         try {
-            setIsLoading(true);
-            const response = await changePassword(userId, newPassword);
-            if (response.data) {
-                // Note: Don't update password in state for security
-                setIsPasswordFormOpen(false);
-                setPasswordChangeUser(null);
-                setError(null);
-            } else {
-                setError('Không thể thay đổi mật khẩu');
-            }
+          // Hiển thị Swal loading
+          Swal.fire({
+            title: 'Đang thay đổi mật khẩu...',
+            allowOutsideClick: false,
+            didOpen: () => Swal.showLoading(),
+          });
+      
+          const response = await changePassword(userId, newPassword);
+      
+          if (response.data) {
+            // Đóng form đổi mật khẩu
+            setIsPasswordFormOpen(false);
+            setPasswordChangeUser(null);
+            setError(null);
+      
+            // Thông báo thành công
+            Swal.fire({
+              icon: 'success',
+              title: 'Đã thay đổi mật khẩu thành công!',
+              showConfirmButton: false,
+              timer: 1500,
+            });
+          } else {
+            Swal.fire({
+              icon: 'error',
+              title: 'Không thể thay đổi mật khẩu',
+              text: response.message || '',
+            });
+          }
         } catch (error) {
-            setError('Không thể thay đổi mật khẩu');
+          Swal.fire({
+            icon: 'error',
+            title: 'Lỗi khi thay đổi mật khẩu',
+            text: (error as Error).message || 'Đã xảy ra lỗi không xác định.',
+          });
         } finally {
-            setIsLoading(false);
+          setIsLoading(false);
         }
-    };
+      };
 
     const handleRoleChange = async (userId: string, newRole: 'ADMIN' | 'USER') => {
         try {

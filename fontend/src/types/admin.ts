@@ -61,6 +61,6 @@ export interface Notification {
     customerServiceName: string;
     serviceName: string;
     createdAt: string;
-    isRead: boolean;
+    read: boolean;
   }
   

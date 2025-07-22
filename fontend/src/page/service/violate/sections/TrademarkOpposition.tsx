@@ -4,7 +4,7 @@ import { UniversalProcess } from '../../../../component/service/UniversalProcess
 import { ProcessTimeline } from '../../../../component/service/ProcessTimeLine';
 import { Process, ProcessStep } from '../../../../types/service';
 import { getProcessByServiceId, getProcessTimeLineByServiceId } from '../../../../service/service';
-import { useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 const TrademarkOpposition: React.FC = () => {
 
@@ -16,15 +16,15 @@ const TrademarkOpposition: React.FC = () => {
       iconBgClass: 'bg-gradient-to-r from-indigo-500 to-purple-500'
     }
   ]
-  const location = useLocation();
-  const id = location.state?.id;
+  const { id } = useParams<{ id: string }>();
+  const decodedId = id ? atob(id) : undefined;
   const [process, setProcess] = useState<Process[]>([]);
   const [processTineLine, setProcessTimeLine] = useState<ProcessStep[]>([]);
   useEffect(() => {
     const fetchProcessTimeLine = async () => {
       try {
-        if (id) {
-          const response = await getProcessTimeLineByServiceId(id);
+        if (decodedId) {
+          const response = await getProcessTimeLineByServiceId(decodedId);
           setProcessTimeLine(response.data);
         } else {
           console.error('Service ID is undefined');
@@ -34,13 +34,13 @@ const TrademarkOpposition: React.FC = () => {
       }
     }
     fetchProcessTimeLine()
-  }, [id]);
+  }, [decodedId]);
 
   useEffect(() => {
     const fetchProcess = async () => {
       try {
-        if (id) {
-          const response = await getProcessByServiceId(id);
+        if (decodedId) {
+          const response = await getProcessByServiceId(decodedId);
           response.data.sort(
             (a, b) => a.step.localeCompare(b.step)
           )
@@ -53,7 +53,7 @@ const TrademarkOpposition: React.FC = () => {
       }
     };
     fetchProcess();
-  }, [id]);
+  }, [decodedId]);
 
   return (
     <div className='w-full'>

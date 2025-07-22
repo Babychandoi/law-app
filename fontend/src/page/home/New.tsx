@@ -30,7 +30,7 @@ export default function New() {
   }, []);
 
   const handleItemClick = (id : string) => {
-    navigate("new",{state : {id : id}});
+    navigate(`new/${btoa(id)}`);
   };
 
   if (loading) {

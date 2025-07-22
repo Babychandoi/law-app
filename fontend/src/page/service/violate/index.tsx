@@ -3,12 +3,12 @@ import HeroService from '../../../component/service/HeroService';
 import ConsultationForm from '../../../component/Consultation';
 import ToToServices from './sections/ToToService';
 import TrademarkOpposition from './sections/TrademarkOpposition';
-import { useLocation } from 'react-router-dom';
+import {  useParams } from 'react-router-dom';
 import { Hero } from '../../../types/service';
 import { getHeroByServiceId } from '../../../service/service';
 export default function Index() {
-  const location = useLocation();
-  const id = location.state?.id;
+  const { id } = useParams<{ id: string }>();
+  const decodedId = id ? atob(id) : undefined;
     const [hero, setHero] = useState<Hero>({
         title: 'Dịch vụ sở hữu trí tuệ',
         subtitle: 'ToTo Law',
@@ -17,8 +17,8 @@ export default function Index() {
       useEffect(() => {
         const fetchHero = async () => {
           try {
-            if (id) {
-              const response = await getHeroByServiceId(id);
+            if (decodedId) {
+              const response = await getHeroByServiceId(decodedId);
               setHero(response.data);
             } else {
               console.error('Service ID is undefined');
@@ -28,7 +28,7 @@ export default function Index() {
           }
         };
         fetchHero();
-      }, [id]);
+      }, [decodedId]);
       
   return (
     <>

@@ -4,6 +4,8 @@ import { Customer, CustomerDetail} from '../../../../types/admin';
 import { ServiceItem } from '../../../../types/service';
 import { getCustomers,getCustomerById,updateCustomerStatus } from '../../../../service/admin';
 import { getServiceHome } from '../../../../service/service';
+import { toast } from 'react-toastify';
+import Swal from 'sweetalert2';
 const CustomerManagement: React.FC = () => {
   const [allCustomers, setAllCustomers] = useState<Customer[]>([]);
 
@@ -27,10 +29,10 @@ const CustomerManagement: React.FC = () => {
         if (response.code === 200) {
           setServices(response.data);
         } else {
-          console.error("Failed to fetch services:", response.message);
+          toast.warning('Không có dữ liệu dịch vụ nào được trả về!');
         }
       } catch (error) {
-        console.error("Error fetching services:", error);
+        toast.error('Lỗi khi tải danh sách dịch vụ. Vui lòng thử lại!');
       }
     };
 
@@ -42,16 +44,25 @@ const CustomerManagement: React.FC = () => {
   useEffect(() => {
     // Fetch customers from the service
     const fetchCustomers = async () => {
+
       try {
+        Swal.fire({
+          title: 'Đang tải thông tin khách hàng...',
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          }
+        });
         const response = await getCustomers();
         if (response.code === 200) {
+          Swal.close();
           setAllCustomers(response.data);
           setFilteredCustomers(response.data);
         } else {
-          console.error("Failed to fetch customers:", response.message);
+          toast.warning('Lỗi khi tải danh sách khách hàng: ' + response.message);
         }
       } catch (error) {
-        console.error("Error fetching customers:", error);
+        toast.error("Lỗi khi tải danh sách khách hàng: " + (error as Error).message);
       }
     };
 
@@ -135,10 +146,10 @@ const CustomerManagement: React.FC = () => {
             )
           );
         } else {
-          console.error("Failed to update customer status:", response.message);
+          toast.error("Cập nhật trạng thái khách hàng thất bại: " + response.message);
         }
       } catch (error) {
-        console.error("Error updating customer status:", error);
+        toast.error("Lỗi khi cập nhật trạng thái khách hàng: " + (error as Error).message);
       }
     };
 
@@ -161,7 +172,7 @@ const CustomerManagement: React.FC = () => {
       setSelectedCustomer(customerdetail.data);
       setShowModal(true);
     } else {
-      console.error("Failed to fetch customer details:", customerdetail.message);
+      toast.error("Lỗi khi tải chi tiết khách hàng: " + customerdetail.message);
     }
   };
 

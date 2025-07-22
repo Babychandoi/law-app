@@ -134,7 +134,6 @@ const AddNews: React.FC<AddNewsProps> = ({ onSave, onCancel }) => {
           image: formData.image,
           sections: sections
         };
-        console.log(newsData)
         onSave(newsData, imageFile as File);
   };
 

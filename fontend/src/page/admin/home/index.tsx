@@ -7,6 +7,7 @@ import { checkToken } from '../../../service/admin';
 import { tryRefreshToken } from '../../../service/axiosClient';
 
 
+
 const AdminDashboard: React.FC = () => {
 
     const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -31,7 +32,6 @@ const AdminDashboard: React.FC = () => {
             }
           }
         } catch (error) {
-          console.error("Error checking token:", error);
           sessionStorage.clear();
           navigate('/login');
         }

@@ -20,7 +20,7 @@ export const generateMapUrl = (
     iwloc: 'B',
     output: 'embed'
   });
-  
+
   return `https://maps.google.com/maps?${params.toString()}`;
 };
 
@@ -49,10 +49,4 @@ export const getIframeStyles = (loading: boolean): React.CSSProperties => ({
   display: loading ? 'none' : 'block'
 });
 
-export const handleMapLoad = (label: string) => {
-  console.log(`Map loaded successfully: ${label}`);
-};
 
-export const handleMapError = (label: string) => {
-  console.error(`Failed to load Google Maps: ${label}`);
-};

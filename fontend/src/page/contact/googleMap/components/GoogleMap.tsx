@@ -5,9 +5,7 @@ import { DEFAULT_PROPS } from '../constants/GoogleMap.constants';
 import { 
   generateMapUrl, 
   getContainerStyles, 
-  getIframeStyles,
-  handleMapLoad,
-  handleMapError 
+  getIframeStyles, 
 } from '../utils/GoogleMap.utils';
 import LoadingSpinner from './LoadingSpinner';
 
@@ -56,8 +54,6 @@ const GoogleMap: React.FC<GoogleMapProps> = (props) => {
         loading="lazy"
         referrerPolicy="no-referrer-when-downgrade"
         title={`Bản đồ Google Maps - ${label}`}
-        onLoad={() => handleMapLoad(label)}
-        onError={() => handleMapError(label)}
       />
     </div>
   );

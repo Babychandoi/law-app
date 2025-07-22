@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { PreviousPartner } from '../../types/service';
 import { getPreviousPartner } from '../../service/service';
+import { toast } from 'react-toastify';
 const PartnersCarousel = () => {
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
   const [isAutoPlay, setIsAutoPlay] = useState(true);
@@ -16,7 +17,7 @@ const PartnersCarousel = () => {
           setClients(response.data);
         }
       } catch (error) {
-        console.error('Failed to fetch clients:', error);
+        toast.error('Không thể tải danh sách đối tác & khách hàng');
       }
     };
 

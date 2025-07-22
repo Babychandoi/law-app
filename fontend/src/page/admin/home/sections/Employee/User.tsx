@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { UserCreate } from '../../../../../types/admin';
+import { toast } from 'react-toastify';
 
 // User Form Component
 interface UserFormProps {
@@ -107,7 +108,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSave }) => {
             onSave(cleanedData);
             handleClose();
         } catch (error) {
-            console.error('Error saving user:', error);
+            toast.error('Không thể tạo người dùng mới. Vui lòng thử lại sau!');
         } finally {
             setIsLoading(false);
         }

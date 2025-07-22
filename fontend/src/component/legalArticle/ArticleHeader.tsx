@@ -11,7 +11,6 @@ interface HeaderNews {
   id?: string;
 }
 const ArticleHeader: React.FC <HeaderProps> = ({headerNew}) => {
-  console.log(headerNew);
   const [headers] = useState<HeaderNews>(headerNew || {});
   const data: HeaderNews = {
     id : "1",
