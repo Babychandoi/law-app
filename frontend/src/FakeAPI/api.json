@@ -1,0 +1,17 @@
+{
+    "intellectualService": [
+      { "id": 1, "name": "Tư vấn bảo hộ"},
+      { "id": 2, "name": "Đăng kí nhãn hiệu" },
+      {"id": 3, "name": "Sáng chế" }
+    ],
+    "otherService": [
+        { "id": 1, "name": "Tư vấn hợp đồng"},
+        { "id": 2, "name": "Dịch vụ pháp lý" },
+        {"id": 3, "name": "Giải quyết tranh chấp" }
+    ],
+    "News" :[
+        { "id": 1, "name": "Bản tin pháp luật"},
+        { "id": 2, "name": "Thông tin hữu ích" },
+        {"id": 3, "name": "Tuyển dụng" }
+    ]
+  }
