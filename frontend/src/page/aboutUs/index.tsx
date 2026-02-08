@@ -7,6 +7,7 @@ import VideoSection from '../../component/VideoSection';
 import ContactSection from './sections/ContactSection';
 import { Service } from './types';
 import { Seo } from '../../component/Seo';
+
 const HomePage: React.FC = () => {
   const aboutContent = [
     "Dịch vụ Sở hữu trí tuệ – Luật Poip",
@@ -53,7 +54,7 @@ const HomePage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50">
       <Seo 
         title="Về chúng tôi - Luật Poip"
         keywords='Về Luật Poip, dịch vụ pháp lý, sở hữu trí tuệ, bảo hộ nhãn hiệu, bản quyền, giấy phép, tư vấn pháp lý, luật sư sở hữu trí tuệ, Luật Poip'
@@ -63,39 +64,22 @@ const HomePage: React.FC = () => {
         title="Dịch vụ sở hữu trí tuệ"
         subtitle="Poip Law"
       />
-      <div className='human' style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        height: '100vh',
-        width: '100%',
-        backgroundColor: '#f0f0f0',
-        position: 'relative'
-      }} >
-        <img src="/assets/images/human.webp" alt="" style={{ width: '80%', 
-        height: 'auto' }}
-        />
-     </div>
       <AboutSection 
         title="VỀ CHÚNG TÔI"
         content={aboutContent}
         image="/assets/images/about-law.webp"
       />
-      
       <ServicesSection 
         title="DỊCH VỤ CỦA CHÚNG TÔI"
         services={services}
         image="/assets/images/legal-services.webp"
       />
-      
       <TeamSection 
         title="NHÂN SỰ CỦA CHÚNG TÔI"
         content={teamContent}
         image="/assets/images/law-team.webp"
       />
-      
       <VideoSection />
-      
       <ContactSection 
         title="Liên hệ chúng tôi"
         buttonText="Liên hệ"

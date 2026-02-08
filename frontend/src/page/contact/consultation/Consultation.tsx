@@ -4,49 +4,11 @@ import Contact from './Contact'
 
 export default function Consultation() {
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row', // default desktop
-        flexWrap: 'wrap', // để auto xuống dòng nếu không đủ
-        justifyContent: 'center',
-        padding: '20px',
-        backgroundColor: '#f5f5f5',
-        fontFamily: 'Arial, sans-serif',
-        color: '#333',
-        textAlign: 'center',
-        boxSizing: 'border-box',
-        margin: '0 auto',
-        borderRadius: '8px',
-        boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-      }}
-    >
-      <div
-        style={{
-          flex: '1 1 300px', // grow-shrink-basis
-          maxWidth: '600px',
-          minWidth: '280px',
-          padding: '20px',
-          backgroundColor: '#fff',
-          borderRadius: '8px',
-          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-          margin: '20px',
-        }}
-      >
+    <div className="flex flex-col lg:flex-row flex-wrap justify-center py-5 px-0 md:px-5 bg-gray-50">
+      <div className="w-full lg:flex-1 lg:min-w-[280px] lg:max-w-[600px] p-0 md:p-5 bg-white md:rounded-2xl md:shadow-2xl m-0 md:m-5">
         <ConsultationForm />
       </div>
-      <div
-        style={{
-          flex: '1 1 300px',
-          maxWidth: '600px',
-          minWidth: '280px',
-          padding: '20px',
-          backgroundColor: '#fff',
-          borderRadius: '8px',
-          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.1)',
-          margin: '20px',
-        }}
-      >
+      <div className="w-full lg:flex-1 lg:min-w-[280px] lg:max-w-[600px] p-0 md:p-5 bg-white md:rounded-2xl md:shadow-2xl m-0 md:m-5">
         <Contact />
       </div>
     </div>

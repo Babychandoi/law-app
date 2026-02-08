@@ -5,6 +5,7 @@ import { Job } from '../../types/service';
 import { getJobs, searchJobs } from '../../service/service';
 import { jobListingConfig } from './jobData';
 import {Seo } from '../../component/Seo';
+import ChoosePoip from '../../component/recruitment/ChoosePoip';
 const JobListing: React.FC = () => {
   const navigate = useNavigate();
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -84,12 +85,17 @@ const JobListing: React.FC = () => {
         keywords='Tuyển dụng, việc làm, cơ hội nghề nghiệp, luật sư, Luật Poip'
         description="Khám phá cơ hội nghề nghiệp tại Luật Poip. Tham gia đội ngũ chuyên nghiệp của chúng tôi và phát triển sự nghiệp trong lĩnh vực pháp luật." />  
       {/* Tiêu đề trang */}
-      <div className="mb-8">
-        <h3 className="text-3xl font-bold text-gray-800">
-          <span className="border-b-2 border-blue-500 pb-2">Tuyển dụng</span>
-        </h3>
+      <div className="mb-12 text-center">
+        <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent">
+          Tuyển dụng
+        </h1>
+        <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
+          Gia nhập đội ngũ chuyên nghiệp của Luật Poip - Nơi bạn phát triển sự nghiệp cùng chúng tôi
+        </p>
+        <div className="w-24 h-1 bg-[#f2c64d] mx-auto">
+        </div>
       </div>
-
+      <ChoosePoip />
       {/* Bộ lọc */}
       <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
         <form onSubmit={handleSearch}>
@@ -233,7 +239,7 @@ const JobListing: React.FC = () => {
 
                   <div className="flex items-center">
                     <Calendar className="w-4 h-4 mr-2 text-orange-500" />
-                    <span>{job.postedDate}</span>
+                    <span>{new Date(job.postedDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
                   </div>
                 </div>
               </div>

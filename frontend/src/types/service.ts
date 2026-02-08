@@ -67,6 +67,7 @@ export interface ServiceItem {
     description: string;
     href: string;
     id : string;
+    color?: string;
   }
   export interface CustomerService {
     name: string;

@@ -88,7 +88,7 @@ const JobComponent : React.FC = () => {
                         </div>
                         <div className="flex items-center gap-2">
                             <Calendar className="w-5 h-5" />
-                            <span>{job.postedDate}</span>
+                            <span>{new Date(job.postedDate).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' })}</span>
                         </div>
                     </div>
                 </div>

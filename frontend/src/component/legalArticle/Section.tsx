@@ -14,31 +14,39 @@ const Section: React.FC<SectionProps> = ({
   title,
   content,
   icon,
-  isExpanded,
-  onToggle,
 }) => {
+  const colors = [
+    'from-blue-400 to-indigo-400',
+    'from-green-400 to-emerald-400',
+    'from-purple-400 to-pink-400',
+    'from-orange-400 to-red-400',
+    'from-yellow-400 to-orange-400',
+    'from-teal-400 to-cyan-400'
+  ];
+  
+  const colorIndex = parseInt(id.replace(/\D/g, '') || '0') % colors.length;
+  const gradientColor = colors[colorIndex];
+
   return (
-    <div id ={id} className="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-xl">
-      <button
-        onClick={() => onToggle(id)}
-        className="w-full p-6 text-left flex items-center justify-between hover:bg-gray-50 transition-colors"
-      >
-        <div className="flex items-center gap-4">
-          <div className="h-10 w-10 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-lg flex items-center justify-center text-white">
+    <div 
+      id={id} 
+      className="group bg-white rounded-2xl shadow-2xl border-2 border-gray-100 overflow-hidden transition-all duration-300 hover:shadow-3xl hover:scale-[1.01] hover:border-gray-200"
+    >
+      <div className="p-6">
+        <div className="flex items-center gap-4 mb-6">
+          <div className={`h-12 w-12 bg-gradient-to-br ${gradientColor} rounded-2xl flex items-center justify-center text-white shadow-lg flex-shrink-0`}>
             {icon}
           </div>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-2xl font-bold text-gray-900">
             {title}
           </h2>
         </div>
-      </button>
-        <div className="px-6 pb-6 border-t border-gray-100">
-          <div className="pt-6">
-            <p className="text-gray-700 leading-relaxed text-justify whitespace-pre-line">
-              {content}
-            </p>
-          </div>
-        </div>
+        
+        <div className={`h-1 w-20 bg-gradient-to-r ${gradientColor} rounded-full mb-4`}></div>
+        <p className="text-gray-700 leading-relaxed text-justify whitespace-pre-line">
+          {content}
+        </p>
+      </div>
     </div>
   );
 };

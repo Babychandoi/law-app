@@ -25,8 +25,8 @@ const ChatyWidget: React.FC = () => {
     name: 'Chat trực tiếp',
     ariaLabel: 'Chat trực tiếp',
     hoverText: 'Hỗ trợ trực tiếp',
-    color: '#3B82F6',
-    bgGradient: 'from-blue-500 to-blue-600',
+    color: '#F59E0B',
+    bgGradient: 'from-yellow-400 via-orange-400 to-red-400',
     icon: <MessageCircle className="w-5 h-5" />,
     onClick: () => setShowChat(prev => !prev),
   };
@@ -81,7 +81,7 @@ const ChatyWidget: React.FC = () => {
     {
       id: 'zalo',
       name: 'Zalo',
-      href: 'https://zalo.me/0947600064',
+      href: 'https://zalo.me/0346903548',
       target: '_blank',
       ariaLabel: 'Chat qua Zalo',
       hoverText: 'Chat qua Zalo',
@@ -96,7 +96,7 @@ const ChatyWidget: React.FC = () => {
     {
       id: 'phone',
       name: 'Điện thoại',
-      href: 'tel:0947600064',
+      href: 'tel:0346.903.548',
       ariaLabel: 'Gọi điện thoại',
       hoverText: 'Gọi ngay: 094 760 0064',
       color: '#059669',
