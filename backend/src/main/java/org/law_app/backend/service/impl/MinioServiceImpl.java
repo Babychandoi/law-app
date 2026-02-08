@@ -59,14 +59,9 @@ public class MinioServiceImpl implements MinioService {
     }
     public  String generateFileUrl(String bucket, String objectName) {
         try{
-            return minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs.builder()
-                            .method(Method.GET)
-                            .bucket(bucket)
-                            .object(objectName)
-                            .expiry(60 * 60 * 12) // URL valid for 1 day
-                            .build()
-            );
+            return minioConfig.getPublicUrl()
+           	 + "/" + bucket
+           	 + "/" + objectName;
         } catch (Exception e) {
             log.error("Error generating file URL: {}", e.getMessage());
             throw new RuntimeException("Failed to generate file URL", e);

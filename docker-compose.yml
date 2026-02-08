@@ -1,6 +1,23 @@
-version: '3.8'
-
 services:
+  # ==================== NGINX ====================
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: law-app-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./certbot/www:/var/www/certbot
+      - ./certbot/conf:/etc/letsencrypt
+    depends_on:
+      - frontend
+      - backend
+      - minio
+    networks:
+      - law-app-network
+    restart: unless-stopped
+
   # ==================== FRONTEND ====================
   frontend:
     build:
@@ -11,10 +28,6 @@ services:
         REACT_APP_WS_URL: ${REACT_APP_WS_URL}
         REACT_APP_CHAT_WS_URL: ${REACT_APP_CHAT_WS_URL}
     container_name: law-app-frontend
-    ports:
-      - "3000:80"
-    depends_on:
-      - backend
     networks:
       - law-app-network
     restart: unless-stopped
@@ -25,8 +38,6 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: law-app-backend
-    ports:
-      - "8080:8080"
     env_file:
       - .env
     depends_on:
@@ -62,7 +73,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 30s
     networks:
       - law-app-network
     restart: unless-stopped
@@ -74,9 +84,12 @@ services:
     ports:
       - "27017:27017"
     environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
       MONGO_INITDB_DATABASE: ${SPRING_DATA_MONGODB_DATABASE}
     volumes:
       - mongodb_data:/data/db
+      - ./docker/mongo/init:/docker-entrypoint-initdb.d
     networks:
       - law-app-network
     restart: unless-stopped
@@ -85,11 +98,9 @@ services:
   redis:
     image: redis:7-alpine
     container_name: law-app-redis
-    ports:
-      - "6379:6379"
+    command: redis-server --appendonly yes
     volumes:
       - redis_data:/data
-    command: redis-server --appendonly yes
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 10s
@@ -99,7 +110,7 @@ services:
       - law-app-network
     restart: unless-stopped
 
-  # ==================== MINIO (Object Storage) ====================
+  # ==================== MINIO ====================
   minio:
     image: minio/minio:latest
     container_name: law-app-minio
@@ -121,10 +132,9 @@ services:
       - law-app-network
     restart: unless-stopped
 
-  # ==================== MINIO SETUP (Create Buckets) ====================
+  # ==================== MINIO SETUP ====================
   minio-setup:
     image: minio/mc:latest
-    container_name: law-app-minio-setup
     depends_on:
       - minio
     env_file:
@@ -135,24 +145,17 @@ services:
       mc alias set myminio http://minio:9000 $${MINIO_ACCESS_KEY} $${MINIO_SECRET_KEY};
       mc mb myminio/$${MINIO_BUCKET_IMAGES} --ignore-existing;
       mc anonymous set public myminio/$${MINIO_BUCKET_IMAGES};
-      echo 'MinIO bucket setup completed!';
       exit 0;
       "
     networks:
       - law-app-network
 
-# ==================== VOLUMES ====================
 volumes:
   mysql_data:
-    driver: local
   mongodb_data:
-    driver: local
   redis_data:
-    driver: local
   minio_data:
-    driver: local
 
-# ==================== NETWORKS ====================
 networks:
   law-app-network:
     driver: bridge

@@ -2,28 +2,14 @@ spring:
   application:
     name: ${SPRING_APPLICATION_NAME}
 
-  devtools:
-    restart:
-      log-condition-evaluation-delta: false  # Tắt hoàn toàn delta logging
-
+  # ================= DATASOURCE (MYSQL) =================
   datasource:
     url: ${SPRING_DATASOURCE_URL}
     username: ${SPRING_DATASOURCE_USERNAME}
     password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: ${SPRING_DATASOURCE_DRIVER_CLASS_NAME}
 
-  mail:
-    host: smtp.gmail.com
-    port: 587
-    username: ${EMAIL_USERNAME}
-    password: ${EMAIL_PASSWORD}
-    properties:
-      mail:
-        smtp:
-          auth: true
-          starttls:
-            enable: true
-
+  # ================= JPA / HIBERNATE =================
   jpa:
     database-platform: ${SPRING_JPA_DATABASE_PLATFORM}
     generate-ddl: ${SPRING_JPA_GENERATE_DDL}
@@ -38,37 +24,53 @@ spring:
         globally_quoted_identifiers: ${SPRING_JPA_PROPERTIES_HIBERNATE_GLOBALLY_QUOTED_IDENTIFIERS}
         format_sql: ${SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL}
 
+  # ================= MONGODB =================
   data:
     mongodb:
-      host: ${SPRING_DATA_MONGODB_HOST:localhost}
-      port: ${SPRING_DATA_MONGODB_PORT:27017}
-      database: ${SPRING_DATA_MONGODB_DATABASE:law-app-chat}
+      uri: mongodb://root:${MONGO_ROOT_PASSWORD}@${SPRING_DATA_MONGODB_HOST}:${SPRING_DATA_MONGODB_PORT}/${SPRING_DATA_MONGODB_DATABASE}?authSource=admin
 
+    # ================= REDIS =================
     redis:
       host: ${SPRING_DATA_REDIS_HOST}
       port: ${SPRING_DATA_REDIS_PORT}
 
+  # ================= FILE UPLOAD =================
   servlet:
     multipart:
       max-file-size: ${SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE}
       max-request-size: ${SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE}
 
-# Logging configuration (at root level, not under spring)
+  # ================= EMAIL =================
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+# ================= LOGGING =================
 logging:
   level:
     org.hibernate.SQL: ${LOGGING_LEVEL_ORG_HIBERNATE_SQL}
     org.hibernate.type.descriptor.sql: ${LOGGING_LEVEL_ORG_HIBERNATE_TYPE_DESCRIPTOR_SQL}
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG
-    org.springframework.boot.autoconfigure.condition: ERROR  # Tắt condition evaluation delta log
+    org.springframework.boot.autoconfigure.condition: ERROR
 
-# Custom application properties (not under spring namespace)
+# ================= JWT =================
 jwt:
   signerKey: ${JWT_SIGNER_KEY}
   valid-duration: ${JWT_VALID_DURATION}
   refreshable-duration: ${JWT_REFRESHABLE_DURATION}
 
+# ================= MINIO =================
 minio:
   url: ${MINIO_URL}
+  public-url: ${MINIO_PUBLIC_URL}
   access-key: ${MINIO_ACCESS_KEY}
   secret-key: ${MINIO_SECRET_KEY}
   bucket:

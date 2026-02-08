@@ -18,6 +18,9 @@ public class MinioConfig {
     @Value("${minio.secret-key}")
     private String secretKey;
 
+    @Value("${minio.public-url}")
+    private String publicUrl;
+
     @Value("${minio.bucket.images}")
     private String imagesBucket;
 

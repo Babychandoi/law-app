@@ -38,7 +38,8 @@ public class SecurityConfig {
     private CustomJwtDecoder customJwtDecoder;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(request-> request
+        http	.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+		.authorizeHttpRequests(request-> request
 
                 .requestMatchers(HttpMethod.POST,AuthorizedUrls).permitAll()
                 .requestMatchers(HttpMethod.GET, AuthorizedUrlsPublic)
@@ -61,7 +62,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:3000")); // Nguồn gốc được phép
+        configuration.setAllowedOrigins(List.of(
+		"http://localhost:3000",
+		"http://103.56.160.193:3000",
+		"https://luatpoip.com"
+	)); // Nguồn gốc được phép
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
