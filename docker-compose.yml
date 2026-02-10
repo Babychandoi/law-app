@@ -1,8 +1,11 @@
+version: "3.9"
+
 services:
   # ==================== NGINX ====================
   nginx:
     image: nginx:1.25-alpine
     container_name: law-app-nginx
+    mem_limit: 64m
     ports:
       - "80:80"
       - "443:443"
@@ -57,6 +60,7 @@ services:
   mysql:
     image: mysql:8.0
     container_name: law-app-mysql
+    mem_limit: 512m
     ports:
       - "3306:3306"
     environment:
@@ -69,7 +73,7 @@ services:
       - ./docker/mysql/init:/docker-entrypoint-initdb.d
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD}"]
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -81,6 +85,7 @@ services:
   mongodb:
     image: mongo:7.0
     container_name: law-app-mongodb
+    mem_limit: 384m
     ports:
       - "27017:27017"
     environment:
@@ -114,6 +119,7 @@ services:
   minio:
     image: minio/minio:latest
     container_name: law-app-minio
+    mem_limit: 256m
     ports:
       - "9000:9000"
       - "9001:9001"
@@ -159,3 +165,4 @@ volumes:
 networks:
   law-app-network:
     driver: bridge
+
