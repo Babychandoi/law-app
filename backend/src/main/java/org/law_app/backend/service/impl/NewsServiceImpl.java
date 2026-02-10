@@ -7,11 +7,9 @@ import org.law_app.backend.dto.request.NewsRequest;
 import org.law_app.backend.dto.response.NewsResponse;
 import org.law_app.backend.entity.CustomerSubscribe;
 import org.law_app.backend.entity.News;
-import org.law_app.backend.entity.SectionNews;
 import org.law_app.backend.mapper.NewsMapper;
 import org.law_app.backend.repository.CustomerSubscribeRepository;
 import org.law_app.backend.repository.NewsRepository;
-import org.law_app.backend.repository.SectionNewsRepository;
 import org.law_app.backend.security.MinioConfig;
 import org.law_app.backend.service.EmailService;
 import org.law_app.backend.service.MinioService;
@@ -30,7 +28,6 @@ import java.util.stream.Collectors;
 @FieldDefaults(makeFinal = true, level = lombok.AccessLevel.PRIVATE)
 public class NewsServiceImpl implements NewsService {
     NewsRepository newsRepository;
-    SectionNewsRepository sectionNewsRepository;
     CustomerSubscribeRepository customerSubscribeRepository;
     EmailService emailService;
     NewsMapper newsMapper;
@@ -39,15 +36,69 @@ public class NewsServiceImpl implements NewsService {
     @Override
     @Transactional
     public NewsResponse createNews(NewsRequest newsRequest) {
-        try{
-            News news = newsRepository.save(newsMapper.toNews(newsRequest));
+        try {
+            // Generate slug from title FIRST
+            String slug = generateSlug(newsRequest.getTitle());
+            
+            // Check if slug exists, if yes, append number
+            String finalSlug = slug;
+            int counter = 1;
+            while (newsRepository.existsById(finalSlug)) {
+                finalSlug = slug + "-" + counter;
+                counter++;
+            }
+            
+            // Set the ID in the request before mapping
+            newsRequest.setId(finalSlug);
+            
+            // Map to entity (will include fullContent)
+            News news = newsMapper.toNews(newsRequest);
+            
+            // Save the news with fullContent
+            news = newsRepository.save(news);
+            
             NewsResponse newsResponse = newsMapper.toNewsResponse(news);
-            newsResponse.setImage(minioService.generateFileUrl(minioConfig.getImagesBucket(), news.getImage()));
+            
+            // Only generate URL if image is not already a full URL
+            String imageUrl = news.getImage();
+            if (imageUrl != null && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                imageUrl = minioService.generateFileUrl(minioConfig.getImagesBucket(), imageUrl);
+            }
+            newsResponse.setImage(imageUrl);
+            
             return newsResponse;
         } catch (Exception e) {
-            log.error("Error creating news: {}", e.getMessage());
+            log.error("Error creating news: {}", e.getMessage(), e);
             throw new RuntimeException("Failed to create news", e);
         }
+    }
+    
+    private String generateSlug(String title) {
+        if (title == null || title.isEmpty()) {
+            return "untitled";
+        }
+        
+        // Convert Vietnamese characters to ASCII
+        String slug = title.toLowerCase();
+        
+        // Vietnamese character mapping
+        slug = slug.replaceAll("[àáạảãâầấậẩẫăằắặẳẵ]", "a");
+        slug = slug.replaceAll("[èéẹẻẽêềếệểễ]", "e");
+        slug = slug.replaceAll("[ìíịỉĩ]", "i");
+        slug = slug.replaceAll("[òóọỏõôồốộổỗơờớợởỡ]", "o");
+        slug = slug.replaceAll("[ùúụủũưừứựửữ]", "u");
+        slug = slug.replaceAll("[ỳýỵỷỹ]", "y");
+        slug = slug.replaceAll("đ", "d");
+        
+        // Remove special characters and replace spaces with hyphens
+        slug = slug.replaceAll("[^a-z0-9\\s-]", "");
+        slug = slug.trim().replaceAll("\\s+", "-");
+        slug = slug.replaceAll("-+", "-");
+        
+        // Remove leading/trailing hyphens
+        slug = slug.replaceAll("^-+|-+$", "");
+        
+        return slug.isEmpty() ? "untitled" : slug;
     }
 
     @Override
@@ -55,14 +106,21 @@ public class NewsServiceImpl implements NewsService {
         try {
             List<News> news = newsRepository.findAll();
             return news.stream()
-                    .map(n -> NewsResponse.builder()
-                            .id(n.getId())
-                            .title(n.getTitle())
-                            .subtitle(n.getSubtitle())
-                            .author(n.getAuthor())
-                            .image(minioService.generateFileUrl(minioConfig.getImagesBucket(),n.getImage()))
-                            .createdAt(n.getCreatedAt())
-                            .build())
+                    .map(n -> {
+                        String imageUrl = n.getImage();
+                        // Only generate URL if image is not already a full URL
+                        if (imageUrl != null && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                            imageUrl = minioService.generateFileUrl(minioConfig.getImagesBucket(), imageUrl);
+                        }
+                        return NewsResponse.builder()
+                                .id(n.getId())
+                                .title(n.getTitle())
+                                .subtitle(n.getSubtitle())
+                                .author(n.getAuthor())
+                                .image(imageUrl)
+                                .createdAt(n.getCreatedAt())
+                                .build();
+                    })
                     .collect(Collectors.toList());
         }catch (Exception e) {
             log.error("Error fetching all news: {}", e.getMessage());
@@ -76,7 +134,14 @@ public class NewsServiceImpl implements NewsService {
             News news = newsRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("News not found with id: " + id));
             NewsResponse newsResponse = newsMapper.toNewsResponse(news);
-            newsResponse.setImage(minioService.generateFileUrl(minioConfig.getImagesBucket(), news.getImage()));
+            
+            // Only generate URL if image is not already a full URL
+            String imageUrl = news.getImage();
+            if (imageUrl != null && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                imageUrl = minioService.generateFileUrl(minioConfig.getImagesBucket(), imageUrl);
+            }
+            newsResponse.setImage(imageUrl);
+            
             return newsResponse;
         } catch (Exception e) {
             log.error("Error fetching news by id: {}", e.getMessage());
@@ -90,14 +155,18 @@ public class NewsServiceImpl implements NewsService {
             News existingNews = newsRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("News not found with id: " + id));
 
-            sectionNewsRepository.deleteAll(existingNews.getSections());
-
-            // ✅ Cập nhật trực tiếp
+            // Update news from request
             newsMapper.updateNewsFromRequest(existingNews, newsRequest);
 
-            // ✅ Không còn lỗi detached entity
             NewsResponse newsResponse = newsMapper.toNewsResponse(existingNews);
-            newsResponse.setImage(minioService.generateFileUrl(minioConfig.getImagesBucket(), existingNews.getImage()));
+            
+            // Only generate URL if image is not already a full URL
+            String imageUrl = existingNews.getImage();
+            if (imageUrl != null && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+                imageUrl = minioService.generateFileUrl(minioConfig.getImagesBucket(), imageUrl);
+            }
+            newsResponse.setImage(imageUrl);
+            
             return newsResponse;
         } catch (Exception e) {
             log.error("Error updating news: {}", e.getMessage());
@@ -111,7 +180,6 @@ public class NewsServiceImpl implements NewsService {
         try {
             News news = newsRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("News not found with id: " + id));
-            sectionNewsRepository.deleteAll(news.getSections());
             newsRepository.delete(news);
             return true;
         } catch (Exception e) {

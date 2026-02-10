@@ -7,10 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
-import org.law_app.backend.dto.response.SectionNewsResponse;
-
-import java.util.Date;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -24,5 +20,5 @@ public class NewsRequest {
     String subtitle; // Subtitle of the news article
     String author; // Author of the news article
     String image; // Image associated with the news article
-    List<SectionNewsRequest> sections; // List of sections associated with the news article
+    String fullContent; // Full HTML content from rich text editor
 }

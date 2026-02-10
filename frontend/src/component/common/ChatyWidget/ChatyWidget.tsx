@@ -98,7 +98,7 @@ const ChatyWidget: React.FC = () => {
       name: 'Điện thoại',
       href: 'tel:0346.903.548',
       ariaLabel: 'Gọi điện thoại',
-      hoverText: 'Gọi ngay: 094 760 0064',
+      hoverText: 'Gọi ngay: 0346 903 548',
       color: '#059669',
       bgGradient: 'from-emerald-600 to-green-600',
       icon: <Phone className="w-5 h-5" />

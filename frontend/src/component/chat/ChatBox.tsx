@@ -91,6 +91,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
   const [apiError, setApiError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [retryCount, setRetryCount] = useState(0);
+  const [isAITyping, setIsAITyping] = useState(false); // NEW: AI typing indicator
   
   // Refs
   const clientRef = useRef<Client | null>(null);
@@ -216,6 +217,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
           client.subscribe(`/topic/chat/${guestId}`, (message: IMessage) => {
             try {
               const msg: ChatMessage = JSON.parse(message.body);
+              
+              // Hide AI typing indicator when message arrives
+              setIsAITyping(false);
+              
               setMessages(prev => {
                 const existingIndex = prev.findIndex(existingMsg => 
                   (existingMsg.id && existingMsg.id === msg.id) ||
@@ -333,6 +338,18 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
 
       setMessage('');
       setApiError(null);
+      
+      // Show AI typing indicator after sending message
+      setTimeout(() => {
+        setIsAITyping(true);
+        scrollToBottom();
+      }, 500);
+      
+      // Hide typing indicator after 10 seconds if no response
+      setTimeout(() => {
+        setIsAITyping(false);
+      }, 10000);
+      
       setTimeout(() => scrollToBottom(), 100);
       setTimeout(() => messageInputRef.current?.focus(), 100);
       
@@ -533,6 +550,18 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
                         )}
                       </div>
                     )}
+                    
+                    {/* AI Bot Indicator */}
+                    {msg.senderType === 'ADMIN' && msg.adminId === 'AI-BOT' && (
+                      <div className="flex items-center space-x-1 mt-2 pt-2 border-t border-gray-200">
+                        <div className="w-4 h-4 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
+                          <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"/>
+                            <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"/>
+                          </svg>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   {msg.createdAt && msg.status !== 'sending' && (
                     <div className={`text-xs mt-1 px-2 ${
@@ -544,6 +573,30 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
                 </div>
               </div>
             ))}
+            
+            {/* AI Typing Indicator */}
+            {isAITyping && (
+              <div className="flex justify-start animate-fade-in">
+                <div className="max-w-[80%]">
+                  <div className="px-4 py-3 rounded-2xl bg-white border border-gray-200 rounded-bl-md shadow-sm">
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center animate-pulse">
+                        <svg className="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"/>
+                        </svg>
+                      </div>
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '0ms'}}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '150ms'}}></div>
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{animationDelay: '300ms'}}></div>
+                      </div>
+                      <span className="text-xs text-gray-500">Đang trả lời...</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <div ref={messagesEndRef} />
         </div>
 

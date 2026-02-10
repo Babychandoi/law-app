@@ -2,6 +2,7 @@ package org.law_app.backend.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.law_app.backend.common.SenderType;
 import org.law_app.backend.dto.request.ChatRequest;
 import org.law_app.backend.dto.response.ApiResponse;
 import org.law_app.backend.dto.response.ChatMessageResponse;
@@ -9,6 +10,7 @@ import org.law_app.backend.dto.response.ChatStatsResponse;
 import org.law_app.backend.dto.response.ConversationResponse;
 import org.law_app.backend.entity.ChatMessage;
 import org.law_app.backend.service.ChatService;
+import org.law_app.backend.service.ChatbotAIService;
 import org.law_app.backend.service.NotificationService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -16,6 +18,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("/chat")
@@ -27,6 +30,7 @@ public class ChatController {
     private final ChatService chatService;
     private final SimpMessagingTemplate messagingTemplate;
     private final NotificationService notificationService;
+    private final ChatbotAIService chatbotAIService;
 
     /**
      * WebSocket endpoint for sending messages
@@ -38,6 +42,14 @@ public class ChatController {
         
         // Save message to database
         ChatMessage savedMessage = chatService.saveMessage(chatRequest);
+        
+        // ===== ADMIN TAKEOVER LOGIC =====
+        // If message is from ADMIN, disable AI for this conversation
+        if ("ADMIN".equals(chatRequest.getSenderType().toString())) {
+            chatbotAIService.disableAIForGuest(chatRequest.getGuestId());
+            log.info("Admin took over conversation for guest: {}", chatRequest.getGuestId());
+        }
+        // ===== END ADMIN TAKEOVER LOGIC =====
         
         // Create response
         ChatMessageResponse response = ChatMessageResponse.builder()
@@ -55,6 +67,57 @@ public class ChatController {
         
         // Also notify admin dashboard
         messagingTemplate.convertAndSend("/topic/admin/messages", response);
+        
+        // ===== AI CHATBOT LOGIC =====
+        // If message is from guest and AI should respond
+        if ("GUEST".equals(chatRequest.getSenderType().toString()) && 
+            chatbotAIService.shouldAIRespond(chatRequest.getGuestId())) {
+            
+            // Generate AI response asynchronously to not block
+            CompletableFuture.runAsync(() -> {
+                try {
+                    String aiResponse = chatbotAIService.generateResponse(
+                        chatRequest.getGuestId(), 
+                        chatRequest.getContent()
+                    );
+                    
+                    if (aiResponse != null && !aiResponse.isEmpty()) {
+                        // Create AI message
+                        ChatRequest aiRequest = new ChatRequest();
+                        aiRequest.setGuestId(chatRequest.getGuestId());
+                        aiRequest.setContent(aiResponse);
+                        aiRequest.setSenderType(SenderType.ADMIN); // AI messages are ADMIN type
+                        
+                        // Save AI message with special admin ID
+                        ChatMessage aiMessage = chatService.saveMessage(aiRequest);
+                        
+                        // Send AI response to guest
+                        ChatMessageResponse aiMessageResponse = ChatMessageResponse.builder()
+                                .id(aiMessage.getId())
+                                .guestId(aiMessage.getGuestId())
+                                .content(aiMessage.getContent())
+                                .senderType(aiMessage.getSenderType())
+                                .createdAt(aiMessage.getCreatedAt())
+                                .adminId("AI-BOT")
+                                .isRead(false)
+                                .build();
+                        
+                        // Small delay to make it feel more natural
+                        Thread.sleep(1500);
+                        
+                        messagingTemplate.convertAndSend(
+                            "/topic/chat/" + chatRequest.getGuestId(), 
+                            aiMessageResponse
+                        );
+                        
+                        log.info("AI response sent to guest: {}", chatRequest.getGuestId());
+                    }
+                } catch (Exception e) {
+                    log.error("Error generating AI response: {}", e.getMessage(), e);
+                }
+            });
+        }
+        // ===== END AI CHATBOT LOGIC =====
         
         // Create notification for admin if message is from guest
         if ("GUEST".equals(chatRequest.getSenderType().toString())) {
@@ -189,12 +252,15 @@ public class ChatController {
     }
 
     /**
-     * Admin sends message to guest
+     * Admin sends message to guest - this disables AI
      * POST /chat/admin/send
      */
     @PostMapping("/admin/send")
     public ApiResponse<ChatMessageResponse> adminSendMessage(@RequestBody ChatRequest chatRequest) {
         log.info("Admin sending message to guest: {}", chatRequest.getGuestId());
+        
+        // Disable AI when admin takes over
+        chatbotAIService.disableAIForGuest(chatRequest.getGuestId());
         
         ChatMessage savedMessage = chatService.saveMessage(chatRequest);
         
@@ -215,6 +281,34 @@ public class ChatController {
                 .code(200)
                 .message("Message sent successfully")
                 .data(response)
+                .build();
+    }
+    
+    /**
+     * Enable AI for a conversation
+     * PUT /chat/admin/conversations/{guestId}/enable-ai
+     */
+    @PutMapping("/admin/conversations/{guestId}/enable-ai")
+    public ApiResponse<Void> enableAI(@PathVariable String guestId) {
+        log.info("Enabling AI for guest: {}", guestId);
+        chatbotAIService.enableAIForGuest(guestId);
+        return ApiResponse.<Void>builder()
+                .code(200)
+                .message("AI enabled for conversation")
+                .build();
+    }
+
+    /**
+     * Disable AI for a conversation
+     * PUT /chat/admin/conversations/{guestId}/disable-ai
+     */
+    @PutMapping("/admin/conversations/{guestId}/disable-ai")
+    public ApiResponse<Void> disableAI(@PathVariable String guestId) {
+        log.info("Disabling AI for guest: {}", guestId);
+        chatbotAIService.disableAIForGuest(guestId);
+        return ApiResponse.<Void>builder()
+                .code(200)
+                .message("AI disabled for conversation")
                 .build();
     }
 

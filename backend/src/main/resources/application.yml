@@ -75,3 +75,15 @@ minio:
   secret-key: ${MINIO_SECRET_KEY}
   bucket:
     images: ${MINIO_BUCKET_IMAGES}
+
+# ================= DEEPSEEK AI CHATBOT =================
+deepseek:
+  api:
+    key: ${DEEPSEEK_API_KEY}
+    url: ${DEEPSEEK_API_URL:https://api.deepseek.com/v1/chat/completions}
+  model: ${DEEPSEEK_MODEL:deepseek-chat}
+  temperature: ${DEEPSEEK_TEMPERATURE:0.7}
+  max-tokens: ${DEEPSEEK_MAX_TOKENS:8192}
+
+chatbot:
+  enabled: ${CHATBOT_ENABLED:true}

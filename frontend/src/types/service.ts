@@ -95,13 +95,7 @@ export interface ServiceItem {
     createdAt?: Date;
     author: string;
     image? : string;
-    sections? : SectionNews[];
-  }
-  export interface SectionNews{
-    id?: string;
-    title: string;
-    content: string;
-    icon: string;
+    fullContent?: string; // Full HTML content from rich text editor
   }
 export interface BreadcrumbItem {
   name: string;

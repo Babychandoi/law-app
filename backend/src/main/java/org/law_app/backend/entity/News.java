@@ -19,16 +19,14 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class News {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id; // Unique identifier for the news article
+    String id; // Unique identifier for the news article (slug from title)
     String title; // Title of the news article
     @Column(length = 10000)
     String subtitle; // Subtitle of the news article
     String author; // Author of the news article
     @CreationTimestamp
     Date createdAt; // Timestamp when the news article was created
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "news_id", referencedColumnName = "id")
-    List<SectionNews> sections; // List of sections associated with the news article
+    @Column(length = 50000)
+    String fullContent; // Full HTML content from rich text editor
     String image;
 }

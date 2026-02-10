@@ -4,18 +4,28 @@ import org.law_app.backend.common.Color;
 import org.law_app.backend.dto.request.*;
 import org.law_app.backend.dto.response.*;
 import org.law_app.backend.entity.*;
+import org.law_app.backend.service.MinioService;
 import org.mapstruct.Mapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 @Mapper(componentModel = "spring")
-public interface ServiceMapper {
-    default ServiceResponse toServiceResponse(Services services){
+public abstract class ServiceMapper {
+
+    @Autowired
+    protected MinioService minioService;
+    
+    @Value("${minio.bucket.images}")
+    protected String imagesBucket;
+
+    public ServiceResponse toServiceResponse(Services services){
         return ServiceResponse.builder()
                 .id(services.getId())
                 .title(services.getTitle())
                 .href(services.getHref())
                 .build();
     }
-    default ServicesHomeResponse toServicesHomeResponse(ChildrenServices services) {
+    public ServicesHomeResponse toServicesHomeResponse(ChildrenServices services) {
         return ServicesHomeResponse.builder()
                 .id(services.getId())
                 .icon(services.getIcon())
@@ -24,16 +34,17 @@ public interface ServiceMapper {
                 .description(services.getDescriptionHome())
                 .build();
     }
-    default ServiceResponse toChildServiceResponse(ChildrenServices services) {
+    public ServiceResponse toChildServiceResponse(ChildrenServices services) {
 
         return ServiceResponse.builder()
                 .id(services.getId())
                 .title(services.getTitle())
                 .href(services.getHref())
+                .image(services.getImage() != null ? minioService.generateFileUrl(imagesBucket,services.getImage()) : null)
                 .description(services.getDescription())
                 .build();
     }
-    default ChildrenServices toChildrenServices(ServiceRequest serviceRequest) {
+    public ChildrenServices toChildrenServices(ServiceRequest serviceRequest) {
         return ChildrenServices.builder()
                 .title(serviceRequest.getTitle())
                 .href(serviceRequest.getHref())
@@ -41,7 +52,7 @@ public interface ServiceMapper {
                 .description(serviceRequest.getDescription())
                 .build();
     }
-    default Services toServices(ServiceRequest serviceRequest) {
+    public Services toServices(ServiceRequest serviceRequest) {
         if (serviceRequest == null) {
             return null;
         }
@@ -50,7 +61,7 @@ public interface ServiceMapper {
         services.setHref(serviceRequest.getHref());
         return services;
     }
-    default ChildrenServiceResponse toChildrenServiceResponse(ChildrenServices childrenServices) {
+    public ChildrenServiceResponse toChildrenServiceResponse(ChildrenServices childrenServices) {
 
         return ChildrenServiceResponse.builder()
                 .id(childrenServices.getId())
@@ -60,7 +71,7 @@ public interface ServiceMapper {
                 .image(childrenServices.getImage())
                 .build();
     }
-    default PricingResponse toPricingResponse(Pricing pricing) {
+    public PricingResponse toPricingResponse(Pricing pricing) {
         return PricingResponse.builder()
                 .id(pricing.getId())
                 .title(pricing.getTitle())
@@ -72,7 +83,7 @@ public interface ServiceMapper {
                 .featured(pricing.isFeatured())
                 .build();
     }
-    default Pricing toPricing(PricingRequest pricingResponse) {
+    public Pricing toPricing(PricingRequest pricingResponse) {
        return Pricing.builder()
                 .title(pricingResponse.getTitle())
                 .description(pricingResponse.getDescription() == null ?  null : pricingResponse.getDescription())
@@ -83,7 +94,7 @@ public interface ServiceMapper {
                 .featured(pricingResponse.isFeatured())
                 .build();
     }
-    default CompanyResponse toCompanyResponse(Company company) {
+    public CompanyResponse toCompanyResponse(Company company) {
         return CompanyResponse.builder()
                 .id(company.getId())
                 .name(company.getName())
@@ -93,7 +104,7 @@ public interface ServiceMapper {
                 .websiteName(company.getWebsiteName())
                 .build();
     }
-    default LocationResponse toLocationResponse(Location location) {
+    public LocationResponse toLocationResponse(Location location) {
         return LocationResponse.builder()
                 .id(location.getId())
                 .type(location.getType())
@@ -101,7 +112,7 @@ public interface ServiceMapper {
                 .color(location.getColor() != null ? location.getColor() : null)
                 .build();
     }
-    default ImportantResponse toImportantResponse(Important important) {
+    public ImportantResponse toImportantResponse(Important important) {
         return ImportantResponse.builder()
                 .id(important.getId())
                 .icon(important.getIcon() != null ? important.getIcon() : null)
@@ -110,7 +121,7 @@ public interface ServiceMapper {
                 .color(important.getColor() != null ? important.getColor() : null)
                 .build();
     }
-    default PhoneContactResponse toPhoneContactResponse(PhoneContact phoneContact) {
+    public PhoneContactResponse toPhoneContactResponse(PhoneContact phoneContact) {
         return PhoneContactResponse.builder()
                 .id(phoneContact.getId())
                 .label(phoneContact.getLabel())
@@ -118,7 +129,7 @@ public interface ServiceMapper {
                 .color(phoneContact.getColor() != null ? phoneContact.getColor() : null)
                 .build();
     }
-    default SocialResponse toSocialResponse(Social social) {
+    public SocialResponse toSocialResponse(Social social) {
         return SocialResponse.builder()
                 .id(social.getId())
                 .color(social.getColor() == Color.BLUE_600 ? "blue-600" : social.getColor() == Color.BLUE_700 ? "blue-700" : null)
@@ -127,7 +138,7 @@ public interface ServiceMapper {
                 .href(social.getHref() != null ? social.getHref() : null)
                 .build();
     }
-    default Social toSocial(SocialRequest socialRequest) {
+    public Social toSocial(SocialRequest socialRequest) {
         return Social.builder()
                 .label(socialRequest.getLabel())
                 .icon(socialRequest.getIcon() != null ? socialRequest.getIcon() : null)
@@ -135,14 +146,14 @@ public interface ServiceMapper {
                 .color(socialRequest.getColor() != null ? socialRequest.getColor() : null)
                 .build();
     }
-    default PhoneContact toPhoneContact(PhoneContactRequest phoneContactRequest) {
+    public PhoneContact toPhoneContact(PhoneContactRequest phoneContactRequest) {
         return PhoneContact.builder()
                 .label(phoneContactRequest.getLabel())
                 .number(phoneContactRequest.getNumber())
                 .color(phoneContactRequest.getColor() != null ? phoneContactRequest.getColor() : null)
                 .build();
     }
-    default Company toCompany(CompanyRequest companyRequest) {
+    public Company toCompany(CompanyRequest companyRequest) {
         return Company.builder()
                 .name(companyRequest.getName())
                 .representative(companyRequest.getRepresentative())
@@ -151,14 +162,14 @@ public interface ServiceMapper {
                 .email(companyRequest.getEmail())
                 .build();
     }
-    default Location toLocation(LocationRequest locationRequest) {
+    public Location toLocation(LocationRequest locationRequest) {
         return Location.builder()
                 .type(locationRequest.getType())
                 .address(locationRequest.getAddress())
                 .color(locationRequest.getColor() != null ? locationRequest.getColor() : null)
                 .build();
     }
-    default Important toImportant(ImportantRequest importantRequest) {
+    public Important toImportant(ImportantRequest importantRequest) {
         return Important.builder()
                 .text(importantRequest.getText())
                 .href(importantRequest.getHref() != null ? importantRequest.getHref() : null)

@@ -9,7 +9,6 @@ import lombok.experimental.FieldDefaults;
 import lombok.experimental.SuperBuilder;
 
 import java.util.Date;
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -24,5 +23,5 @@ public class NewsResponse {
     String author; // Author of the news article
     Date createdAt;// Timestamp when the news article was created, formatted as a string
     String image; // Image associated with the news article
-    List<SectionNewsResponse> sections; // List of sections associated with the news article
+    String fullContent; // Full HTML content from rich text editor
 }
