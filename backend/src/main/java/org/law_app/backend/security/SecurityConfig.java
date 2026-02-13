@@ -31,7 +31,7 @@ import java.util.List;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-    private final String[] AuthorizedUrls = new String[] {"/auth/login", "/auth/introspect", "/auth/logout", "/auth/refresh","/customer","/news/subscribe"};
+    private final String[] AuthorizedUrls = new String[] {"/auth/login", "/auth/introspect", "/auth/logout", "/auth/refresh","/customer","/news/subscribe","/jobs/apply"};
     private final String[] AuthorizedUrlsPublic = new String[] {"/service/**","/services/**","/jobs/**","/news/**","/chat/{guestId}","/chat/conversation"};
 
     @Autowired

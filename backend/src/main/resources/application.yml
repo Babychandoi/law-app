@@ -75,6 +75,7 @@ minio:
   secret-key: ${MINIO_SECRET_KEY}
   bucket:
     images: ${MINIO_BUCKET_IMAGES}
+    cvs: ${MINIO_BUCKET_CVS}
 
 # ================= DEEPSEEK AI CHATBOT =================
 deepseek:

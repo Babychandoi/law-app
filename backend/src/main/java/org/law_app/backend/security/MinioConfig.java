@@ -24,6 +24,9 @@ public class MinioConfig {
     @Value("${minio.bucket.images}")
     private String imagesBucket;
 
+    @Value("${minio.bucket.cvs}")
+    private String cvsBucket;
+
     @Bean
     public MinioClient minioClient() {
         return MinioClient.builder()

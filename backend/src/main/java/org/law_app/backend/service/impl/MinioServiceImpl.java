@@ -37,6 +37,17 @@ public class MinioServiceImpl implements MinioService {
         }
     }
 
+    @Override
+    public String uploadCV(MultipartFile file) {
+        try {
+            String bucket = minioConfig.getCvsBucket();
+            return saveFile(file, bucket);
+        } catch (Exception e) {
+            log.error("Error uploading CV to MinIO: {}", e.getMessage());
+            throw new RuntimeException("Failed to upload CV", e);
+        }
+    }
+
     private String saveFile(MultipartFile file, String bucket) throws IOException, ServerException,
             InsufficientDataException, InvalidKeyException, NoSuchAlgorithmException, XmlParserException, ErrorResponseException, InvalidResponseException, InternalException {
         String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();

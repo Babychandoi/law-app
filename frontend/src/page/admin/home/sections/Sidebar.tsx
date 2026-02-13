@@ -47,7 +47,15 @@ const Sidebar: React.FC<{
       icon: '📝',
       key: 'posts',
       path: '/administration/posts',
-    },{
+    },
+    {
+      category: 'Quản lý ứng viên',
+      icon: '💼',
+      key: 'applications',
+      path: '/administration/applications',
+      onlyAdmin: true,
+    },
+    {
       category: 'Chats',
       icon: '💬',
       key: 'chats',

@@ -5,6 +5,8 @@ import CustomerManagement from '../page/admin/home/sections/Customer';
 import EmployeeManagement from '../page/admin/home/sections/Employee';
 import PostManagement from '../page/admin/home/sections/Post';
 import ChatManagement from '../page/admin/home/sections/Chat';
+import JobApplications from '../page/admin/home/sections/JobApplications';
+
 export const authRouter = [
     {
       path: '/login',
@@ -24,6 +26,10 @@ export const authRouter = [
         {
           path: 'customers',
           element: <CustomerManagement />
+        },
+        {
+          path: 'applications',
+          element: <JobApplications />
         },
         {
           path: 'chats',
