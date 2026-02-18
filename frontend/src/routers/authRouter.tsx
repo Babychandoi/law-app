@@ -6,13 +6,14 @@ import EmployeeManagement from '../page/admin/home/sections/Employee';
 import PostManagement from '../page/admin/home/sections/Post';
 import ChatManagement from '../page/admin/home/sections/Chat';
 import JobApplications from '../page/admin/home/sections/JobApplications';
+import Subscribers from '../page/admin/home/sections/Subscribers';
 
 export const authRouter = [
     {
-      path: '/login',
+      path: '/2025/luatpoip/admin/login',
       element: < Login/>
     },{
-      path: '/administration',
+      path: '/2025/luatpoip/admin',
       element: <Home />,
       children: [
         {
@@ -30,6 +31,10 @@ export const authRouter = [
         {
           path: 'applications',
           element: <JobApplications />
+        },
+        {
+          path: 'subscribers',
+          element: <Subscribers />
         },
         {
           path: 'chats',

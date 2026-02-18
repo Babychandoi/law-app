@@ -5,6 +5,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.law_app.backend.dto.request.NewsRequest;
 import org.law_app.backend.dto.response.NewsResponse;
+import org.law_app.backend.dto.response.SubscriberResponse;
 import org.law_app.backend.entity.CustomerSubscribe;
 import org.law_app.backend.entity.News;
 import org.law_app.backend.mapper.NewsMapper;
@@ -421,5 +422,23 @@ public class NewsServiceImpl implements NewsService {
             log.error("Error subscribing email: {}", e.getMessage());
             throw new RuntimeException("Lỗi hệ thống, vui lòng thử lại sau!");
         }
+    }
+
+    @Override
+    public List<SubscriberResponse> getAllSubscribers() {
+        return customerSubscribeRepository.findAll().stream()
+                .map(subscriber -> SubscriberResponse.builder()
+                        .id(subscriber.getId())
+                        .email(subscriber.getEmail())
+                        .createdAt(subscriber.getCreatedAt())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Boolean deleteSubscriber(String id) {
+        customerSubscribeRepository.deleteById(id);
+        log.info("Subscriber deleted: {}", id);
+        return true;
     }
 }

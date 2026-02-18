@@ -54,7 +54,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ title, buttonText }) =>
               <Mail className="w-7 h-7 text-purple-600" />
             </div>
             <h3 className="text-sm font-semibold text-gray-300 mb-2">Email</h3>
-            <p className="text-purple-400 font-bold text-sm">lienhe@luatpoip.com</p>
+            <p className="text-purple-400 font-bold text-sm">luatpoip@gmail.com</p>
           </div>
 
           <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 rounded-2xl p-6 border border-green-400/30 hover:border-green-400 transition-all duration-300 backdrop-blur-sm hover:transform hover:scale-105">

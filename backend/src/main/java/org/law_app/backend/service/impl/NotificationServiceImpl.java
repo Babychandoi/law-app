@@ -141,7 +141,7 @@ public class NotificationServiceImpl implements NotificationService {
                     .title(title)
                     .content(content)
                     .type("CHAT")
-                    .link("/administration/chats")
+                    .link("/2025/luatpoip/admin/chats")
                     .referenceId(guestId)
                     .createdAt(new Date())
                     .customerService(null) // No customer service for chat notifications

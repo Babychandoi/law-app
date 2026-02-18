@@ -6,6 +6,7 @@ import lombok.experimental.FieldDefaults;
 import org.law_app.backend.dto.request.NewsRequest;
 import org.law_app.backend.dto.response.ApiResponse;
 import org.law_app.backend.dto.response.NewsResponse;
+import org.law_app.backend.dto.response.SubscriberResponse;
 import org.law_app.backend.service.NewsService;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,6 +58,30 @@ public class NewsController {
         return ApiResponse.<Boolean>builder()
                 .message("News deleted successfully")
                 .data(newsService.deleteNews(id))
+                .build();
+    }
+    
+    /**
+     * Get all subscribers (Admin only)
+     * GET /news/subscribers
+     */
+    @GetMapping("/subscribers")
+    public ApiResponse<List<SubscriberResponse>> getAllSubscribers() {
+        return ApiResponse.<List<SubscriberResponse>>builder()
+                .message("Subscribers retrieved successfully")
+                .data(newsService.getAllSubscribers())
+                .build();
+    }
+    
+    /**
+     * Delete subscriber (Admin only)
+     * DELETE /news/subscribers/{id}
+     */
+    @DeleteMapping("/subscribers/{id}")
+    public ApiResponse<Boolean> deleteSubscriber(@PathVariable String id) {
+        return ApiResponse.<Boolean>builder()
+                .message("Subscriber deleted successfully")
+                .data(newsService.deleteSubscriber(id))
                 .build();
     }
 }

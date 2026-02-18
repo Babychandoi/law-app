@@ -17,7 +17,7 @@ const AdminDashboard: React.FC = () => {
         const token = sessionStorage.getItem('accessToken');
         if (!token) {
           sessionStorage.clear();
-          return navigate('/login');
+          return navigate('/2025/luatpoip/admin/login');
         }
     
         try {
@@ -28,12 +28,12 @@ const AdminDashboard: React.FC = () => {
               return;
             } else {
               sessionStorage.clear();
-              navigate('/login');
+              navigate('/2025/luatpoip/admin/login');
             }
           }
         } catch (error) {
           sessionStorage.clear();
-          navigate('/login');
+          navigate('/2025/luatpoip/admin/login');
         }
       };
     

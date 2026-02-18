@@ -18,11 +18,11 @@ const LoginForm: React.FC = () => {
       checkToken(token)
         .then(async (res) => {
           if (res.code === 200 && res.data.valid) {
-            navigate("/administration");
+            navigate("/2025/luatpoip/admin");
           } else {
             const refreshed = await tryRefreshToken();
             if (refreshed) {
-              navigate("/administration");
+              navigate("/2025/luatpoip/admin");
             } else {
               sessionStorage.clear();
             }
@@ -77,7 +77,7 @@ const LoginForm: React.FC = () => {
           const token = response.data;
           sessionStorage.setItem("accessToken", token.token);
           sessionStorage.setItem("refreshToken", token.refreshToken);
-          navigate("/administration");
+          navigate("/2025/luatpoip/admin");
         } else {
           // Handle non-200 response codes
           setErrors({ general: response.message || 'Đăng nhập không thành công. Vui lòng kiểm tra lại thông tin.' });

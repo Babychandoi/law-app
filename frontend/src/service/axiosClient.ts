@@ -33,7 +33,7 @@ axiosClient.interceptors.response.use(
         return axiosClient(originalRequest);
       } else {
         sessionStorage.clear();
-        window.location.href = "/login";
+        window.location.href = "/2025/luatpoip/admin/login";
       }
     }
     return Promise.reject(error);

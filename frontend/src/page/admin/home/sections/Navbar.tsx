@@ -192,7 +192,7 @@ const Navbar: React.FC = () => {
       const response = await logout(token);
       if (response.code === 200) {
         sessionStorage.clear();
-        window.location.href = '/login';
+        window.location.href = '/2025/luatpoip/admin/login';
       } else {
         toast.error("Không thể đăng xuất");
       }
