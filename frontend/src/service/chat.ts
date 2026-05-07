@@ -33,12 +33,12 @@ interface ChatStats {
   todayMessages: number;
 }
 
-
 const chatService = {
   // Fetch all conversations
   fetchConversations: async (): Promise<Conversation[]> => {
     try {
-      const response = await axiosClient.get<Promise<ApiResponse<Conversation[]>>>(`/chat/admin/conversations`);
+      const response =
+        await axiosClient.get<Promise<ApiResponse<Conversation[]>>>(`/chat/admin/conversations`);
       const data = await response.data;
       if (data.code === 200) {
         return data.data;
@@ -116,13 +116,13 @@ const chatService = {
   updateGuestName: async (guestId: string, name: string): Promise<void> => {
     try {
       await axiosClient.put(`/chat/admin/guest/${guestId}/name`, null, {
-        params: { name }
+        params: { name },
       });
       toast.success('Đã cập nhật tên khách hàng');
     } catch (error) {
       toast.error('Không thể cập nhật tên khách hàng');
     }
-  }
+  },
 };
 
 export default chatService;

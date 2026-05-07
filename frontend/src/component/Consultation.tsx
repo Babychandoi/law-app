@@ -1,12 +1,21 @@
-import { Mail, User, Phone, Calendar, MessageSquare, Sparkles, Send, ChevronDown } from "lucide-react";
-import { useEffect, useState } from "react";
-import { getServiceHome } from "../service/service";
-import { ServiceItem } from "../types/service";
-import PhoneInput from "react-phone-input-2";
-import { CustomerService } from "../types/service";
-import { createCustomerService } from "../service/service";
-import "react-phone-input-2/lib/style.css";
-import Swal from "sweetalert2";
+import {
+  Mail,
+  User,
+  Phone,
+  Calendar,
+  MessageSquare,
+  Sparkles,
+  Send,
+  ChevronDown,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { getServiceHome } from '../service/service';
+import { ServiceItem } from '../types/service';
+import PhoneInput from 'react-phone-input-2';
+import { CustomerService } from '../types/service';
+import { createCustomerService } from '../service/service';
+import 'react-phone-input-2/lib/style.css';
+import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 
 declare global {
@@ -17,11 +26,11 @@ declare global {
 
 const ConsultationForm = () => {
   const [formData, setFormData] = useState<CustomerService>({
-    name: "",
-    phone: "",
-    email: "",
-    serviceId: "",
-    description: ""
+    name: '',
+    phone: '',
+    email: '',
+    serviceId: '',
+    description: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -34,7 +43,7 @@ const ConsultationForm = () => {
         const response = await getServiceHome();
         if (response.data && response.data.length > 0) {
           setServiceOptions(response.data);
-          setFormData(prev => ({ ...prev, service: response.data[0].id }));
+          setFormData((prev) => ({ ...prev, serviceId: response.data[0].id }));
         }
       } catch (error) {
         toast.error('Không thể tải danh sách dịch vụ. Vui lòng thử lại!');
@@ -58,35 +67,36 @@ const ConsultationForm = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
     if (errors[name as keyof CustomerService]) {
-      setErrors(prev => ({ ...prev, [name]: undefined }));
+      setErrors((prev) => ({ ...prev, [name]: undefined }));
     }
   };
 
   const handlePhoneChange = (phone: string) => {
-    setFormData(prev => ({ ...prev, phone }));
+    setFormData((prev) => ({ ...prev, phone }));
     if (errors.phone) {
-      setErrors(prev => ({ ...prev, phone: undefined }));
+      setErrors((prev) => ({ ...prev, phone: undefined }));
     }
   };
 
   const handleServiceSelect = (serviceId: string) => {
-    setFormData(prev => ({ ...prev, serviceId: serviceId }));
+    setFormData((prev) => ({ ...prev, serviceId: serviceId }));
     setIsDropdownOpen(false);
     if (errors.serviceId) {
-      setErrors(prev => ({ ...prev, serviceId: undefined }));
+      setErrors((prev) => ({ ...prev, serviceId: undefined }));
     }
   };
 
   const validateForm = (): boolean => {
     const newErrors: Partial<CustomerService> = {};
-    if (!formData.name.trim()) newErrors.name = "Vui lòng nhập họ tên";
-    if (!formData.phone.trim()) newErrors.phone = "Vui lòng nhập số điện thoại";
-    else if (formData.phone.length < 10) newErrors.phone = "Số điện thoại không hợp lệ";
-    if (!formData.email.trim()) newErrors.email = "Vui lòng nhập email";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = "Email không hợp lệ";
-    if (!formData.serviceId) newErrors.serviceId = "Vui lòng chọn dịch vụ";
+    if (!formData.name.trim()) newErrors.name = 'Vui lòng nhập họ tên';
+    if (!formData.phone.trim()) newErrors.phone = 'Vui lòng nhập số điện thoại';
+    else if (formData.phone.length < 10) newErrors.phone = 'Số điện thoại không hợp lệ';
+    if (!formData.email.trim()) newErrors.email = 'Vui lòng nhập email';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
+      newErrors.email = 'Email không hợp lệ';
+    if (!formData.serviceId) newErrors.serviceId = 'Vui lòng chọn dịch vụ';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -120,11 +130,11 @@ const ConsultationForm = () => {
       });
 
       setFormData({
-        name: "",
-        phone: "+84",
-        email: "",
-        serviceId: serviceOptions[0]?.id || "",
-        description: "",
+        name: '',
+        phone: '+84',
+        email: '',
+        serviceId: serviceOptions[0]?.id || '',
+        description: '',
       });
     } catch (error) {
       Swal.fire({
@@ -137,40 +147,35 @@ const ConsultationForm = () => {
     }
   };
 
-  const selectedService = serviceOptions.find(service => service.id === formData.serviceId);
+  const selectedService = serviceOptions.find((service) => service.id === formData.serviceId);
 
   return (
-    <div id="contact-form" className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50 py-20 px-4 relative overflow-hidden">
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-r from-yellow-400/10 to-orange-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-      </div>
-
-      <div className="w-full max-w-2xl mx-auto relative z-10">
+    <div id="contact-form" className="bg-brand-surface py-16 px-4 sm:py-20">
+      <div className="w-full max-w-2xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-12">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <div className="h-1 w-12 bg-gradient-to-r from-yellow-400 to-orange-400"></div>
-            <Sparkles className="text-yellow-400" size={24} />
-            <div className="h-1 w-12 bg-gradient-to-r from-orange-400 to-yellow-400"></div>
+          <div className="flex items-center justify-center gap-2 mb-4 text-brand-goldDark">
+            <div className="h-px w-12 bg-brand-gold"></div>
+            <Sparkles size={22} />
+            <div className="h-px w-12 bg-brand-gold"></div>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-yellow-500 via-orange-500 to-yellow-600 bg-clip-text text-transparent">
-              Đăng Ký Tư Vấn Miễn Phí
-            </span>
+          <h2 className="text-3xl md:text-4xl font-semibold text-gray-950 mb-4">
+            Đăng ký tư vấn miễn phí
           </h2>
-          <p className="text-gray-600 text-lg">
+          <p className="text-gray-600">
             Để lại thông tin để được tư vấn chuyên nghiệp từ đội ngũ chuyên gia
           </p>
         </div>
 
         {/* Form Card */}
-        <div className="bg-white rounded-none md:rounded-3xl shadow-none md:shadow-2xl border-0 md:border md:border-gray-200 p-4 md:p-10 hover:shadow-3xl transition-all duration-500">
+        <div className="bg-white rounded-lg shadow-soft border border-brand-line p-5 md:p-8">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Name Field */}
             <div className="group">
-              <label htmlFor="name" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+              <label
+                htmlFor="name"
+                className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3"
+              >
                 <div className="p-2 bg-blue-50 rounded-lg">
                   <User className="w-4 h-4 text-blue-600" />
                 </div>
@@ -184,16 +189,24 @@ const ConsultationForm = () => {
                 value={formData.name}
                 onChange={handleChange}
                 className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all duration-300 ${
-                  errors.name ? 'border-red-500' : 'border-gray-200 hover:border-gray-300'
+                  errors.name ? 'border-red-500' : 'border-gray-200 hover:border-brand-gold'
                 }`}
                 placeholder="Nhập họ tên của bạn"
               />
-              {errors.name && <p className="text-red-500 text-sm mt-2 flex items-center gap-1"><span>⚠</span>{errors.name}</p>}
+              {errors.name && (
+                <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                  <span>⚠</span>
+                  {errors.name}
+                </p>
+              )}
             </div>
 
             {/* Phone Field */}
             <div className="group">
-              <label htmlFor="phone" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+              <label
+                htmlFor="phone"
+                className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3"
+              >
                 <div className="p-2 bg-green-50 rounded-lg">
                   <Phone className="w-4 h-4 text-green-600" />
                 </div>
@@ -228,12 +241,20 @@ const ConsultationForm = () => {
                   boxSizing: 'border-box',
                 }}
               />
-              {errors.phone && <p className="text-red-500 text-sm mt-2 flex items-center gap-1"><span>⚠</span>{errors.phone}</p>}
+              {errors.phone && (
+                <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                  <span>⚠</span>
+                  {errors.phone}
+                </p>
+              )}
             </div>
 
             {/* Email Field */}
             <div className="group">
-              <label htmlFor="email" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+              <label
+                htmlFor="email"
+                className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3"
+              >
                 <div className="p-2 bg-purple-50 rounded-lg">
                   <Mail className="w-4 h-4 text-purple-600" />
                 </div>
@@ -247,11 +268,16 @@ const ConsultationForm = () => {
                 value={formData.email}
                 onChange={handleChange}
                 className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-400 transition-all duration-300 ${
-                  errors.email ? 'border-red-500' : 'border-gray-200 hover:border-gray-300'
+                  errors.email ? 'border-red-500' : 'border-gray-200 hover:border-brand-gold'
                 }`}
                 placeholder="Nhập email của bạn"
               />
-              {errors.email && <p className="text-red-500 text-sm mt-2 flex items-center gap-1"><span>⚠</span>{errors.email}</p>}
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                  <span>⚠</span>
+                  {errors.email}
+                </p>
+              )}
             </div>
 
             {/* Service Selection */}
@@ -268,16 +294,16 @@ const ConsultationForm = () => {
                   type="button"
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all duration-300 flex items-center justify-between ${
-                    errors.serviceId ? 'border-red-500' : 'border-gray-200 hover:border-gray-300'
+                    errors.serviceId ? 'border-red-500' : 'border-gray-200 hover:border-brand-gold'
                   }`}
                 >
                   <span className="text-gray-700">
                     {selectedService ? selectedService.title : 'Chọn dịch vụ'}
                   </span>
-                  <ChevronDown 
+                  <ChevronDown
                     className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${
                       isDropdownOpen ? 'rotate-180' : ''
-                    }`} 
+                    }`}
                   />
                 </button>
                 {isDropdownOpen && (
@@ -288,7 +314,9 @@ const ConsultationForm = () => {
                         type="button"
                         onClick={() => handleServiceSelect(option.id)}
                         className={`w-full px-4 py-3 text-left hover:bg-orange-50 transition-colors duration-200 first:rounded-t-xl last:rounded-b-xl ${
-                          formData.serviceId === option.id ? 'bg-orange-100 text-orange-700 font-semibold' : 'text-gray-700'
+                          formData.serviceId === option.id
+                            ? 'bg-orange-100 text-orange-700 font-semibold'
+                            : 'text-gray-700'
                         }`}
                       >
                         {option.title}
@@ -297,12 +325,20 @@ const ConsultationForm = () => {
                   </div>
                 )}
               </div>
-              {errors.serviceId && <p className="text-red-500 text-sm mt-2 flex items-center gap-1"><span>⚠</span>{errors.serviceId}</p>}
+              {errors.serviceId && (
+                <p className="text-red-500 text-sm mt-2 flex items-center gap-1">
+                  <span>⚠</span>
+                  {errors.serviceId}
+                </p>
+              )}
             </div>
 
             {/* Content Field */}
             <div className="group">
-              <label htmlFor="description" className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3">
+              <label
+                htmlFor="description"
+                className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-3"
+              >
                 <div className="p-2 bg-pink-50 rounded-lg">
                   <MessageSquare className="w-4 h-4 text-pink-600" />
                 </div>
@@ -323,7 +359,7 @@ const ConsultationForm = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-4 px-6 bg-gradient-to-r from-yellow-400 to-orange-400 hover:from-yellow-500 hover:to-orange-500 text-gray-900 font-bold rounded-xl transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-2xl hover:shadow-yellow-500/50 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
+              className="w-full py-4 px-6 bg-brand-gold hover:bg-brand-goldDark text-white font-bold rounded-xl transition flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isSubmitting ? (
                 <>

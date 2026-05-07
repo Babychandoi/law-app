@@ -1,5 +1,8 @@
 package org.law_app.backend.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
@@ -15,193 +18,206 @@ import org.law_app.backend.security.MinioConfig;
 import org.law_app.backend.service.EmailService;
 import org.law_app.backend.service.MinioService;
 import org.law_app.backend.service.NewsService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
 
 @RequiredArgsConstructor
 @Slf4j
 @Service
 @FieldDefaults(makeFinal = true, level = lombok.AccessLevel.PRIVATE)
 public class NewsServiceImpl implements NewsService {
-    NewsRepository newsRepository;
-    CustomerSubscribeRepository customerSubscribeRepository;
-    EmailService emailService;
-    NewsMapper newsMapper;
-    MinioService minioService;
-    MinioConfig minioConfig;
-    @Override
-    @Transactional
-    public NewsResponse createNews(NewsRequest newsRequest) {
-        try {
-            // Generate slug from title FIRST
-            String slug = generateSlug(newsRequest.getTitle());
-            
-            // Check if slug exists, if yes, append number
-            String finalSlug = slug;
-            int counter = 1;
-            while (newsRepository.existsById(finalSlug)) {
-                finalSlug = slug + "-" + counter;
-                counter++;
-            }
-            
-            // Set the ID in the request before mapping
-            newsRequest.setId(finalSlug);
-            
-            // Map to entity (will include fullContent)
-            News news = newsMapper.toNews(newsRequest);
-            
-            // Save the news with fullContent
-            news = newsRepository.save(news);
-            
-            NewsResponse newsResponse = newsMapper.toNewsResponse(news);
-            
-            // Only generate URL if image is not already a full URL
-            String imageUrl = news.getImage();
-            if (imageUrl != null && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
-                imageUrl = minioService.generateFileUrl(minioConfig.getImagesBucket(), imageUrl);
-            }
-            newsResponse.setImage(imageUrl);
-            
-            return newsResponse;
-        } catch (Exception e) {
-            log.error("Error creating news: {}", e.getMessage(), e);
-            throw new RuntimeException("Failed to create news", e);
-        }
+  NewsRepository newsRepository;
+  CustomerSubscribeRepository customerSubscribeRepository;
+  EmailService emailService;
+  NewsMapper newsMapper;
+  MinioService minioService;
+  MinioConfig minioConfig;
+
+  @Override
+  @Transactional
+  public NewsResponse createNews(NewsRequest newsRequest) {
+    try {
+      // Generate slug from title FIRST
+      String slug = generateSlug(newsRequest.getTitle());
+
+      // Check if slug exists, if yes, append number
+      String finalSlug = slug;
+      int counter = 1;
+      while (newsRepository.existsById(finalSlug)) {
+        finalSlug = slug + "-" + counter;
+        counter++;
+      }
+
+      // Set the ID in the request before mapping
+      newsRequest.setId(finalSlug);
+
+      // Map to entity (will include fullContent)
+      News news = newsMapper.toNews(newsRequest);
+
+      // Save the news with fullContent
+      news = newsRepository.save(news);
+
+      NewsResponse newsResponse = newsMapper.toNewsResponse(news);
+
+      // Only generate URL if image is not already a full URL
+      String imageUrl = news.getImage();
+      if (imageUrl != null && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+        imageUrl = minioService.generateFileUrl(minioConfig.getImagesBucket(), imageUrl);
+      }
+      newsResponse.setImage(imageUrl);
+
+      return newsResponse;
+    } catch (Exception e) {
+      log.error("Error creating news: {}", e.getMessage(), e);
+      throw new RuntimeException("Failed to create news", e);
     }
-    
-    private String generateSlug(String title) {
-        if (title == null || title.isEmpty()) {
-            return "untitled";
-        }
-        
-        // Convert Vietnamese characters to ASCII
-        String slug = title.toLowerCase();
-        
-        // Vietnamese character mapping
-        slug = slug.replaceAll("[àáạảãâầấậẩẫăằắặẳẵ]", "a");
-        slug = slug.replaceAll("[èéẹẻẽêềếệểễ]", "e");
-        slug = slug.replaceAll("[ìíịỉĩ]", "i");
-        slug = slug.replaceAll("[òóọỏõôồốộổỗơờớợởỡ]", "o");
-        slug = slug.replaceAll("[ùúụủũưừứựửữ]", "u");
-        slug = slug.replaceAll("[ỳýỵỷỹ]", "y");
-        slug = slug.replaceAll("đ", "d");
-        
-        // Remove special characters and replace spaces with hyphens
-        slug = slug.replaceAll("[^a-z0-9\\s-]", "");
-        slug = slug.trim().replaceAll("\\s+", "-");
-        slug = slug.replaceAll("-+", "-");
-        
-        // Remove leading/trailing hyphens
-        slug = slug.replaceAll("^-+|-+$", "");
-        
-        return slug.isEmpty() ? "untitled" : slug;
+  }
+
+  private String generateSlug(String title) {
+    if (title == null || title.isEmpty()) {
+      return "untitled";
     }
 
-    @Override
-    public List<NewsResponse> getAllNews() {
-        try {
-            List<News> news = newsRepository.findAll();
-            return news.stream()
-                    .map(n -> {
-                        String imageUrl = n.getImage();
-                        // Only generate URL if image is not already a full URL
-                        if (imageUrl != null && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
-                            imageUrl = minioService.generateFileUrl(minioConfig.getImagesBucket(), imageUrl);
-                        }
-                        return NewsResponse.builder()
-                                .id(n.getId())
-                                .title(n.getTitle())
-                                .subtitle(n.getSubtitle())
-                                .author(n.getAuthor())
-                                .image(imageUrl)
-                                .createdAt(n.getCreatedAt())
-                                .build();
-                    })
-                    .collect(Collectors.toList());
-        }catch (Exception e) {
-            log.error("Error fetching all news: {}", e.getMessage());
-            throw new RuntimeException("Failed to fetch news", e);
-        }
+    // Convert Vietnamese characters to ASCII
+    String slug = title.toLowerCase();
+
+    // Vietnamese character mapping
+    slug = slug.replaceAll("[àáạảãâầấậẩẫăằắặẳẵ]", "a");
+    slug = slug.replaceAll("[èéẹẻẽêềếệểễ]", "e");
+    slug = slug.replaceAll("[ìíịỉĩ]", "i");
+    slug = slug.replaceAll("[òóọỏõôồốộổỗơờớợởỡ]", "o");
+    slug = slug.replaceAll("[ùúụủũưừứựửữ]", "u");
+    slug = slug.replaceAll("[ỳýỵỷỹ]", "y");
+    slug = slug.replaceAll("đ", "d");
+
+    // Remove special characters and replace spaces with hyphens
+    slug = slug.replaceAll("[^a-z0-9\\s-]", "");
+    slug = slug.trim().replaceAll("\\s+", "-");
+    slug = slug.replaceAll("-+", "-");
+
+    // Remove leading/trailing hyphens
+    slug = slug.replaceAll("^-+|-+$", "");
+
+    return slug.isEmpty() ? "untitled" : slug;
+  }
+
+  @Override
+  public List<NewsResponse> getAllNews() {
+    try {
+      List<News> news = newsRepository.findAll();
+      return news.stream().map(this::toSummaryResponse).collect(Collectors.toList());
+    } catch (Exception e) {
+      log.error("Error fetching all news: {}", e.getMessage());
+      throw new RuntimeException("Failed to fetch news", e);
     }
+  }
 
-    @Override
-    public NewsResponse getNewsById(String id) {
-        try {
-            News news = newsRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("News not found with id: " + id));
-            NewsResponse newsResponse = newsMapper.toNewsResponse(news);
-            
-            // Only generate URL if image is not already a full URL
-            String imageUrl = news.getImage();
-            if (imageUrl != null && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
-                imageUrl = minioService.generateFileUrl(minioConfig.getImagesBucket(), imageUrl);
-            }
-            newsResponse.setImage(imageUrl);
-            
-            return newsResponse;
-        } catch (Exception e) {
-            log.error("Error fetching news by id: {}", e.getMessage());
-            throw new RuntimeException("Failed to fetch news by id", e);
-        }
+  @Override
+  public Page<NewsResponse> getAllNews(Pageable pageable) {
+    try {
+      return newsRepository.findAll(pageable).map(this::toSummaryResponse);
+    } catch (Exception e) {
+      log.error("Error fetching paged news: {}", e.getMessage());
+      throw new RuntimeException("Failed to fetch news", e);
     }
-    @Transactional
-    @Override
-    public NewsResponse updateNews(String id, NewsRequest newsRequest) {
-        try {
-            News existingNews = newsRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("News not found with id: " + id));
+  }
 
-            // Update news from request
-            newsMapper.updateNewsFromRequest(existingNews, newsRequest);
-
-            NewsResponse newsResponse = newsMapper.toNewsResponse(existingNews);
-            
-            // Only generate URL if image is not already a full URL
-            String imageUrl = existingNews.getImage();
-            if (imageUrl != null && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
-                imageUrl = minioService.generateFileUrl(minioConfig.getImagesBucket(), imageUrl);
-            }
-            newsResponse.setImage(imageUrl);
-            
-            return newsResponse;
-        } catch (Exception e) {
-            log.error("Error updating news: {}", e.getMessage());
-            throw new RuntimeException("Failed to update news", e);
-        }
+  private NewsResponse toSummaryResponse(News news) {
+    String imageUrl = news.getImage();
+    if (imageUrl != null && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+      imageUrl = minioService.generateFileUrl(minioConfig.getImagesBucket(), imageUrl);
     }
+    return NewsResponse.builder()
+        .id(news.getId())
+        .title(news.getTitle())
+        .subtitle(news.getSubtitle())
+        .author(news.getAuthor())
+        .image(imageUrl)
+        .createdAt(news.getCreatedAt())
+        .build();
+  }
 
-    @Transactional
-    @Override
-    public Boolean deleteNews(String id) {
-        try {
-            News news = newsRepository.findById(id)
-                    .orElseThrow(() -> new RuntimeException("News not found with id: " + id));
-            newsRepository.delete(news);
-            return true;
-        } catch (Exception e) {
-            log.error("Error deleting news: {}", e.getMessage());
-            throw new RuntimeException("Failed to delete news", e);
-        }
+  @Override
+  public NewsResponse getNewsById(String id) {
+    try {
+      News news =
+          newsRepository
+              .findById(id)
+              .orElseThrow(() -> new RuntimeException("News not found with id: " + id));
+      NewsResponse newsResponse = newsMapper.toNewsResponse(news);
+
+      // Only generate URL if image is not already a full URL
+      String imageUrl = news.getImage();
+      if (imageUrl != null && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+        imageUrl = minioService.generateFileUrl(minioConfig.getImagesBucket(), imageUrl);
+      }
+      newsResponse.setImage(imageUrl);
+
+      return newsResponse;
+    } catch (Exception e) {
+      log.error("Error fetching news by id: {}", e.getMessage());
+      throw new RuntimeException("Failed to fetch news by id", e);
     }
+  }
 
-    @Override
-    public String subscribe(String email) {
-        try {
-            if (customerSubscribeRepository.existsByEmail(email)) {
-                return "Bạn đã được đăng ký nhận thông báo trước đó!";
-            }
-            CustomerSubscribe customerSubscribe = CustomerSubscribe.builder()
-                    .email(email)
-                    .createdAt(LocalDateTime.now())
-                    .build();
-            customerSubscribeRepository.save(customerSubscribe);
-            String title = "Chào mừng bạn đến với luật Poip";
-            String content = """
+  @Transactional
+  @Override
+  public NewsResponse updateNews(String id, NewsRequest newsRequest) {
+    try {
+      News existingNews =
+          newsRepository
+              .findById(id)
+              .orElseThrow(() -> new RuntimeException("News not found with id: " + id));
+
+      // Update news from request
+      newsMapper.updateNewsFromRequest(existingNews, newsRequest);
+
+      NewsResponse newsResponse = newsMapper.toNewsResponse(existingNews);
+
+      // Only generate URL if image is not already a full URL
+      String imageUrl = existingNews.getImage();
+      if (imageUrl != null && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+        imageUrl = minioService.generateFileUrl(minioConfig.getImagesBucket(), imageUrl);
+      }
+      newsResponse.setImage(imageUrl);
+
+      return newsResponse;
+    } catch (Exception e) {
+      log.error("Error updating news: {}", e.getMessage());
+      throw new RuntimeException("Failed to update news", e);
+    }
+  }
+
+  @Transactional
+  @Override
+  public Boolean deleteNews(String id) {
+    try {
+      News news =
+          newsRepository
+              .findById(id)
+              .orElseThrow(() -> new RuntimeException("News not found with id: " + id));
+      newsRepository.delete(news);
+      return true;
+    } catch (Exception e) {
+      log.error("Error deleting news: {}", e.getMessage());
+      throw new RuntimeException("Failed to delete news", e);
+    }
+  }
+
+  @Override
+  public String subscribe(String email) {
+    try {
+      if (customerSubscribeRepository.existsByEmail(email)) {
+        return "Bạn đã được đăng ký nhận thông báo trước đó!";
+      }
+      CustomerSubscribe customerSubscribe =
+          CustomerSubscribe.builder().email(email).createdAt(LocalDateTime.now()).build();
+      customerSubscribeRepository.save(customerSubscribe);
+      String title = "Chào mừng bạn đến với luật Poip";
+      String content =
+          """
                 <!DOCTYPE html>
                 <html lang="vi">
                 <head>
@@ -360,18 +376,18 @@ public class NewsServiceImpl implements NewsService {
                             <h1>⚖️ Luật Poip </h1>
                             <p>Cập nhật tin tức pháp luật mới nhất</p>
                         </div>
-                        
+
                         <div class="icon-container">
                             <div class="icon">✉️</div>
                         </div>
-                        
+
                         <div class="content">
                             <h2>Chào mừng bạn đã đăng ký!</h2>
-                            
+
                             <p>Xin chào,</p>
-                            
+
                             <p>Cảm ơn bạn đã đăng ký nhận bản tin từ <strong>luật Poip</strong>! Chúng tôi rất vui mừng được đồng hành cùng bạn trong việc cập nhật những thông tin pháp luật mới nhất và hữu ích nhất.</p>
-                            
+
                             <div class="benefits">
                                 <h3>📚 Bạn sẽ nhận được:</h3>
                                 <ul>
@@ -382,30 +398,30 @@ public class NewsServiceImpl implements NewsService {
                                     <li>Mẹo và hướng dẫn sử dụng ứng dụng luật Poip hiệu quả</li>
                                 </ul>
                             </div>
-                            
+
                             <p>Đăng ký của bạn đã được xác nhận thành công. Bạn sẽ nhận được email đầu tiên trong thời gian sớm nhất.</p>
-                            
+
                             <div class="cta-button">
                                 <a href="https://luatpoip.com">Khám phá luật Poip ngay</a>
                             </div>
-                            
+
                             <p style="margin-top: 30px; font-size: 14px; color: #888888;">
-                                Nếu bạn có bất kỳ câu hỏi nào, đừng ngần ngại liên hệ với chúng tôi tại 
+                                Nếu bạn có bất kỳ câu hỏi nào, đừng ngần ngại liên hệ với chúng tôi tại
                                 <a href="mailto:luatpoip@gmail.com" style="color: #667eea;">luatpoip@gmail.com</a>
                             </p>
                         </div>
-                        
+
                         <div class="footer">
                             <p><strong>Luật Poip</strong> - Trang hỗ trợ và giải đáp thắc mắc về luật</p>
                             <p>Địa chỉ: 70 Ngách 6 Ngõ 10 Tả Thanh Oai, Đại Thanh, Hà Nội, Việt Nam</p>
                             <p>Email: luatpoip@gmail.com | Hotline: 0868.193.345</p>
-                            
+
                             <div class="social-links">
                                 <a href="#" title="Facebook">📘</a>
                                 <a href="#" title="Twitter">🐦</a>
                                 <a href="#" title="LinkedIn">💼</a>
                             </div>
-                            
+
                             <p style="margin-top: 20px; font-size: 12px;">
                                 Bạn nhận được email này vì đã đăng ký nhận tin tức từ luật Poip.<br>
                             </p>
@@ -414,31 +430,33 @@ public class NewsServiceImpl implements NewsService {
                 </body>
                 </html>
                 """;
-            
-            emailService.sendEmail(email, title, content);
-            log.info("Subscribing email: {}", email);
-            return "Cảm ơn bạn đã đăng ký nhận tin tức từ luật Poip!";
-        } catch (Exception e) {
-            log.error("Error subscribing email: {}", e.getMessage());
-            throw new RuntimeException("Lỗi hệ thống, vui lòng thử lại sau!");
-        }
-    }
 
-    @Override
-    public List<SubscriberResponse> getAllSubscribers() {
-        return customerSubscribeRepository.findAll().stream()
-                .map(subscriber -> SubscriberResponse.builder()
-                        .id(subscriber.getId())
-                        .email(subscriber.getEmail())
-                        .createdAt(subscriber.getCreatedAt())
-                        .build())
-                .collect(Collectors.toList());
+      emailService.sendEmail(email, title, content);
+      log.info("Subscribing email: {}", email);
+      return "Cảm ơn bạn đã đăng ký nhận tin tức từ luật Poip!";
+    } catch (Exception e) {
+      log.error("Error subscribing email: {}", e.getMessage());
+      throw new RuntimeException("Lỗi hệ thống, vui lòng thử lại sau!");
     }
+  }
 
-    @Override
-    public Boolean deleteSubscriber(String id) {
-        customerSubscribeRepository.deleteById(id);
-        log.info("Subscriber deleted: {}", id);
-        return true;
-    }
+  @Override
+  public List<SubscriberResponse> getAllSubscribers() {
+    return customerSubscribeRepository.findAll().stream()
+        .map(
+            subscriber ->
+                SubscriberResponse.builder()
+                    .id(subscriber.getId())
+                    .email(subscriber.getEmail())
+                    .createdAt(subscriber.getCreatedAt())
+                    .build())
+        .collect(Collectors.toList());
+  }
+
+  @Override
+  public Boolean deleteSubscriber(String id) {
+    customerSubscribeRepository.deleteById(id);
+    log.info("Subscriber deleted: {}", id);
+    return true;
+  }
 }

@@ -1,16 +1,17 @@
-import axios from "axios";
-import { ApiResponse, LoginResponse } from "../types/admin";
-import { toast } from "react-toastify";
+import axios from 'axios';
+import { ApiResponse, LoginResponse } from '../types/admin';
+import { toast } from 'react-toastify';
 
 const axiosClient = axios.create({
-  baseURL:process.env.REACT_APP_API_URL ,
+  baseURL: process.env.REACT_APP_API_URL,
   headers: {
-    "Content-Type": "application/json",
+    'Content-Type': 'application/json',
   },
+  timeout: 20000,
 });
 
 axiosClient.interceptors.request.use((config) => {
-  const token = sessionStorage.getItem("accessToken");
+  const token = sessionStorage.getItem('accessToken');
   if (token && config.headers) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -21,19 +22,22 @@ axiosClient.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    if (!originalRequest) {
+      return Promise.reject(error);
+    }
     if (
       error.response?.status === 401 &&
       !originalRequest._retry &&
-      sessionStorage.getItem("refreshToken")
+      sessionStorage.getItem('refreshToken')
     ) {
       originalRequest._retry = true;
       const refreshed = await tryRefreshToken();
       if (refreshed) {
-        originalRequest.headers.Authorization = `Bearer ${sessionStorage.getItem("accessToken")}`;
+        originalRequest.headers.Authorization = `Bearer ${sessionStorage.getItem('accessToken')}`;
         return axiosClient(originalRequest);
       } else {
         sessionStorage.clear();
-        window.location.href = "/2025/luatpoip/admin/login";
+        window.location.href = '/2025/luatpoip/admin/login';
       }
     }
     return Promise.reject(error);
@@ -42,22 +46,24 @@ axiosClient.interceptors.response.use(
 
 export default axiosClient;
 export async function tryRefreshToken(): Promise<boolean> {
-    const refreshToken = sessionStorage.getItem("refreshToken");
-    if (!refreshToken) return false;
-    try {
-      const response = await axios.post<ApiResponse<LoginResponse>>(`${process.env.REACT_APP_API_URL}/auth/refresh`, {
-        refreshToken,
-      });
-  
-      const data = response.data.data;
-      if (!data?.token || !data?.refreshToken) return false;
-  
-      sessionStorage.setItem("accessToken", data.token);
-      sessionStorage.setItem("refreshToken", data.refreshToken);
-  
-      return true;
-    } catch (error) {
-      toast.error('Đăng nhập không thành công');
-      return false;
-    }
+  const refreshToken = sessionStorage.getItem('refreshToken');
+  if (!refreshToken) return false;
+  try {
+    const response = await axios.post<ApiResponse<LoginResponse>>(
+      `${process.env.REACT_APP_API_URL}/auth/refresh`,
+      { refreshToken },
+      { timeout: 20000 }
+    );
+
+    const data = response.data.data;
+    if (!data?.token || !data?.refreshToken) return false;
+
+    sessionStorage.setItem('accessToken', data.token);
+    sessionStorage.setItem('refreshToken', data.refreshToken);
+
+    return true;
+  } catch (error) {
+    toast.error('Đăng nhập không thành công');
+    return false;
   }
+}

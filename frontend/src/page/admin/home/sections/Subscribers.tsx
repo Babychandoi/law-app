@@ -28,7 +28,7 @@ const Subscribers: React.FC = () => {
     try {
       setLoading(true);
       const response = await axiosClient.get<ApiResponse<Subscriber[]>>('/news/subscribers');
-      
+
       if (response.data.code === 200) {
         setSubscribers(response.data.data);
       }
@@ -54,7 +54,7 @@ const Subscribers: React.FC = () => {
     }
   };
 
-  const filteredSubscribers = subscribers.filter(sub =>
+  const filteredSubscribers = subscribers.filter((sub) =>
     sub.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -134,7 +134,7 @@ const Subscribers: React.FC = () => {
                         {new Date(subscriber.createdAt).toLocaleDateString('vi-VN', {
                           year: 'numeric',
                           month: 'long',
-                          day: 'numeric'
+                          day: 'numeric',
                         })}
                       </div>
                     </td>

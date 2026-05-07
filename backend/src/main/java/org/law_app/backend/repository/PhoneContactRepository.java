@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PhoneContactRepository extends JpaRepository<PhoneContact, String> {
-    // This repository interface will handle CRUD operations for PhoneContact entities
-    // Additional custom query methods can be defined here if needed
+  // This repository interface will handle CRUD operations for PhoneContact entities
+  // Additional custom query methods can be defined here if needed
 }

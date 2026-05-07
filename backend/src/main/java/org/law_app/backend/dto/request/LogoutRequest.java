@@ -1,4 +1,5 @@
 package org.law_app.backend.dto.request;
+
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -8,5 +9,5 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class LogoutRequest {
-    String token;
+  String token;
 }

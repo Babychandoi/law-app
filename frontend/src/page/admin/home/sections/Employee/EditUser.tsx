@@ -15,7 +15,7 @@ const UserEdit: React.FC<UserEditProps> = ({
   isOpen,
   onClose,
   onSave,
-  isLoading = false
+  isLoading = false,
 }) => {
   const [formData, setFormData] = useState<UserCreate>({
     username: '',
@@ -67,7 +67,7 @@ const UserEdit: React.FC<UserEditProps> = ({
 
     // Validate phoneNumber (optional)
     if (formData.phoneNumber && formData.phoneNumber.trim()) {
-      if (!/^[\d\s\+\-\(\)]+$/.test(formData.phoneNumber)) {
+      if (!/^[\d\s+()-]+$/.test(formData.phoneNumber)) {
         newErrors.phoneNumber = 'Số điện thoại không hợp lệ';
       }
     }
@@ -82,16 +82,16 @@ const UserEdit: React.FC<UserEditProps> = ({
   };
 
   const handleInputChange = (field: keyof UserCreate, value: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [field]: value
+      [field]: value,
     }));
 
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({
+      setErrors((prev) => ({
         ...prev,
-        [field]: ''
+        [field]: '',
       }));
     }
   };
@@ -109,9 +109,9 @@ const UserEdit: React.FC<UserEditProps> = ({
         fullName: formData.fullName.trim(),
         phoneNumber: formData.phoneNumber?.trim() || '',
         position: formData.position?.trim() || '',
-        role: formData.role
+        role: formData.role,
       };
-      
+
       onSave(cleanedData, initialData.id);
     }
   };
@@ -124,7 +124,7 @@ const UserEdit: React.FC<UserEditProps> = ({
         fullName: initialData.fullName || '',
         phoneNumber: initialData.phoneNumber || '',
         position: initialData.position || '',
-        role: initialData.role || 'USER'
+        role: initialData.role || 'USER',
       });
     }
     setErrors({});
@@ -137,7 +137,7 @@ const UserEdit: React.FC<UserEditProps> = ({
       fullName: '',
       phoneNumber: '',
       position: '',
-      role: 'USER'
+      role: 'USER',
     });
     setErrors({});
     onClose();
@@ -155,7 +155,7 @@ const UserEdit: React.FC<UserEditProps> = ({
             </div>
             <h2 className="text-2xl font-bold text-gray-800">Chỉnh sửa thông tin người dùng</h2>
           </div>
-          <button 
+          <button
             onClick={handleClose}
             className="text-gray-500 hover:text-gray-700 transition-colors"
             disabled={isLoading}
@@ -181,9 +181,7 @@ const UserEdit: React.FC<UserEditProps> = ({
               placeholder="Nhập tên đăng nhập"
               disabled={isLoading}
             />
-            {errors.username && (
-              <p className="mt-1 text-sm text-red-600">{errors.username}</p>
-            )}
+            {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username}</p>}
           </div>
 
           {/* Email Field */}
@@ -202,9 +200,7 @@ const UserEdit: React.FC<UserEditProps> = ({
               placeholder="Nhập email"
               disabled={isLoading}
             />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email}</p>
-            )}
+            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
           </div>
 
           {/* Full Name Field */}
@@ -223,9 +219,7 @@ const UserEdit: React.FC<UserEditProps> = ({
               placeholder="Nhập họ tên"
               disabled={isLoading}
             />
-            {errors.fullName && (
-              <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>
-            )}
+            {errors.fullName && <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>}
           </div>
 
           {/* phoneNumber Number Field */}
@@ -265,9 +259,7 @@ const UserEdit: React.FC<UserEditProps> = ({
               placeholder="Nhập chức vụ"
               disabled={isLoading}
             />
-            {errors.position && (
-              <p className="mt-1 text-sm text-red-600">{errors.position}</p>
-            )}
+            {errors.position && <p className="mt-1 text-sm text-red-600">{errors.position}</p>}
           </div>
 
           {/* Action Buttons */}
@@ -281,7 +273,7 @@ const UserEdit: React.FC<UserEditProps> = ({
               <Save className="h-4 w-4" />
               {isLoading ? 'Đang lưu...' : 'Lưu thay đổi'}
             </button>
-            
+
             <button
               type="button"
               onClick={handleReset}
@@ -290,7 +282,7 @@ const UserEdit: React.FC<UserEditProps> = ({
             >
               Khôi phục
             </button>
-            
+
             <button
               type="button"
               onClick={handleClose}

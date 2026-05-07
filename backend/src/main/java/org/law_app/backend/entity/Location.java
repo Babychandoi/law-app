@@ -15,13 +15,15 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Location {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id; // Unique identifier for the location
-    String type; // Type of the location (e.g., city, state, country)
-    String address; // Address of the location
-    Color color; // Color associated with the location, if applicable
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "company_id")
-    Company company; // Reference to the company associated with this location
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  String id; // Unique identifier for the location
+
+  String type; // Type of the location (e.g., city, state, country)
+  String address; // Address of the location
+  Color color; // Color associated with the location, if applicable
+
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "company_id")
+  Company company; // Reference to the company associated with this location
 }

@@ -14,21 +14,22 @@ interface Props {
 }
 
 const ScienceTechEnterpriseConditions: React.FC<Props> = ({
-  title = "ĐIỀU KIỆN CẤP GIẤY CHỨNG NHẬN DOANH NGHIỆP KHOA HỌC VÀ CÔNG NGHỆ",
+  title = 'ĐIỀU KIỆN CẤP GIẤY CHỨNG NHẬN DOANH NGHIỆP KHOA HỌC VÀ CÔNG NGHỆ',
   conditions = [
     {
-      title: "Được thành lập và hoạt động theo Luật doanh nghiệp"
+      title: 'Được thành lập và hoạt động theo Luật doanh nghiệp',
     },
     {
-      title: "Có khả năng tạo ra hoặc ứng dụng kết quả KH&CN"
+      title: 'Có khả năng tạo ra hoặc ứng dụng kết quả KH&CN',
     },
     {
-      title: "Đáp ứng điều kiện về tỷ lệ doanh thu",
-      description: "Đối với doanh nghiệp đã thành lập từ đủ 5 năm trở lên: có doanh thu từ việc sản xuất, kinh doanh sản phẩm hình thành từ kết quả KH&CN đạt tỷ lệ tối thiểu 30% trên tổng doanh thu."
-    }
+      title: 'Đáp ứng điều kiện về tỷ lệ doanh thu',
+      description:
+        'Đối với doanh nghiệp đã thành lập từ đủ 5 năm trở lên: có doanh thu từ việc sản xuất, kinh doanh sản phẩm hình thành từ kết quả KH&CN đạt tỷ lệ tối thiểu 30% trên tổng doanh thu.',
+    },
   ],
   headerIcon = <Lightbulb className="w-8 h-8 text-blue-600" />,
-  conditionIcon = <ChevronDown className="w-6 h-6 text-blue-600" />
+  conditionIcon = <ChevronDown className="w-6 h-6 text-blue-600" />,
 }) => {
   return (
     <div className="bg-gradient-to-br from-gray-50 to-blue-50 py-16">
@@ -61,9 +62,7 @@ const ScienceTechEnterpriseConditions: React.FC<Props> = ({
                     {condition.title}
                   </h3>
                   {condition.description && (
-                    <p className="text-gray-600 text-sm leading-relaxed">
-                      {condition.description}
-                    </p>
+                    <p className="text-gray-600 text-sm leading-relaxed">{condition.description}</p>
                   )}
                 </div>
               </div>

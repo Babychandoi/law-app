@@ -14,14 +14,15 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Hero {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    String id;
-    String title;
-    String subtitle;
-    String description;
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id")
-    ChildrenServices service;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  String id;
 
+  String title;
+  String subtitle;
+  String description;
+
+  @OneToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "service_id")
+  ChildrenServices service;
 }

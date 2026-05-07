@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Briefcase, Download, Eye, Calendar, Mail, Phone } from 'lucide-react';
 import { toast } from 'react-toastify';
-import { 
-  getAllJobApplications, 
+import {
+  getAllJobApplications,
   updateApplicationStatus,
-  JobApplication 
+  JobApplication,
 } from '../../../../service/jobApplication';
 
 interface Job {
@@ -31,7 +31,7 @@ const JobApplications: React.FC = () => {
       if (response.code === 200) {
         const apps = response.data;
         setApplications(apps);
-        
+
         // Group by job
         const grouped = apps.reduce((acc: any, app: JobApplication) => {
           const existing = acc.find((j: Job) => j.id === app.jobId);
@@ -41,12 +41,12 @@ const JobApplications: React.FC = () => {
             acc.push({
               id: app.jobId,
               title: app.jobTitle,
-              applications: [app]
+              applications: [app],
             });
           }
           return acc;
         }, []);
-        
+
         setGroupedApplications(grouped);
       }
     } catch (error) {
@@ -69,27 +69,36 @@ const JobApplications: React.FC = () => {
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'PENDING': return 'bg-yellow-100 text-yellow-800';
-      case 'REVIEWING': return 'bg-blue-100 text-blue-800';
-      case 'ACCEPTED': return 'bg-green-100 text-green-800';
-      case 'REJECTED': return 'bg-red-100 text-red-800';
-      default: return 'bg-gray-100 text-gray-800';
+      case 'PENDING':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'REVIEWING':
+        return 'bg-blue-100 text-blue-800';
+      case 'ACCEPTED':
+        return 'bg-green-100 text-green-800';
+      case 'REJECTED':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-gray-100 text-gray-800';
     }
   };
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'PENDING': return 'Chờ xử lý';
-      case 'REVIEWING': return 'Đang xem xét';
-      case 'ACCEPTED': return 'Chấp nhận';
-      case 'REJECTED': return 'Từ chối';
-      default: return status;
+      case 'PENDING':
+        return 'Chờ xử lý';
+      case 'REVIEWING':
+        return 'Đang xem xét';
+      case 'ACCEPTED':
+        return 'Chấp nhận';
+      case 'REJECTED':
+        return 'Từ chối';
+      default:
+        return status;
     }
   };
 
-  const filteredApplications = selectedJob === 'all' 
-    ? applications 
-    : applications.filter(app => app.jobId === selectedJob);
+  const filteredApplications =
+    selectedJob === 'all' ? applications : applications.filter((app) => app.jobId === selectedJob);
 
   const handlePreview = (cvUrl: string) => {
     // MinIO URLs can be opened directly for preview
@@ -130,7 +139,7 @@ const JobApplications: React.FC = () => {
           className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
         >
           <option value="all">Tất cả vị trí ({applications.length})</option>
-          {groupedApplications.map(job => (
+          {groupedApplications.map((job) => (
             <option key={job.id} value={job.id}>
               {job.title} ({job.applications.length})
             </option>
@@ -146,8 +155,11 @@ const JobApplications: React.FC = () => {
             <p className="text-gray-600">Chưa có ứng viên nào</p>
           </div>
         ) : (
-          filteredApplications.map(app => (
-            <div key={app.id} className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow">
+          filteredApplications.map((app) => (
+            <div
+              key={app.id}
+              className="bg-white rounded-lg shadow hover:shadow-lg transition-shadow"
+            >
               <div className="p-6">
                 {/* Header */}
                 <div className="flex items-start justify-between mb-4">
@@ -160,7 +172,9 @@ const JobApplications: React.FC = () => {
                       {app.jobTitle}
                     </p>
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(app.status)}`}>
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(app.status)}`}
+                  >
                     {getStatusText(app.status)}
                   </span>
                 </div>
@@ -204,7 +218,7 @@ const JobApplications: React.FC = () => {
                     <Download className="w-4 h-4" />
                     Tải xuống
                   </a>
-                  
+
                   {/* Status Update Buttons */}
                   {app.status === 'PENDING' && (
                     <button

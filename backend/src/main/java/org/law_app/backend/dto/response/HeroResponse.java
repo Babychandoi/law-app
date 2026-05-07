@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class HeroResponse {
-    String title;
-    String description;
-    String subtitle;
+  String title;
+  String description;
+  String subtitle;
 }

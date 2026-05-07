@@ -15,10 +15,10 @@ import lombok.experimental.SuperBuilder;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class NewsRequest {
-    String id; // Unique identifier for the news article
-    String title; // Title of the news article
-    String subtitle; // Subtitle of the news article
-    String author; // Author of the news article
-    String image; // Image associated with the news article
-    String fullContent; // Full HTML content from rich text editor
+  String id; // Unique identifier for the news article
+  String title; // Title of the news article
+  String subtitle; // Subtitle of the news article
+  String author; // Author of the news article
+  String image; // Image associated with the news article
+  String fullContent; // Full HTML content from rich text editor
 }

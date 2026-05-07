@@ -11,9 +11,9 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CustomerRequest {
-    String name; // Name of the customer
-    String email; // Email address of the customer
-    String phone; // Phone number of the customer
-    String description; // Description of the customer
-    String serviceId; // ID of the service associated with the customer
+  String name; // Name of the customer
+  String email; // Email address of the customer
+  String phone; // Phone number of the customer
+  String description; // Description of the customer
+  String serviceId; // ID of the service associated with the customer
 }

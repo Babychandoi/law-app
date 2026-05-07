@@ -9,9 +9,7 @@ interface ServiceCardProps {
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ service }) => (
   <div className="bg-gray-50 p-6 rounded-lg">
-    <h3 className="text-xl font-semibold text-center mb-4 text-blue-700">
-      {service.title}
-    </h3>
+    <h3 className="text-xl font-semibold text-center mb-4 text-blue-700">{service.title}</h3>
     <ul className="space-y-3">
       {service.items.map((item, itemIndex) => (
         <li key={itemIndex} className="flex items-start">

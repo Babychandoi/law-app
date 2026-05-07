@@ -7,13 +7,15 @@ interface BlogPostProps {
 }
 
 const BlogPost: React.FC<BlogPostProps> = ({ news }) => {
-  
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50 relative overflow-hidden">
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-r from-yellow-400/10 to-orange-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+        <div
+          className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"
+          style={{ animationDelay: '1s' }}
+        ></div>
       </div>
 
       <div className="container mx-auto px-4 md:px-8 lg:px-12 py-12 relative z-10">
@@ -25,7 +27,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ news }) => {
               subtitle: news?.subtitle,
               author: news?.author,
               id: news?.id,
-              image: news?.image
+              image: news?.image,
             }}
           />
         )}
@@ -35,7 +37,7 @@ const BlogPost: React.FC<BlogPostProps> = ({ news }) => {
           <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 overflow-hidden">
             <div className="p-6 md:p-8 lg:p-12">
               {/* Rich Text Content */}
-              <div 
+              <div
                 className="prose prose-lg max-w-none
                   prose-headings:font-bold prose-headings:text-gray-900
                   prose-h1:text-3xl prose-h1:mb-6 prose-h1:mt-8

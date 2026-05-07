@@ -1,7 +1,7 @@
-import { useState } from "react";
-import { News } from "../../../../../types/service";
-import { Upload, X } from "lucide-react";
-import React from "react";
+import { useState } from 'react';
+import { News } from '../../../../../types/service';
+import { Upload, X } from 'lucide-react';
+import React from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
@@ -20,37 +20,43 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
   });
 
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>("");
-  const [error, setError] = useState<string>("");
-  const [fullContent, setFullContent] = useState<string>(news.fullContent || "");
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  const [fullContent, setFullContent] = useState<string>(news.fullContent || '');
 
   // Quill modules configuration
   const quillModules = {
     toolbar: [
-      [{ 'header': [1, 2, 3, false] }],
+      [{ header: [1, 2, 3, false] }],
       ['bold', 'italic', 'underline', 'strike'],
-      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-      [{ 'indent': '-1'}, { 'indent': '+1' }],
+      [{ list: 'ordered' }, { list: 'bullet' }],
+      [{ indent: '-1' }, { indent: '+1' }],
       ['link', 'image'],
-      ['clean']
+      ['clean'],
     ],
     clipboard: {
-      matchVisual: false
-    }
+      matchVisual: false,
+    },
   };
 
   const quillFormats = [
     'header',
-    'bold', 'italic', 'underline', 'strike',
-    'list', 'bullet', 'indent',
-    'link', 'image'
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'list',
+    'bullet',
+    'indent',
+    'link',
+    'image',
   ];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -68,60 +74,65 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
         return;
       }
       setImageFile(file);
-      
+
       const reader = new FileReader();
       reader.onload = (e) => {
         setImagePreview(e.target?.result as string);
       };
       reader.readAsDataURL(file);
 
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        image: ""
+        image: '',
       }));
     }
   };
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      image: value
+      image: value,
     }));
-    
+
     if (value) {
       setImageFile(null);
-      setImagePreview("");
+      setImagePreview('');
     }
   };
 
   const removeImage = () => {
     setImageFile(null);
-    setImagePreview("");
-    setFormData(prev => ({
+    setImagePreview('');
+    setFormData((prev) => ({
       ...prev,
-      image: ""
+      image: '',
     }));
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title || !formData.subtitle || !formData.author || (!formData.image && !imageFile)) {
-      setError("Vui lòng điền đầy đủ thông tin bắt buộc.");
+    if (
+      !formData.title ||
+      !formData.subtitle ||
+      !formData.author ||
+      (!formData.image && !imageFile)
+    ) {
+      setError('Vui lòng điền đầy đủ thông tin bắt buộc.');
       return;
     }
-    
+
     if (!fullContent.trim()) {
-      setError("Vui lòng nhập nội dung bài viết.");
+      setError('Vui lòng nhập nội dung bài viết.');
       return;
     }
-    
-    setError("");
+
+    setError('');
 
     const updatedNews: News = {
       ...news,
       ...formData,
-      fullContent: fullContent
+      fullContent: fullContent,
     };
     onSave(updatedNews, imageFile || undefined);
   };
@@ -148,9 +159,7 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
             <h4 className="text-lg font-semibold text-gray-800 mb-4">Thông tin cơ bản</h4>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tiêu đề *
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tiêu đề *</label>
                 <input
                   type="text"
                   name="title"
@@ -161,9 +170,7 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Tác giả *
-                </label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tác giả *</label>
                 <input
                   type="text"
                   name="author"
@@ -175,9 +182,7 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
               </div>
             </div>
             <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Phụ đề *
-              </label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Phụ đề *</label>
               <textarea
                 name="subtitle"
                 value={formData.subtitle}
@@ -187,19 +192,15 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
                 required
               />
             </div>
-            
+
             {/* Image Upload Section */}
             <div className="mt-4">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Hình ảnh *
-              </label>
-              
+              <label className="block text-sm font-medium text-gray-700 mb-2">Hình ảnh *</label>
+
               {/* Current Image Display */}
               {formData.image && !imagePreview && !imageFile && (
                 <div className="mb-4">
-                  <label className="block text-sm text-gray-600 mb-2">
-                    Hình ảnh hiện tại
-                  </label>
+                  <label className="block text-sm text-gray-600 mb-2">Hình ảnh hiện tại</label>
                   <div className="relative inline-block">
                     <img
                       src={formData.image}
@@ -209,7 +210,7 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
                   </div>
                 </div>
               )}
-              
+
               <div className="mb-4">
                 <label className="block text-sm text-gray-600 mb-2">
                   Tải lên file hình ảnh mới
@@ -219,7 +220,8 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
                       <Upload className="w-8 h-8 mb-2 text-gray-500" />
                       <p className="mb-2 text-sm text-gray-500">
-                        <span className="font-semibold">Click để tải lên</span> hoặc kéo thả file vào đây
+                        <span className="font-semibold">Click để tải lên</span> hoặc kéo thả file
+                        vào đây
                       </p>
                       <p className="text-xs text-gray-500">PNG, JPG, GIF, WebP (MAX. 5MB)</p>
                     </div>
@@ -279,11 +281,13 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
           {/* Content Editor */}
           <div className="mb-6">
             <h4 className="text-lg font-semibold text-gray-800 mb-4">Nội dung bài viết</h4>
-            
+
             <div className="bg-gradient-to-r from-yellow-50 via-orange-50 to-red-50 border-2 border-orange-200 rounded-2xl p-6">
               <div>
-        
-                <div className="bg-white rounded-xl overflow-hidden" style={{ border: '2px solid #d1d5db' }}>
+                <div
+                  className="bg-white rounded-xl overflow-hidden"
+                  style={{ border: '2px solid #d1d5db' }}
+                >
                   <ReactQuill
                     theme="snow"
                     value={fullContent}
@@ -299,7 +303,7 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
                   <span>{fullContent.replace(/<[^>]*>/g, '').length} ký tự</span>
                 </div>
               </div>
-              
+
               {fullContent.trim() && (
                 <div className="mt-4 p-4 bg-green-50 border-2 border-green-200 rounded-xl">
                   <div className="flex items-center gap-2 text-green-700">

@@ -13,8 +13,8 @@ import org.law_app.backend.common.Icon;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SocialRequest {
-    Icon icon; // Icon associated with the social entity
-    String href; // URL or link associated with the social entity
-    String label; // Label for the social entity (e.g., "Facebook", "Twitter")
-    Color color; // Color associated with the social entity, if applicable
+  Icon icon; // Icon associated with the social entity
+  String href; // URL or link associated with the social entity
+  String label; // Label for the social entity (e.g., "Facebook", "Twitter")
+  Color color; // Color associated with the social entity, if applicable
 }

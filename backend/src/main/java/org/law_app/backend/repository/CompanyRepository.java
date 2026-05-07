@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CompanyRepository extends JpaRepository<Company, String> {
-    // Define custom query methods if needed
-    // For example, to find a company by its name:
-    // Optional<Company> findByName(String name);
+  // Define custom query methods if needed
+  // For example, to find a company by its name:
+  // Optional<Company> findByName(String name);
 }

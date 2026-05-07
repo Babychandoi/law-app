@@ -11,7 +11,7 @@ export const DEFAULT_PROPS: Required<Omit<GoogleMapProps, 'className' | 'style' 
   label: 'Luật Poip',
   borderRadius: '8px',
   loading: false,
-  loadingText: 'Đang tải bản đồ...'
+  loadingText: 'Đang tải bản đồ...',
 };
 
 export const FAMOUS_LOCATIONS = {
@@ -20,5 +20,5 @@ export const FAMOUS_LOCATIONS = {
   onePillar: { lat: 21.0368, lng: 105.8344, label: 'Chùa Một Cột' },
   literature: { lat: 21.0227, lng: 105.8356, label: 'Văn Miếu' },
   hoChiMinhMausoleum: { lat: 21.0368, lng: 105.8345, label: 'Lăng Chủ Tịch Hồ Chí Minh' },
-  templeOfLiterature: { lat: 21.0227, lng: 105.8356, label: 'Văn Miếu Quốc Tử Giám' }
+  templeOfLiterature: { lat: 21.0227, lng: 105.8356, label: 'Văn Miếu Quốc Tử Giám' },
 } as const;

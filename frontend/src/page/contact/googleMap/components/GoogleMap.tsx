@@ -2,11 +2,7 @@
 import React, { useMemo } from 'react';
 import { GoogleMapProps } from '../types/GoogleMap.types';
 import { DEFAULT_PROPS } from '../constants/GoogleMap.constants';
-import { 
-  generateMapUrl, 
-  getContainerStyles, 
-  getIframeStyles, 
-} from '../utils/GoogleMap.utils';
+import { generateMapUrl, getContainerStyles, getIframeStyles } from '../utils/GoogleMap.utils';
 import LoadingSpinner from './LoadingSpinner';
 
 const GoogleMap: React.FC<GoogleMapProps> = (props) => {
@@ -25,12 +21,12 @@ const GoogleMap: React.FC<GoogleMapProps> = (props) => {
     borderRadius,
     ariaLabel,
     loading,
-    loadingText
+    loadingText,
   } = config;
 
   // Generate map URL with memoization for performance
-  const mapUrl = useMemo(() => 
-    generateMapUrl(coordinates, height, language, label, mapType, zoom),
+  const mapUrl = useMemo(
+    () => generateMapUrl(coordinates, height, language, label, mapType, zoom),
     [coordinates, height, language, label, mapType, zoom]
   );
 
@@ -39,14 +35,14 @@ const GoogleMap: React.FC<GoogleMapProps> = (props) => {
   const iframeStyles = getIframeStyles(loading);
 
   return (
-    <div 
+    <div
       className={`google-map-container ${className}`}
       style={containerStyles}
       role="img"
       aria-label={ariaLabel || `Bản đồ hiển thị ${label}`}
     >
       {loading && <LoadingSpinner loadingText={loadingText} />}
-      
+
       <iframe
         src={mapUrl}
         style={iframeStyles}

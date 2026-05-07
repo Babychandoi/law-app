@@ -1,13 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { 
-  Bell, 
-  User2, 
-  LogOut,
-  Mail,
-  Phone,
-  ChevronDown,
-  Eye
-} from 'lucide-react';
+import { Bell, User2, LogOut, Mail, Phone, ChevronDown, Eye } from 'lucide-react';
 import { myProfile, logout, getNotificationById } from '../../../../service/admin';
 import { Notification, User } from '../../../../types/admin';
 import { toast } from 'react-toastify';
@@ -43,12 +35,12 @@ const Navbar: React.FC = () => {
           }));
           setNotifications(mappedNotifications);
           setDisplayedNotifications(mappedNotifications.slice(0, 3));
-          setUnreadCount(mappedNotifications.filter(n => !n.read).length);
+          setUnreadCount(mappedNotifications.filter((n) => !n.read).length);
         } else {
-          toast.error("Không thể tải thông báo"); 
+          toast.error('Không thể tải thông báo');
         }
       } catch (error) {
-        toast.error("Lỗi khi tải thông báo");
+        toast.error('Lỗi khi tải thông báo');
       }
     };
 
@@ -62,10 +54,10 @@ const Navbar: React.FC = () => {
         if (response.code === 200 && response.data) {
           setProfile(response.data);
         } else {
-          toast.error("Không thể tải thông tin người dùng");
+          toast.error('Không thể tải thông tin người dùng');
         }
       } catch (error) {
-        toast.error("Lỗi khi tải thông tin người dùng");
+        toast.error('Lỗi khi tải thông tin người dùng');
       }
     };
     fetchProfile();
@@ -73,13 +65,14 @@ const Navbar: React.FC = () => {
 
   useEffect(() => {
     if (profile?.id) {
-      const wsUrl = process.env.REACT_APP_WS_URL?.replace('http://', 'ws://').replace('https://', 'wss://');
+      const wsUrl = process.env.REACT_APP_WS_URL?.replace('http://', 'ws://').replace(
+        'https://',
+        'wss://'
+      );
       const socket = new WebSocket(`${wsUrl}?userId=${profile.id}`);
-      
-      socket.onopen = () => {
-        console.log('Notification WebSocket connected');
-      };
-      
+
+      socket.onopen = () => {};
+
       socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
 
@@ -93,25 +86,17 @@ const Navbar: React.FC = () => {
           // Legacy fields
           customerServiceName: data.customerServiceName,
           serviceName: data.serviceName,
-          createdAt: new Date(data.createdAt).toLocaleString("vi-VN"),
+          createdAt: new Date(data.createdAt).toLocaleString('vi-VN'),
           read: data.read,
         };
 
-        setNotifications((prev) => {
-          const updated = [newNotification, ...prev];
-          if (showAllNotifications) {
-            setDisplayedNotifications(updated);
-          } else {
-            setDisplayedNotifications(updated.slice(0, notificationsToShow));
-          }
-          return updated;
-        });
+        setNotifications((prev) => [newNotification, ...prev]);
         setUnreadCount((prevCount) => prevCount + (data.read ? 0 : 1));
       };
 
       socket.onerror = (err) => {
         console.error('WebSocket error:', err);
-        toast.error("Lỗi kết nối đến máy chủ thông báo");
+        toast.error('Lỗi kết nối đến máy chủ thông báo');
       };
 
       return () => {
@@ -129,16 +114,8 @@ const Navbar: React.FC = () => {
   }, [notifications, notificationsToShow, showAllNotifications]);
 
   const markRead = async (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) =>
-        n.id === id ? { ...n, read: true } : n
-      )
-    );
-    setDisplayedNotifications((prev) =>
-      prev.map((n) =>
-        n.id === id ? { ...n, read: true } : n
-      )
-    );
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+    setDisplayedNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
     setUnreadCount((prevCount) => Math.max(0, prevCount - 1));
     await markAsRead(id);
   };
@@ -162,13 +139,13 @@ const Navbar: React.FC = () => {
 
   const markAllAsRead = async () => {
     try {
-      setNotifications(prev => prev.map(n => ({ ...n, read: true })));
-      setDisplayedNotifications(prev => prev.map(n => ({ ...n, read: true })));
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setDisplayedNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
       setUnreadCount(0);
       await markAllRead();
-      toast.success("Đã đánh dấu tất cả thông báo là đã đọc");
+      toast.success('Đã đánh dấu tất cả thông báo là đã đọc');
     } catch (error) {
-      toast.error("Lỗi khi đánh dấu thông báo");
+      toast.error('Lỗi khi đánh dấu thông báo');
       window.location.reload();
     }
   };
@@ -185,7 +162,7 @@ const Navbar: React.FC = () => {
 
   const hanldeLogout = async () => {
     try {
-      const token = sessionStorage.getItem("accessToken");
+      const token = sessionStorage.getItem('accessToken');
       if (!token) {
         return;
       }
@@ -194,10 +171,10 @@ const Navbar: React.FC = () => {
         sessionStorage.clear();
         window.location.href = '/2025/luatpoip/admin/login';
       } else {
-        toast.error("Không thể đăng xuất");
+        toast.error('Không thể đăng xuất');
       }
     } catch (error) {
-      toast.error("Lỗi khi đăng xuất");
+      toast.error('Lỗi khi đăng xuất');
     }
   };
 
@@ -241,7 +218,7 @@ const Navbar: React.FC = () => {
                       <p>Không có thông báo nào</p>
                     </div>
                   ) : (
-                    displayedNotifications.map(n => (
+                    displayedNotifications.map((n) => (
                       <div
                         key={n.id}
                         className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
@@ -258,25 +235,28 @@ const Navbar: React.FC = () => {
                           <div className="flex-1">
                             {n.type === 'CHAT' ? (
                               <>
-                                <p className="font-medium text-gray-900">{n.title || 'Tin nhắn mới'}</p>
+                                <p className="font-medium text-gray-900">
+                                  {n.title || 'Tin nhắn mới'}
+                                </p>
                                 <p className="text-sm text-gray-600">{n.content}</p>
                               </>
-                            ) : n.type === 'CUSTOMER_SERVICE' || (!n.type && n.customerServiceName) ? (
+                            ) : n.type === 'CUSTOMER_SERVICE' ||
+                              (!n.type && n.customerServiceName) ? (
                               <>
                                 <p className="font-medium text-gray-900">{n.customerServiceName}</p>
                                 <p className="text-sm text-gray-600">{n.serviceName}</p>
                               </>
                             ) : (
                               <>
-                                <p className="font-medium text-gray-900">{n.title || 'Thông báo'}</p>
+                                <p className="font-medium text-gray-900">
+                                  {n.title || 'Thông báo'}
+                                </p>
                                 <p className="text-sm text-gray-600">{n.content}</p>
                               </>
                             )}
                             <p className="text-xs text-gray-500 mt-1">{n.createdAt}</p>
                           </div>
-                          {!n.read && (
-                            <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                          )}
+                          {!n.read && <div className="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>}
                         </div>
                       </div>
                     ))
@@ -284,24 +264,29 @@ const Navbar: React.FC = () => {
                   {notifications.length > 5 && (
                     <div className="p-3 border-t border-gray-200 bg-gray-50">
                       <div className="flex justify-center space-x-4">
-                        {!showAllNotifications && displayedNotifications.length < notifications.length && (
-                          <button
-                            onClick={handleLoadMore}
-                            className="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-700"
-                          >
-                            <ChevronDown size={16} />
-                            <span>Xem thêm ({Math.min(5, notifications.length - displayedNotifications.length)})</span>
-                          </button>
-                        )}
-                        {!showAllNotifications && displayedNotifications.length < notifications.length && (
-                          <button
-                            onClick={handleViewAll}
-                            className="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-700"
-                          >
-                            <Eye size={16} />
-                            <span>Xem tất cả ({notifications.length})</span>
-                          </button>
-                        )}
+                        {!showAllNotifications &&
+                          displayedNotifications.length < notifications.length && (
+                            <button
+                              onClick={handleLoadMore}
+                              className="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-700"
+                            >
+                              <ChevronDown size={16} />
+                              <span>
+                                Xem thêm (
+                                {Math.min(5, notifications.length - displayedNotifications.length)})
+                              </span>
+                            </button>
+                          )}
+                        {!showAllNotifications &&
+                          displayedNotifications.length < notifications.length && (
+                            <button
+                              onClick={handleViewAll}
+                              className="flex items-center space-x-1 text-sm text-blue-600 hover:text-blue-700"
+                            >
+                              <Eye size={16} />
+                              <span>Xem tất cả ({notifications.length})</span>
+                            </button>
+                          )}
                         {showAllNotifications && (
                           <button
                             onClick={handleViewLess}
@@ -349,7 +334,8 @@ const Navbar: React.FC = () => {
                   </div>
                 </div>
                 <div className="p-4 border-t border-gray-200">
-                  <button className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                  <button
+                    className="w-full flex items-center justify-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
                     onClick={hanldeLogout}
                   >
                     <LogOut size={16} />

@@ -6,7 +6,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, String> {
-    // Additional query methods can be defined here if needed
-    Boolean existsByEmailAndPhone(String email, String phone);
-    Customer findByEmailAndPhone(String email, String phone);
+  // Additional query methods can be defined here if needed
+  Boolean existsByEmailAndPhone(String email, String phone);
+
+  Customer findByEmailAndPhone(String email, String phone);
 }

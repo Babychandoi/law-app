@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface HeroRepository extends JpaRepository<Hero, String> {
-    Hero findByService(ChildrenServices services);
+  Hero findByService(ChildrenServices services);
 }

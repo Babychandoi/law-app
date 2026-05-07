@@ -1,6 +1,6 @@
-import React from 'react'
-import ConsultationForm from '../../../component/Consultation'
-import Contact from './Contact'
+import React from 'react';
+import ConsultationForm from '../../../component/Consultation';
+import Contact from './Contact';
 
 export default function Consultation() {
   return (
@@ -12,6 +12,5 @@ export default function Consultation() {
         <Contact />
       </div>
     </div>
-  )
+  );
 }
-

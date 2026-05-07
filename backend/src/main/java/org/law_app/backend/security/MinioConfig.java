@@ -9,29 +9,26 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @Data
 public class MinioConfig {
-    @Value("${minio.url}")
-    private String url;
+  @Value("${minio.url}")
+  private String url;
 
-    @Value("${minio.access-key}")
-    private String accessKey;
+  @Value("${minio.access-key}")
+  private String accessKey;
 
-    @Value("${minio.secret-key}")
-    private String secretKey;
+  @Value("${minio.secret-key}")
+  private String secretKey;
 
-    @Value("${minio.public-url}")
-    private String publicUrl;
+  @Value("${minio.public-url}")
+  private String publicUrl;
 
-    @Value("${minio.bucket.images}")
-    private String imagesBucket;
+  @Value("${minio.bucket.images}")
+  private String imagesBucket;
 
-    @Value("${minio.bucket.cvs}")
-    private String cvsBucket;
+  @Value("${minio.bucket.cvs}")
+  private String cvsBucket;
 
-    @Bean
-    public MinioClient minioClient() {
-        return MinioClient.builder()
-                .endpoint(url)
-                .credentials(accessKey, secretKey)
-                .build();
-    }
+  @Bean
+  public MinioClient minioClient() {
+    return MinioClient.builder().endpoint(url).credentials(accessKey, secretKey).build();
+  }
 }

@@ -1,11 +1,10 @@
 package org.law_app.backend.dto.response;
 
 import jakarta.persistence.*;
-import lombok.*;
-import lombok.experimental.FieldDefaults;
-
 import java.util.Date;
 import java.util.List;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
 
 @Data
 @NoArgsConstructor
@@ -13,23 +12,23 @@ import java.util.List;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JobResponse {
-    String id;
+  String id;
 
-    String title;
+  String title;
 
-    String company;
+  String company;
 
-    String jobType;
+  String jobType;
 
-    String location;
+  String location;
 
-    Date postedDate;
+  Date postedDate;
 
-    List<String> description;
+  List<String> description;
 
-    List<String> requirements;
+  List<String> requirements;
 
-    List<String> benefits;
+  List<String> benefits;
 
-    String category;
+  String category;
 }

@@ -35,13 +35,10 @@ export const NewsGrid = ({ items, loading, onItemClick }: NewsGridProps) => {
         <div
           key={item.id}
           style={{
-            animationDelay: `${index * 0.1}s`
+            animationDelay: `${index * 0.1}s`,
           }}
         >
-          <NewsCard 
-            item={item} 
-            onClick={onItemClick}
-          />
+          <NewsCard item={item} onClick={onItemClick} />
         </div>
       ))}
     </div>

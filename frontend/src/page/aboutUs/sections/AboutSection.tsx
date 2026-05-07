@@ -16,9 +16,9 @@ const AboutSection: React.FC<AboutSectionProps> = ({ title, content, image }) =>
           <div className="relative">
             <div className="absolute -inset-4 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
             <div className="relative rounded-2xl overflow-hidden shadow-2xl border-2 border-gray-200 group-hover:border-yellow-400 transition-all duration-500">
-              <img 
-                src={image} 
-                alt="About Poip Law" 
+              <img
+                src={image}
+                alt="About Poip Law"
                 className="w-full h-96 object-cover transform group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -39,7 +39,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ title, content, image }) =>
               </span>
             </h2>
           </div>
-          
+
           <div className="space-y-4">
             {content.map((paragraph, index) => (
               <div key={index} className="flex gap-3 group/item">
@@ -48,9 +48,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ title, content, image }) =>
                     <CheckCircle className="w-4 h-4 text-yellow-600" />
                   </div>
                 </div>
-                <p className="text-gray-700 leading-relaxed text-justify flex-1">
-                  {paragraph}
-                </p>
+                <p className="text-gray-700 leading-relaxed text-justify flex-1">{paragraph}</p>
               </div>
             ))}
           </div>

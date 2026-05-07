@@ -1,5 +1,17 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { Search, MessageCircle, Send, MoreVertical, CheckCheck, User, Paperclip, Smile, Edit2, Check, X } from 'lucide-react';
+import {
+  Search,
+  MessageCircle,
+  Send,
+  MoreVertical,
+  CheckCheck,
+  User,
+  Paperclip,
+  Smile,
+  Edit2,
+  Check,
+  X,
+} from 'lucide-react';
 import SockJS from 'sockjs-client';
 import { Client, IMessage } from '@stomp/stompjs';
 import chatService from '../../../../service/chat';
@@ -62,13 +74,13 @@ const AdminChatDashboard: React.FC = () => {
     unreadConversations: 0,
     assignedToAdmin: 0,
     onlineUsers: 0,
-    todayMessages: 0
+    todayMessages: 0,
   });
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [newGuestName, setNewGuestName] = useState('');
-  
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageInputRef = useRef<HTMLTextAreaElement>(null);
   const clientRef = useRef<Client | null>(null);
@@ -104,22 +116,22 @@ const AdminChatDashboard: React.FC = () => {
         heartbeatIncoming: 4000,
         heartbeatOutgoing: 4000,
         connectHeaders: {
-          adminId: currentAdmin.id // Send adminId in CONNECT headers
+          adminId: currentAdmin.id, // Send adminId in CONNECT headers
         },
         onConnect: () => {
           setIsConnected(true);
-          
+
           client.subscribe('/topic/admin/messages', (message: IMessage) => {
             try {
               const newMessage: ChatMessage = JSON.parse(message.body);
-              
+
               // Update conversations list
               fetchConversations();
-              
+
               // If this message is for the currently selected conversation, add it to messages
               if (selectedConversation === newMessage.guestId) {
-                setMessages(prev => {
-                  const exists = prev.some(msg => msg.id === newMessage.id);
+                setMessages((prev) => {
+                  const exists = prev.some((msg) => msg.id === newMessage.id);
                   if (!exists) {
                     return [...prev, newMessage];
                   }
@@ -136,8 +148,8 @@ const AdminChatDashboard: React.FC = () => {
             client.subscribe(`/topic/chat/${selectedConversation}`, (message: IMessage) => {
               try {
                 const newMessage: ChatMessage = JSON.parse(message.body);
-                setMessages(prev => {
-                  const exists = prev.some(msg => msg.id === newMessage.id);
+                setMessages((prev) => {
+                  const exists = prev.some((msg) => msg.id === newMessage.id);
                   if (!exists) {
                     return [...prev, newMessage];
                   }
@@ -153,9 +165,11 @@ const AdminChatDashboard: React.FC = () => {
           client.subscribe('/topic/admin/online-status', (message: IMessage) => {
             try {
               const payload: StatusUpdate = JSON.parse(message.body);
-              setConversations(prev => prev.map(conv =>
-                conv.guestId === payload.guestId ? { ...conv, isOnline: payload.isOnline } : conv
-              ));
+              setConversations((prev) =>
+                prev.map((conv) =>
+                  conv.guestId === payload.guestId ? { ...conv, isOnline: payload.isOnline } : conv
+                )
+              );
             } catch (error) {
               console.error('Error parsing status update:', error);
             }
@@ -174,7 +188,7 @@ const AdminChatDashboard: React.FC = () => {
         onWebSocketError: (error) => {
           console.error('WebSocket error:', error);
           setIsConnected(false);
-        }
+        },
       });
 
       client.activate();
@@ -206,31 +220,24 @@ const AdminChatDashboard: React.FC = () => {
   const markConversationAsRead = useCallback(async (guestId: string) => {
     try {
       await chatService.markConversationAsRead(guestId);
-      setConversations(prev => prev.map(conv =>
-        conv.guestId === guestId ? { ...conv, unreadCount: 0 } : conv
-      ));
+      setConversations((prev) =>
+        prev.map((conv) => (conv.guestId === guestId ? { ...conv, unreadCount: 0 } : conv))
+      );
     } catch (error) {
       console.error('Error marking conversation as read:', error);
-    }
-  }, []);
-
-  const assignConversation = useCallback(async (guestId: string, adminId: string) => {
-    try {
-      await chatService.assignConversation(guestId, adminId);
-      setConversations(prev => prev.map(conv =>
-        conv.guestId === guestId ? { ...conv, assignedAdmin: adminId } : conv
-      ));
-    } catch (error) {
-      console.error('Error assigning conversation:', error);
     }
   }, []);
 
   const updatePriority = useCallback(async (guestId: string, priority: string) => {
     try {
       await chatService.updatePriority(guestId, priority);
-      setConversations(prev => prev.map(conv =>
-        conv.guestId === guestId ? { ...conv, priority: priority as 'low' | 'normal' | 'high' } : conv
-      ));
+      setConversations((prev) =>
+        prev.map((conv) =>
+          conv.guestId === guestId
+            ? { ...conv, priority: priority as 'low' | 'normal' | 'high' }
+            : conv
+        )
+      );
     } catch (error) {
       console.error('Error updating priority:', error);
     }
@@ -239,9 +246,9 @@ const AdminChatDashboard: React.FC = () => {
   const updateGuestName = useCallback(async (guestId: string, name: string) => {
     try {
       await chatService.updateGuestName(guestId, name);
-      setConversations(prev => prev.map(conv =>
-        conv.guestId === guestId ? { ...conv, guestName: name } : conv
-      ));
+      setConversations((prev) =>
+        prev.map((conv) => (conv.guestId === guestId ? { ...conv, guestName: name } : conv))
+      );
       setEditingName(false);
       setNewGuestName('');
     } catch (error) {
@@ -249,8 +256,8 @@ const AdminChatDashboard: React.FC = () => {
     }
   }, []);
 
-  const currentConversation = useMemo(() => 
-    conversations.find(conv => conv.guestId === selectedConversation),
+  const currentConversation = useMemo(
+    () => conversations.find((conv) => conv.guestId === selectedConversation),
     [conversations, selectedConversation]
   );
 
@@ -278,7 +285,7 @@ const AdminChatDashboard: React.FC = () => {
       guestId: selectedConversation,
       content: trimmedMessage,
       senderType: 'ADMIN',
-      adminId: currentAdmin.id
+      adminId: currentAdmin.id,
     };
 
     try {
@@ -294,29 +301,33 @@ const AdminChatDashboard: React.FC = () => {
     }
   }, [newMessage, selectedConversation, currentAdmin.id]);
 
-  const handleConversationSelect = useCallback((guestId: string) => {
-    setSelectedConversation(guestId);
-    fetchMessages(guestId);
-    markConversationAsRead(guestId);
-  }, [fetchMessages, markConversationAsRead]);
+  const handleConversationSelect = useCallback(
+    (guestId: string) => {
+      setSelectedConversation(guestId);
+      fetchMessages(guestId);
+      markConversationAsRead(guestId);
+    },
+    [fetchMessages, markConversationAsRead]
+  );
 
   const filteredConversations = useMemo(() => {
     let filtered = conversations;
 
     if (searchQuery) {
-      filtered = filtered.filter(conv =>
-        conv.guestName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        conv.guestId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        conv.lastMessage?.content.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        (conv) =>
+          conv.guestName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          conv.guestId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          conv.lastMessage?.content.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     switch (filterStatus) {
       case 'unread':
-        filtered = filtered.filter(conv => conv.unreadCount > 0);
+        filtered = filtered.filter((conv) => conv.unreadCount > 0);
         break;
       case 'assigned':
-        filtered = filtered.filter(conv => conv.assignedAdmin === currentAdmin.id);
+        filtered = filtered.filter((conv) => conv.assignedAdmin === currentAdmin.id);
         break;
     }
 
@@ -355,10 +366,14 @@ const AdminChatDashboard: React.FC = () => {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'text-red-600 bg-red-100';
-      case 'normal': return 'text-blue-600 bg-blue-100';
-      case 'low': return 'text-gray-600 bg-gray-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'high':
+        return 'text-red-600 bg-red-100';
+      case 'normal':
+        return 'text-blue-600 bg-blue-100';
+      case 'low':
+        return 'text-gray-600 bg-gray-100';
+      default:
+        return 'text-gray-600 bg-gray-100';
     }
   };
 
@@ -468,15 +483,21 @@ const AdminChatDashboard: React.FC = () => {
                           <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></div>
                         )}
                       </div>
-                      
+
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                           <h3 className="text-sm font-semibold text-gray-900 truncate">
                             {conversation.guestName || conversation.guestId}
                           </h3>
                           <div className="flex items-center space-x-1">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(conversation.priority)}`}>
-                              {conversation.priority === 'high' ? 'Cao' : conversation.priority === 'normal' ? 'Bình thường' : 'Thấp'}
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(conversation.priority)}`}
+                            >
+                              {conversation.priority === 'high'
+                                ? 'Cao'
+                                : conversation.priority === 'normal'
+                                  ? 'Bình thường'
+                                  : 'Thấp'}
                             </span>
                             {conversation.unreadCount > 0 && (
                               <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1 min-w-[1.25rem] text-center">
@@ -485,16 +506,18 @@ const AdminChatDashboard: React.FC = () => {
                             )}
                           </div>
                         </div>
-                        
+
                         <p className="text-xs text-gray-600 mt-1 truncate">
                           {conversation.lastMessage?.content || 'Chưa có tin nhắn'}
                         </p>
-                        
+
                         <div className="flex items-center justify-between mt-2">
                           <span className="text-xs text-gray-500">
-                            {conversation.lastMessage ? formatTime(conversation.lastMessage.createdAt) : ''}
+                            {conversation.lastMessage
+                              ? formatTime(conversation.lastMessage.createdAt)
+                              : ''}
                           </span>
-                          
+
                           {/* {conversation.assignedAdmin === currentAdmin.id && (
                             <span className="text-xs text-green-600 font-medium">Được giao</span>
                           )} */}
@@ -504,7 +527,7 @@ const AdminChatDashboard: React.FC = () => {
                   </div>
                 </div>
               ))}
-              
+
               {filteredConversations.length === 0 && (
                 <div className="p-8 text-center text-gray-500">
                   <MessageCircle className="w-12 h-12 mx-auto mb-4 text-gray-300" />
@@ -530,7 +553,7 @@ const AdminChatDashboard: React.FC = () => {
                       <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></div>
                     )}
                   </div>
-                  
+
                   <div>
                     {editingName ? (
                       <div className="flex items-center space-x-2">
@@ -579,7 +602,8 @@ const AdminChatDashboard: React.FC = () => {
                           Đang trực tuyến
                         </>
                       ) : (
-                        currentConversation?.lastSeen && `Hoạt động ${formatTime(currentConversation.lastSeen)}`
+                        currentConversation?.lastSeen &&
+                        `Hoạt động ${formatTime(currentConversation.lastSeen)}`
                       )}
                     </p>
                   </div>
@@ -614,13 +638,15 @@ const AdminChatDashboard: React.FC = () => {
                   key={message.id}
                   className={`flex ${message.senderType === 'ADMIN' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`max-w-xs lg:max-w-md ${message.senderType === 'ADMIN' ? 'order-2' : 'order-1'}`}>
+                  <div
+                    className={`max-w-xs lg:max-w-md ${message.senderType === 'ADMIN' ? 'order-2' : 'order-1'}`}
+                  >
                     {message.senderType === 'GUEST' && (
                       <div className="text-xs text-gray-500 mb-1">
                         {currentConversation?.guestName || 'Khách hàng'}
                       </div>
                     )}
-                    
+
                     <div
                       className={`px-4 py-2 rounded-2xl break-words ${
                         message.senderType === 'ADMIN'
@@ -631,20 +657,24 @@ const AdminChatDashboard: React.FC = () => {
                       <div className="text-sm leading-relaxed whitespace-pre-wrap">
                         {message.content}
                       </div>
-                      
+
                       {message.senderType === 'ADMIN' && (
                         <div className="flex items-center justify-end mt-1 space-x-1">
                           <CheckCheck className="w-3 h-3 text-blue-200" />
                         </div>
                       )}
                     </div>
-                    
-                    <div className={`text-xs mt-1 px-2 ${
-                      message.senderType === 'ADMIN' ? 'text-right text-gray-400' : 'text-left text-gray-400'
-                    }`}>
+
+                    <div
+                      className={`text-xs mt-1 px-2 ${
+                        message.senderType === 'ADMIN'
+                          ? 'text-right text-gray-400'
+                          : 'text-left text-gray-400'
+                      }`}
+                    >
                       {new Date(message.createdAt).toLocaleTimeString('vi-VN', {
                         hour: '2-digit',
-                        minute: '2-digit'
+                        minute: '2-digit',
                       })}
                     </div>
                   </div>
@@ -658,7 +688,7 @@ const AdminChatDashboard: React.FC = () => {
                 <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
                   <Paperclip className="w-5 h-5" />
                 </button>
-                
+
                 <div className="flex-1 relative">
                   <textarea
                     ref={messageInputRef}
@@ -674,7 +704,7 @@ const AdminChatDashboard: React.FC = () => {
                     <Smile className="w-5 h-5" />
                   </button>
                 </div>
-                
+
                 <button
                   onClick={sendMessage}
                   disabled={!newMessage.trim() || !isConnected}
@@ -683,7 +713,7 @@ const AdminChatDashboard: React.FC = () => {
                   <Send className="w-5 h-5" />
                 </button>
               </div>
-              
+
               <div className="mt-2 text-xs">
                 {!isConnected && (
                   <div className="text-red-500 flex items-center">
@@ -699,7 +729,9 @@ const AdminChatDashboard: React.FC = () => {
             <div className="text-center">
               <MessageCircle className="w-16 h-16 mx-auto mb-4 text-gray-300" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Chọn cuộc trò chuyện</h3>
-              <p className="text-gray-500">Chọn một cuộc trò chuyện từ danh sách để bắt đầu nhắn tin</p>
+              <p className="text-gray-500">
+                Chọn một cuộc trò chuyện từ danh sách để bắt đầu nhắn tin
+              </p>
             </div>
           </div>
         )}

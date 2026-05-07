@@ -7,46 +7,51 @@ import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
 public interface NotificationMapper {
-    default NotificationResponse toNotificationResponse(NotificationUser notificationUser) {
-        return NotificationResponse.builder()
-                .id(notificationUser.getId())
-                .read(notificationUser.isRead())
-                .createdAt(notificationUser.getCreatedAt())
-                .userId(notificationUser.getUser().getId())
-                .title(notificationUser.getNotification().getTitle())
-                .content(notificationUser.getNotification().getContent())
-                .type(notificationUser.getNotification().getType())
-                .link(notificationUser.getNotification().getLink())
-                .referenceId(notificationUser.getNotification().getReferenceId())
-                // Legacy fields for backward compatibility
-                .customerServiceName(notificationUser.getNotification().getCustomerService() != null
-                        ? notificationUser.getNotification().getCustomerService().getName()
-                        : null)
-                .serviceName(notificationUser.getNotification().getCustomerService() != null 
-                        && notificationUser.getNotification().getCustomerService().getService() != null
-                        ? notificationUser.getNotification().getCustomerService().getService().getTitle()
-                        : null)
-                .build();
-    }
-    default NotificationMessage toNotificationMessage(NotificationUser notificationUser) {
-        return NotificationMessage.builder()
-                .id(notificationUser.getId())
-                .userId(notificationUser.getUser().getId())
-                .title(notificationUser.getNotification().getTitle())
-                .content(notificationUser.getNotification().getContent())
-                .type(notificationUser.getNotification().getType())
-                .link(notificationUser.getNotification().getLink())
-                .referenceId(notificationUser.getNotification().getReferenceId())
-                // Legacy fields for backward compatibility
-                .customerServiceName(notificationUser.getNotification().getCustomerService() != null
-                        ? notificationUser.getNotification().getCustomerService().getName()
-                        : null)
-                .serviceName(notificationUser.getNotification().getCustomerService() != null 
-                        && notificationUser.getNotification().getCustomerService().getService() != null
-                        ? notificationUser.getNotification().getCustomerService().getService().getTitle()
-                        : null)
-                .createdAt(notificationUser.getCreatedAt())
-                .read(notificationUser.isRead())
-                .build();
-    }
+  default NotificationResponse toNotificationResponse(NotificationUser notificationUser) {
+    return NotificationResponse.builder()
+        .id(notificationUser.getId())
+        .read(notificationUser.isRead())
+        .createdAt(notificationUser.getCreatedAt())
+        .userId(notificationUser.getUser().getId())
+        .title(notificationUser.getNotification().getTitle())
+        .content(notificationUser.getNotification().getContent())
+        .type(notificationUser.getNotification().getType())
+        .link(notificationUser.getNotification().getLink())
+        .referenceId(notificationUser.getNotification().getReferenceId())
+        // Legacy fields for backward compatibility
+        .customerServiceName(
+            notificationUser.getNotification().getCustomerService() != null
+                ? notificationUser.getNotification().getCustomerService().getName()
+                : null)
+        .serviceName(
+            notificationUser.getNotification().getCustomerService() != null
+                    && notificationUser.getNotification().getCustomerService().getService() != null
+                ? notificationUser.getNotification().getCustomerService().getService().getTitle()
+                : null)
+        .build();
+  }
+
+  default NotificationMessage toNotificationMessage(NotificationUser notificationUser) {
+    return NotificationMessage.builder()
+        .id(notificationUser.getId())
+        .userId(notificationUser.getUser().getId())
+        .title(notificationUser.getNotification().getTitle())
+        .content(notificationUser.getNotification().getContent())
+        .type(notificationUser.getNotification().getType())
+        .link(notificationUser.getNotification().getLink())
+        .referenceId(notificationUser.getNotification().getReferenceId())
+        // Legacy fields for backward compatibility
+        .customerServiceName(
+            notificationUser.getNotification().getCustomerService() != null
+                ? notificationUser.getNotification().getCustomerService().getName()
+                : null)
+        .serviceName(
+            notificationUser.getNotification().getCustomerService() != null
+                    && notificationUser.getNotification().getCustomerService().getService() != null
+                ? notificationUser.getNotification().getCustomerService().getService().getTitle()
+                : null)
+        .createdAt(notificationUser.getCreatedAt())
+        .read(notificationUser.isRead())
+        .build();
+  }
 }

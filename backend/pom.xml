@@ -20,11 +20,11 @@
     <packaging>jar</packaging>
 
     <name>backend</name>
-    <description>Spring Boot 4 Backend</description>
+    <description>Spring Boot 3 Backend</description>
 
     <!-- ================= PROPERTIES ================= -->
     <properties>
-        <!-- Spring Boot 4 bắt buộc Java 21 -->
+        <!-- Java 21 is required by the Docker/runtime target. -->
         <java.version>21</java.version>
 
         <mapstruct.version>1.5.5.Final</mapstruct.version>
@@ -198,6 +198,23 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- Formatting -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>2.43.0</version>
+                <configuration>
+                    <java>
+                        <googleJavaFormat>
+                            <version>1.22.0</version>
+                        </googleJavaFormat>
+                        <removeUnusedImports/>
+                        <trimTrailingWhitespace/>
+                        <endWithNewline/>
+                    </java>
+                </configuration>
             </plugin>
 
         </plugins>

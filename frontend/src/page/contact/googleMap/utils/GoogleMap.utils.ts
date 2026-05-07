@@ -18,7 +18,7 @@ export const generateMapUrl = (
     z: zoom.toString(),
     ie: 'UTF8',
     iwloc: 'B',
-    output: 'embed'
+    output: 'embed',
   });
 
   return `https://maps.google.com/maps?${params.toString()}`;
@@ -39,14 +39,12 @@ export const getContainerStyles = (
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  ...customStyle
+  ...customStyle,
 });
 
 export const getIframeStyles = (loading: boolean): React.CSSProperties => ({
   border: 0,
   width: '100%',
   height: '100%',
-  display: loading ? 'none' : 'block'
+  display: loading ? 'none' : 'block',
 });
-
-

@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StatusUpdate {
-    private String guestId;
-    private boolean isOnline;
+  private String guestId;
+  private boolean isOnline;
 }

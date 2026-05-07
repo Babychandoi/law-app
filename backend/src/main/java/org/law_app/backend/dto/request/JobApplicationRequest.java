@@ -9,9 +9,9 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JobApplicationRequest {
-    String jobId;
-    String jobTitle;
-    String candidateName;
-    String candidateEmail;
-    String candidatePhone;
+  String jobId;
+  String jobTitle;
+  String candidateName;
+  String candidateEmail;
+  String candidatePhone;
 }

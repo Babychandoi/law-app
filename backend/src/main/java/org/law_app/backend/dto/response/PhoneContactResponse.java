@@ -12,8 +12,8 @@ import org.law_app.backend.common.Color;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PhoneContactResponse {
-    String id; // Unique identifier for the phone contact
-    String label; // Label for the phone contact (e.g., "Work", "Home")
-    String number; // Phone number of the contact
-    Color color; // Color associated with the phone contact, if applicable
+  String id; // Unique identifier for the phone contact
+  String label; // Label for the phone contact (e.g., "Work", "Home")
+  String number; // Phone number of the contact
+  Color color; // Color associated with the phone contact, if applicable
 }

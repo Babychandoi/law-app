@@ -49,7 +49,7 @@ const PartnersCarousel = () => {
   useEffect(() => {
     if (isAutoPlay && clients.length > 0) {
       intervalRef.current = window.setInterval(() => {
-        setCurrentGroupIndex(prev => (prev + 1) % totalGroups);
+        setCurrentGroupIndex((prev) => (prev + 1) % totalGroups);
       }, 3000);
     }
     return () => {
@@ -60,15 +60,13 @@ const PartnersCarousel = () => {
     };
   }, [isAutoPlay, clients.length, visibleSlides, totalGroups]);
 
-
   const nextSlide = () => {
-    setCurrentGroupIndex(prev => (prev + 1) % totalGroups);
+    setCurrentGroupIndex((prev) => (prev + 1) % totalGroups);
   };
 
   const prevSlide = () => {
-    setCurrentGroupIndex(prev => (prev - 1 + totalGroups) % totalGroups);
+    setCurrentGroupIndex((prev) => (prev - 1 + totalGroups) % totalGroups);
   };
-
 
   const handleMouseEnter = () => {
     setIsAutoPlay(false);
@@ -93,9 +91,7 @@ const PartnersCarousel = () => {
         {/* Header */}
         <div className="flex items-center justify-between mb-12">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              ĐỐI TÁC & KHÁCH HÀNG
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2">ĐỐI TÁC & KHÁCH HÀNG</h2>
             <div className="w-20 h-1 bg-blue-600"></div>
           </div>
 
@@ -129,9 +125,8 @@ const PartnersCarousel = () => {
             className="flex transition-transform duration-500 ease-in-out"
             style={{
               transform: `translateX(-${currentGroupIndex * 100}%)`,
-              width: `${(clients.length * 100) / visibleSlides}%`
+              width: `${(clients.length * 100) / visibleSlides}%`,
             }}
-
           >
             {clients.map((client) => (
               <div
@@ -171,16 +166,15 @@ const PartnersCarousel = () => {
             <button
               key={index}
               onClick={() => setCurrentGroupIndex(index)}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${currentGroupIndex === index
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                currentGroupIndex === index
                   ? 'bg-blue-600 scale-110'
                   : 'bg-gray-300 hover:bg-gray-400'
-                }`}
+              }`}
               aria-label={`Go to slide group ${index + 1}`}
             />
           ))}
-
         </div>
-
 
         {/* Stats */}
         <div className="text-center mt-12">

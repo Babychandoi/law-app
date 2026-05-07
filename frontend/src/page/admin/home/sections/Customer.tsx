@@ -2,7 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Search, Filter, X } from 'lucide-react';
 import { Customer, CustomerDetail } from '../../../../types/admin';
 import { ServiceItem } from '../../../../types/service';
-import { getCustomers, getCustomerById, updateCustomerStatus, myProfile } from '../../../../service/admin';
+import {
+  getCustomers,
+  getCustomerById,
+  updateCustomerStatus,
+  myProfile,
+} from '../../../../service/admin';
 import { getServiceHome } from '../../../../service/service';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
@@ -30,10 +35,10 @@ const CustomerManagement: React.FC = () => {
         if (response.code === 200 && response.data) {
           setProfile(response.data);
         } else {
-          toast.error("Không thể tải thông tin người dùng");
+          toast.error('Không thể tải thông tin người dùng');
         }
       } catch (error) {
-        toast.error("Lỗi khi tải thông tin người dùng");
+        toast.error('Lỗi khi tải thông tin người dùng');
       }
     };
     fetchProfile();
@@ -77,7 +82,7 @@ const CustomerManagement: React.FC = () => {
         toast.warning('Lỗi khi tải danh sách khách hàng: ' + response.message);
       }
     } catch (error) {
-      toast.error("Lỗi khi tải danh sách khách hàng: " + (error as Error).message);
+      toast.error('Lỗi khi tải danh sách khách hàng: ' + (error as Error).message);
     }
   };
 
@@ -87,22 +92,23 @@ const CustomerManagement: React.FC = () => {
 
   useEffect(() => {
     if (profile?.id) {
-      const wsUrl = process.env.REACT_APP_WS_URL?.replace('http://', 'ws://').replace('https://', 'wss://');
+      const wsUrl = process.env.REACT_APP_WS_URL?.replace('http://', 'ws://').replace(
+        'https://',
+        'wss://'
+      );
       const socket = new WebSocket(`${wsUrl}?userId=${profile.id}`);
-      
-      socket.onopen = () => {
-        console.log('Customer WebSocket connected');
-      };
-      
+
+      socket.onopen = () => {};
+
       socket.onmessage = async (event) => {
         await fetchCustomers();
       };
-      
+
       socket.onerror = (err) => {
         console.error('WebSocket error:', err);
-        toast.error("Lỗi kết nối đến máy chủ thông báo");
+        toast.error('Lỗi kết nối đến máy chủ thông báo');
       };
-      
+
       return () => {
         socket.close();
       };
@@ -183,10 +189,10 @@ const CustomerManagement: React.FC = () => {
         });
         applyFiltersAndSearch();
       } else {
-        toast.error("Cập nhật trạng thái khách hàng thất bại: " + response.message);
+        toast.error('Cập nhật trạng thái khách hàng thất bại: ' + response.message);
       }
     } catch (error) {
-      toast.error("Lỗi khi cập nhật trạng thái khách hàng: " + (error as Error).message);
+      toast.error('Lỗi khi cập nhật trạng thái khách hàng: ' + (error as Error).message);
     }
   };
 
@@ -205,12 +211,12 @@ const CustomerManagement: React.FC = () => {
       setSelectedCustomer(customerdetail.data);
       setShowModal(true);
     } else {
-      toast.error("Lỗi khi tải chi tiết khách hàng: " + customerdetail.message);
+      toast.error('Lỗi khi tải chi tiết khách hàng: ' + customerdetail.message);
     }
   };
 
   const getStatusBadge = (status: string) => {
-    const baseClasses = "px-2 py-1 text-xs font-medium rounded-full";
+    const baseClasses = 'px-2 py-1 text-xs font-medium rounded-full';
     switch (status) {
       case 'NEW':
         return `${baseClasses} bg-blue-100 text-blue-800`;
@@ -302,7 +308,9 @@ const CustomerManagement: React.FC = () => {
                 >
                   <option value="ALL">Tất cả dịch vụ</option>
                   {services.map((service) => (
-                    <option key={service.id} value={service.title}>{service.title}</option>
+                    <option key={service.id} value={service.title}>
+                      {service.title}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -344,7 +352,9 @@ const CustomerManagement: React.FC = () => {
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-gray-50">
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Tên khách hàng</th>
+              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
+                Tên khách hàng
+              </th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Điện thoại</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Email</th>
               <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Dịch vụ</th>
@@ -404,7 +414,8 @@ const CustomerManagement: React.FC = () => {
       {totalPages > 1 && (
         <div className="flex items-center justify-between mt-6">
           <div className="text-sm text-gray-600">
-            Hiển thị {startIndex + 1} - {Math.min(endIndex, filteredCustomers.length)} trong {filteredCustomers.length} khách hàng
+            Hiển thị {startIndex + 1} - {Math.min(endIndex, filteredCustomers.length)} trong{' '}
+            {filteredCustomers.length} khách hàng
           </div>
           <div className="flex items-center space-x-2">
             <button
@@ -462,18 +473,24 @@ const CustomerManagement: React.FC = () => {
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">ID khách hàng</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      ID khách hàng
+                    </label>
                     <p className="text-sm text-gray-900 font-mono">{selectedCustomer.id}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Trạng thái
+                    </label>
                     <span className={getStatusBadge(selectedCustomer.status)}>
                       {getStatusText(selectedCustomer.status)}
                     </span>
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Tên khách hàng</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Tên khách hàng
+                  </label>
                   <p className="text-sm text-gray-900">{selectedCustomer.name}</p>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -482,7 +499,9 @@ const CustomerManagement: React.FC = () => {
                     <p className="text-sm text-gray-900">{selectedCustomer.email}</p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Điện thoại</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Điện thoại
+                    </label>
                     <p className="text-sm text-gray-900">{selectedCustomer.phone}</p>
                   </div>
                 </div>
@@ -497,23 +516,35 @@ const CustomerManagement: React.FC = () => {
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Ngày tạo</label>
-                    <p className="text-sm text-gray-900">{formatDate(selectedCustomer.createdAt)}</p>
+                    <p className="text-sm text-gray-900">
+                      {formatDate(selectedCustomer.createdAt)}
+                    </p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Ngày cập nhật</label>
-                    <p className="text-sm text-gray-900">{formatDate(selectedCustomer.updatedAt)}</p>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Ngày cập nhật
+                    </label>
+                    <p className="text-sm text-gray-900">
+                      {formatDate(selectedCustomer.updatedAt)}
+                    </p>
                   </div>
                 </div>
                 {selectedCustomer.completedAt && (
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Ngày hoàn thành</label>
-                    <p className="text-sm text-gray-900">{formatDate(selectedCustomer.completedAt)}</p>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Ngày hoàn thành
+                    </label>
+                    <p className="text-sm text-gray-900">
+                      {formatDate(selectedCustomer.completedAt)}
+                    </p>
                   </div>
                 )}
                 {selectedCustomer.cancelledAt && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Ngày hủy</label>
-                    <p className="text-sm text-gray-900">{formatDate(selectedCustomer.cancelledAt)}</p>
+                    <p className="text-sm text-gray-900">
+                      {formatDate(selectedCustomer.cancelledAt)}
+                    </p>
                   </div>
                 )}
               </div>

@@ -7,7 +7,7 @@ const ContactSection: React.FC<ContactSectionProps> = ({ title, buttonText }) =>
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate("/lien-he");
+    navigate('/lien-he');
   };
 
   return (
@@ -18,7 +18,10 @@ const ContactSection: React.FC<ContactSectionProps> = ({ title, buttonText }) =>
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-r from-yellow-400/10 to-orange-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+        <div
+          className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"
+          style={{ animationDelay: '1s' }}
+        ></div>
       </div>
 
       <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 text-center">

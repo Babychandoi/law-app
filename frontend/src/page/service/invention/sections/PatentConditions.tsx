@@ -1,4 +1,4 @@
-import { Lightbulb, CheckCircle, Sparkles } from "lucide-react";
+import { Lightbulb, CheckCircle, Sparkles } from 'lucide-react';
 
 // Define types for the conditions and sections
 interface Condition {
@@ -15,24 +15,22 @@ interface Data {
 
 // Data structure
 const data: Data = {
-  title: "ĐIỀU KIỆN BẢO HỘ SÁNG CHẾ",
+  title: 'ĐIỀU KIỆN BẢO HỘ SÁNG CHẾ',
   patentSection: {
-    title: "Sáng chế được bảo hộ dưới hình thức cấp Bằng độc quyền sáng chế nếu đáp ứng các điều kiện sau:",
-    conditions: [
-      "Có tính mới",
-      "Có trình độ sáng tạo",
-      "Có khả năng áp dụng công nghiệp",
-    ],
-    color: "blue",
+    title:
+      'Sáng chế được bảo hộ dưới hình thức cấp Bằng độc quyền sáng chế nếu đáp ứng các điều kiện sau:',
+    conditions: ['Có tính mới', 'Có trình độ sáng tạo', 'Có khả năng áp dụng công nghiệp'],
+    color: 'blue',
   },
   utilitySolution: {
-    title: "Sáng chế được bảo hộ dưới hình thức cấp Bằng độc quyền giải pháp hữu ích nếu đáp ứng các điều kiện sau:",
+    title:
+      'Sáng chế được bảo hộ dưới hình thức cấp Bằng độc quyền giải pháp hữu ích nếu đáp ứng các điều kiện sau:',
     conditions: [
-      "Có tính mới",
-      "Không phải là hiểu biết thông thường",
-      "Có khả năng áp dụng công nghiệp",
+      'Có tính mới',
+      'Không phải là hiểu biết thông thường',
+      'Có khả năng áp dụng công nghiệp',
     ],
-    color: "emerald",
+    color: 'emerald',
   },
 };
 
@@ -40,16 +38,16 @@ const data: Data = {
 const getColorClasses = (color: 'blue' | 'emerald') => {
   const colors = {
     blue: {
-      bg: "bg-blue-50",
-      border: "border-blue-200",
-      icon: "text-blue-600",
-      accent: "bg-blue-600",
+      bg: 'bg-blue-50',
+      border: 'border-blue-200',
+      icon: 'text-blue-600',
+      accent: 'bg-blue-600',
     },
     emerald: {
-      bg: "bg-emerald-50",
-      border: "border-emerald-200",
-      icon: "text-emerald-600",
-      accent: "bg-emerald-600",
+      bg: 'bg-emerald-50',
+      border: 'border-emerald-200',
+      icon: 'text-emerald-600',
+      accent: 'bg-emerald-600',
     },
   };
   return colors[color];
@@ -65,9 +63,13 @@ const ConditionCard: React.FC<ConditionCardProps> = ({ section }) => {
   const colorClasses = getColorClasses(color);
 
   return (
-    <div className={`${colorClasses.bg} ${colorClasses.border} border-2 rounded-3xl p-8 shadow-2xl backdrop-blur-sm hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 group`}>
+    <div
+      className={`${colorClasses.bg} ${colorClasses.border} border-2 rounded-3xl p-8 shadow-2xl backdrop-blur-sm hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 group`}
+    >
       <div className="flex items-center mb-6">
-        <div className={`w-12 h-12 ${colorClasses.accent} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+        <div
+          className={`w-12 h-12 ${colorClasses.accent} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}
+        >
           <Sparkles className="w-6 h-6 text-white" />
         </div>
         <div className="ml-4 flex-1">
@@ -78,8 +80,12 @@ const ConditionCard: React.FC<ConditionCardProps> = ({ section }) => {
       <div className="space-y-4">
         {conditions.map((condition: string, index: number) => (
           <div key={index} className="flex items-center group/item">
-            <CheckCircle className={`w-6 h-6 ${colorClasses.icon} mr-4 group-hover/item:scale-110 transition-transform duration-200`} />
-            <p className="text-gray-700 font-medium group-hover/item:text-gray-900 transition-colors duration-200">{condition}</p>
+            <CheckCircle
+              className={`w-6 h-6 ${colorClasses.icon} mr-4 group-hover/item:scale-110 transition-transform duration-200`}
+            />
+            <p className="text-gray-700 font-medium group-hover/item:text-gray-900 transition-colors duration-200">
+              {condition}
+            </p>
           </div>
         ))}
       </div>

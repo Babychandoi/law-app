@@ -1,15 +1,15 @@
 import React from 'react';
-import { 
-  Laptop, 
-  Book, 
-  Newspaper, 
-  Music, 
-  Lightbulb, 
-  Camera, 
-  Home, 
-  Map, 
+import {
+  Laptop,
+  Book,
+  Newspaper,
+  Music,
+  Lightbulb,
+  Camera,
+  Home,
+  Map,
   AlignJustify,
-  TrendingUp
+  TrendingUp,
 } from 'lucide-react';
 
 interface ServiceItem {
@@ -21,52 +21,52 @@ const CopyrightServices: React.FC = () => {
   const services: ServiceItem[] = [
     {
       icon: <Laptop className="w-6 h-6" />,
-      title: "Chương trình máy tính"
+      title: 'Chương trình máy tính',
     },
     {
       icon: <Book className="w-6 h-6" />,
-      title: "Tác phẩm tạo hình, mỹ thuật ứng dụng"
+      title: 'Tác phẩm tạo hình, mỹ thuật ứng dụng',
     },
     {
       icon: <Book className="w-6 h-6" />,
-      title: "Bài giảng, bài phát biểu và bài nói khác"
+      title: 'Bài giảng, bài phát biểu và bài nói khác',
     },
     {
       icon: <Newspaper className="w-6 h-6" />,
-      title: "Tác phẩm báo chí"
+      title: 'Tác phẩm báo chí',
     },
     {
       icon: <Music className="w-6 h-6" />,
-      title: "Tác phẩm âm nhạc"
+      title: 'Tác phẩm âm nhạc',
     },
     {
       icon: <Lightbulb className="w-6 h-6" />,
-      title: "Tác phẩm sân khấu"
+      title: 'Tác phẩm sân khấu',
     },
     {
       icon: <Camera className="w-6 h-6" />,
-      title: "Tác phẩm điện ảnh"
+      title: 'Tác phẩm điện ảnh',
     },
     {
       icon: <Camera className="w-6 h-6" />,
-      title: "Tác phẩm nhiếp ảnh"
+      title: 'Tác phẩm nhiếp ảnh',
     },
     {
       icon: <Home className="w-6 h-6" />,
-      title: "Tác phẩm kiến trúc"
+      title: 'Tác phẩm kiến trúc',
     },
     {
       icon: <Map className="w-6 h-6" />,
-      title: "Bản họa đồ, sơ đồ, bản đồ"
+      title: 'Bản họa đồ, sơ đồ, bản đồ',
     },
     {
       icon: <Lightbulb className="w-6 h-6" />,
-      title: "Tác phẩm văn học, nghệ thuật dân gian"
+      title: 'Tác phẩm văn học, nghệ thuật dân gian',
     },
     {
       icon: <AlignJustify className="w-6 h-6" />,
-      title: "Các loại hình khác"
-    }
+      title: 'Các loại hình khác',
+    },
   ];
 
   return (
@@ -87,14 +87,15 @@ const CopyrightServices: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {services.map((service, index) => (
-            <div key={index} className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div
+              key={index}
+              className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300"
+            >
               <div className="flex flex-col items-center text-center">
                 <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mb-4 text-blue-600">
                   {service.icon}
                 </div>
-                <p className="text-gray-700 font-medium leading-relaxed">
-                  {service.title}
-                </p>
+                <p className="text-gray-700 font-medium leading-relaxed">{service.title}</p>
               </div>
             </div>
           ))}

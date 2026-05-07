@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PreviousPartnerRequest {
-    String title; // Title of the previous partner
-    String image; // Image URL or path for the previous partner
-    String shortName; // Short name or abbreviation for the previous partner
+  String title; // Title of the previous partner
+  String image; // Image URL or path for the previous partner
+  String shortName; // Short name or abbreviation for the previous partner
 }

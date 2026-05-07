@@ -9,9 +9,9 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChatStatsResponse {
-    long totalConversations;
-    long unreadConversations;
-    long assignedToAdmin;
-    long onlineUsers;
-    long todayMessages;
+  long totalConversations;
+  long unreadConversations;
+  long assignedToAdmin;
+  long onlineUsers;
+  long todayMessages;
 }

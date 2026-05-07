@@ -1,11 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
-import { getNews, getNew } from "../../../../service/service";
-import { createNews, deleteNews, updateNews, uploadFile, sendMail } from "../../../../service/admin";
-import { News } from "../../../../types/service";
-import AddNews from "./News/AddNews";
-import EditNews from "./News/EditNews";
-import { Eye, Pencil, Trash2, Send } from "lucide-react";
+import { getNews, getNew } from '../../../../service/service';
+import {
+  createNews,
+  deleteNews,
+  updateNews,
+  uploadFile,
+  sendMail,
+} from '../../../../service/admin';
+import { News } from '../../../../types/service';
+import AddNews from './News/AddNews';
+import EditNews from './News/EditNews';
+import { Eye, Pencil, Trash2, Send } from 'lucide-react';
 
 const NewsManagement: React.FC = () => {
   const [newsList, setNewsList] = useState<News[]>([]);
@@ -29,10 +35,10 @@ const NewsManagement: React.FC = () => {
       if (response.code === 200) {
         setNewsList(response.data);
       } else {
-        setError("Failed to fetch news: " + response.message);
+        setError('Failed to fetch news: ' + response.message);
       }
     } catch (error) {
-      setError("Error fetching news: " + (error as Error).message);
+      setError('Error fetching news: ' + (error as Error).message);
     } finally {
       setLoading(false);
     }
@@ -45,7 +51,7 @@ const NewsManagement: React.FC = () => {
       allowOutsideClick: false,
       didOpen: () => {
         Swal.showLoading();
-      }
+      },
     });
 
     try {
@@ -56,7 +62,6 @@ const NewsManagement: React.FC = () => {
         setEditingNews(response.data);
         setShowEditNews(true);
       } else {
-
         // Hiển thị lỗi phản hồi
         Swal.fire({
           icon: 'error',
@@ -74,9 +79,6 @@ const NewsManagement: React.FC = () => {
     }
   };
 
-
-
-
   const handleDelete = async (id: string) => {
     const result = await Swal.fire({
       title: 'Bạn có chắc chắn?',
@@ -86,7 +88,7 @@ const NewsManagement: React.FC = () => {
       confirmButtonColor: '#d33',
       cancelButtonColor: '#3085d6',
       confirmButtonText: 'Xóa',
-      cancelButtonText: 'Hủy'
+      cancelButtonText: 'Hủy',
     });
 
     if (result.isConfirmed) {
@@ -94,7 +96,7 @@ const NewsManagement: React.FC = () => {
         setLoading(true);
         const response = await deleteNews(id);
         if (response.code === 200) {
-          setNewsList(prev => prev.filter(news => news.id !== id));
+          setNewsList((prev) => prev.filter((news) => news.id !== id));
           if (selectedNews?.id === id) {
             setSelectedNews(null);
           }
@@ -102,19 +104,18 @@ const NewsManagement: React.FC = () => {
           // ✅ Thông báo xóa thành công
           Swal.fire('Đã xóa!', 'Tin tức đã được xóa.', 'success');
         } else {
-          setError("Failed to delete news: " + response.message);
+          setError('Failed to delete news: ' + response.message);
           Swal.fire('Lỗi!', response.message, 'error');
         }
       } catch (error) {
         const message = (error as Error).message;
-        setError("Error deleting news: " + message);
+        setError('Error deleting news: ' + message);
         Swal.fire('Lỗi!', message, 'error');
       } finally {
         setLoading(false);
       }
     }
   };
-
 
   const handleAddNew = () => {
     setShowAddNews(true);
@@ -127,7 +128,7 @@ const NewsManagement: React.FC = () => {
         allowOutsideClick: false,
         didOpen: () => {
           Swal.showLoading();
-        }
+        },
       });
 
       const response = await getNew(newId);
@@ -154,7 +155,6 @@ const NewsManagement: React.FC = () => {
     }
   };
 
-
   const handleCloseDetails = () => {
     setSelectedNews(null);
   };
@@ -169,7 +169,7 @@ const NewsManagement: React.FC = () => {
       });
 
       // Nếu chưa có ảnh và có file, thì upload
-      if (newsData.image === "" && file !== null) {
+      if (newsData.image === '' && file !== null) {
         const uploadResponse = await uploadFile(file);
         if (uploadResponse.code === 200) {
           newsData.image = uploadResponse.data;
@@ -186,7 +186,7 @@ const NewsManagement: React.FC = () => {
       const response = await createNews(newsData);
       if (response.code === 200) {
         // Thêm vào local state
-        setNewsList(prev => [response.data, ...prev]);
+        setNewsList((prev) => [response.data, ...prev]);
         setShowAddNews(false);
 
         Swal.fire({
@@ -210,7 +210,6 @@ const NewsManagement: React.FC = () => {
       });
     }
   };
-
 
   const handleSaveEditNews = async (updatedNews: News, file?: File) => {
     try {
@@ -236,7 +235,7 @@ const NewsManagement: React.FC = () => {
         }
       } else {
         // If no new file, extract filename from full URL or keep as is
-        const originalNews = newsList.find(n => n.id === updatedNews.id);
+        const originalNews = newsList.find((n) => n.id === updatedNews.id);
         if (originalNews?.image) {
           // Extract filename from MinIO URL if it's a full URL
           const imageUrl = originalNews.image;
@@ -262,9 +261,9 @@ const NewsManagement: React.FC = () => {
       const response = await updateNews(updatedNews.id, updatedNews);
       if (response.code === 200) {
         // Cập nhật local state
-        setNewsList(prev => prev.map(news =>
-          news.id === updatedNews.id ? response.data : news
-        ));
+        setNewsList((prev) =>
+          prev.map((news) => (news.id === updatedNews.id ? response.data : news))
+        );
 
         if (selectedNews?.id === updatedNews.id) {
           setSelectedNews(response.data);
@@ -315,7 +314,7 @@ const NewsManagement: React.FC = () => {
     } catch (error) {
       Swal.fire('Error!', (error as Error).message, 'error');
     }
-  }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 p-6">
       {/* Decorative background elements */}
@@ -341,7 +340,7 @@ const NewsManagement: React.FC = () => {
             >
               <span className="flex items-center gap-2">
                 <span className="text-xl">+</span>
-                {loading ? "Đang tải..." : "Thêm tin tức"}
+                {loading ? 'Đang tải...' : 'Thêm tin tức'}
               </span>
             </button>
           </div>
@@ -380,7 +379,7 @@ const NewsManagement: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-lg p-12 text-center border-2 border-gray-100">
               <div className="text-6xl mb-4">📰</div>
               <p className="text-gray-500 text-lg">
-                {loading ? "Đang tải tin tức..." : "Chưa có tin tức nào"}
+                {loading ? 'Đang tải tin tức...' : 'Chưa có tin tức nào'}
               </p>
             </div>
           ) : (
@@ -425,7 +424,9 @@ const NewsManagement: React.FC = () => {
                       <div className="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-lg">
                         <span className="text-green-600">📅</span>
                         <span className="text-gray-700">
-                          {news.createdAt ? new Date(news.createdAt).toLocaleDateString('vi-VN') : "Không xác định"}
+                          {news.createdAt
+                            ? new Date(news.createdAt).toLocaleDateString('vi-VN')
+                            : 'Không xác định'}
                         </span>
                       </div>
                     </div>
@@ -443,7 +444,7 @@ const NewsManagement: React.FC = () => {
                       </button>
 
                       <button
-                        onClick={() => handleEdit(news.id ?? "")}
+                        onClick={() => handleEdit(news.id ?? '')}
                         disabled={loading}
                         title="Sửa"
                         className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-medium shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -453,7 +454,7 @@ const NewsManagement: React.FC = () => {
                       </button>
 
                       <button
-                        onClick={() => handleDelete(news.id ?? "")}
+                        onClick={() => handleDelete(news.id ?? '')}
                         disabled={loading}
                         title="Xóa"
                         className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg font-medium shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -463,7 +464,7 @@ const NewsManagement: React.FC = () => {
                       </button>
 
                       <button
-                        onClick={() => handleSendEmail(news.id ?? "")}
+                        onClick={() => handleSendEmail(news.id ?? '')}
                         disabled={loading}
                         title="Gửi email"
                         className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -478,7 +479,6 @@ const NewsManagement: React.FC = () => {
             ))
           )}
         </div>
-
 
         {/* News Detail Modal */}
         {selectedNews && (
@@ -518,7 +518,9 @@ const NewsManagement: React.FC = () => {
                   <h4 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent mb-3">
                     {selectedNews.title}
                   </h4>
-                  <p className="text-lg text-gray-600 mb-6 leading-relaxed">{selectedNews.subtitle}</p>
+                  <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                    {selectedNews.subtitle}
+                  </p>
 
                   {/* Meta Info */}
                   <div className="flex flex-wrap items-center gap-4 mb-8">
@@ -529,7 +531,9 @@ const NewsManagement: React.FC = () => {
                     <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-green-100 rounded-xl border-2 border-green-200">
                       <span className="text-xl">📅</span>
                       <span className="text-gray-700 font-semibold">
-                        {selectedNews.createdAt ? new Date(selectedNews.createdAt).toLocaleString('vi-VN') : "Không xác định"}
+                        {selectedNews.createdAt
+                          ? new Date(selectedNews.createdAt).toLocaleString('vi-VN')
+                          : 'Không xác định'}
                       </span>
                     </div>
                   </div>
@@ -544,7 +548,7 @@ const NewsManagement: React.FC = () => {
                       <div className="h-1 flex-1 bg-gradient-to-r from-orange-400 to-red-400 rounded-full"></div>
                     </div>
                     <div className="bg-gradient-to-r from-gray-50 to-white border-2 border-gray-200 rounded-2xl p-8 shadow-md">
-                      <div 
+                      <div
                         className="prose prose-lg max-w-none
                           prose-headings:font-bold prose-headings:text-gray-900
                           prose-h1:text-2xl prose-h1:mb-4 prose-h1:mt-6
@@ -571,20 +575,11 @@ const NewsManagement: React.FC = () => {
         )}
 
         {/* Add News Modal */}
-        {showAddNews && (
-          <AddNews
-            onSave={handleSaveNewNews}
-            onCancel={handleCancelAdd}
-          />
-        )}
+        {showAddNews && <AddNews onSave={handleSaveNewNews} onCancel={handleCancelAdd} />}
 
         {/* Edit News Modal */}
         {showEditNews && editingNews && (
-          <EditNews
-            news={editingNews}
-            onSave={handleSaveEditNews}
-            onCancel={handleCancelEdit}
-          />
+          <EditNews news={editingNews} onSave={handleSaveEditNews} onCancel={handleCancelEdit} />
         )}
       </div>
     </div>

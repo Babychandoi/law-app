@@ -18,9 +18,8 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
   plans,
   variant = 'card',
   backgroundColor = 'bg-gray-50',
-  containerClassName = ''
+  containerClassName = '',
 }) => {
-
   const handlePlanClick = (planId: string) => {
     const contactForm = document.getElementById('contact-form');
     if (contactForm) {
@@ -38,10 +37,10 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
           className={`w-full max-w-sm bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105 ${
             plan.featured ? 'ring-2 ring-blue-500 relative' : ''
           }`}
-          style={{ 
+          style={{
             flex: plans.length < 3 ? '0 0 auto' : '1 1 0',
             minWidth: '320px',
-            maxWidth: plans.length === 1 ? '400px' : '350px'
+            maxWidth: plans.length === 1 ? '400px' : '350px',
           }}
         >
           {plan.featured && (
@@ -52,10 +51,13 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
 
           {/* Image */}
           {plan.image && (
-            <div className="relative h-48 overflow-hidden" style={{
-              borderRadius: '0.5rem',
-              padding: '0.5rem',
-            }}>
+            <div
+              className="relative h-48 overflow-hidden"
+              style={{
+                borderRadius: '0.5rem',
+                padding: '0.5rem',
+              }}
+            >
               <img
                 src={plan.image}
                 alt={plan.imageAlt || plan.title}
@@ -67,9 +69,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
           {/* Content */}
           <div className="p-6">
             {/* Title */}
-            <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">
-              {plan.title}
-            </h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">{plan.title}</h3>
 
             {/* Price */}
             <div className="text-center mb-6">
@@ -77,21 +77,17 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
                 {plan.currency && (
                   <span className="text-gray-600 text-sm mr-1">{plan.currency}</span>
                 )}
-                <span className="text-3xl font-bold text-blue-600">
-                  {plan.price}
-                </span>
+                <span className="text-3xl font-bold text-blue-600">{plan.price}</span>
               </div>
             </div>
 
             {/* Divider */}
             <hr className="border-blue-200 mb-4" />
-            
+
             {/* Description */}
             {plan.description && (
               <div className="px-8 py-6">
-                <p className="text-gray-700 text-center leading-relaxed">
-                  {plan.description}
-                </p>
+                <p className="text-gray-700 text-center leading-relaxed">{plan.description}</p>
               </div>
             )}
 
@@ -112,22 +108,16 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
                 </ul>
               </div>
             )}
-            
+
             {/* Custom Content */}
-            {plan.customContent && (
-              <div className="mb-6">
-                {plan.customContent}
-              </div>
-            )}
+            {plan.customContent && <div className="mb-6">{plan.customContent}</div>}
 
             {/* CTA Button */}
             <div className="text-center">
               <button
                 onClick={() => handlePlanClick(plan.id)}
                 className={`w-full px-6 py-3 rounded-lg font-semibold text-white transition-colors duration-300 ${
-                  plan.featured
-                    ? 'bg-blue-600 hover:bg-blue-700'
-                    : 'bg-gray-800 hover:bg-gray-900'
+                  plan.featured ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-800 hover:bg-gray-900'
                 }`}
               >
                 {plan.buttonText || 'Đăng ký tư vấn'}
@@ -145,14 +135,12 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
         <div
           key={plan.id}
           className={`w-full max-w-sm relative bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
-            plan.featured
-              ? 'ring-4 ring-blue-500 ring-opacity-50'
-              : ''
+            plan.featured ? 'ring-4 ring-blue-500 ring-opacity-50' : ''
           }`}
-          style={{ 
+          style={{
             flex: plans.length < 3 ? '0 0 auto' : '1 1 0',
             minWidth: '320px',
-            maxWidth: plans.length === 1 ? '400px' : '350px'
+            maxWidth: plans.length === 1 ? '400px' : '350px',
           }}
         >
           {/* Featured Badge */}
@@ -164,45 +152,51 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
           )}
 
           {/* Header */}
-          <div className={`px-8 py-8 text-center ${
-            plan.featured
-              ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
-              : 'bg-gray-50'
-          }`}>
-            <h3 className={`text-2xl font-bold mb-4 ${
-              plan.featured ? 'text-white' : 'text-gray-900'
-            }`}>
+          <div
+            className={`px-8 py-8 text-center ${
+              plan.featured
+                ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
+                : 'bg-gray-50'
+            }`}
+          >
+            <h3
+              className={`text-2xl font-bold mb-4 ${
+                plan.featured ? 'text-white' : 'text-gray-900'
+              }`}
+            >
               {plan.title}
             </h3>
 
             <div className="mb-4">
-              <span className={`text-4xl font-bold ${
-                plan.featured ? 'text-white' : 'text-gray-900'
-              }`}>
+              <span
+                className={`text-4xl font-bold ${plan.featured ? 'text-white' : 'text-gray-900'}`}
+              >
                 {plan.price}
               </span>
               {plan.currency && (
-                <span className={`text-sm font-medium ml-2 ${
-                  plan.featured ? 'text-blue-100' : 'text-gray-600'
-                }`}>
+                <span
+                  className={`text-sm font-medium ml-2 ${
+                    plan.featured ? 'text-blue-100' : 'text-gray-600'
+                  }`}
+                >
                   {plan.currency}
                 </span>
               )}
             </div>
 
-            <div className={`w-16 h-1 mx-auto rounded-full ${
-              plan.featured
-                ? 'bg-white bg-opacity-50'
-                : 'bg-gradient-to-r from-blue-500 to-indigo-600'
-            }`}></div>
+            <div
+              className={`w-16 h-1 mx-auto rounded-full ${
+                plan.featured
+                  ? 'bg-white bg-opacity-50'
+                  : 'bg-gradient-to-r from-blue-500 to-indigo-600'
+              }`}
+            ></div>
           </div>
 
           {/* Description */}
           {plan.description && (
             <div className="px-8 py-6">
-              <p className="text-gray-700 text-center leading-relaxed">
-                {plan.description}
-              </p>
+              <p className="text-gray-700 text-center leading-relaxed">{plan.description}</p>
             </div>
           )}
 
@@ -225,11 +219,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
           )}
 
           {/* Custom Content */}
-          {plan.customContent && (
-            <div className="px-8 pb-6">
-              {plan.customContent}
-            </div>
-          )}
+          {plan.customContent && <div className="px-8 pb-6">{plan.customContent}</div>}
 
           {/* CTA Button */}
           <div className="px-8 pb-8">
@@ -254,17 +244,11 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
       <div className={`container mx-auto px-4 ${containerClassName}`}>
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-            {title}
-          </h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{title}</h2>
           {variant === 'feature' && (
             <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto rounded-full"></div>
           )}
-          {subtitle && (
-            <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-              {subtitle}
-            </p>
-          )}
+          {subtitle && <p className="text-gray-600 mt-4 max-w-2xl mx-auto">{subtitle}</p>}
         </div>
 
         {/* Pricing Cards */}
@@ -274,9 +258,8 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
         <div className="text-center mt-12">
           <p className="text-gray-600 max-w-2xl mx-auto">
             {variant === 'feature'
-              ? "Tất cả các gói dịch vụ đều bao gồm tư vấn chuyên nghiệp và hỗ trợ khách hàng 24/7. Liên hệ với chúng tôi để được tư vấn chi tiết về gói dịch vụ phù hợp nhất."
-              : "Liên hệ với chúng tôi để được tư vấn chi tiết về quy trình đăng ký và các dịch vụ pháp lý khác tại POIP LAW."
-            }
+              ? 'Tất cả các gói dịch vụ đều bao gồm tư vấn chuyên nghiệp và hỗ trợ khách hàng 24/7. Liên hệ với chúng tôi để được tư vấn chi tiết về gói dịch vụ phù hợp nhất.'
+              : 'Liên hệ với chúng tôi để được tư vấn chi tiết về quy trình đăng ký và các dịch vụ pháp lý khác tại POIP LAW.'}
           </p>
         </div>
       </div>

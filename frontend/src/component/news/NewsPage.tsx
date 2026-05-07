@@ -5,16 +5,11 @@ import { useNews } from '../../hooks/useNews';
 import { BreadcrumbItem } from '../../types/service';
 
 export const NewsPage = () => {
-  const {
-    news,
-    loading,
-    error,
-    handleItemClick
-  } = useNews();
+  const { news, loading, error, handleItemClick } = useNews();
 
   const breadcrumbItems: BreadcrumbItem[] = [
     { name: 'Trang chủ', href: '/' },
-    { name: 'Bản tin', href: '/tin-tuc' }
+    { name: 'Bản tin', href: '/tin-tuc' },
   ];
 
   if (error) {
@@ -36,12 +31,15 @@ export const NewsPage = () => {
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-r from-yellow-400/10 to-orange-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+        <div
+          className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"
+          style={{ animationDelay: '1s' }}
+        ></div>
       </div>
 
       <div className="relative z-10">
         <Breadcrumb items={breadcrumbItems} />
-        
+
         <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
           {/* Header */}
           <div className="text-center mb-12">
@@ -60,11 +58,7 @@ export const NewsPage = () => {
             </p>
           </div>
 
-          <NewsGrid 
-            items={news} 
-            loading={loading}
-            onItemClick={handleItemClick}
-          />
+          <NewsGrid items={news} loading={loading} onItemClick={handleItemClick} />
         </main>
       </div>
     </div>

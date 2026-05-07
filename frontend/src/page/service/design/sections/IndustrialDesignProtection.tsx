@@ -8,11 +8,25 @@ const IndustrialDesignProtection = () => {
     setExpandedSection(expandedSection === section ? null : section);
   };
 
-  const ExpandableSection = ({ id, title, icon: Icon, children, bgColor = "bg-white" }: { id: string; title: string; icon: React.ComponentType; children: React.ReactNode; bgColor?: string }) => {
+  const ExpandableSection = ({
+    id,
+    title,
+    icon: Icon,
+    children,
+    bgColor = 'bg-white',
+  }: {
+    id: string;
+    title: string;
+    icon: React.ComponentType;
+    children: React.ReactNode;
+    bgColor?: string;
+  }) => {
     const isExpanded = expandedSection === id;
-    
+
     return (
-      <div className={`${bgColor} rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl`}>
+      <div
+        className={`${bgColor} rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl`}
+      >
         <button
           onClick={() => toggleSection(id)}
           className="w-full p-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors duration-200"
@@ -25,35 +39,47 @@ const IndustrialDesignProtection = () => {
             </div>
             <h3 className="text-xl font-bold text-gray-800">{title}</h3>
           </div>
-          {isExpanded ? 
-            <ChevronUp className="w-6 h-6 text-gray-600" /> : 
+          {isExpanded ? (
+            <ChevronUp className="w-6 h-6 text-gray-600" />
+          ) : (
             <ChevronDown className="w-6 h-6 text-gray-600" />
-          }
+          )}
         </button>
-        
+
         {isExpanded && (
           <div className="px-6 pb-6 border-t border-gray-100">
-            <div className="pt-4">
-              {children}
-            </div>
+            <div className="pt-4">{children}</div>
           </div>
         )}
       </div>
     );
   };
 
-  const ConditionCard = ({ title, description, icon: Icon, color }: { title: string; description: string; icon: React.ComponentType<any>; color: string }) => (
-      <div className="bg-gradient-to-br from-white to-gray-50 rounded-lg p-6 border-l-4 hover:shadow-md transition-shadow duration-200" style={{borderLeftColor: color}}>
-        <div className="flex items-start space-x-4">
-          <div className="p-2 rounded-lg" style={{backgroundColor: `${color}20`}}>
-            <Icon className={`w-6 h-6`} style={{ color }} />
-          </div>
-          <div className="flex-1">
-            <h4 className="text-lg font-semibold text-gray-800 mb-2">{title}</h4>
-            <p className="text-gray-600 leading-relaxed text-justify">{description}</p>
-          </div>
+  const ConditionCard = ({
+    title,
+    description,
+    icon: Icon,
+    color,
+  }: {
+    title: string;
+    description: string;
+    icon: React.ComponentType<any>;
+    color: string;
+  }) => (
+    <div
+      className="bg-gradient-to-br from-white to-gray-50 rounded-lg p-6 border-l-4 hover:shadow-md transition-shadow duration-200"
+      style={{ borderLeftColor: color }}
+    >
+      <div className="flex items-start space-x-4">
+        <div className="p-2 rounded-lg" style={{ backgroundColor: `${color}20` }}>
+          <Icon className={`w-6 h-6`} style={{ color }} />
+        </div>
+        <div className="flex-1">
+          <h4 className="text-lg font-semibold text-gray-800 mb-2">{title}</h4>
+          <p className="text-gray-600 leading-relaxed text-justify">{description}</p>
         </div>
       </div>
+    </div>
   );
 
   const ExcludedItem = ({ text }: { text: string }) => (
@@ -90,17 +116,18 @@ const IndustrialDesignProtection = () => {
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <h4 className="font-semibold text-gray-800 mb-3">Kiểu dáng công nghiệp:</h4>
               <p className="text-gray-700 leading-relaxed text-justify">
-                Là hình dáng bên ngoài của sản phẩm hoặc bộ phận để lắp ráp thành sản phẩm phức hợp, 
-                được thể hiện bằng hình khối, đường nét, màu sắc hoặc sự kết hợp những yếu tố này và 
-                nhìn thấy được trong quá trình khai thác công dụng của sản phẩm hoặc sản phẩm phức hợp.
+                Là hình dáng bên ngoài của sản phẩm hoặc bộ phận để lắp ráp thành sản phẩm phức hợp,
+                được thể hiện bằng hình khối, đường nét, màu sắc hoặc sự kết hợp những yếu tố này và
+                nhìn thấy được trong quá trình khai thác công dụng của sản phẩm hoặc sản phẩm phức
+                hợp.
               </p>
             </div>
             <div className="bg-white rounded-lg p-6 shadow-sm">
               <h4 className="font-semibold text-gray-800 mb-3">Sản phẩm:</h4>
               <p className="text-gray-700 leading-relaxed text-justify">
-                Được hiểu là đồ vật, dụng cụ, thiết bị, phương tiện, hoặc bộ phận dùng để lắp ráp, 
-                hợp thành các sản phẩm đó, được sản xuất bằng phương pháp công nghiệp hoặc thủ công nghiệp, 
-                có kết cấu và chức năng rõ ràng, được lưu thông độc lập.
+                Được hiểu là đồ vật, dụng cụ, thiết bị, phương tiện, hoặc bộ phận dùng để lắp ráp,
+                hợp thành các sản phẩm đó, được sản xuất bằng phương pháp công nghiệp hoặc thủ công
+                nghiệp, có kết cấu và chức năng rõ ràng, được lưu thông độc lập.
               </p>
             </div>
           </div>
@@ -159,15 +186,17 @@ const IndustrialDesignProtection = () => {
           <div className="bg-white rounded-xl shadow-lg p-8 border-t-4 border-blue-600">
             <h3 className="text-2xl font-bold text-gray-800 mb-4">Cần Hỗ Trợ Tư Vấn?</h3>
             <p className="text-gray-600 mb-6">
-              Liên hệ với chúng tôi để được tư vấn chi tiết về quy trình đăng ký bảo hộ kiểu dáng công nghiệp
+              Liên hệ với chúng tôi để được tư vấn chi tiết về quy trình đăng ký bảo hộ kiểu dáng
+              công nghiệp
             </p>
-            <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
-                onClick={() => {
-                    const contactForm = document.getElementById('contact-form');
-                    if (contactForm) {
-                        contactForm.scrollIntoView({ behavior: 'smooth' });
-                    }
-                }}
+            <button
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
+              onClick={() => {
+                const contactForm = document.getElementById('contact-form');
+                if (contactForm) {
+                  contactForm.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
             >
               Liên Hệ Ngay
             </button>

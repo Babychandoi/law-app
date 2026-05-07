@@ -17,10 +17,10 @@ export const useNews = () => {
         if (response && response.data) {
           setNews(response.data);
         } else {
-          toast.error( 'Không có dữ liệu tin tức nào được trả về!');
+          toast.error('Không có dữ liệu tin tức nào được trả về!');
         }
       } catch (err) {
-        setError('Failed to load news');  
+        setError('Failed to load news');
       } finally {
         setLoading(false);
       }
@@ -30,13 +30,13 @@ export const useNews = () => {
   }, []);
 
   const handleItemClick = (item: News) => {
-    navigate(`/tin-tuc/${item.id || ''}`)
+    navigate(`/tin-tuc/${item.id || ''}`);
   };
 
   return {
     news,
     loading,
     error,
-    handleItemClick
+    handleItemClick,
   };
 };

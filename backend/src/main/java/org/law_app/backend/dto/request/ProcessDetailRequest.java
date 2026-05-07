@@ -11,8 +11,8 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProcessDetailRequest {
-    String type; // Type of the detail (e.g., "document", "task")
-    String desc; // Description of the detail
-    String time; // Estimated time for this detail, if applicable
-    String accuracy; // Accuracy of the detail, if applicable
+  String type; // Type of the detail (e.g., "document", "task")
+  String desc; // Description of the detail
+  String time; // Estimated time for this detail, if applicable
+  String accuracy; // Accuracy of the detail, if applicable
 }

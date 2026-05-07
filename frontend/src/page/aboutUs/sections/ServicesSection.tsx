@@ -11,9 +11,24 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ title, services, imag
 
   const getServiceColor = (index: number) => {
     const colors = [
-      { bg: 'from-blue-500/20 to-blue-600/20', border: 'border-blue-400/40', icon: 'text-blue-600', iconBg: 'bg-blue-50' },
-      { bg: 'from-green-500/20 to-green-600/20', border: 'border-green-400/40', icon: 'text-green-600', iconBg: 'bg-green-50' },
-      { bg: 'from-purple-500/20 to-purple-600/20', border: 'border-purple-400/40', icon: 'text-purple-600', iconBg: 'bg-purple-50' }
+      {
+        bg: 'from-blue-500/20 to-blue-600/20',
+        border: 'border-blue-400/40',
+        icon: 'text-blue-600',
+        iconBg: 'bg-blue-50',
+      },
+      {
+        bg: 'from-green-500/20 to-green-600/20',
+        border: 'border-green-400/40',
+        icon: 'text-green-600',
+        iconBg: 'bg-green-50',
+      },
+      {
+        bg: 'from-purple-500/20 to-purple-600/20',
+        border: 'border-purple-400/40',
+        icon: 'text-purple-600',
+        iconBg: 'bg-purple-50',
+      },
     ];
     return colors[index] || colors[0];
   };
@@ -40,26 +55,26 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ title, services, imag
                 </span>
               </h2>
             </div>
-            
+
             <div className="space-y-6">
               {services.map((service, index) => {
                 const Icon = getServiceIcon(index);
                 const colors = getServiceColor(index);
-                
+
                 return (
-                  <div 
-                    key={index} 
+                  <div
+                    key={index}
                     className={`bg-white rounded-2xl border-2 ${colors.border} p-6 hover:shadow-2xl transition-all duration-500 group`}
                   >
                     <div className="flex items-center gap-3 mb-4">
-                      <div className={`w-12 h-12 ${colors.iconBg} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                      <div
+                        className={`w-12 h-12 ${colors.iconBg} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}
+                      >
                         <Icon className={`w-6 h-6 ${colors.icon}`} />
                       </div>
-                      <h3 className="text-xl font-bold text-gray-800">
-                        {service.title}
-                      </h3>
+                      <h3 className="text-xl font-bold text-gray-800">{service.title}</h3>
                     </div>
-                    
+
                     <ul className="space-y-2">
                       {service.items.map((item, itemIndex) => (
                         <li key={itemIndex} className="flex items-start gap-2 text-gray-700">
@@ -73,16 +88,16 @@ const ServicesSection: React.FC<ServicesSectionProps> = ({ title, services, imag
               })}
             </div>
           </div>
-          
+
           {/* Image */}
           <div className="space-y-6">
             <div className="group">
               <div className="relative">
                 <div className="absolute -inset-4 bg-gradient-to-r from-blue-400/20 to-purple-400/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl border-2 border-gray-200 group-hover:border-blue-400 transition-all duration-500">
-                  <img 
-                    src={image} 
-                    alt="Services" 
+                  <img
+                    src={image}
+                    alt="Services"
                     className="w-full h-96 object-cover transform group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>

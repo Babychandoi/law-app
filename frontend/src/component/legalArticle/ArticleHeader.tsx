@@ -1,4 +1,4 @@
-import React, {useState } from 'react';
+import React, { useState } from 'react';
 import { User, Calendar, FileText, Sparkles } from 'lucide-react';
 interface HeaderProps {
   headerNew?: HeaderNews;
@@ -11,32 +11,31 @@ interface HeaderNews {
   id?: string;
   image?: string;
 }
-const ArticleHeader: React.FC <HeaderProps> = ({headerNew}) => {
+const ArticleHeader: React.FC<HeaderProps> = ({ headerNew }) => {
   const [headers] = useState<HeaderNews>(headerNew || {});
   const data: HeaderNews = {
-    id : "1",
-    title: "",
-    subtitle: "",
-    author: "",
+    id: '1',
+    title: '',
+    subtitle: '',
+    author: '',
     createdAt: new Date(),
-
   };
   return (
     <div className="relative bg-white rounded-2xl shadow-2xl border-2 border-gray-100 overflow-hidden mb-8 transition-all duration-300 hover:shadow-3xl hover:border-yellow-400/30">
       {/* Top accent line */}
       <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400"></div>
-      
+
       {/* Hero Image Section */}
       {(headers?.image || data.image) && (
         <div className="relative h-64 md:h-80 lg:h-96 overflow-hidden">
-          <img 
-            src={headers?.image || data.image} 
+          <img
+            src={headers?.image || data.image}
             alt={headers?.title || data.title}
             className="w-full h-full object-cover"
           />
           {/* Gradient overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-          
+
           {/* Title overlay on image - ONLY TITLE */}
           <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6 lg:p-8">
             <div className="flex items-center gap-3 md:gap-4">
@@ -50,7 +49,7 @@ const ArticleHeader: React.FC <HeaderProps> = ({headerNew}) => {
               </div>
             </div>
           </div>
-          
+
           {/* Decorative sparkles */}
           <div className="absolute top-4 right-4 opacity-20">
             <Sparkles className="w-12 h-12 md:w-16 md:h-16 text-yellow-400" />
@@ -69,7 +68,7 @@ const ArticleHeader: React.FC <HeaderProps> = ({headerNew}) => {
               </p>
             </div>
           )}
-          
+
           {/* Metadata */}
           <div className="flex flex-wrap items-center gap-4 md:gap-6 text-sm border-t-2 border-gray-100 pt-4 md:pt-5">
             <div className="flex items-center gap-2 md:gap-3 group">
@@ -78,7 +77,9 @@ const ArticleHeader: React.FC <HeaderProps> = ({headerNew}) => {
               </div>
               <div>
                 <p className="text-xs text-gray-500">Tác giả</p>
-                <p className="font-semibold text-gray-900 text-xs md:text-sm">{headers?.author || data.author}</p>
+                <p className="font-semibold text-gray-900 text-xs md:text-sm">
+                  {headers?.author || data.author}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2 md:gap-3 group">
@@ -87,13 +88,17 @@ const ArticleHeader: React.FC <HeaderProps> = ({headerNew}) => {
               </div>
               <div>
                 <p className="text-xs text-gray-500">Ngày đăng</p>
-                <p className="font-semibold text-gray-900 text-xs md:text-sm">{(headers?.createdAt ? new Date(headers.createdAt).toLocaleDateString('vi-VN') : (data.createdAt ?? new Date()).toLocaleDateString('vi-VN'))}</p>
+                <p className="font-semibold text-gray-900 text-xs md:text-sm">
+                  {headers?.createdAt
+                    ? new Date(headers.createdAt).toLocaleDateString('vi-VN')
+                    : (data.createdAt ?? new Date()).toLocaleDateString('vi-VN')}
+                </p>
               </div>
             </div>
           </div>
         </div>
       )}
-      
+
       {/* No image fallback - keep subtitle with title */}
       {!(headers?.image || data.image) && (
         <>
@@ -113,13 +118,15 @@ const ArticleHeader: React.FC <HeaderProps> = ({headerNew}) => {
                     {headers?.title || data.title}
                   </h1>
                   {(headers?.subtitle || data.subtitle) && (
-                    <p className="text-sm md:text-lg text-gray-600 leading-relaxed break-words overflow-wrap-anywhere">{headers?.subtitle || data.subtitle}</p>
+                    <p className="text-sm md:text-lg text-gray-600 leading-relaxed break-words overflow-wrap-anywhere">
+                      {headers?.subtitle || data.subtitle}
+                    </p>
                   )}
                 </div>
               </div>
             </div>
           </div>
-          
+
           {/* Metadata section for no-image case */}
           <div className="p-4 md:p-8 pt-4 md:pt-6">
             <div className="flex flex-wrap items-center gap-4 md:gap-6 text-sm border-t-2 border-gray-100 pt-4 md:pt-5">
@@ -129,7 +136,9 @@ const ArticleHeader: React.FC <HeaderProps> = ({headerNew}) => {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">Tác giả</p>
-                  <p className="font-semibold text-gray-900 text-xs md:text-sm">{headers?.author || data.author}</p>
+                  <p className="font-semibold text-gray-900 text-xs md:text-sm">
+                    {headers?.author || data.author}
+                  </p>
                 </div>
               </div>
               <div className="flex items-center gap-2 md:gap-3 group">
@@ -138,7 +147,11 @@ const ArticleHeader: React.FC <HeaderProps> = ({headerNew}) => {
                 </div>
                 <div>
                   <p className="text-xs text-gray-500">Ngày đăng</p>
-                  <p className="font-semibold text-gray-900 text-xs md:text-sm">{(headers?.createdAt ? new Date(headers.createdAt).toLocaleDateString('vi-VN') : (data.createdAt ?? new Date()).toLocaleDateString('vi-VN'))}</p>
+                  <p className="font-semibold text-gray-900 text-xs md:text-sm">
+                    {headers?.createdAt
+                      ? new Date(headers.createdAt).toLocaleDateString('vi-VN')
+                      : (data.createdAt ?? new Date()).toLocaleDateString('vi-VN')}
+                  </p>
                 </div>
               </div>
             </div>

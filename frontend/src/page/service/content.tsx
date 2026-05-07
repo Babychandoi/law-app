@@ -30,7 +30,10 @@ const LuatBlog: React.FC = () => {
       {/* Animated Background Elements */}
       <div className="absolute inset-0">
         <div className="absolute top-20 left-20 w-96 h-96 bg-gradient-to-r from-yellow-400/10 to-orange-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+        <div
+          className="absolute bottom-20 right-20 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"
+          style={{ animationDelay: '1s' }}
+        ></div>
       </div>
 
       <div className="container mx-auto px-4 py-16 relative z-10">
@@ -57,7 +60,7 @@ const LuatBlog: React.FC = () => {
               className="group bg-white rounded-2xl shadow-2xl border-2 border-gray-100 overflow-hidden hover:shadow-3xl hover:border-yellow-400/30 transition-all duration-300 hover:scale-[1.02] cursor-pointer"
               onClick={() => handleNavigate(post.href)}
               style={{
-                animationDelay: `${index * 0.1}s`
+                animationDelay: `${index * 0.1}s`,
               }}
             >
               {/* Image Container */}
@@ -69,7 +72,7 @@ const LuatBlog: React.FC = () => {
                 />
                 {/* Gradient Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                
+
                 {/* Hover Badge */}
                 <div className="absolute top-4 right-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 px-4 py-2 rounded-full font-bold text-sm opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 shadow-lg">
                   Xem chi tiết

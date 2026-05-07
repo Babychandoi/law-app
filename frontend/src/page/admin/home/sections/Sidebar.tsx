@@ -12,13 +12,12 @@ const Sidebar: React.FC<{
 
   // ✅ Decode JWT để lấy scope
   useEffect(() => {
-    const token = sessionStorage.getItem("accessToken");
+    const token = sessionStorage.getItem('accessToken');
     if (token) {
       try {
         const payload = JSON.parse(atob(token.split('.')[1]));
         setIsAdmin(payload.scope === 'ADMIN');
-      } catch (err) {
-      }
+      } catch (err) {}
     }
   }, []);
 
@@ -68,7 +67,7 @@ const Sidebar: React.FC<{
       key: 'chats',
       path: '/2025/luatpoip/admin/chats',
       onlyAdmin: true,
-    }
+    },
   ];
 
   const handleTabChange = (key: string, path: string) => {
@@ -108,7 +107,9 @@ const Sidebar: React.FC<{
               A
             </div>
             <div>
-              <div className="text-white font-medium">Xin chào, {isAdmin ? "Admin" : "Người dùng"}</div>
+              <div className="text-white font-medium">
+                Xin chào, {isAdmin ? 'Admin' : 'Người dùng'}
+              </div>
               <div className="text-white/70 text-sm">
                 {isAdmin ? 'Quản trị viên' : 'Khách truy cập'}
               </div>
@@ -118,7 +119,7 @@ const Sidebar: React.FC<{
 
         <div className="space-y-2">
           {menuItems
-            .filter(item => !item.onlyAdmin || isAdmin)
+            .filter((item) => !item.onlyAdmin || isAdmin)
             .map((item, index) => (
               <div key={index}>
                 <button
@@ -130,9 +131,7 @@ const Sidebar: React.FC<{
                   }`}
                 >
                   <span className="text-xl">{item.icon}</span>
-                  <span className="text-white font-medium text-left">
-                    {item.category}
-                  </span>
+                  <span className="text-white font-medium text-left">{item.category}</span>
                 </button>
               </div>
             ))}

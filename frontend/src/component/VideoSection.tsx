@@ -6,7 +6,10 @@ const VideoSection: React.FC = () => (
     {/* Animated Background Elements */}
     <div className="absolute inset-0">
       <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-r from-yellow-400/10 to-orange-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-      <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
+      <div
+        className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"
+        style={{ animationDelay: '1s' }}
+      ></div>
     </div>
 
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -32,7 +35,7 @@ const VideoSection: React.FC = () => (
         <div className="relative group">
           {/* Decorative Background */}
           <div className="absolute -inset-4 bg-gradient-to-r from-yellow-400/20 via-orange-400/20 to-red-400/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-          
+
           {/* Video Card */}
           <div className="relative bg-white rounded-2xl shadow-2xl border-2 border-gray-200 overflow-hidden group-hover:border-yellow-400 transition-all duration-500">
             {/* Video Wrapper */}
@@ -44,7 +47,7 @@ const VideoSection: React.FC = () => (
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
               ></iframe>
-              
+
               {/* Play Icon Overlay (optional decorative element) */}
               <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/10 to-orange-400/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
             </div>
@@ -61,7 +64,7 @@ const VideoSection: React.FC = () => (
                     <p className="text-xs text-gray-500">Tìm hiểu về dịch vụ của chúng tôi</p>
                   </div>
                 </div>
-                
+
                 <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-yellow-50 rounded-lg border border-yellow-200">
                   <Sparkles className="w-4 h-4 text-yellow-600" />
                   <span className="text-xs font-semibold text-yellow-700">Xem ngay</span>
