@@ -219,9 +219,9 @@ const CustomerManagement: React.FC = () => {
     const baseClasses = 'px-2 py-1 text-xs font-medium rounded-full';
     switch (status) {
       case 'NEW':
-        return `${baseClasses} bg-blue-100 text-blue-800`;
+        return `${baseClasses} bg-brand-surface text-brand-goldDark`;
       case 'RECEIVED':
-        return `${baseClasses} bg-purple-100 text-purple-800`;
+        return `${baseClasses} bg-brand-surface text-brand-goldDark`;
       case 'PROCESSING':
         return `${baseClasses} bg-yellow-100 text-yellow-800`;
       case 'COMPLETED':
@@ -268,13 +268,15 @@ const CustomerManagement: React.FC = () => {
               placeholder="Tìm kiếm theo tên, điện thoại, email hoặc dịch vụ..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
             />
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`px-4 py-2 rounded-lg transition-colors flex items-center gap-2 ${
-              showFilters ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              showFilters
+                ? 'bg-brand-goldDark text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
             }`}
           >
             <Filter className="w-4 h-4" />
@@ -289,7 +291,7 @@ const CustomerManagement: React.FC = () => {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
                 >
                   <option value="ALL">Tất cả trạng thái</option>
                   <option value="NEW">Mới</option>
@@ -304,7 +306,7 @@ const CustomerManagement: React.FC = () => {
                 <select
                   value={serviceFilter}
                   onChange={(e) => setServiceFilter(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
                 >
                   <option value="ALL">Tất cả dịch vụ</option>
                   {services.map((service) => (
@@ -320,7 +322,7 @@ const CustomerManagement: React.FC = () => {
                   type="date"
                   value={dateFromFilter}
                   onChange={(e) => setDateFromFilter(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
                 />
               </div>
               <div>
@@ -329,7 +331,7 @@ const CustomerManagement: React.FC = () => {
                   type="date"
                   value={dateToFilter}
                   onChange={(e) => setDateToFilter(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
                 />
               </div>
             </div>
@@ -371,7 +373,7 @@ const CustomerManagement: React.FC = () => {
                 <td className="px-4 py-3 text-sm text-gray-900">{customer.email}</td>
                 <td className="px-4 py-3 text-sm text-gray-700">
                   <div
-                    className="font-medium cursor-pointer hover:text-blue-600"
+                    className="font-medium cursor-pointer hover:text-brand-goldDark"
                     onClick={() => quickFilterByService(customer.serviceName)}
                   >
                     {customer.serviceName}
@@ -381,7 +383,7 @@ const CustomerManagement: React.FC = () => {
                   <select
                     value={customer.status}
                     onChange={(e) => updateStatus(customer.id, e.target.value as any)}
-                    className={`${getStatusBadge(customer.status)} border-none bg-transparent cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:rounded-md`}
+                    className={`${getStatusBadge(customer.status)} border-none bg-transparent cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-goldDark focus:rounded-md`}
                   >
                     <option value="NEW">Mới</option>
                     <option value="RECEIVED">Đã tiếp nhận</option>
@@ -392,7 +394,7 @@ const CustomerManagement: React.FC = () => {
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-700">
                   <span
-                    className="cursor-pointer hover:text-blue-600"
+                    className="cursor-pointer hover:text-brand-goldDark"
                     onClick={() => quickFilterByDate(customer.createdAt)}
                   >
                     {formatDate(customer.createdAt)}
@@ -433,7 +435,7 @@ const CustomerManagement: React.FC = () => {
                   onClick={() => goToPage(page)}
                   className={`px-3 py-1 rounded-lg ${
                     currentPage === page
-                      ? 'bg-blue-600 text-white'
+                      ? 'bg-brand-goldDark text-white'
                       : 'border border-gray-300 hover:bg-gray-50'
                   }`}
                 >

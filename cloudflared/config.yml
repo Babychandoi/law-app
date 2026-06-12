@@ -1,0 +1,24 @@
+tunnel: 89915047-c0df-4906-a383-845af53c76cc
+credentials-file: /etc/cloudflared/credentials.json
+
+ingress:
+  # Frontend (React SPA)
+  - hostname: luatpoip.com
+    service: http://frontend:80
+  - hostname: www.luatpoip.com
+    service: http://frontend:80
+
+  # Backend API + WebSocket / STOMP (/ws)
+  - hostname: api.luatpoip.com
+    service: http://backend:8080
+
+  # MinIO – file upload/download (cho phép body lớn)
+  - hostname: minio.luatpoip.com
+    service: http://minio:9000
+
+  # MinIO Console (admin UI)
+  - hostname: minio-console.luatpoip.com
+    service: http://minio:9001
+
+  # Bắt buộc: mọi request không khớp hostname trên trả 404
+  - service: http_status:404

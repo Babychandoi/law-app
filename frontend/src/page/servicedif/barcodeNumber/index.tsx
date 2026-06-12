@@ -45,8 +45,7 @@ export default function Index() {
       description: 'Phân bổ được cho 100 loại sản phẩm',
       featured: true,
       features: ['Cấp mã ngay trong vòng 1 -> 2 ngày làm việc'],
-      image:
-        'https://minio-app-restless-frog-6585.fly.dev:9000/images/a33e2ec4-a12a-4621-8117-a948ac0da79e_ma-so-ma-vach.jpeg',
+      image: '/assets/images/masomavach.webp',
     },
   ]);
   return (

@@ -45,10 +45,10 @@ const ToToBenefitsSection: React.FC = () => {
           {benefits.map((benefit, index) => (
             <div
               key={index}
-              className="group text-center p-8 rounded-xl bg-white border border-gray-100 hover:border-green-200 hover:shadow-lg transition-all duration-300"
+              className="group text-center p-8 rounded-xl bg-white border border-gray-100 hover:border-green-200 hover:shadow-sm transition-all duration-300"
             >
               {/* Icon */}
-              <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mx-auto mb-6 group-hover:bg-green-200 group-hover:scale-110 transition-all duration-300">
+              <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mx-auto mb-6 group-hover:bg-green-200  transition-all duration-300">
                 <div className="text-green-600">{benefit.icon}</div>
               </div>
 

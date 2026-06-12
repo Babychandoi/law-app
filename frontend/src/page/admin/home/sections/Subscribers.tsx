@@ -61,7 +61,7 @@ const Subscribers: React.FC = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b border-brand-line"></div>
       </div>
     );
   }
@@ -77,7 +77,7 @@ const Subscribers: React.FC = () => {
               Tổng số: {subscribers.length} người đăng ký nhận tin tức
             </p>
           </div>
-          <Users className="w-12 h-12 text-blue-600" />
+          <Users className="w-12 h-12 text-brand-goldDark" />
         </div>
       </div>
 
@@ -88,7 +88,7 @@ const Subscribers: React.FC = () => {
           placeholder="Tìm kiếm theo email..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent"
         />
       </div>
 

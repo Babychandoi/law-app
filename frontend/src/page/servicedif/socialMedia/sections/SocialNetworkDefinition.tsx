@@ -16,32 +16,32 @@ const SocialNetworkDefinition: React.FC<Props> = ({
 }) => {
   const variants = {
     default: {
-      background: 'bg-gradient-to-br from-blue-50 to-indigo-50',
-      iconBg: 'bg-blue-100',
-      iconColor: 'text-blue-600',
-      cardBorder: 'border-blue-100',
-      textAccent: 'text-blue-800',
+      background: 'bg-brand-surface  ',
+      iconBg: 'bg-brand-surface',
+      iconColor: 'text-brand-goldDark',
+      cardBorder: 'border-brand-line',
+      textAccent: 'text-brand-goldDark',
     },
     blue: {
-      background: 'bg-gradient-to-br from-sky-50 to-cyan-50',
-      iconBg: 'bg-sky-100',
-      iconColor: 'text-sky-600',
-      cardBorder: 'border-sky-100',
-      textAccent: 'text-sky-800',
+      background: 'bg-brand-surface  ',
+      iconBg: 'bg-brand-surface',
+      iconColor: 'text-brand-goldDark',
+      cardBorder: 'border-brand-line',
+      textAccent: 'text-brand-goldDark',
     },
     purple: {
-      background: 'bg-gradient-to-br from-purple-50 to-pink-50',
-      iconBg: 'bg-purple-100',
-      iconColor: 'text-purple-600',
-      cardBorder: 'border-purple-100',
-      textAccent: 'text-purple-800',
+      background: 'bg-brand-surface  ',
+      iconBg: 'bg-brand-surface',
+      iconColor: 'text-brand-goldDark',
+      cardBorder: 'border-brand-line',
+      textAccent: 'text-brand-goldDark',
     },
     orange: {
-      background: 'bg-gradient-to-br from-orange-50 to-red-50',
-      iconBg: 'bg-orange-100',
-      iconColor: 'text-orange-600',
-      cardBorder: 'border-orange-100',
-      textAccent: 'text-orange-800',
+      background: 'bg-brand-goldDark',
+      iconBg: 'bg-brand-surface',
+      iconColor: 'text-brand-goldDark',
+      cardBorder: 'border-brand-line',
+      textAccent: 'text-brand-goldDark',
     },
   };
 
@@ -54,7 +54,7 @@ const SocialNetworkDefinition: React.FC<Props> = ({
       <section className="mb-12">
         <div className="max-w-4xl mx-auto px-6 text-center">
           <div
-            className={`inline-flex items-center justify-center w-20 h-20 ${currentVariant.iconBg} rounded-2xl shadow-lg mb-6`}
+            className={`inline-flex items-center justify-center w-20 h-20 ${currentVariant.iconBg} rounded-lg shadow-sm mb-6`}
           >
             {headerIcon || defaultIcon}
           </div>
@@ -70,7 +70,7 @@ const SocialNetworkDefinition: React.FC<Props> = ({
       <section>
         <div className="max-w-7xl mx-auto px-6">
           <div
-            className={`bg-white rounded-2xl shadow-xl p-8 md:p-12 border ${currentVariant.cardBorder}`}
+            className={`bg-white rounded-lg shadow-soft p-8 md:p-12 border ${currentVariant.cardBorder}`}
           >
             <div className="flex items-start gap-4">
               <div

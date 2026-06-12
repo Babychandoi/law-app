@@ -19,9 +19,10 @@ export const Button = ({
   ...props
 }: ButtonProps) => {
   const variants = {
-    default: 'bg-blue-600 text-white hover:bg-blue-700',
-    outline: 'border border-gray-300 bg-white hover:bg-gray-50',
-    ghost: 'hover:bg-gray-100',
+    default:
+      'border border-brand-goldDark bg-brand-goldDark text-white hover:border-brand-ink hover:bg-brand-ink',
+    outline: 'border border-brand-line bg-white text-brand-ink hover:border-brand-gold',
+    ghost: 'text-brand-ink hover:bg-brand-surface',
   };
 
   const sizes = {
@@ -32,8 +33,9 @@ export const Button = ({
 
   return (
     <button
+      type="button"
       className={cn(
-        'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 disabled:pointer-events-none disabled:opacity-50',
+        'inline-flex items-center justify-center rounded-md font-semibold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/30 disabled:pointer-events-none disabled:opacity-50',
         variants[variant],
         sizes[size],
         className

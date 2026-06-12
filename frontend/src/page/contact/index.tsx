@@ -23,8 +23,9 @@ export default function Contact() {
       <Consultation />
       <Suspense
         fallback={
-          <div className="flex items-center justify-center py-20">
-            <div className="animate-spin rounded-full h-12 w-12 border-4 border-yellow-400 border-t-transparent"></div>
+          <div className="flex items-center justify-center gap-3 py-20" role="status">
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-line border-t-brand-goldDark"></div>
+            <span className="sr-only">Đang tải bản đồ</span>
           </div>
         }
       >

@@ -417,9 +417,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
       case ConnectionState.CONNECTED:
         return { text: 'Đang kết nối', color: 'bg-green-400' };
       case ConnectionState.CONNECTING:
-        return { text: 'Đang kết nối...', color: 'bg-yellow-400' };
+        return { text: 'Đang kết nối...', color: 'bg-brand-goldDark' };
       case ConnectionState.RECONNECTING:
-        return { text: 'Đang kết nối lại...', color: 'bg-yellow-400' };
+        return { text: 'Đang kết nối lại...', color: 'bg-brand-goldDark' };
       case ConnectionState.ERROR:
         return { text: 'Lỗi kết nối', color: 'bg-red-400' };
       default:
@@ -430,16 +430,16 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
   const connectionStatus = getConnectionStatus();
 
   return (
-    <div className="transition-all duration-300 ease-in-out w-full sm:w-96 max-h-[600px] rounded-2xl overflow-hidden shadow-2xl">
+    <div className="transition-all duration-300 ease-in-out w-full sm:w-96 max-h-[600px] rounded-lg overflow-hidden shadow-soft">
       {/* Chat Header */}
-      <div className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 text-white px-4 py-4 flex items-center justify-between shadow-lg relative overflow-hidden">
+      <div className="bg-brand-goldDark text-white px-4 py-4 flex items-center justify-between shadow-sm relative overflow-hidden">
         {/* Decorative elements */}
-        <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+        <div className="absolute inset-0 bg-white/10"></div>
 
         <div className="flex items-center space-x-3 relative z-10">
           <div className="relative">
             <div
-              className={`w-10 h-10 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center ${isConnected ? 'animate-pulse' : ''}`}
+              className={`w-10 h-10 rounded-full bg-white/20  flex items-center justify-center ${isConnected ? '' : ''}`}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -462,8 +462,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
         <div className="flex items-center space-x-2 relative z-10">
           {connectionState === ConnectionState.ERROR && (
             <button
+              type="button"
               onClick={retryConnection}
-              className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm transition-all duration-300 flex items-center justify-center hover:scale-110"
+              className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30  transition-all duration-300 flex items-center justify-center "
               title="Thử kết nối lại"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -477,8 +478,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
             </button>
           )}
           <button
+            type="button"
             onClick={onClose}
-            className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-sm transition-all duration-300 flex items-center justify-center hover:scale-110"
+            className="w-9 h-9 rounded-full bg-white/20 hover:bg-white/30  transition-all duration-300 flex items-center justify-center "
             title="Đóng"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -494,12 +496,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
       </div>
 
       {/* Chat Body */}
-      <div className="bg-gradient-to-b from-gray-50 to-white flex flex-col h-[544px]">
+      <div className="bg-brand-surface   flex flex-col h-[544px]">
         {/* Messages Container */}
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {isLoading && (
             <div className="flex justify-center items-center py-4">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b border-brand-line"></div>
               <span className="ml-2 text-sm text-gray-500">Đang tải tin nhắn...</span>
             </div>
           )}
@@ -523,6 +525,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
                   <p className="text-red-600 text-xs mt-1">{apiError}</p>
                   {connectionState === ConnectionState.ERROR && (
                     <button
+                      type="button"
                       onClick={retryConnection}
                       className="mt-2 text-xs bg-red-100 hover:bg-red-200 text-red-700 px-2 py-1 rounded transition-colors"
                     >
@@ -536,9 +539,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
 
           {messages.length === 0 && !apiError && !isLoading && (
             <div className="text-center text-gray-500 mt-8">
-              <div className="w-16 h-16 mx-auto mb-4 bg-blue-100 rounded-full flex items-center justify-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-brand-surface rounded-full flex items-center justify-center">
                 <svg
-                  className="w-8 h-8 text-blue-500"
+                  className="w-8 h-8 text-brand-goldDark"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -563,9 +566,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
             >
               <div className={`max-w-[80%] ${msg.senderType === 'GUEST' ? 'order-2' : 'order-1'}`}>
                 <div
-                  className={`px-4 py-2 rounded-2xl break-words shadow-sm relative ${
+                  className={`px-4 py-2 rounded-lg break-words shadow-sm relative ${
                     msg.senderType === 'GUEST'
-                      ? `bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-br-md ${
+                      ? `bg-brand-goldDark text-white rounded-br-md ${
                           msg.status === 'sending'
                             ? 'opacity-70'
                             : msg.status === 'failed'
@@ -581,7 +584,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
                     <div className="flex items-center justify-end mt-1 space-x-1">
                       {msg.status === 'sending' && (
                         <>
-                          <div className="w-2 h-2 bg-white/60 rounded-full animate-pulse"></div>
+                          <div className="w-2 h-2 bg-white/60 rounded-full "></div>
                           <span className="text-xs text-white/80">Đang gửi...</span>
                         </>
                       )}
@@ -620,7 +623,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
                   {/* AI Bot Indicator */}
                   {msg.senderType === 'ADMIN' && msg.adminId === 'AI-BOT' && (
                     <div className="flex items-center space-x-1 mt-2 pt-2 border-t border-gray-200">
-                      <div className="w-4 h-4 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center">
+                      <div className="w-4 h-4 bg-brand-goldDark rounded-full flex items-center justify-center">
                         <svg
                           className="w-2.5 h-2.5 text-white"
                           fill="currentColor"
@@ -652,9 +655,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
           {isAITyping && (
             <div className="flex justify-start animate-fade-in">
               <div className="max-w-[80%]">
-                <div className="px-4 py-3 rounded-2xl bg-white border border-gray-200 rounded-bl-md shadow-sm">
+                <div className="px-4 py-3 rounded-lg bg-white border border-gray-200 rounded-bl-md shadow-sm">
                   <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 bg-gradient-to-r from-blue-400 to-purple-500 rounded-full flex items-center justify-center animate-pulse">
+                    <div className="w-4 h-4 bg-brand-goldDark rounded-full flex items-center justify-center ">
                       <svg
                         className="w-2.5 h-2.5 text-white"
                         fill="currentColor"
@@ -665,15 +668,15 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
                     </div>
                     <div className="flex space-x-1">
                       <div
-                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        className="w-2 h-2 bg-gray-400 rounded-full "
                         style={{ animationDelay: '0ms' }}
                       ></div>
                       <div
-                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        className="w-2 h-2 bg-gray-400 rounded-full "
                         style={{ animationDelay: '150ms' }}
                       ></div>
                       <div
-                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                        className="w-2 h-2 bg-gray-400 rounded-full "
                         style={{ animationDelay: '300ms' }}
                       ></div>
                     </div>
@@ -697,14 +700,15 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyPress}
                 maxLength={MAX_MESSAGE_LENGTH}
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm placeholder-gray-500"
+                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-goldDark focus:border-transparent text-sm placeholder-gray-500"
                 placeholder={isConnected ? 'Nhập tin nhắn của bạn...' : 'Đang kết nối...'}
                 disabled={!isConnected || isConnecting}
               />
               <button
+                type="button"
                 onClick={sendMessage}
                 disabled={!message.trim() || !isConnected || isConnecting}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-full flex items-center justify-center transition-colors"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-brand-goldDark hover:bg-brand-goldDark disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-full flex items-center justify-center transition-colors"
                 title="Gửi tin nhắn"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -721,7 +725,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
 
           <div className="mt-2 text-xs">
             {!isConnected && connectionState !== ConnectionState.ERROR && (
-              <div className="text-orange-500 flex items-center">
+              <div className="text-brand-goldDark flex items-center">
                 <svg className="w-3 h-3 mr-1 animate-spin" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
@@ -735,7 +739,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
 
             {message.length > MAX_MESSAGE_LENGTH - 50 && (
               <div
-                className={`${message.length >= MAX_MESSAGE_LENGTH ? 'text-red-500' : 'text-yellow-600'}`}
+                className={`${message.length >= MAX_MESSAGE_LENGTH ? 'text-red-500' : 'text-brand-goldDark'}`}
               >
                 {MAX_MESSAGE_LENGTH - message.length} ký tự còn lại
               </div>

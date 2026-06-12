@@ -22,7 +22,7 @@ export default function New() {
   useEffect(() => {
     let mounted = true;
     setLoading(true);
-    getNews({ page: 0, size: 8 })
+    getNews({ page: 0, size: 4 })
       .then((response) => {
         if (mounted) {
           setNews(response.data || []);
@@ -89,6 +89,8 @@ export default function New() {
                       <img
                         src={item.image}
                         alt={item.title}
+                        loading="lazy"
+                        decoding="async"
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       />
                     ) : (

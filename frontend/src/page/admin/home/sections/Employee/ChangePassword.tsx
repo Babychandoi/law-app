@@ -83,7 +83,7 @@ const PasswordChangeForm: React.FC<PasswordChangeProps> = ({ user, isOpen, onClo
               type="password"
               value={passwords.newPassword}
               onChange={(e) => handleInputChange('newPassword', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
               placeholder="Nhập mật khẩu mới (ít nhất 6 ký tự)"
               required
             />
@@ -97,7 +97,7 @@ const PasswordChangeForm: React.FC<PasswordChangeProps> = ({ user, isOpen, onClo
               type="password"
               value={passwords.confirmPassword}
               onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
               placeholder="Nhập lại mật khẩu mới"
               required
             />

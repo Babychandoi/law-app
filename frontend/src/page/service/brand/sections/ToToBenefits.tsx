@@ -35,14 +35,14 @@ const ToToBenefits = () => {
   ];
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 py-16 px-6">
+    <div className="bg-brand-surface   py-16 px-6">
       <div className="max-w-7xl mx-auto">
         {/* Header Section */}
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">
             LỢI ÍCH KHI ĐĂNG KÝ BẢO HỘ NHÃN HIỆU TẠI POIP
           </h2>
-          <div className="w-32 h-1 bg-gradient-to-r from-blue-600 to-indigo-600 mx-auto mb-6"></div>
+          <div className="w-32 h-1 bg-brand-goldDark mx-auto mb-6"></div>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
             Luật sư tại Luật Poip mang lại nhiều lợi ích cho việc đăng ký bảo hộ nhãn hiệu, bao gồm:
           </p>
@@ -54,14 +54,14 @@ const ToToBenefits = () => {
             {benefits.map((benefit, index) => (
               <div
                 key={index}
-                className="group bg-white rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
+                className="group bg-white rounded-xl p-6 shadow-sm hover:shadow-soft transition-all duration-300 "
               >
                 <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <div className="flex-shrink-0 w-12 h-12 bg-brand-goldDark rounded-full flex items-center justify-center text-white shadow-sm  transition-transform duration-300">
                     {benefit.icon}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-brand-goldDark transition-colors">
                       {benefit.title}
                     </h3>
                     <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
@@ -73,26 +73,26 @@ const ToToBenefits = () => {
 
           {/* Certificate Image */}
           <div className="relative">
-            <div className="bg-white rounded-2xl p-6 shadow-2xl">
-              <div className="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center relative overflow-hidden">
+            <div className="bg-white rounded-lg p-6 shadow-soft">
+              <div className="aspect-[3/4] bg-brand-surface   rounded-xl flex items-center justify-center relative overflow-hidden">
                 {/* Certificate placeholder */}
                 <div className="text-center p-8">
                   <img
-                    src="/assets/images/dangkynhanhieu.png"
+                    src="/assets/images/dangkynhanhieu.webp"
                     alt="Giấy chứng nhận đăng ký nhãn hiệu"
-                    className="w-full h-auto rounded-lg shadow-lg"
+                    className="w-full h-auto rounded-lg shadow-sm"
                     loading="lazy"
                   />
                 </div>
 
                 {/* Decorative elements */}
-                <div className="absolute top-4 right-4 w-8 h-8 bg-blue-500 rounded-full opacity-20"></div>
-                <div className="absolute bottom-4 left-4 w-6 h-6 bg-indigo-500 rounded-full opacity-20"></div>
-                <div className="absolute top-1/2 left-4 w-4 h-4 bg-blue-400 rounded-full opacity-30"></div>
+                <div className="absolute top-4 right-4 w-8 h-8 bg-brand-goldDark rounded-full opacity-20"></div>
+                <div className="absolute bottom-4 left-4 w-6 h-6 bg-brand-goldDark rounded-full opacity-20"></div>
+                <div className="absolute top-1/2 left-4 w-4 h-4 bg-brand-goldDark rounded-full opacity-30"></div>
               </div>
 
               {/* Badge */}
-              <div className="absolute -top-4 -right-4 bg-gradient-to-r from-green-400 to-green-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+              <div className="absolute -top-4 -right-4 bg-green-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-sm">
                 ✓ Uy tín
               </div>
             </div>

@@ -59,14 +59,14 @@ const TrademarkPricing = () => {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-100 py-16 px-4">
+    <div className="bg-brand-surface   py-16 px-4">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-gray-900 mb-4">
             CHI PHÍ ĐĂNG KÝ BẢO HỘ NHÃN HIỆU TẠI POIP
           </h2>
-          <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto rounded-full"></div>
+          <div className="w-24 h-1 bg-brand-goldDark mx-auto rounded-full"></div>
         </div>
 
         {/* Pricing Cards */}
@@ -74,13 +74,13 @@ const TrademarkPricing = () => {
           {pricingPlans.map((plan, index) => (
             <div
               key={index}
-              className={`relative bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
-                plan.featured ? 'ring-4 ring-blue-500 ring-opacity-50' : ''
+              className={`relative bg-white rounded-lg shadow-soft overflow-hidden transform transition-all duration-300  hover:shadow-soft ${
+                plan.featured ? 'ring-4 ring-brand-goldDark ring-opacity-50' : ''
               }`}
             >
               {/* Featured Badge */}
               {plan.featured && (
-                <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-bl-2xl">
+                <div className="absolute top-0 right-0 bg-brand-goldDark text-white px-4 py-2 rounded-bl-2xl">
                   <Star className="w-4 h-4 inline-block mr-1" />
                   <span className="text-sm font-semibold">Phổ biến</span>
                 </div>
@@ -89,9 +89,7 @@ const TrademarkPricing = () => {
               {/* Header */}
               <div
                 className={`px-8 py-8 text-center ${
-                  plan.featured
-                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
-                    : 'bg-gray-50'
+                  plan.featured ? 'bg-brand-goldDark text-white' : 'bg-gray-50'
                 }`}
               >
                 <h3
@@ -113,7 +111,7 @@ const TrademarkPricing = () => {
                   {plan.currency && (
                     <span
                       className={`text-sm font-medium ml-2 ${
-                        plan.featured ? 'text-blue-100' : 'text-gray-600'
+                        plan.featured ? 'text-brand-goldDark' : 'text-gray-600'
                       }`}
                     >
                       {plan.currency}
@@ -123,9 +121,7 @@ const TrademarkPricing = () => {
 
                 <div
                   className={`w-16 h-1 mx-auto rounded-full ${
-                    plan.featured
-                      ? 'bg-white bg-opacity-50'
-                      : 'bg-gradient-to-r from-blue-500 to-indigo-600'
+                    plan.featured ? 'bg-white bg-opacity-50' : 'bg-brand-goldDark'
                   }`}
                 ></div>
               </div>
@@ -152,11 +148,12 @@ const TrademarkPricing = () => {
               {/* CTA Button */}
               <div className="px-8 pb-8">
                 <button
+                  type="button"
                   onClick={scrollToContact}
-                  className={`w-full py-4 px-6 rounded-xl font-semibold text-center transition-all duration-300 transform hover:scale-105 ${
+                  className={`w-full py-4 px-6 rounded-xl font-semibold text-center transition-all duration-300  ${
                     plan.featured
-                      ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg hover:shadow-xl'
-                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200 border-2 border-transparent hover:border-blue-500'
+                      ? 'bg-brand-goldDark text-white shadow-sm hover:shadow-soft'
+                      : 'bg-gray-100 text-gray-900 hover:bg-gray-200 border-2 border-transparent hover:border-brand-line'
                   }`}
                 >
                   Đăng ký tư vấn

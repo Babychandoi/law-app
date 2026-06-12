@@ -25,15 +25,16 @@ const IndustrialDesignProtection = () => {
 
     return (
       <div
-        className={`${bgColor} rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl`}
+        className={`${bgColor} rounded-xl shadow-sm overflow-hidden transition-all duration-300 hover:shadow-soft`}
       >
         <button
+          type="button"
           onClick={() => toggleSection(id)}
           className="w-full p-6 flex items-center justify-between text-left hover:bg-gray-50 transition-colors duration-200"
         >
           <div className="flex items-center space-x-4">
-            <div className="bg-blue-100 p-3 rounded-full">
-              <div className="w-6 h-6 text-blue-600">
+            <div className="bg-brand-surface p-3 rounded-full">
+              <div className="w-6 h-6 text-brand-goldDark">
                 <Icon />
               </div>
             </div>
@@ -67,7 +68,7 @@ const IndustrialDesignProtection = () => {
     color: string;
   }) => (
     <div
-      className="bg-gradient-to-br from-white to-gray-50 rounded-lg p-6 border-l-4 hover:shadow-md transition-shadow duration-200"
+      className="bg-brand-surface   rounded-lg p-6 border hover:shadow-md transition-shadow duration-200"
       style={{ borderLeftColor: color }}
     >
       <div className="flex items-start space-x-4">
@@ -90,11 +91,11 @@ const IndustrialDesignProtection = () => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-12 px-4">
+    <div className="min-h-screen bg-brand-surface    py-12 px-4">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-600 rounded-full mb-6">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-goldDark rounded-full mb-6">
             <Lightbulb className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
@@ -110,7 +111,7 @@ const IndustrialDesignProtection = () => {
           id="definition"
           title="Định Nghĩa Kiểu Dáng Công Nghiệp"
           icon={Info}
-          bgColor="bg-gradient-to-r from-blue-50 to-indigo-50"
+          bgColor="bg-brand-surface  "
         >
           <div className="space-y-4">
             <div className="bg-white rounded-lg p-6 shadow-sm">
@@ -139,7 +140,7 @@ const IndustrialDesignProtection = () => {
             id="conditions"
             title="Điều Kiện Bảo Hộ Kiểu Dáng Công Nghiệp"
             icon={CheckCircle}
-            bgColor="bg-gradient-to-r from-green-50 to-emerald-50"
+            bgColor="bg-green-600"
           >
             <div className="space-y-6">
               <ConditionCard
@@ -170,7 +171,7 @@ const IndustrialDesignProtection = () => {
             id="excluded"
             title="Đối Tượng Không Được Bảo Hộ"
             icon={XCircle}
-            bgColor="bg-gradient-to-r from-red-50 to-pink-50"
+            bgColor="bg-brand-surface  "
           >
             <div className="space-y-4">
               <ExcludedItem text="Hình dáng bên ngoài của sản phẩm do đặc tính kỹ thuật của sản phẩm bắt buộc phải có." />
@@ -183,14 +184,15 @@ const IndustrialDesignProtection = () => {
 
         {/* Footer */}
         <div className="mt-12 text-center">
-          <div className="bg-white rounded-xl shadow-lg p-8 border-t-4 border-blue-600">
+          <div className="bg-white rounded-xl shadow-sm p-8 border border-brand-line">
             <h3 className="text-2xl font-bold text-gray-800 mb-4">Cần Hỗ Trợ Tư Vấn?</h3>
             <p className="text-gray-600 mb-6">
               Liên hệ với chúng tôi để được tư vấn chi tiết về quy trình đăng ký bảo hộ kiểu dáng
               công nghiệp
             </p>
             <button
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 shadow-lg hover:shadow-xl"
+              type="button"
+              className="bg-brand-goldDark hover:bg-brand-goldDark text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-soft"
               onClick={() => {
                 const contactForm = document.getElementById('contact-form');
                 if (contactForm) {

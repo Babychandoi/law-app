@@ -46,7 +46,7 @@ const BarcodeBenefits: React.FC = () => {
   ];
 
   return (
-    <section className="p-8 bg-white rounded-lg shadow-lg">
+    <section className="p-8 bg-white rounded-lg shadow-sm">
       <div className="mb-8 text-center">
         <h2 className="text-3xl font-bold text-gray-800">LỢI ÍCH KHI ĐĂNG KÝ SỬ DỤNG MÃ VẠCH</h2>
         <h5 className="text-lg text-gray-600 mt-2">

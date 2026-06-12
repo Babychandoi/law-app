@@ -1,2 +1,11 @@
 .env
 .env.*.local.env
+
+# Cloudflare Tunnel secrets / binary
+cloudflared/credentials.json
+cloudflared.exe
+
+# SSL certificates & private keys (KHONG commit private key)
+certbot/conf/live/
+certbot/conf/archive/
+certbot/conf/keys/

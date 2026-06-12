@@ -29,12 +29,12 @@ const RegistrationProcess = ({
 }) => {
   const getColorClasses = (color: keyof typeof colors) => {
     const colors = {
-      blue: { bg: 'bg-blue-100', text: 'text-blue-600' },
+      blue: { bg: 'bg-brand-surface', text: 'text-brand-goldDark' },
       green: { bg: 'bg-green-100', text: 'text-green-600' },
-      purple: { bg: 'bg-purple-100', text: 'text-purple-600' },
+      purple: { bg: 'bg-brand-surface', text: 'text-brand-goldDark' },
       red: { bg: 'bg-red-100', text: 'text-red-600' },
-      yellow: { bg: 'bg-yellow-100', text: 'text-yellow-600' },
-      indigo: { bg: 'bg-indigo-100', text: 'text-indigo-600' },
+      yellow: { bg: 'bg-brand-surface', text: 'text-brand-goldDark' },
+      indigo: { bg: 'bg-brand-surface', text: 'text-brand-goldDark' },
     };
     return colors[color] || colors.blue;
   };
@@ -44,7 +44,7 @@ const RegistrationProcess = ({
       {/* Header Section */}
       <div className="container mx-auto px-4 mb-12">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 text-white rounded-full mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-brand-goldDark text-white rounded-full mb-6">
             <ArrowRight className="w-8 h-8" />
           </div>
           <h2 className="text-3xl font-bold text-gray-800 uppercase tracking-wide">{title}</h2>
@@ -61,7 +61,7 @@ const RegistrationProcess = ({
             return (
               <div
                 key={step.id}
-                className="bg-white rounded-lg shadow-lg p-8 hover:shadow-xl transition-shadow duration-300"
+                className="bg-white rounded-lg shadow-sm p-8 hover:shadow-soft transition-shadow duration-300"
               >
                 <div className="flex items-start space-x-4">
                   <div className="flex-shrink-0">

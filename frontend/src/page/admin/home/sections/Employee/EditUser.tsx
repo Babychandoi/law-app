@@ -150,8 +150,8 @@ const UserEdit: React.FC<UserEditProps> = ({
       <div className="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <User className="h-6 w-6 text-blue-600" />
+            <div className="p-2 bg-brand-surface rounded-lg">
+              <User className="h-6 w-6 text-brand-goldDark" />
             </div>
             <h2 className="text-2xl font-bold text-gray-800">Chỉnh sửa thông tin người dùng</h2>
           </div>
@@ -175,7 +175,7 @@ const UserEdit: React.FC<UserEditProps> = ({
               type="text"
               value={formData.username}
               onChange={(e) => handleInputChange('username', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
                 errors.username ? 'border-red-500 bg-red-50' : 'border-gray-300'
               }`}
               placeholder="Nhập tên đăng nhập"
@@ -194,7 +194,7 @@ const UserEdit: React.FC<UserEditProps> = ({
               type="email"
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
                 errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
               }`}
               placeholder="Nhập email"
@@ -213,7 +213,7 @@ const UserEdit: React.FC<UserEditProps> = ({
               type="text"
               value={formData.fullName}
               onChange={(e) => handleInputChange('fullName', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
                 errors.fullName ? 'border-red-500 bg-red-50' : 'border-gray-300'
               }`}
               placeholder="Nhập họ tên"
@@ -232,7 +232,7 @@ const UserEdit: React.FC<UserEditProps> = ({
               type="tel"
               value={formData.phoneNumber}
               onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
                 errors.phoneNumber ? 'border-red-500 bg-red-50' : 'border-gray-300'
               }`}
               placeholder="Nhập số điện thoại"
@@ -253,7 +253,7 @@ const UserEdit: React.FC<UserEditProps> = ({
               type="text"
               value={formData.position}
               onChange={(e) => handleInputChange('position', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors ${
+              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
                 errors.position ? 'border-red-500 bg-red-50' : 'border-gray-300'
               }`}
               placeholder="Nhập chức vụ"
@@ -268,7 +268,7 @@ const UserEdit: React.FC<UserEditProps> = ({
               type="button"
               onClick={handleSubmit}
               disabled={isLoading}
-              className="flex-1 flex items-center justify-center gap-2 bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex-1 flex items-center justify-center gap-2 bg-brand-goldDark text-white py-3 px-6 rounded-lg hover:bg-brand-goldDark focus:ring-2 focus:ring-brand-goldDark focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <Save className="h-4 w-4" />
               {isLoading ? 'Đang lưu...' : 'Lưu thay đổi'}

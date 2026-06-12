@@ -34,15 +34,17 @@ const TrademarkBrandComparison = () => {
     color,
   }: ComparisonCardProps) => (
     <div
-      className={`bg-white rounded-xl shadow-lg border-l-4 ${color} p-6 transform hover:scale-105 transition-all duration-300`}
+      className={`bg-white rounded-xl shadow-sm border ${color} p-6  transition-all duration-300`}
     >
       <div className="flex items-center mb-4">
-        <Icon className={`w-8 h-8 mr-3 ${isProtected ? 'text-green-600' : 'text-orange-600'}`} />
+        <Icon
+          className={`w-8 h-8 mr-3 ${isProtected ? 'text-green-600' : 'text-brand-goldDark'}`}
+        />
         <h3 className="text-xl font-bold text-gray-800">{title}</h3>
         {isProtected ? (
           <Shield className="w-6 h-6 ml-auto text-green-600" />
         ) : (
-          <Users className="w-6 h-6 ml-auto text-orange-600" />
+          <Users className="w-6 h-6 ml-auto text-brand-goldDark" />
         )}
       </div>
       <div className="space-y-3">
@@ -68,16 +70,21 @@ const TrademarkBrandComparison = () => {
     isExpanded: boolean;
     onToggle: () => void;
   }) => (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-200">
-      <div className="flex items-center justify-between cursor-pointer" onClick={onToggle}>
+    <div className="bg-brand-surface   rounded-lg p-4 border border-brand-line">
+      <button
+        type="button"
+        className="flex min-h-11 w-full items-center justify-between rounded-md text-left focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/30"
+        onClick={onToggle}
+        aria-expanded={isExpanded}
+      >
         <div className="flex items-center">
-          <div className="bg-blue-600 text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">
+          <div className="bg-brand-goldDark text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">
             {number}
           </div>
           <h4 className="font-semibold text-gray-800">{title}</h4>
         </div>
         {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
-      </div>
+      </button>
       {isExpanded && <div className="mt-3 pl-11 text-gray-700 text-sm">{description}</div>}
     </div>
   );
@@ -102,7 +109,7 @@ const TrademarkBrandComparison = () => {
     subtitle: '',
     icon: Users,
     isProtected: false,
-    color: 'border-orange-500',
+    color: 'border-brand-line',
     content: [
       {
         label: 'Định nghĩa',
@@ -133,10 +140,10 @@ const TrademarkBrandComparison = () => {
   ];
 
   return (
-    <div className="max-w-6xl mx-auto p-6 bg-gradient-to-br from-blue-50 to-purple-50 min-h-screen">
+    <div className="max-w-6xl mx-auto p-6 bg-brand-surface   min-h-screen">
       {/* Header */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full mb-4 shadow-lg">
+        <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-goldDark rounded-full mb-4 shadow-sm">
           <Lightbulb className="w-10 h-10 text-white" />
         </div>
         <h1 className="text-4xl font-bold text-gray-900 mb-2">NHÃN HIỆU & THƯƠNG HIỆU LÀ GÌ?</h1>
@@ -147,33 +154,36 @@ const TrademarkBrandComparison = () => {
 
       {/* Navigation Tabs */}
       <div className="flex justify-center mb-8">
-        <div className="bg-white rounded-full p-1 shadow-lg">
+        <div className="bg-white rounded-full p-1 shadow-sm">
           <button
+            type="button"
             onClick={() => setActiveTab('comparison')}
             className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
               activeTab === 'comparison'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-gray-600 hover:text-blue-600'
+                ? 'bg-brand-goldDark text-white shadow-md'
+                : 'text-gray-600 hover:text-brand-goldDark'
             }`}
           >
             So Sánh
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('conditions')}
             className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
               activeTab === 'conditions'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-gray-600 hover:text-blue-600'
+                ? 'bg-brand-goldDark text-white shadow-md'
+                : 'text-gray-600 hover:text-brand-goldDark'
             }`}
           >
             Điều Kiện
           </button>
           <button
+            type="button"
             onClick={() => setActiveTab('summary')}
             className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
               activeTab === 'summary'
-                ? 'bg-blue-600 text-white shadow-md'
-                : 'text-gray-600 hover:text-blue-600'
+                ? 'bg-brand-goldDark text-white shadow-md'
+                : 'text-gray-600 hover:text-brand-goldDark'
             }`}
           >
             Tổng Kết
@@ -191,7 +201,7 @@ const TrademarkBrandComparison = () => {
 
       {activeTab === 'conditions' && (
         <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-xl shadow-lg p-8">
+          <div className="bg-white rounded-xl shadow-sm p-8">
             <h2 className="text-2xl font-bold text-center mb-6 text-gray-900">
               Điều Kiện Bảo Hộ Nhãn Hiệu
             </h2>
@@ -214,7 +224,7 @@ const TrademarkBrandComparison = () => {
       {activeTab === 'summary' && (
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Alert Box */}
-          <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded-lg shadow-md">
+          <div className="bg-red-50 border border-red-500 p-6 rounded-lg shadow-md">
             <div className="flex items-center">
               <AlertTriangle className="w-6 h-6 text-red-600 mr-3" />
               <h3 className="text-lg font-bold text-red-800">Điểm Quan Trọng</h3>
@@ -229,8 +239,8 @@ const TrademarkBrandComparison = () => {
           </div>
 
           {/* Comparison Table */}
-          <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-6">
+          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+            <div className="bg-brand-goldDark p-6">
               <h2 className="text-2xl font-bold text-white text-center">So Sánh Tổng Quan</h2>
             </div>
             <div className="overflow-x-auto">
@@ -291,7 +301,7 @@ const TrademarkBrandComparison = () => {
           </div>
 
           {/* Recommendation */}
-          <div className="bg-gradient-to-r from-green-50 to-blue-50 rounded-xl p-6 border border-green-200">
+          <div className="bg-green-600 rounded-xl p-6 border border-green-200">
             <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
               <CheckCircle className="w-6 h-6 text-green-600 mr-2" />
               Lời Khuyên Thực Tiễn
@@ -304,13 +314,13 @@ const TrademarkBrandComparison = () => {
                 Xây dựng <strong>thương hiệu</strong> để tạo uy tín và nhận diện thị trường
               </li>
               <li className="flex items-start">
-                <span className="bg-blue-100 text-blue-800 rounded-full px-2 py-1 text-xs font-medium mr-3 mt-0.5">
+                <span className="bg-brand-surface text-brand-goldDark rounded-full px-2 py-1 text-xs font-medium mr-3 mt-0.5">
                   2
                 </span>
                 Đăng ký <strong>nhãn hiệu</strong> để có được bảo vệ pháp lý độc quyền
               </li>
               <li className="flex items-start">
-                <span className="bg-purple-100 text-purple-800 rounded-full px-2 py-1 text-xs font-medium mr-3 mt-0.5">
+                <span className="bg-brand-surface text-brand-goldDark rounded-full px-2 py-1 text-xs font-medium mr-3 mt-0.5">
                   3
                 </span>
                 Kết hợp cả hai để có chiến lược bảo vệ thương hiệu toàn diện

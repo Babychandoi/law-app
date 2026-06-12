@@ -11,7 +11,7 @@ const TrademarkOpposition: React.FC = () => {
       title: 'TÀI LIỆU CẦN CUNG CẤP',
       content:
         ' 01 Giấy ủy quyền phản đối đơn nhãn hiệu (theo mẫu).\n Tài liệu chứng minh căn cứ phản đối.',
-      iconBgClass: 'bg-gradient-to-r from-indigo-500 to-purple-500',
+      iconBgClass: 'bg-brand-goldDark',
     },
   ];
   const [process] = useState<Process[]>([
@@ -50,19 +50,19 @@ const TrademarkOpposition: React.FC = () => {
   return (
     <div className="w-full">
       {/* Main Container - Everything within one cohesive section */}
-      <div className="bg-gradient-to-b from-blue-50 via-indigo-50 to-gray-50 min-h-screen">
+      <div className="bg-brand-surface    min-h-screen">
         {/* Main Title Section */}
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4">
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-600 rounded-full mb-6 shadow-lg">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-goldDark rounded-full mb-6 shadow-sm">
                 <FastForward className="w-10 h-10 text-white" />
               </div>
               <h1 className="text-3xl md:text-5xl font-bold text-gray-800 uppercase tracking-wide leading-tight">
                 THỦ TỤC PHẢN ĐỐI ĐƠN ĐĂNG KÝ
                 <>
                   <br />
-                  <span className="text-blue-600">BẢO HỘ NHÃN HIỆU</span>
+                  <span className="text-brand-goldDark">BẢO HỘ NHÃN HIỆU</span>
                 </>
               </h1>
             </div>
@@ -72,12 +72,12 @@ const TrademarkOpposition: React.FC = () => {
         {/* Content Container */}
         <div className="max-w-7xl mx-auto px-4 space-y-12 pb-16">
           {/* Process Steps */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden">
             <UniversalProcess title="QUY TRÌNH PHẢN ĐỐI ĐƠN" steps={process} />
           </div>
 
           {/* Timeline */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+          <div className="bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden">
             <ProcessTimeline
               title="THỜI GIAN THỰC HIỆN"
               subtitle=""
@@ -95,14 +95,14 @@ const TrademarkOpposition: React.FC = () => {
                 return (
                   <div
                     key={index}
-                    className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden"
+                    className="bg-white rounded-lg shadow-soft border border-gray-100 overflow-hidden"
                   >
                     <div className="p-8 md:p-12">
                       <div className="flex flex-col md:flex-row items-center md:items-start space-y-6 md:space-y-0 md:space-x-8">
                         {/* Icon */}
                         <div className="flex-shrink-0">
                           <div
-                            className={`inline-flex items-center justify-center w-16 h-16 ${section.iconBgClass || 'bg-gradient-to-r from-blue-500 to-indigo-500'} rounded-full shadow-md`}
+                            className={`inline-flex items-center justify-center w-16 h-16 ${section.iconBgClass || 'bg-brand-goldDark'} rounded-full shadow-md`}
                           >
                             <SectionIcon className="w-8 h-8 text-white" />
                           </div>
@@ -113,7 +113,7 @@ const TrademarkOpposition: React.FC = () => {
                           <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-4 uppercase tracking-wide">
                             {section.title}
                           </h3>
-                          <div className="w-20 h-1 bg-gradient-to-r from-blue-500 to-indigo-500 mx-auto md:mx-0 rounded-full mb-6"></div>
+                          <div className="w-20 h-1 bg-brand-goldDark mx-auto md:mx-0 rounded-full mb-6"></div>
                           <div className="text-gray-700 leading-relaxed">
                             {section.content.split('\n').map((line, lineIndex) => (
                               <p key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>

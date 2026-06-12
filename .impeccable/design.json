@@ -1,0 +1,246 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-10T16:00:00+07:00",
+  "title": "Design System: Luật Poip",
+  "extensions": {
+    "colorMeta": {
+      "counsel-ink": {
+        "role": "neutral",
+        "displayName": "Counsel Ink",
+        "canonical": "#171717",
+        "tonalRamp": [
+          "#171717",
+          "#292929",
+          "#414141",
+          "#5b5b5b",
+          "#777777",
+          "#999999",
+          "#c4c4c4",
+          "#eeeeee"
+        ]
+      },
+      "counsel-muted": {
+        "role": "neutral",
+        "displayName": "Counsel Muted",
+        "canonical": "#5f6368",
+        "tonalRamp": [
+          "#202225",
+          "#373a3e",
+          "#50545a",
+          "#696e74",
+          "#858a90",
+          "#a5a9ad",
+          "#c9cbcd",
+          "#f0f1f1"
+        ]
+      },
+      "poip-gold": {
+        "role": "primary",
+        "displayName": "Poip Gold",
+        "canonical": "#c7942c",
+        "tonalRamp": [
+          "#2f2107",
+          "#523a0b",
+          "#765311",
+          "#9a6f1a",
+          "#c7942c",
+          "#d9ad52",
+          "#e8cb8a",
+          "#f8edcf"
+        ]
+      },
+      "poip-gold-deep": {
+        "role": "primary",
+        "displayName": "Poip Gold Deep",
+        "canonical": "#875f12",
+        "tonalRamp": [
+          "#241900",
+          "#3d2a03",
+          "#573c07",
+          "#704e0c",
+          "#875f12",
+          "#ad8536",
+          "#d5b875",
+          "#f4e8c5"
+        ]
+      },
+      "quiet-line": {
+        "role": "neutral",
+        "displayName": "Quiet Line",
+        "canonical": "#e8e1d3",
+        "tonalRamp": [
+          "#28251f",
+          "#454139",
+          "#625d52",
+          "#817a6d",
+          "#a09889",
+          "#beb6a7",
+          "#d9d2c5",
+          "#f4f0e8"
+        ]
+      },
+      "service-surface": {
+        "role": "neutral",
+        "displayName": "Service Surface",
+        "canonical": "#f8f6f1",
+        "tonalRamp": [
+          "#292722",
+          "#46443e",
+          "#65625b",
+          "#858179",
+          "#a6a29a",
+          "#c7c3bb",
+          "#e3e0d9",
+          "#f8f6f1"
+        ]
+      },
+      "white": {
+        "role": "neutral",
+        "displayName": "White",
+        "canonical": "#ffffff",
+        "tonalRamp": [
+          "#262626",
+          "#444444",
+          "#626262",
+          "#828282",
+          "#a2a2a2",
+          "#c2c2c2",
+          "#e2e2e2",
+          "#ffffff"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Hero messages and major service-page promises."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "Major section introductions and conversion sections."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "Cards, process steps, and compact content groups."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Plain-language explanations and legal guidance."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Buttons, field labels, navigation, and metadata."
+      }
+    },
+    "shadows": [
+      {
+        "name": "soft-lift",
+        "value": "0 18px 45px rgba(23, 23, 23, 0.08)",
+        "purpose": "Dropdowns, consultation containers, and interactive hover emphasis."
+      },
+      {
+        "name": "resting-card",
+        "value": "0 1px 2px rgba(0, 0, 0, 0.05)",
+        "purpose": "Low-key separation for reusable white cards."
+      }
+    ],
+    "motion": [
+      {
+        "name": "state-transition",
+        "value": "180ms ease-out",
+        "purpose": "Hover, focus, and disclosure feedback only."
+      }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Consultation Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Primary action for consultation forms, calls, and lead-generation paths.",
+      "html": "<button class=\"ds-btn-primary\">Đăng ký tư vấn</button>",
+      "css": ".ds-btn-primary { background: #875f12; color: #fff; border: 1px solid #875f12; border-radius: 6px; padding: 12px 20px; font: 600 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; transition: background-color 180ms ease-out, border-color 180ms ease-out; } .ds-btn-primary:hover { background: #171717; border-color: #171717; } .ds-btn-primary:focus-visible { outline: 3px solid rgba(135, 95, 18, 0.35); outline-offset: 3px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Secondary navigation or comparison action beside a primary consultation action.",
+      "html": "<button class=\"ds-btn-secondary\">Xem dịch vụ</button>",
+      "css": ".ds-btn-secondary { background: #fff; color: #171717; border: 1px solid #e8e1d3; border-radius: 6px; padding: 12px 20px; font: 600 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; transition: border-color 180ms ease-out, color 180ms ease-out; } .ds-btn-secondary:hover { border-color: #c7942c; color: #875f12; } .ds-btn-secondary:focus-visible { outline: 3px solid rgba(135, 95, 18, 0.35); outline-offset: 3px; }"
+    },
+    {
+      "name": "Consultation Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Readable, high-contrast field for lead-generation forms.",
+      "html": "<label class=\"ds-field\"><span>Họ và tên</span><input placeholder=\"Nhập họ tên của bạn\" /></label>",
+      "css": ".ds-field { display: grid; gap: 8px; color: #171717; font: 600 14px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; } .ds-field input { background: #fff; color: #171717; border: 2px solid #e8e1d3; border-radius: 12px; padding: 12px 16px; font: 400 16px/1.5 -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; } .ds-field input::placeholder { color: #5f6368; } .ds-field input:focus-visible { border-color: #875f12; outline: 3px solid rgba(135, 95, 18, 0.22); outline-offset: 1px; }"
+    },
+    {
+      "name": "Service Card",
+      "kind": "card",
+      "refersTo": "card-service",
+      "description": "A restrained service summary that explains value and leads to detail.",
+      "html": "<article class=\"ds-service-card\"><div class=\"ds-service-icon\">§</div><h3>Đăng ký nhãn hiệu</h3><p>Tra cứu, tư vấn khả năng bảo hộ và theo dõi hồ sơ đến khi có kết quả.</p><a href=\"#\">Xem chi tiết →</a></article>",
+      "css": ".ds-service-card { max-width: 320px; background: #fff; color: #171717; border: 1px solid #e8e1d3; border-radius: 8px; padding: 20px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; transition: border-color 180ms ease-out, box-shadow 180ms ease-out, transform 180ms ease-out; } .ds-service-card:hover { border-color: #c7942c; box-shadow: 0 18px 45px rgba(23, 23, 23, 0.08); transform: translateY(-2px); } .ds-service-card h3 { margin: 16px 0 8px; font-size: 18px; line-height: 1.5; } .ds-service-card p { margin: 0; color: #5f6368; font-size: 14px; line-height: 1.7; } .ds-service-card a { display: inline-block; margin-top: 16px; color: #875f12; font-size: 14px; font-weight: 600; } .ds-service-icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 6px; background: #f8f6f1; color: #875f12; font-weight: 700; }"
+    },
+    {
+      "name": "Public Navigation Link",
+      "kind": "nav",
+      "description": "Compact public-site navigation with a restrained active state.",
+      "html": "<nav class=\"ds-nav\"><a href=\"#\">Trang chủ</a><a class=\"ds-active\" href=\"#\">Dịch vụ</a><a href=\"#\">Liên hệ</a></nav>",
+      "css": ".ds-nav { display: flex; gap: 4px; padding: 8px; background: #fff; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; } .ds-nav a { color: #171717; border-radius: 6px; padding: 8px 12px; font-size: 14px; font-weight: 600; text-decoration: none; transition: background-color 180ms ease-out, color 180ms ease-out; } .ds-nav a:hover, .ds-nav a.ds-active { background: #f8f6f1; color: #875f12; } .ds-nav a:focus-visible { outline: 3px solid rgba(135, 95, 18, 0.35); outline-offset: 2px; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "Clear Counsel",
+    "overview": "Luật Poip should feel like a focused consultation with a trusted legal expert: composed, direct, and easy to follow. Hierarchy and plain-language content do the persuasive work; color marks important actions and navigation states.",
+    "keyCharacteristics": [
+      "Restrained black, gold, white, and quiet off-white palette.",
+      "Clear information hierarchy with practical Vietnamese copy.",
+      "Compact, reachable consultation actions for forms, calls, and Zalo.",
+      "Gently curved components with visible borders and restrained elevation.",
+      "Real imagery used as evidence and context, not decoration."
+    ],
+    "rules": [
+      {
+        "name": "The One Gold Rule",
+        "body": "Poip Gold is the only decorative accent on the public brand surface; do not introduce unrelated blue, purple, orange, or red accents for ordinary content.",
+        "section": "colors"
+      },
+      {
+        "name": "The No Spectacle Rule",
+        "body": "Gradients are forbidden as text fills, generic section backgrounds, button fills, and decorative glow fields.",
+        "section": "colors"
+      },
+      {
+        "name": "The Plain-Language Rule",
+        "body": "Headings state the visitor benefit or next step; never use dense legal jargon as a substitute for hierarchy.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-by-Default Rule",
+        "body": "A static content section must use spacing, borders, and tonal surfaces before using a shadow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do use Counsel Ink, Poip Gold, white, and Service Surface as the dominant public-site palette.",
+      "Do explain legal services in plain Vietnamese and make the next consultation step explicit.",
+      "Do maintain WCAG 2.1 AA contrast, keyboard navigation, visible focus, and reduced-motion support."
+    ],
+    "donts": [
+      "Don't use flashy gradients, including gradient text, generic gradient backgrounds, or decorative glow fields.",
+      "Don't use excessive animations; movement must clarify state and include a reduced-motion alternative.",
+      "Don't build generic corporate templates made from endless identical icon cards.",
+      "Don't use dense legal jargon when plain Vietnamese can explain the same decision."
+    ]
+  }
+}

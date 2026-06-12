@@ -4,9 +4,9 @@ import { GoogleMapProps } from '../types/GoogleMap.types';
 export const DEFAULT_PROPS: Required<Omit<GoogleMapProps, 'className' | 'style' | 'ariaLabel'>> = {
   width: '100%',
   height: 600,
-  coordinates: { lat: 20.951164, lng: 105.8095075 },
-  zoom: 14,
-  language: 'en',
+  coordinates: { lat: 20.974852, lng: 105.65274 },
+  zoom: 15,
+  language: 'vi',
   mapType: 'roadmap',
   label: 'Luật Poip',
   borderRadius: '8px',
@@ -15,7 +15,7 @@ export const DEFAULT_PROPS: Required<Omit<GoogleMapProps, 'className' | 'style' 
 };
 
 export const FAMOUS_LOCATIONS = {
-  toto: { lat: 20.951164, lng: 105.8095075, label: 'Luật Poip' },
+  toto: { lat: 20.974852, lng: 105.65274, label: 'Luật Poip' },
   hoanKiem: { lat: 21.0285, lng: 105.8542, label: 'Hồ Hoàn Kiếm' },
   onePillar: { lat: 21.0368, lng: 105.8344, label: 'Chùa Một Cột' },
   literature: { lat: 21.0227, lng: 105.8356, label: 'Văn Miếu' },

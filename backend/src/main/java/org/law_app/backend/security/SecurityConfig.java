@@ -82,11 +82,12 @@ public class SecurityConfig {
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(
+    configuration.setAllowedOriginPatterns(
         List.of(
             "http://localhost:3000",
             "http://103.56.160.193:3000",
-            "https://luatpoip.com")); // Nguồn gốc được phép
+            "https://luatpoip.com",
+            "https://www.luatpoip.com")); // Nguồn gốc được phép
     configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
     configuration.setAllowCredentials(true);

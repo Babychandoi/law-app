@@ -51,7 +51,7 @@ const HomePage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50">
+    <div className="min-h-screen bg-brand-surface   ">
       <Seo
         title="Về chúng tôi - Luật Poip"
         keywords="Về Luật Poip, dịch vụ pháp lý, sở hữu trí tuệ, bảo hộ nhãn hiệu, bản quyền, giấy phép, tư vấn pháp lý, luật sư sở hữu trí tuệ, Luật Poip"

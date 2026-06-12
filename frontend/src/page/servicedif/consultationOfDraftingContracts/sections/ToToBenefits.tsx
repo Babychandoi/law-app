@@ -19,7 +19,7 @@ const ToToBenefitsComponent: React.FC = () => {
       description: 'Chỉ với 3 bước đơn giản - Mọi thủ tục Luật Poip lo hết',
       icon: <Zap className="w-8 h-8" />,
       color: 'text-emerald-600',
-      bgGradient: 'from-emerald-50 to-teal-50',
+      bgGradient: ' ',
       iconBg: 'bg-emerald-500',
     },
     {
@@ -27,9 +27,9 @@ const ToToBenefitsComponent: React.FC = () => {
       title: 'TIẾT KIỆM CHI PHÍ',
       description: 'Mức phí được Luật Poip hỗ trợ',
       icon: <DollarSign className="w-8 h-8" />,
-      color: 'text-blue-600',
-      bgGradient: 'from-blue-50 to-cyan-50',
-      iconBg: 'bg-blue-500',
+      color: 'text-brand-goldDark',
+      bgGradient: ' ',
+      iconBg: 'bg-brand-goldDark',
     },
     {
       id: 3,
@@ -37,45 +37,40 @@ const ToToBenefitsComponent: React.FC = () => {
       description:
         'Luật Poip cam kết về kết quả cho Khách hàng - Hoàn lại tiền cho KH khi kết quả không như mong muốn',
       icon: <Award className="w-8 h-8" />,
-      color: 'text-purple-600',
-      bgGradient: 'from-purple-50 to-pink-50',
-      iconBg: 'bg-purple-500',
+      color: 'text-brand-goldDark',
+      bgGradient: ' ',
+      iconBg: 'bg-brand-goldDark',
     },
   ];
 
   return (
-    <div className="relative py-20 bg-gradient-to-br from-slate-50 via-white to-blue-50 overflow-hidden">
+    <div className="relative py-20 bg-brand-surface    overflow-hidden">
       {/* Background Elements */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-blue-300 to-purple-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-emerald-300 to-teal-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse delay-1000"></div>
-      </div>
+      <div className="absolute inset-0 opacity-20"></div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Section */}
         <div className="text-center mb-16">
           <div className="inline-flex items-center justify-center mb-8">
             <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-green-400 to-blue-500 rounded-full blur-lg opacity-60 animate-pulse"></div>
-              <div className="relative bg-gradient-to-r from-green-500 to-blue-600 p-6 rounded-full shadow-2xl">
+              <div className="absolute inset-0 bg-green-600 rounded-full blur-lg opacity-60 "></div>
+              <div className="relative bg-green-600 p-6 rounded-full shadow-soft">
                 <CheckCircle2 className="w-12 h-12 text-white" />
               </div>
             </div>
           </div>
 
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            <span className="bg-gradient-to-r from-slate-800 via-blue-800 to-purple-800 bg-clip-text text-transparent">
-              LỢI ÍCH KHI SỬ DỤNG
-            </span>
+            <span className="text-brand-ink">LỢI ÍCH KHI SỬ DỤNG</span>
           </h1>
-          <h2 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-brand-ink mb-8">
             DỊCH VỤ CỦA LUẬT POIP
           </h2>
 
           <div className="flex justify-center space-x-2 mb-8">
-            <div className="w-12 h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"></div>
-            <div className="w-12 h-1 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full"></div>
-            <div className="w-12 h-1 bg-gradient-to-r from-pink-500 to-red-500 rounded-full"></div>
+            <div className="w-12 h-1 bg-brand-goldDark rounded-full"></div>
+            <div className="w-12 h-1 bg-brand-surface   rounded-full"></div>
+            <div className="w-12 h-1 bg-brand-surface   rounded-full"></div>
           </div>
         </div>
 
@@ -91,24 +86,22 @@ const ToToBenefitsComponent: React.FC = () => {
             >
               {/* Card */}
               <div
-                className={`relative bg-gradient-to-br ${benefit.bgGradient} rounded-3xl p-8 lg:p-10 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3 border border-white/60 backdrop-blur-sm h-full`}
+                className={`relative bg-brand-surface ${benefit.bgGradient} rounded-xl p-8 lg:p-10 shadow-soft hover:shadow-soft transition-all duration-200  border border-white/60  h-full`}
               >
                 {/* Floating Number */}
-                <div className="absolute -top-6 -right-6 w-16 h-16 bg-gradient-to-br from-white to-gray-100 rounded-2xl shadow-xl flex items-center justify-center border-4 border-white group-hover:scale-110 transition-transform duration-300">
-                  <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    {benefit.id}
-                  </span>
+                <div className="absolute -top-6 -right-6 w-16 h-16 bg-brand-surface   rounded-lg shadow-soft flex items-center justify-center border-4 border-white  transition-transform duration-300">
+                  <span className="text-2xl font-bold text-brand-ink">{benefit.id}</span>
                 </div>
 
                 {/* Icon */}
                 <div className="flex justify-center mb-8">
                   <div
-                    className={`relative ${benefit.iconBg} p-6 rounded-2xl shadow-lg group-hover:scale-110 transition-all duration-300`}
+                    className={`relative ${benefit.iconBg} p-6 rounded-lg shadow-sm  transition-all duration-300`}
                   >
                     <div className="text-white">{benefit.icon}</div>
                     {/* Icon glow effect */}
                     <div
-                      className={`absolute inset-0 ${benefit.iconBg} rounded-2xl blur-lg opacity-50 group-hover:opacity-75 transition-opacity duration-300`}
+                      className={`absolute inset-0 ${benefit.iconBg} rounded-lg blur-lg opacity-50 group-hover:opacity-75 transition-opacity duration-300`}
                     ></div>
                   </div>
                 </div>
@@ -116,7 +109,7 @@ const ToToBenefitsComponent: React.FC = () => {
                 {/* Content */}
                 <div className="text-center">
                   <h3
-                    className={`text-xl lg:text-2xl font-bold ${benefit.color} mb-6 leading-tight group-hover:scale-105 transition-transform duration-300`}
+                    className={`text-xl lg:text-2xl font-bold ${benefit.color} mb-6 leading-tight  transition-transform duration-300`}
                   >
                     {benefit.title}
                   </h3>
@@ -127,16 +120,16 @@ const ToToBenefitsComponent: React.FC = () => {
                 </div>
 
                 {/* Decorative elements */}
-                <div className="absolute top-4 left-4 w-8 h-8 border-2 border-white/30 rounded-full group-hover:scale-125 transition-transform duration-500"></div>
-                <div className="absolute bottom-4 right-4 w-6 h-6 border-2 border-white/30 rounded-full group-hover:scale-125 transition-transform duration-500 delay-100"></div>
+                <div className="absolute top-4 left-4 w-8 h-8 border-2 border-white/30 rounded-full group-hover:scale-125 transition-transform duration-200"></div>
+                <div className="absolute bottom-4 right-4 w-6 h-6 border-2 border-white/30 rounded-full group-hover:scale-125 transition-transform duration-200 delay-100"></div>
 
                 {/* Hover overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-3xl"></div>
+                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
               </div>
 
               {/* Connection line for desktop */}
               {index < benefits.length - 1 && (
-                <div className="hidden lg:block absolute top-1/2 -right-6 w-12 h-0.5 bg-gradient-to-r from-blue-300 to-purple-300 opacity-30"></div>
+                <div className="hidden lg:block absolute top-1/2 -right-6 w-12 h-0.5 bg-brand-goldDark opacity-30"></div>
               )}
             </div>
           ))}
@@ -144,19 +137,18 @@ const ToToBenefitsComponent: React.FC = () => {
 
         {/* Bottom CTA Section */}
         <div className="mt-20 text-center">
-          <div className="relative bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 p-1 rounded-3xl shadow-2xl max-w-2xl mx-auto">
-            <div className="bg-white rounded-3xl px-8 py-12">
-              <h3 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-4">
-                Sẵn sàng trải nghiệm?
-              </h3>
+          <div className="relative bg-brand-surface    p-1 rounded-xl shadow-soft max-w-2xl mx-auto">
+            <div className="bg-white rounded-xl px-8 py-12">
+              <h3 className="text-3xl font-bold text-brand-ink mb-4">Sẵn sàng trải nghiệm?</h3>
               <p className="text-slate-600 text-lg mb-8">
                 Hãy để Poip Law đồng hành cùng bạn trong mọi vấn đề pháp lý
               </p>
               <button
-                className="group relative inline-flex items-center 
-              justify-center px-8 py-4 text-lg font-semibold 
-              text-white bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl 
-              shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300"
+                type="button"
+                className="group relative inline-flex items-center
+              justify-center px-8 py-4 text-lg font-semibold
+              text-white bg-brand-goldDark rounded-lg
+              shadow-sm hover:shadow-soft  transition-all duration-300"
                 onClick={() => {
                   const contactForm = document.getElementById('contact-form');
                   if (contactForm) {

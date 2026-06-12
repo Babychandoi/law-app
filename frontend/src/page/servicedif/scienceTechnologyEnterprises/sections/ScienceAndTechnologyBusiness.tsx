@@ -3,7 +3,7 @@ import React from 'react';
 const ScienceAndTechnologyBusiness: React.FC = () => {
   return (
     <div className="container mx-auto p-6">
-      <section className="bg-white rounded-lg shadow-lg mb-8 overflow-hidden">
+      <section className="bg-white rounded-lg shadow-sm mb-8 overflow-hidden">
         <div className="relative">
           <img
             className="w-full h-64 object-cover"
@@ -19,7 +19,7 @@ const ScienceAndTechnologyBusiness: React.FC = () => {
         </div>
       </section>
 
-      <section className="bg-gray-50 rounded-lg shadow-lg p-6">
+      <section className="bg-gray-50 rounded-lg shadow-sm p-6">
         <h2 className="text-3xl font-bold text-gray-800 text-center mb-4">
           THÔNG TIN VỀ DOANH NGHIỆP KHOA HỌC VÀ CÔNG NGHỆ
         </h2>
@@ -30,7 +30,7 @@ const ScienceAndTechnologyBusiness: React.FC = () => {
         </p>
       </section>
 
-      <section className="bg-white rounded-lg shadow-lg p-6 mt-8">
+      <section className="bg-white rounded-lg shadow-sm p-6 mt-8">
         <h2 className="text-3xl font-bold text-gray-800 text-center mb-4">
           LỢI ÍCH CỦA DOANH NGHIỆP KHOA HỌC VÀ CÔNG NGHỆ
         </h2>

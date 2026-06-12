@@ -48,14 +48,14 @@ const ChoosePoip: React.FC = () => {
         {benefits.map((benefit, index) => (
           <div
             key={index}
-            className="flex flex-col relative overflow-hidden h-auto 
-                     shadow-medium rounded-large transition-transform-background 
-                     bg-gradient-to-br from-[#f2c64d]/10 to-transparent 
+            className="flex flex-col relative overflow-hidden h-auto
+                     shadow-medium rounded-large transition-transform-background
+                     bg-brand-surface
                      border-2 border-[#f2c64d]/30
-                     hover:scale-105 hover:shadow-lg duration-300"
+                      hover:shadow-sm duration-300"
           >
             <div
-              className="relative flex w-full flex-auto flex-col 
+              className="relative flex w-full flex-auto flex-col
                           p-6 text-center"
             >
               <div className="text-5xl mb-4">{benefit.icon}</div>

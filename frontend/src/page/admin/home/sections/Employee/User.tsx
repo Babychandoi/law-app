@@ -161,7 +161,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSave }) => {
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
                 errors.username
                   ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-blue-500'
+                  : 'border-gray-300 focus:ring-brand-goldDark'
               }`}
               placeholder="Nhập tên đăng nhập"
               disabled={isLoading}
@@ -180,7 +180,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSave }) => {
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
                 errors.password
                   ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-blue-500'
+                  : 'border-gray-300 focus:ring-brand-goldDark'
               }`}
               placeholder="Nhập mật khẩu (ít nhất 6 ký tự)"
               disabled={isLoading}
@@ -200,7 +200,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSave }) => {
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
                 errors.fullName
                   ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-blue-500'
+                  : 'border-gray-300 focus:ring-brand-goldDark'
               }`}
               placeholder="Nhập họ tên"
               disabled={isLoading}
@@ -220,7 +220,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSave }) => {
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
                 errors.email
                   ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-blue-500'
+                  : 'border-gray-300 focus:ring-brand-goldDark'
               }`}
               placeholder="Nhập email"
               disabled={isLoading}
@@ -238,7 +238,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSave }) => {
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
                 errors.phoneNumber
                   ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-blue-500'
+                  : 'border-gray-300 focus:ring-brand-goldDark'
               }`}
               placeholder="Nhập số điện thoại"
               disabled={isLoading}
@@ -258,7 +258,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSave }) => {
               className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
                 errors.position
                   ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-blue-500'
+                  : 'border-gray-300 focus:ring-brand-goldDark'
               }`}
               placeholder="Nhập chức vụ"
               disabled={isLoading}
@@ -274,7 +274,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSave }) => {
             <select
               value={formData.role}
               onChange={(e) => handleInputChange('role', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark transition-colors"
               disabled={isLoading}
             >
               <option value="USER">Người dùng</option>
@@ -294,7 +294,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSave }) => {
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+              className="px-4 py-2 bg-brand-goldDark text-white rounded-md hover:bg-brand-goldDark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
               disabled={isLoading}
             >
               {isLoading ? (

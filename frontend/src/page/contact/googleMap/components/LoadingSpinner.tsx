@@ -11,7 +11,7 @@ const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ loadingText }) => {
           0% { transform: rotate(0deg) translate(-50%, -50%); }
           100% { transform: rotate(360deg) translate(-50%, -50%); }
         }
-        
+
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.7; }

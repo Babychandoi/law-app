@@ -19,8 +19,7 @@ export default function Index() {
       price: '1.800.000',
       featured: false,
       features: [],
-      image:
-        'https://minio-app-restless-frog-6585.fly.dev:9000/images/569959e9-5885-46a9-9ec5-77eb07a39bd0_tac-pham-my-thuat-ung-dung.jpeg',
+      image: '/assets/images/dangkybanquyentacgia.webp',
     },
     {
       id: '8be60467-00ac-4ca0-9af3-4bf1296c823b',
@@ -30,8 +29,7 @@ export default function Index() {
       price: '2.500.000',
       featured: true,
       features: [],
-      image:
-        'https://minio-app-restless-frog-6585.fly.dev:9000/images/72f7d228-4b12-4fc3-bc5a-1bbe939e8b95_chuong-trinh-may-tinh-la-gi-1-e1690767279710.jpeg',
+      image: '/assets/images/dangkybanquyentacgia.webp',
     },
     {
       id: 'e60f7b3d-e9ff-47c1-bcda-24c609c8a7fd',
@@ -41,8 +39,7 @@ export default function Index() {
       price: 'Liên hệ',
       featured: false,
       features: [],
-      image:
-        'https://minio-app-restless-frog-6585.fly.dev:9000/images/d386b8b3-1ef9-4756-85a7-9b3e55ca4c7c_book-on-wooden-table-1565317730961314739093-e1690767356209.jpeg',
+      image: '/assets/images/dangkybanquyentacgia.webp',
     },
   ]);
   const [hero] = useState<Hero>({

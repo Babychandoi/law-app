@@ -320,7 +320,7 @@ const NewsManagement: React.FC = () => {
       {/* Decorative background elements */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-yellow-200/20 to-orange-200/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-br from-blue-200/20 to-purple-200/20 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-br from-brand-surface to-brand-surface rounded-full blur-3xl"></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto">
@@ -328,7 +328,7 @@ const NewsManagement: React.FC = () => {
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent mb-2">
+              <h2 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400  text-brand-ink mb-2">
                 Quản lý tin tức
               </h2>
               <p className="text-gray-600">Tạo, chỉnh sửa và quản lý các bài viết tin tức</p>
@@ -336,7 +336,7 @@ const NewsManagement: React.FC = () => {
             <button
               onClick={handleAddNew}
               disabled={loading}
-              className="group relative bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 hover:from-yellow-500 hover:via-orange-500 hover:to-red-500 disabled:from-gray-300 disabled:to-gray-400 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200"
+              className="group relative bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 hover:from-yellow-500 hover:via-orange-500 hover:to-red-500 disabled:from-gray-300 disabled:to-gray-400 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl  active:scale-95 transition-all duration-200"
             >
               <span className="flex items-center gap-2">
                 <span className="text-xl">+</span>
@@ -354,7 +354,7 @@ const NewsManagement: React.FC = () => {
               <span className="text-red-700 font-medium flex-1">{error}</span>
               <button
                 onClick={() => setError(null)}
-                className="text-red-600 hover:text-red-800 text-2xl font-bold hover:scale-110 transition-transform"
+                className="text-red-600 hover:text-red-800 text-2xl font-bold  transition-transform"
               >
                 ×
               </button>
@@ -386,7 +386,7 @@ const NewsManagement: React.FC = () => {
             newsList.map((news, index) => (
               <div
                 key={news.id}
-                className="group bg-white rounded-2xl shadow-md hover:shadow-2xl border-2 border-gray-100 hover:border-orange-200 transition-all duration-300 overflow-hidden"
+                className="group bg-white rounded-2xl shadow-md hover:shadow-soft border-2 border-gray-100 hover:border-orange-200 transition-all duration-300 overflow-hidden"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="flex flex-col md:flex-row">
@@ -395,7 +395,7 @@ const NewsManagement: React.FC = () => {
                     <img
                       src={news.image}
                       alt={news.title}
-                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                      className="w-full h-full object-cover  transition-transform duration-200"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         target.src = '/placeholder-image.jpg';
@@ -408,7 +408,7 @@ const NewsManagement: React.FC = () => {
                   <div className="flex-1 p-6">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-transparent group-hover:bg-gradient-to-r group-hover:from-yellow-400 group-hover:to-orange-400 group-hover:bg-clip-text transition-all duration-300">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-brand-goldDark group-hover:bg-gradient-to-r group-hover:from-yellow-400 group-hover:to-orange-400 group-hover: transition-all duration-300">
                           {news.title}
                         </h3>
                         <p className="text-gray-600 line-clamp-2 mb-3">{news.subtitle}</p>
@@ -417,8 +417,8 @@ const NewsManagement: React.FC = () => {
 
                     {/* Meta Info */}
                     <div className="flex flex-wrap items-center gap-4 mb-4 text-sm">
-                      <div className="flex items-center gap-2 px-3 py-1 bg-blue-50 rounded-lg">
-                        <span className="text-blue-600">👤</span>
+                      <div className="flex items-center gap-2 px-3 py-1 bg-brand-surface rounded-lg">
+                        <span className="text-brand-goldDark">👤</span>
                         <span className="text-gray-700 font-medium">{news.author}</span>
                       </div>
                       <div className="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-lg">
@@ -437,7 +437,7 @@ const NewsManagement: React.FC = () => {
                         onClick={() => news.id && handleViewDetails(news.id)}
                         disabled={loading}
                         title="Xem chi tiết"
-                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white rounded-lg font-medium shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-gold to-brand-goldDark hover:from-brand-gold hover:to-brand-goldDark text-white rounded-lg font-medium shadow-md hover:shadow-lg  active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Eye size={18} />
                         <span>Xem</span>
@@ -447,7 +447,7 @@ const NewsManagement: React.FC = () => {
                         onClick={() => handleEdit(news.id ?? '')}
                         disabled={loading}
                         title="Sửa"
-                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-lg font-medium shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-gold to-brand-goldDark hover:from-brand-gold hover:to-brand-goldDark text-white rounded-lg font-medium shadow-md hover:shadow-lg  active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Pencil size={18} />
                         <span>Sửa</span>
@@ -457,7 +457,7 @@ const NewsManagement: React.FC = () => {
                         onClick={() => handleDelete(news.id ?? '')}
                         disabled={loading}
                         title="Xóa"
-                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg font-medium shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white rounded-lg font-medium shadow-md hover:shadow-lg  active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Trash2 size={18} />
                         <span>Xóa</span>
@@ -467,7 +467,7 @@ const NewsManagement: React.FC = () => {
                         onClick={() => handleSendEmail(news.id ?? '')}
                         disabled={loading}
                         title="Gửi email"
-                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white rounded-lg font-medium shadow-md hover:shadow-lg  active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Send size={18} />
                         <span>Gửi email</span>
@@ -483,14 +483,14 @@ const NewsManagement: React.FC = () => {
         {/* News Detail Modal */}
         {selectedNews && (
           <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden border-2 border-gray-100">
+            <div className="bg-white rounded-xl shadow-soft max-w-4xl w-full max-h-[90vh] overflow-hidden border-2 border-gray-100">
               {/* Modal Header */}
               <div className="relative p-6 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400">
                 <div className="flex justify-between items-center">
                   <h3 className="text-2xl font-bold text-white drop-shadow-lg">Chi tiết tin tức</h3>
                   <button
                     onClick={handleCloseDetails}
-                    className="w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-xl text-2xl font-bold hover:scale-110 active:scale-95 transition-all duration-200"
+                    className="w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-xl text-2xl font-bold  active:scale-95 transition-all duration-200"
                   >
                     ×
                   </button>
@@ -515,7 +515,7 @@ const NewsManagement: React.FC = () => {
                   </div>
 
                   {/* Title & Subtitle */}
-                  <h4 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent mb-3">
+                  <h4 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400  text-brand-ink mb-3">
                     {selectedNews.title}
                   </h4>
                   <p className="text-lg text-gray-600 mb-6 leading-relaxed">
@@ -524,7 +524,7 @@ const NewsManagement: React.FC = () => {
 
                   {/* Meta Info */}
                   <div className="flex flex-wrap items-center gap-4 mb-8">
-                    <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl border-2 border-blue-200">
+                    <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-surface to-brand-surface rounded-xl border-2 border-brand-line">
                       <span className="text-xl">👤</span>
                       <span className="text-gray-700 font-semibold">{selectedNews.author}</span>
                     </div>
@@ -561,7 +561,7 @@ const NewsManagement: React.FC = () => {
                           prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-3
                           prose-li:text-gray-700 prose-li:mb-1
                           prose-img:rounded-xl prose-img:shadow-lg prose-img:my-4 prose-img:max-w-full
-                          prose-blockquote:border-l-4 prose-blockquote:border-orange-400 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600
+                          prose-blockquote:border prose-blockquote:border-orange-400 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600
                           prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm prose-code:text-gray-800
                         "
                         dangerouslySetInnerHTML={{ __html: selectedNews.fullContent }}

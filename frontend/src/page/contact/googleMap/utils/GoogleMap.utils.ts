@@ -9,11 +9,13 @@ export const generateMapUrl = (
   mapType: MapType,
   zoom: number
 ): string => {
+  const latLng = `${coordinates.lat},${coordinates.lng}`;
   const params = new URLSearchParams({
     width: '100%',
     height: height.toString(),
     hl: language,
-    q: `${coordinates.lat},${coordinates.lng}+(${label})`,
+    q: latLng,
+    ll: latLng,
     t: mapType,
     z: zoom.toString(),
     ie: 'UTF8',

@@ -47,8 +47,8 @@ const UserTable: React.FC<UserTableProps> = ({
                   onChange={(e) => onRoleChange(user.id, e.target.value as 'ADMIN' | 'USER')}
                   className={`px-2 py-1 text-xs font-medium rounded-full border-0 cursor-pointer ${
                     user.role === 'ADMIN'
-                      ? 'bg-purple-100 text-purple-800'
-                      : 'bg-blue-100 text-blue-800'
+                      ? 'bg-brand-surface text-brand-goldDark'
+                      : 'bg-brand-surface text-brand-goldDark'
                   }`}
                 >
                   <option value="USER">Người dùng</option>
@@ -76,7 +76,7 @@ const UserTable: React.FC<UserTableProps> = ({
                 <div className="flex space-x-2">
                   <button
                     onClick={() => onEdit(user)}
-                    className="p-2 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-lg transition-colors"
+                    className="p-2 text-brand-goldDark hover:text-brand-goldDark hover:bg-brand-surface rounded-lg transition-colors"
                     title="Chỉnh sửa"
                   >
                     <Pencil size={18} />

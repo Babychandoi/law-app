@@ -1,4 +1,13 @@
-import { Facebook, Linkedin, Mail, MapPin, Phone, Send, ShieldCheck } from 'lucide-react';
+import {
+  Facebook,
+  Linkedin,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Send,
+  ShieldCheck,
+} from 'lucide-react';
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -155,7 +164,7 @@ export default function Footer() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center gap-2 rounded-md bg-brand-gold px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-goldDark disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-md bg-brand-goldDark px-4 py-2 text-sm font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Send size={16} />
               Gửi
@@ -164,17 +173,26 @@ export default function Footer() {
 
           <div className="mt-6 flex gap-2">
             <a
+              href={contactInfo.zaloHref}
+              target="_blank"
+              rel="noreferrer"
+              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-gold hover:text-brand-gold"
+              aria-label="Zalo"
+            >
+              <MessageCircle size={18} />
+            </a>
+            <a
               href={contactInfo.messengerHref}
               target="_blank"
               rel="noreferrer"
-              className="rounded-md border border-white/15 p-2 text-white/75 hover:border-brand-gold hover:text-brand-gold"
+              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-gold hover:text-brand-gold"
               aria-label="Facebook"
             >
               <Facebook size={18} />
             </a>
             <a
               href={contactInfo.emailHref}
-              className="rounded-md border border-white/15 p-2 text-white/75 hover:border-brand-gold hover:text-brand-gold"
+              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-gold hover:text-brand-gold"
               aria-label="Email"
             >
               <Mail size={18} />
@@ -183,7 +201,7 @@ export default function Footer() {
               href={company.socials[0]?.href || contactInfo.mapHref}
               target="_blank"
               rel="noreferrer"
-              className="rounded-md border border-white/15 p-2 text-white/75 hover:border-brand-gold hover:text-brand-gold"
+              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-gold hover:text-brand-gold"
               aria-label="LinkedIn"
             >
               <Linkedin size={18} />

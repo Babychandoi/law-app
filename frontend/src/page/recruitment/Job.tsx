@@ -39,8 +39,9 @@ const JobComponent: React.FC = () => {
       <div className="max-w-4xl mx-auto p-6 bg-white">
         <h1 className="text-2xl font-bold text-red-500">Không tìm thấy công việc</h1>
         <button
+          type="button"
           onClick={() => navigate('/tuyen-dung')}
-          className="mt-4 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700"
+          className="mt-4 bg-brand-goldDark text-white py-2 px-4 rounded-lg hover:bg-brand-goldDark"
         >
           Quay lại danh sách
         </button>
@@ -153,7 +154,7 @@ const JobComponent: React.FC = () => {
 
   const ListWithBullets = ({
     items,
-    bulletColor = 'bg-blue-500',
+    bulletColor = 'bg-brand-goldDark',
   }: {
     items: string[];
     bulletColor?: string;
@@ -225,43 +226,48 @@ const JobComponent: React.FC = () => {
         <h3 className="text-xl font-semibold text-gray-800 mb-4">Thông tin ứng viên</h3>
 
         <div>
-          <label className="block text-gray-700 font-medium mb-2">
+          <label htmlFor="candidate-name" className="block text-gray-700 font-medium mb-2">
             Họ và tên <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
+            id="candidate-name"
             name="candidateName"
             value={formData.candidateName}
             onChange={handleInputChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-goldDark focus:border-transparent"
             placeholder="Nguyễn Văn A"
             required
           />
         </div>
 
         <div>
-          <label className="block text-gray-700 font-medium mb-2">
+          <label htmlFor="candidate-email" className="block text-gray-700 font-medium mb-2">
             Email <span className="text-red-500">*</span>
           </label>
           <input
             type="email"
+            id="candidate-email"
             name="candidateEmail"
             value={formData.candidateEmail}
             onChange={handleInputChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-goldDark focus:border-transparent"
             placeholder="email@example.com"
             required
           />
         </div>
 
         <div>
-          <label className="block text-gray-700 font-medium mb-2">Số điện thoại</label>
+          <label htmlFor="candidate-phone" className="block text-gray-700 font-medium mb-2">
+            Số điện thoại
+          </label>
           <input
             type="tel"
+            id="candidate-phone"
             name="candidatePhone"
             value={formData.candidatePhone}
             onChange={handleInputChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-goldDark focus:border-transparent"
             placeholder="0123456789"
           />
         </div>
@@ -281,7 +287,7 @@ const JobComponent: React.FC = () => {
             />
             <label
               htmlFor="cv-upload"
-              className="flex items-center justify-center w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:border-blue-500 transition-colors"
+              className="flex items-center justify-center w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-md cursor-pointer hover:border-brand-line transition-colors"
             >
               <Upload className="w-5 h-5 mr-2 text-gray-400" />
               <span className="text-gray-600">
@@ -299,7 +305,7 @@ const JobComponent: React.FC = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors font-semibold flex items-center justify-center disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="w-full bg-brand-goldDark text-white py-3 px-6 rounded-lg hover:bg-brand-goldDark transition-colors font-semibold flex items-center justify-center disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {loading ? (
             <>

@@ -26,6 +26,7 @@ import EmployeeManagement from '../page/admin/home/sections/Employee';
 import JobApplications from '../page/admin/home/sections/JobApplications';
 import PostManagement from '../page/admin/home/sections/Post';
 import Subscribers from '../page/admin/home/sections/Subscribers';
+import LandingPage from '../page/landing/LandingPage';
 
 export const publicRoutes: RouteObject = {
   path: '/',
@@ -71,4 +72,7 @@ export const adminRoutes: RouteObject[] = [
   },
 ];
 
-export const appRoutes: RouteObject[] = [...adminRoutes, publicRoutes];
+// Landing page chạy ads — layout riêng, KHÔNG dùng PublicLayout (không nav/footer)
+export const landingRoutes: RouteObject[] = [{ path: '/lp/:slug', element: <LandingPage /> }];
+
+export const appRoutes: RouteObject[] = [...adminRoutes, ...landingRoutes, publicRoutes];

@@ -40,7 +40,7 @@ const CopyrightBenefits: React.FC = () => {
               <img
                 src="/assets/images/dangkybanquyentacgia.webp"
                 alt="Giấy chứng nhận đăng ký quyền tác giả"
-                className="w-full h-auto rounded-lg shadow-lg"
+                className="w-full h-auto rounded-lg shadow-sm"
                 loading="lazy"
               />
             </div>

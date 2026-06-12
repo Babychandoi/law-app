@@ -34,8 +34,8 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
       {plans.map((plan) => (
         <div
           key={plan.id}
-          className={`w-full max-w-sm bg-white rounded-lg shadow-lg overflow-hidden transition-transform duration-300 hover:scale-105 ${
-            plan.featured ? 'ring-2 ring-blue-500 relative' : ''
+          className={`w-full max-w-sm bg-white rounded-lg shadow-sm overflow-hidden transition-transform duration-300  ${
+            plan.featured ? 'ring-2 ring-brand-goldDark relative' : ''
           }`}
           style={{
             flex: plans.length < 3 ? '0 0 auto' : '1 1 0',
@@ -44,7 +44,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
           }}
         >
           {plan.featured && (
-            <div className="absolute top-4 right-4 bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold">
+            <div className="absolute top-4 right-4 bg-brand-goldDark text-white px-3 py-1 rounded-full text-sm font-semibold">
               Phổ biến
             </div>
           )}
@@ -61,7 +61,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
               <img
                 src={plan.image}
                 alt={plan.imageAlt || plan.title}
-                className="w-full h-full object-cover transition-transform duration-300 hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-300 "
               />
             </div>
           )}
@@ -77,12 +77,12 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
                 {plan.currency && (
                   <span className="text-gray-600 text-sm mr-1">{plan.currency}</span>
                 )}
-                <span className="text-3xl font-bold text-blue-600">{plan.price}</span>
+                <span className="text-3xl font-bold text-brand-goldDark">{plan.price}</span>
               </div>
             </div>
 
             {/* Divider */}
-            <hr className="border-blue-200 mb-4" />
+            <hr className="border-brand-line mb-4" />
 
             {/* Description */}
             {plan.description && (
@@ -115,9 +115,12 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
             {/* CTA Button */}
             <div className="text-center">
               <button
+                type="button"
                 onClick={() => handlePlanClick(plan.id)}
                 className={`w-full px-6 py-3 rounded-lg font-semibold text-white transition-colors duration-300 ${
-                  plan.featured ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-800 hover:bg-gray-900'
+                  plan.featured
+                    ? 'bg-brand-goldDark hover:bg-brand-goldDark'
+                    : 'bg-gray-800 hover:bg-gray-900'
                 }`}
               >
                 {plan.buttonText || 'Đăng ký tư vấn'}
@@ -134,8 +137,8 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
       {plans.map((plan, index) => (
         <div
           key={plan.id}
-          className={`w-full max-w-sm relative bg-white rounded-2xl shadow-xl overflow-hidden transform transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
-            plan.featured ? 'ring-4 ring-blue-500 ring-opacity-50' : ''
+          className={`w-full max-w-sm relative bg-white rounded-lg shadow-soft overflow-hidden transform transition-all duration-300  hover:shadow-soft ${
+            plan.featured ? 'ring-4 ring-brand-goldDark ring-opacity-50' : ''
           }`}
           style={{
             flex: plans.length < 3 ? '0 0 auto' : '1 1 0',
@@ -145,7 +148,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
         >
           {/* Featured Badge */}
           {plan.featured && (
-            <div className="absolute top-0 right-0 bg-gradient-to-r from-blue-500 to-indigo-600 text-white px-4 py-2 rounded-bl-2xl z-10">
+            <div className="absolute top-0 right-0 bg-brand-goldDark text-white px-4 py-2 rounded-bl-2xl z-10">
               <Star className="w-4 h-4 inline-block mr-1" />
               <span className="text-sm font-semibold">Phổ biến</span>
             </div>
@@ -154,9 +157,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
           {/* Header */}
           <div
             className={`px-8 py-8 text-center ${
-              plan.featured
-                ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white'
-                : 'bg-gray-50'
+              plan.featured ? 'bg-brand-goldDark text-white' : 'bg-gray-50'
             }`}
           >
             <h3
@@ -176,7 +177,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
               {plan.currency && (
                 <span
                   className={`text-sm font-medium ml-2 ${
-                    plan.featured ? 'text-blue-100' : 'text-gray-600'
+                    plan.featured ? 'text-white' : 'text-gray-600'
                   }`}
                 >
                   {plan.currency}
@@ -186,9 +187,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
 
             <div
               className={`w-16 h-1 mx-auto rounded-full ${
-                plan.featured
-                  ? 'bg-white bg-opacity-50'
-                  : 'bg-gradient-to-r from-blue-500 to-indigo-600'
+                plan.featured ? 'bg-white bg-opacity-50' : 'bg-brand-goldDark'
               }`}
             ></div>
           </div>
@@ -224,11 +223,12 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
           {/* CTA Button */}
           <div className="px-8 pb-8">
             <button
+              type="button"
               onClick={() => handlePlanClick(plan.id)}
-              className={`w-full py-4 px-6 rounded-xl font-semibold text-center transition-all duration-300 transform hover:scale-105 ${
+              className={`w-full py-4 px-6 rounded-xl font-semibold text-center transition-all duration-300  ${
                 plan.featured
-                  ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg hover:shadow-xl'
-                  : 'bg-gray-100 text-gray-900 hover:bg-gray-200 border-2 border-transparent hover:border-blue-500'
+                  ? 'bg-brand-goldDark text-white shadow-sm hover:shadow-soft'
+                  : 'bg-gray-100 text-gray-900 hover:bg-gray-200 border-2 border-transparent hover:border-brand-line'
               }`}
             >
               {plan.buttonText || 'Đăng ký tư vấn'}
@@ -246,7 +246,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{title}</h2>
           {variant === 'feature' && (
-            <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-indigo-600 mx-auto rounded-full"></div>
+            <div className="w-24 h-1 bg-brand-goldDark mx-auto rounded-full"></div>
           )}
           {subtitle && <p className="text-gray-600 mt-4 max-w-2xl mx-auto">{subtitle}</p>}
         </div>

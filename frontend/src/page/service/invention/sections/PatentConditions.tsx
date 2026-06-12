@@ -38,10 +38,10 @@ const data: Data = {
 const getColorClasses = (color: 'blue' | 'emerald') => {
   const colors = {
     blue: {
-      bg: 'bg-blue-50',
-      border: 'border-blue-200',
-      icon: 'text-blue-600',
-      accent: 'bg-blue-600',
+      bg: 'bg-brand-surface',
+      border: 'border-brand-line',
+      icon: 'text-brand-goldDark',
+      accent: 'bg-brand-goldDark',
     },
     emerald: {
       bg: 'bg-emerald-50',
@@ -64,11 +64,11 @@ const ConditionCard: React.FC<ConditionCardProps> = ({ section }) => {
 
   return (
     <div
-      className={`${colorClasses.bg} ${colorClasses.border} border-2 rounded-3xl p-8 shadow-2xl backdrop-blur-sm hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2 group`}
+      className={`${colorClasses.bg} ${colorClasses.border} border-2 rounded-xl p-8 shadow-soft  hover:shadow-soft transition-all duration-200  group`}
     >
       <div className="flex items-center mb-6">
         <div
-          className={`w-12 h-12 ${colorClasses.accent} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}
+          className={`w-12 h-12 ${colorClasses.accent} rounded-xl flex items-center justify-center shadow-sm  transition-transform duration-300`}
         >
           <Sparkles className="w-6 h-6 text-white" />
         </div>
@@ -95,13 +95,9 @@ const ConditionCard: React.FC<ConditionCardProps> = ({ section }) => {
 
 const PatentProtectionConditions: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
+    <div className="min-h-screen bg-brand-surface   ">
       {/* Animated Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-10 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse"></div>
-        <div className="absolute top-40 right-10 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse animation-delay-2000"></div>
-        <div className="absolute bottom-20 left-1/2 w-72 h-72 bg-pink-200 rounded-full mix-blend-multiply filter blur-xl opacity-30 animate-pulse animation-delay-4000"></div>
-      </div>
+      <div className="absolute inset-0 overflow-hidden pointer-events-none"></div>
 
       <div className="relative z-10">
         {/* Header Section */}
@@ -109,15 +105,13 @@ const PatentProtectionConditions: React.FC = () => {
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center">
               <div className="relative inline-block mb-8">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur-lg opacity-30 animate-pulse"></div>
-                <div className="relative w-24 h-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center shadow-2xl">
+                <div className="absolute inset-0 bg-brand-goldDark rounded-full blur-lg opacity-30 "></div>
+                <div className="relative w-24 h-24 bg-brand-goldDark rounded-full flex items-center justify-center shadow-soft">
                   <Lightbulb className="w-12 h-12 text-white" />
                 </div>
               </div>
-              <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 bg-clip-text text-transparent mb-4">
-                {data.title}
-              </h1>
-              <div className="w-24 h-1 bg-gradient-to-r from-blue-600 to-purple-600 mx-auto rounded-full"></div>
+              <h1 className="text-4xl md:text-5xl font-bold text-brand-ink mb-4">{data.title}</h1>
+              <div className="w-24 h-1 bg-brand-goldDark mx-auto rounded-full"></div>
             </div>
           </div>
         </section>

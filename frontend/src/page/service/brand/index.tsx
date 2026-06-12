@@ -144,7 +144,7 @@ export default function Index() {
         title="CHI PHÍ ĐĂNG KÝ BẢO HỘ NHÃN HIỆU TẠI PIOP LAW"
         plans={pricingPlans}
         variant="feature"
-        backgroundColor="bg-gradient-to-br from-blue-50 to-indigo-100"
+        backgroundColor="bg-brand-surface  "
       />
       <ConsultationForm />
       <PartnersCarousel />

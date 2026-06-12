@@ -156,6 +156,22 @@ services:
     networks:
       - law-app-network
 
+  # ==================== CLOUDFLARE TUNNEL ====================
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: law-app-cloudflared
+    command: tunnel --no-autoupdate --config /etc/cloudflared/config.yml run
+    volumes:
+      - ./cloudflared/config.yml:/etc/cloudflared/config.yml:ro
+      - ./cloudflared/credentials.json:/etc/cloudflared/credentials.json:ro
+    depends_on:
+      - frontend
+      - backend
+      - minio
+    networks:
+      - law-app-network
+    restart: unless-stopped
+
 volumes:
   mysql_data:
   mongodb_data:

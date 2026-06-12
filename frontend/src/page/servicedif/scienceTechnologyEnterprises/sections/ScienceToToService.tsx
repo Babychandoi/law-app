@@ -51,11 +51,11 @@ const ToToLawServices: React.FC<Props> = ({
   serviceIcon = <CheckCircle className="w-5 h-5 text-emerald-500" />,
 }) => {
   return (
-    <div className="bg-gradient-to-br from-emerald-50 to-blue-50 py-16">
+    <div className="bg-green-600 py-16">
       {/* Header */}
       <section className="mb-12">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-lg mb-6">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-lg shadow-sm mb-6">
             {headerIcon}
           </div>
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">{title}</h1>
@@ -65,7 +65,7 @@ const ToToLawServices: React.FC<Props> = ({
       {/* Services List */}
       <section>
         <div className="max-w-4xl mx-auto px-6">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+          <div className="bg-white rounded-lg shadow-soft p-8 md:p-12">
             <div className="space-y-6">
               {services.map((service) => (
                 <div

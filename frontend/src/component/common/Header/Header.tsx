@@ -4,9 +4,12 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { contactInfo, menuIconMap, menuItems } from '../../../shared/config/site';
 import { ServiceResponse } from '../../../types/service';
 
+const focusClass =
+  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-goldDark';
+
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
-    'inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition',
+    `inline-flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${focusClass}`,
     isActive
       ? 'bg-brand-surface text-brand-goldDark'
       : 'text-gray-700 hover:bg-gray-50 hover:text-brand-goldDark',
@@ -14,7 +17,7 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
 
 function MenuIcon({ id, size = 17 }: { id: string; size?: number }) {
   const Icon = menuIconMap[id as keyof typeof menuIconMap];
-  return Icon ? <Icon size={size} /> : null;
+  return Icon ? <Icon size={size} aria-hidden="true" /> : null;
 }
 
 function DesktopMenuItem({ item }: { item: ServiceResponse }) {
@@ -31,27 +34,31 @@ function DesktopMenuItem({ item }: { item: ServiceResponse }) {
 
   return (
     <li className="group relative">
-      <NavLink to={item.href} className={navLinkClass}>
+      <NavLink to={item.href} className={navLinkClass} aria-haspopup="true">
         <MenuIcon id={item.id} />
         <span>{item.title}</span>
-        <ChevronDown size={15} className="transition group-hover:rotate-180" />
+        <ChevronDown
+          size={15}
+          aria-hidden="true"
+          className="transition group-hover:rotate-180 group-focus-within:rotate-180"
+        />
       </NavLink>
-      <div className="invisible absolute left-0 top-full z-50 w-80 translate-y-2 opacity-0 transition group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
-        <div className="mt-3 rounded-lg border border-brand-line bg-white p-2 shadow-soft">
+      <div className="invisible absolute left-0 top-full z-50 w-80 translate-y-2 opacity-0 transition group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+        <div className="mt-2 rounded-lg border border-brand-line bg-white p-2 shadow-soft">
           {item.children.map((child) => (
             <NavLink
               key={child.id}
               to={child.href}
               className={({ isActive }) =>
                 [
-                  'flex items-center gap-3 rounded-md px-3 py-3 text-sm transition',
+                  `flex min-h-11 items-center gap-3 rounded-md px-3 py-3 text-sm transition-colors ${focusClass}`,
                   isActive
                     ? 'bg-brand-surface text-brand-goldDark'
                     : 'text-gray-700 hover:bg-gray-50 hover:text-brand-goldDark',
                 ].join(' ')
               }
             >
-              <span className="text-brand-gold">
+              <span className="text-brand-goldDark">
                 <MenuIcon id={child.id} size={16} />
               </span>
               <span>{child.title}</span>
@@ -84,7 +91,7 @@ function MobileMenuItem({
           onClick={onNavigate}
           className={({ isActive }) =>
             [
-              'flex flex-1 items-center gap-3 rounded-md px-3 py-3 text-sm font-medium',
+              `flex min-h-11 flex-1 items-center gap-3 rounded-md px-3 py-3 text-sm font-medium ${focusClass}`,
               isActive ? 'bg-brand-surface text-brand-goldDark' : 'text-gray-800',
             ].join(' ')
           }
@@ -96,10 +103,15 @@ function MobileMenuItem({
           <button
             type="button"
             onClick={() => onToggle(item.id)}
-            className="rounded-md border border-brand-line p-2 text-gray-700"
-            aria-label={`Mở ${item.title}`}
+            className={`flex h-11 w-11 items-center justify-center rounded-md border border-brand-line text-gray-700 ${focusClass}`}
+            aria-label={`${isOpen ? 'Đóng' : 'Mở'} ${item.title}`}
+            aria-expanded={isOpen}
           >
-            <ChevronDown size={16} className={isOpen ? 'rotate-180 transition' : 'transition'} />
+            <ChevronDown
+              size={16}
+              aria-hidden="true"
+              className={isOpen ? 'rotate-180 transition' : 'transition'}
+            />
           </button>
         )}
       </div>
@@ -112,7 +124,7 @@ function MobileMenuItem({
               onClick={onNavigate}
               className={({ isActive }) =>
                 [
-                  'flex items-center gap-2 rounded-md px-3 py-2 text-sm',
+                  `flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-sm ${focusClass}`,
                   isActive ? 'bg-brand-surface text-brand-goldDark' : 'text-gray-700',
                 ].join(' ')
               }
@@ -139,31 +151,41 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-brand-line bg-white/95 backdrop-blur">
-      <div className="hidden border-b border-brand-line bg-brand-ink text-white lg:block">
+      <div className="hidden border-b border-white/10 bg-brand-ink text-white lg:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2 text-sm">
           <div className="flex items-center gap-5">
             <a
               className="inline-flex items-center gap-2 hover:text-brand-gold"
               href={contactInfo.phoneHref}
             >
-              <Phone size={14} />
+              <Phone size={14} aria-hidden="true" />
               <span>Hotline: {contactInfo.hotline}</span>
             </a>
             <a
               className="inline-flex items-center gap-2 hover:text-brand-gold"
               href={contactInfo.emailHref}
             >
-              <Mail size={14} />
+              <Mail size={14} aria-hidden="true" />
               <span>{contactInfo.email}</span>
             </a>
           </div>
-          <span className="text-white/70">Tư vấn sở hữu trí tuệ và pháp lý doanh nghiệp</span>
+          <span className="text-white/75">Tư vấn sở hữu trí tuệ và pháp lý doanh nghiệp</span>
         </div>
       </div>
 
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <Link to="/" className="flex shrink-0 items-center" aria-label="Luật Poip">
-          <img src="/assets/images/logo.png" alt="Luật Poip" className="h-11 w-32 object-contain" />
+        <Link
+          to="/"
+          className={`flex shrink-0 items-center ${focusClass}`}
+          aria-label="Luật Poip - Trang chủ"
+        >
+          <img
+            src="/assets/images/logo-poip-v2.png"
+            alt="Luật Poip"
+            width="160"
+            height="53"
+            className="h-[53px] w-40 object-contain"
+          />
         </Link>
 
         <nav className="hidden lg:block" aria-label="Điều hướng chính">
@@ -176,7 +198,7 @@ export default function Header() {
 
         <a
           href={contactInfo.phoneHref}
-          className="hidden rounded-md bg-brand-gold px-4 py-2 text-sm font-semibold text-white transition hover:bg-brand-goldDark lg:inline-flex"
+          className={`hidden min-h-11 items-center rounded-md bg-brand-goldDark px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-black lg:inline-flex ${focusClass}`}
         >
           Gọi tư vấn
         </a>
@@ -184,16 +206,23 @@ export default function Header() {
         <button
           type="button"
           onClick={() => setIsMobileOpen((value) => !value)}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-brand-line text-gray-800 lg:hidden"
+          className={`inline-flex h-11 w-11 items-center justify-center rounded-md border border-brand-line text-gray-800 lg:hidden ${focusClass}`}
           aria-label={isMobileOpen ? 'Đóng menu' : 'Mở menu'}
+          aria-expanded={isMobileOpen}
+          aria-controls="mobile-navigation"
         >
-          {isMobileOpen ? <X size={20} /> : <Menu size={20} />}
+          {isMobileOpen ? (
+            <X size={20} aria-hidden="true" />
+          ) : (
+            <Menu size={20} aria-hidden="true" />
+          )}
         </button>
       </div>
 
       {isMobileOpen && (
         <nav
-          className="border-t border-brand-line bg-white px-4 py-3 lg:hidden"
+          id="mobile-navigation"
+          className="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-brand-line bg-white px-4 py-3 lg:hidden"
           aria-label="Điều hướng di động"
         >
           <ul className="space-y-1">
@@ -210,15 +239,17 @@ export default function Header() {
           <div className="mt-4 grid grid-cols-2 gap-2">
             <a
               href={contactInfo.phoneHref}
-              className="rounded-md bg-brand-gold px-3 py-2 text-center text-sm font-semibold text-white"
+              className="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-goldDark px-3 py-2 text-center text-sm font-semibold text-white"
             >
               Gọi ngay
             </a>
             <a
-              href={contactInfo.emailHref}
-              className="rounded-md border border-brand-line px-3 py-2 text-center text-sm font-semibold text-gray-800"
+              href={contactInfo.zaloHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-brand-line px-3 py-2 text-center text-sm font-semibold text-gray-800"
             >
-              Email
+              Nhắn Zalo
             </a>
           </div>
         </nav>
