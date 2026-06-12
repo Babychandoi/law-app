@@ -9,4 +9,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ProcessRepository extends JpaRepository<Process, String> {
   List<Process> findByService(ChildrenServices service);
+
+  List<Process> findByServiceOrderBySortOrderAsc(ChildrenServices service);
+
+  void deleteByService(ChildrenServices service);
 }

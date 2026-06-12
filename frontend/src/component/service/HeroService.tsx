@@ -38,7 +38,7 @@ export default function HeroSection({
   };
 
   return (
-    <section className="border-b border-white/10 bg-brand-ink py-16 text-white sm:py-20">
+    <section className="public-page-hero border-b border-white/10 bg-brand-ink py-16 text-white sm:py-20">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-end">
         <div className="max-w-4xl">
           <div className="mb-5 flex items-center gap-3 text-sm font-semibold text-brand-gold">
@@ -47,7 +47,7 @@ export default function HeroSection({
             </span>
             <span>{subtitle}</span>
           </div>
-          <h1 className="text-4xl font-semibold leading-[1.12] tracking-[-0.025em] text-white md:text-5xl lg:text-6xl">
+          <h1 className="public-page-hero-title text-4xl font-semibold leading-[1.12] tracking-[-0.025em] text-white md:text-5xl lg:text-6xl">
             {title}
           </h1>
           {description && (

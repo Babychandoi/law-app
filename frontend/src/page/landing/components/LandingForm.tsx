@@ -4,7 +4,7 @@ import PhoneInput from 'react-phone-input-2';
 import Swal from 'sweetalert2';
 import 'react-phone-input-2/lib/style.css';
 import { createCustomerService, getServiceHome } from '../../../service/service';
-import { CustomerService, ServiceItem } from '../../../types/service';
+import { CustomerService } from '../../../types/service';
 import { trackLead } from '../tracking';
 
 interface LandingFormProps {
@@ -34,9 +34,8 @@ export default function LandingForm({ source, serviceTitleMatch, id }: LandingFo
         const list = res.data || [];
         if (!list.length) return;
         const matched =
-          list.find((s) =>
-            s.title?.toLowerCase().includes(serviceTitleMatch.toLowerCase())
-          ) || list[0];
+          list.find((s) => s.title?.toLowerCase().includes(serviceTitleMatch.toLowerCase())) ||
+          list[0];
         setServiceId(matched.id);
       })
       .catch(() => undefined);
@@ -98,14 +97,17 @@ export default function LandingForm({ source, serviceTitleMatch, id }: LandingFo
       id={id}
       onSubmit={handleSubmit}
       noValidate
-      className="rounded-lg border border-brand-line bg-white p-5 shadow-soft sm:p-6"
+      className="landing-form rounded-lg border border-brand-line bg-white p-5 shadow-soft sm:p-6"
     >
       <h2 className="text-lg font-semibold text-brand-ink">Nhận tư vấn miễn phí</h2>
       <p className="mt-1 text-sm text-brand-muted">Điền thông tin, luật sư sẽ gọi lại cho bạn.</p>
 
-      <div className="mt-5 space-y-4">
+      <div className="landing-form-fields mt-5 space-y-4">
         <div>
-          <label htmlFor={`${id}-name`} className="mb-1.5 block text-sm font-semibold text-brand-ink">
+          <label
+            htmlFor={`${id}-name`}
+            className="mb-1.5 block text-sm font-semibold text-brand-ink"
+          >
             Họ và tên <span className="text-red-700">*</span>
           </label>
           <input
@@ -121,7 +123,10 @@ export default function LandingForm({ source, serviceTitleMatch, id }: LandingFo
         </div>
 
         <div>
-          <label htmlFor={`${id}-phone`} className="mb-1.5 block text-sm font-semibold text-brand-ink">
+          <label
+            htmlFor={`${id}-phone`}
+            className="mb-1.5 block text-sm font-semibold text-brand-ink"
+          >
             Số điện thoại <span className="text-red-700">*</span>
           </label>
           <PhoneInput
@@ -140,7 +145,10 @@ export default function LandingForm({ source, serviceTitleMatch, id }: LandingFo
         </div>
 
         <div>
-          <label htmlFor={`${id}-email`} className="mb-1.5 block text-sm font-semibold text-brand-ink">
+          <label
+            htmlFor={`${id}-email`}
+            className="mb-1.5 block text-sm font-semibold text-brand-ink"
+          >
             Email
           </label>
           <input
@@ -155,7 +163,10 @@ export default function LandingForm({ source, serviceTitleMatch, id }: LandingFo
         </div>
 
         <div>
-          <label htmlFor={`${id}-note`} className="mb-1.5 block text-sm font-semibold text-brand-ink">
+          <label
+            htmlFor={`${id}-note`}
+            className="mb-1.5 block text-sm font-semibold text-brand-ink"
+          >
             Nội dung cần tư vấn
           </label>
           <textarea

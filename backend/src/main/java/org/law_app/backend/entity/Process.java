@@ -19,6 +19,7 @@ public class Process {
   String id;
 
   String step;
+  Integer sortOrder;
   String title;
   String description;
 

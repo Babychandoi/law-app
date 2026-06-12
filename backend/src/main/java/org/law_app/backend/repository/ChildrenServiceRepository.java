@@ -11,4 +11,6 @@ public interface ChildrenServiceRepository extends JpaRepository<ChildrenService
   List<ChildrenServices> findByParentService(Services services);
 
   List<ChildrenServices> findByParentServiceIn(List<Services> services);
+
+  java.util.Optional<ChildrenServices> findByHref(String href);
 }

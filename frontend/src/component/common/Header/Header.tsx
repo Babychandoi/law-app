@@ -1,7 +1,8 @@
 import { ChevronDown, Mail, Menu, Phone, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
-import { contactInfo, menuIconMap, menuItems } from '../../../shared/config/site';
+import { contactInfo, menuIconMap } from '../../../shared/config/site';
+import { useMenuItems } from '../../../shared/hooks/useMenuItems';
 import { ServiceResponse } from '../../../types/service';
 
 const focusClass =
@@ -140,6 +141,7 @@ function MobileMenuItem({
 }
 
 export default function Header() {
+  const menuItems = useMenuItems(); // dropdown dịch vụ nạp từ DB, fallback menu tĩnh
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const location = useLocation();
@@ -151,7 +153,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-brand-line bg-white/95 backdrop-blur">
-      <div className="hidden border-b border-white/10 bg-brand-ink text-white lg:block">
+      <div className="public-header-top hidden border-b border-white/10 bg-brand-ink text-white xl:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2 text-sm">
           <div className="flex items-center gap-5">
             <a
@@ -173,7 +175,7 @@ export default function Header() {
         </div>
       </div>
 
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+      <div className="public-header-main mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <Link
           to="/"
           className={`flex shrink-0 items-center ${focusClass}`}
@@ -184,11 +186,11 @@ export default function Header() {
             alt="Luật Poip"
             width="160"
             height="53"
-            className="h-[53px] w-40 object-contain"
+            className="public-header-logo h-[53px] w-40 object-contain"
           />
         </Link>
 
-        <nav className="hidden lg:block" aria-label="Điều hướng chính">
+        <nav className="hidden xl:block" aria-label="Điều hướng chính">
           <ul className="flex items-center gap-1">
             {menuItems.map((item) => (
               <DesktopMenuItem key={item.id} item={item} />
@@ -198,7 +200,7 @@ export default function Header() {
 
         <a
           href={contactInfo.phoneHref}
-          className={`hidden min-h-11 items-center rounded-md bg-brand-goldDark px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-black lg:inline-flex ${focusClass}`}
+          className={`hidden min-h-11 items-center rounded-md bg-brand-goldDark px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-black xl:inline-flex ${focusClass}`}
         >
           Gọi tư vấn
         </a>
@@ -206,7 +208,7 @@ export default function Header() {
         <button
           type="button"
           onClick={() => setIsMobileOpen((value) => !value)}
-          className={`inline-flex h-11 w-11 items-center justify-center rounded-md border border-brand-line text-gray-800 lg:hidden ${focusClass}`}
+          className={`inline-flex h-11 w-11 items-center justify-center rounded-md border border-brand-line text-gray-800 xl:hidden ${focusClass}`}
           aria-label={isMobileOpen ? 'Đóng menu' : 'Mở menu'}
           aria-expanded={isMobileOpen}
           aria-controls="mobile-navigation"
@@ -222,7 +224,7 @@ export default function Header() {
       {isMobileOpen && (
         <nav
           id="mobile-navigation"
-          className="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-brand-line bg-white px-4 py-3 lg:hidden"
+          className="max-h-[calc(100vh-4rem)] overflow-y-auto border-t border-brand-line bg-white px-4 py-3 xl:hidden"
           aria-label="Điều hướng di động"
         >
           <ul className="space-y-1">

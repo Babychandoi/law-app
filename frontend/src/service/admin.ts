@@ -61,6 +61,119 @@ export const uploadFile = async (file: File): Promise<ApiResponse<string>> => {
   return response.data;
 };
 
+export interface AdminChildrenService {
+  id: string;
+  title: string;
+  href?: string;
+  description?: string;
+  image?: string;
+}
+
+// Lấy toàn bộ dịch vụ con (để admin chọn đổi ảnh)
+export const getAllChildrenServices = async (): Promise<ApiResponse<AdminChildrenService[]>> => {
+  const response = await axiosClient.get<ApiResponse<AdminChildrenService[]>>(`/service/children`);
+  return response.data;
+};
+
+// Cập nhật ảnh cho 1 dịch vụ con
+export const updateServiceImage = async (
+  id: string,
+  image: string
+): Promise<ApiResponse<boolean>> => {
+  const response = await axiosClient.put<ApiResponse<boolean>>(`/service/children/${id}/image`, {
+    image,
+  });
+  return response.data;
+};
+
+// ===== CMS: quản lý dịch vụ hoàn toàn qua admin =====
+
+export interface ServicePayload {
+  title: string;
+  href: string;
+  description?: string;
+  icon?: string;
+  image?: string;
+  descriptionHome?: string;
+  parentServiceId?: string;
+}
+
+export const createService = async (
+  data: ServicePayload
+): Promise<ApiResponse<AdminChildrenService>> => {
+  const response = await axiosClient.post<ApiResponse<AdminChildrenService>>(
+    `/service/children`,
+    data
+  );
+  return response.data;
+};
+
+export const updateService = async (
+  id: string,
+  data: ServicePayload
+): Promise<ApiResponse<boolean>> => {
+  const response = await axiosClient.put<ApiResponse<boolean>>(`/service/children/${id}`, data);
+  return response.data;
+};
+
+export const deleteService = async (id: string): Promise<ApiResponse<boolean>> => {
+  const response = await axiosClient.delete<ApiResponse<boolean>>(`/service/children/${id}`);
+  return response.data;
+};
+
+export const saveServiceHero = async (
+  id: string,
+  hero: { title: string; subtitle?: string; description?: string }
+): Promise<ApiResponse<boolean>> => {
+  const response = await axiosClient.put<ApiResponse<boolean>>(
+    `/service/children/${id}/hero`,
+    hero
+  );
+  return response.data;
+};
+
+export const saveServiceProcess = async (
+  id: string,
+  steps: unknown[]
+): Promise<ApiResponse<boolean>> => {
+  const response = await axiosClient.put<ApiResponse<boolean>>(
+    `/service/children/${id}/process`,
+    steps
+  );
+  return response.data;
+};
+
+export const saveServicePricing = async (
+  id: string,
+  plans: unknown[]
+): Promise<ApiResponse<boolean>> => {
+  const response = await axiosClient.put<ApiResponse<boolean>>(
+    `/service/children/${id}/pricing`,
+    plans
+  );
+  return response.data;
+};
+
+export const getServiceSections = async (
+  id: string
+): Promise<ApiResponse<import('../types/servicePage').ServiceSection[]>> => {
+  const response = await axiosClient.get<
+    ApiResponse<import('../types/servicePage').ServiceSection[]>
+  >(`/service/children/${id}/sections`);
+  return response.data;
+};
+
+export const saveServiceSections = async (
+  id: string,
+  sections: import('../types/servicePage').ServiceSection[]
+): Promise<ApiResponse<boolean>> => {
+  const response = await axiosClient.put<ApiResponse<boolean>>(
+    `/service/children/${id}/sections`,
+    sections
+  );
+  return response.data;
+};
+
 export const createNews = async (news: News): Promise<ApiResponse<News>> => {
   const response = await axiosClient.post<ApiResponse<News>>(`/news`, news);
   return response.data;

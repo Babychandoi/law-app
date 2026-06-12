@@ -58,9 +58,7 @@ const ServiceDirectory = ({ serviceTitle, heading, description }: ServiceDirecto
                 <img
                   src={service.image}
                   alt={service.title}
-                  width={400}
-                  height={192}
-                  className="h-48 w-full object-cover"
+                  className="aspect-[16/10] w-full bg-white object-contain"
                   loading="lazy"
                   decoding="async"
                 />

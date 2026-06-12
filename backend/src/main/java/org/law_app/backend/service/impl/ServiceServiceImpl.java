@@ -100,7 +100,7 @@ public class ServiceServiceImpl implements ServiceService {
           childrenServiceRepository
               .findById(serviceId)
               .orElseThrow(() -> new RuntimeException("Service not found with id: " + serviceId));
-      List<Pricing> pricings = pricingRepository.findByService(childrenService);
+      List<Pricing> pricings = pricingRepository.findByServiceOrderBySortOrderAsc(childrenService);
       return pricings.stream().map(serviceMapper::toPricingResponse).toList();
     } catch (Exception e) {
       log.error("Error while getting pricing by service id: {}", e.getMessage());

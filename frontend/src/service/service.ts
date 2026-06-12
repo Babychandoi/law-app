@@ -14,6 +14,15 @@ export const getServices = async (): Promise<ApiResponse<ServiceResponse[]>> => 
   const response = await axiosClient.get<ApiResponse<ServiceResponse[]>>(`/services`);
   return response.data;
 };
+// Toàn bộ nội dung một trang dịch vụ động theo đường dẫn
+export const getServicePage = async (
+  href: string
+): Promise<ApiResponse<import('../types/servicePage').ServicePageData>> => {
+  const response = await axiosClient.get<
+    ApiResponse<import('../types/servicePage').ServicePageData>
+  >(`/service/page`, { params: { href } });
+  return response.data;
+};
 export const getChildrenServiceByTitle = async (title: string): Promise<ApiResponse<any>> => {
   const response = await axiosClient.get<ApiResponse<any>>(`/services`, { params: { title } });
   return response.data;

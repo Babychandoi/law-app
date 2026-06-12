@@ -31,11 +31,13 @@ export default function LandingPage() {
   }
 
   const scrollToForm = () => {
-    document.getElementById('lead-form-top')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document
+      .getElementById('lead-form-top')
+      ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   };
 
   return (
-    <div className="bg-brand-surface pb-20 lg:pb-0">
+    <div className="landing-page bg-brand-surface pb-20 lg:pb-0">
       {/* Thanh trên cùng — chỉ logo + hotline, không nav để giữ khách trên trang */}
       <header className="border-b border-brand-line bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
@@ -55,12 +57,12 @@ export default function LandingPage() {
 
       {/* HERO */}
       <section className="bg-brand-ink text-white">
-        <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
+        <div className="landing-hero-inner mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
           <div className="lg:pt-6">
             <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">
               {config.eyebrow}
             </p>
-            <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-[-0.02em] text-balance md:text-5xl">
+            <h1 className="landing-hero-title mt-4 text-3xl font-semibold leading-tight tracking-[-0.02em] text-balance md:text-5xl">
               {config.heroTitle} <span className="text-brand-gold">{config.heroHighlight}</span>
             </h1>
             <p className="mt-5 max-w-xl text-base leading-8 text-white/80">{config.heroSubtitle}</p>
@@ -68,7 +70,11 @@ export default function LandingPage() {
             <ul className="mt-7 space-y-3">
               {config.heroPoints.map((point) => (
                 <li key={point} className="flex items-start gap-3 text-sm text-white/85">
-                  <CheckCircle2 className="mt-0.5 shrink-0 text-brand-gold" size={19} aria-hidden="true" />
+                  <CheckCircle2
+                    className="mt-0.5 shrink-0 text-brand-gold"
+                    size={19}
+                    aria-hidden="true"
+                  />
                   <span>{point}</span>
                 </li>
               ))}
@@ -97,7 +103,11 @@ export default function LandingPage() {
           </div>
 
           <div className="lg:pt-2">
-            <LandingForm id="lead-form-top" source={config.slug} serviceTitleMatch={config.serviceTitleMatch} />
+            <LandingForm
+              id="lead-form-top"
+              source={config.slug}
+              serviceTitleMatch={config.serviceTitleMatch}
+            />
           </div>
         </div>
       </section>
@@ -110,7 +120,10 @@ export default function LandingPage() {
         <div className="mt-9 grid gap-x-10 gap-y-8 sm:grid-cols-2">
           {config.benefits.map((b) => (
             <div key={b.title} className="flex gap-4">
-              <ShieldCheck className="mt-0.5 h-6 w-6 shrink-0 text-brand-goldDark" aria-hidden="true" />
+              <ShieldCheck
+                className="mt-0.5 h-6 w-6 shrink-0 text-brand-goldDark"
+                aria-hidden="true"
+              />
               <div>
                 <h3 className="font-semibold text-brand-ink">{b.title}</h3>
                 <p className="mt-2 text-[15px] leading-7 text-brand-muted">{b.description}</p>
@@ -193,7 +206,10 @@ export default function LandingPage() {
               </a>
             </div>
           </div>
-          <LandingForm source={`${config.slug}-final`} serviceTitleMatch={config.serviceTitleMatch} />
+          <LandingForm
+            source={`${config.slug}-final`}
+            serviceTitleMatch={config.serviceTitleMatch}
+          />
         </div>
       </section>
 

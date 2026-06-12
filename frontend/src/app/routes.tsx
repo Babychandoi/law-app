@@ -5,17 +5,8 @@ import Contact from '../page/contact';
 import Home from '../page/home/Home';
 import Job from '../page/recruitment/Job';
 import Recruitment from '../page/recruitment/recruitment';
-import Brand from '../page/service/brand';
-import CopyRight from '../page/service/copyright';
-import Design from '../page/service/design';
-import Invention from '../page/service/invention';
 import Service from '../page/service';
-import Violate from '../page/service/violate';
-import BarcodeNumber from '../page/servicedif/barcodeNumber';
-import ConsultationOfDraftingContracts from '../page/servicedif/consultationOfDraftingContracts';
 import ServiceDif from '../page/servicedif';
-import ScienceTechnologyEnterprises from '../page/servicedif/scienceTechnologyEnterprises';
-import SocialMedia from '../page/servicedif/socialMedia';
 import News from '../page/news';
 import NewsDetail from '../page/news/section/New';
 import Login from '../page/admin/login/login';
@@ -27,6 +18,9 @@ import JobApplications from '../page/admin/home/sections/JobApplications';
 import PostManagement from '../page/admin/home/sections/Post';
 import Subscribers from '../page/admin/home/sections/Subscribers';
 import LandingPage from '../page/landing/LandingPage';
+import DynamicServicePage from '../page/service/DynamicServicePage';
+import ServiceImages from '../page/admin/home/sections/ServiceImages';
+import ServiceManager from '../page/admin/home/sections/Services';
 
 export const publicRoutes: RouteObject = {
   path: '/',
@@ -38,21 +32,13 @@ export const publicRoutes: RouteObject = {
     { path: 'tuyen-dung', element: <Recruitment /> },
     { path: 'tuyen-dung/vi-tri/:id', element: <Job /> },
     { path: 'dich-vu', element: <Service /> },
-    { path: 'dang-ky-bao-ho-nhan-hieu', element: <Brand /> },
-    { path: 'dang-ky-bao-ho-ban-quyen', element: <CopyRight /> },
-    { path: 'bao-ho-kieu-dang-cong-nghiep', element: <Design /> },
-    { path: 'bao-ho-sang-che-giai-phap-huu-ich', element: <Invention /> },
-    { path: 'xu-ly-xam-pham', element: <Violate /> },
     { path: 'dich-vu-khac', element: <ServiceDif /> },
-    { path: 'ma-so-ma-vach', element: <BarcodeNumber /> },
-    {
-      path: 'giay-phep-doanh-nghiep-khoa-hoc-cong-nghe',
-      element: <ScienceTechnologyEnterprises />,
-    },
-    { path: 'dang-ky-giay-phep-mang-xa-hoi', element: <SocialMedia /> },
-    { path: 'tu-van-soan-thao-hop-dong', element: <ConsultationOfDraftingContracts /> },
+    // 9 trang dịch vụ cũ (hardcode) đã chuyển sang trang động — route :slug bên dưới
     { path: 'tin-tuc', element: <News /> },
     { path: 'tin-tuc/:id', element: <NewsDetail /> },
+    // Trang dịch vụ động (CMS): mọi đường dẫn chưa khai báo sẽ tra DB theo href.
+    // Các route tĩnh phía trên luôn được ưu tiên khớp trước.
+    { path: ':slug', element: <DynamicServicePage /> },
   ],
 };
 
@@ -68,6 +54,8 @@ export const adminRoutes: RouteObject[] = [
       { path: 'applications', element: <JobApplications /> },
       { path: 'subscribers', element: <Subscribers /> },
       { path: 'chats', element: <ChatManagement /> },
+      { path: 'service-images', element: <ServiceImages /> },
+      { path: 'services', element: <ServiceManager /> },
     ],
   },
 ];

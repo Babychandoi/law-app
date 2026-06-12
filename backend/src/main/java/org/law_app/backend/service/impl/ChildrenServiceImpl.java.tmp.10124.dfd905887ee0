@@ -377,12 +377,10 @@ public class ChildrenServiceImpl implements ChildrenService {
     ChildrenServices child = requireChild(serviceId);
     pricingRepository.deleteByService(child);
     if (pricingRequests != null) {
-      int order = 0;
       for (org.law_app.backend.dto.request.PricingRequest req : pricingRequests) {
         Pricing pricing = serviceMapper.toPricing(req);
         pricing.setService(child);
         pricing.setImage(toObjectName(pricing.getImage()));
-        pricing.setSortOrder(order++); // giữ đúng thứ tự các gói khi đọc lại
         pricingRepository.save(pricing);
       }
     }
