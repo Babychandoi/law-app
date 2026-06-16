@@ -15,6 +15,7 @@ import org.law_app.backend.dto.request.*;
 import org.law_app.backend.dto.response.ApiResponse;
 import org.law_app.backend.dto.response.AuthenticationResponse;
 import org.law_app.backend.dto.response.IntrospectResponse;
+import org.law_app.backend.common.ErrorCode;
 import org.law_app.backend.dto.response.UserResponse;
 import org.law_app.backend.security.CookieUtil;
 import org.law_app.backend.service.AuthenticationService;
@@ -101,6 +102,10 @@ public class AuthenticationController {
     String refreshToken = readCookie(httpRequest, CookieUtil.REFRESH_COOKIE);
     if (refreshToken == null && request != null) {
       refreshToken = request.getRefreshToken();
+    }
+    // No refresh token (e.g. not logged in) -> clean 401, not a 500 from JWT parsing.
+    if (refreshToken == null || refreshToken.isBlank()) {
+      throw new AppException(ErrorCode.UNAUTHENTICATED);
     }
     var result =
         authenticationService.refreshToken(
