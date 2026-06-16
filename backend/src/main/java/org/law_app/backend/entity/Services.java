@@ -25,6 +25,7 @@ public class Services {
 
   String title;
   String href;
+  String icon;
   @CreationTimestamp LocalDateTime createdAt;
   @UpdateTimestamp LocalDateTime updatedAt;
 }

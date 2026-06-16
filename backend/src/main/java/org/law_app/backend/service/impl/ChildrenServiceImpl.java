@@ -99,7 +99,7 @@ public class ChildrenServiceImpl implements ChildrenService {
       return process.stream()
           .map(
               proc -> {
-                List<ProcessDetail> processDetails = processDetailRepository.findByProcess(proc);
+                List<ProcessDetail> processDetails = processDetailRepository.findByProcessOrderBySortOrderAsc(proc);
                 return childrenMapper.toProcessResponse(proc, processDetails);
               })
           .toList();
@@ -125,6 +125,9 @@ public class ChildrenServiceImpl implements ChildrenService {
         processRepository.save(process);
         if (request.getDetails() != null && !request.getDetails().isEmpty()) {
           List<ProcessDetail> processDetails = childrenMapper.toProcessDetail(request, process);
+          for (int d = 0; d < processDetails.size(); d++) {
+            processDetails.get(d).setSortOrder(d); // giữ đúng thứ tự chi tiết trong bước
+          }
           processDetailRepository.saveAll(processDetails);
         }
       }
@@ -488,7 +491,7 @@ public class ChildrenServiceImpl implements ChildrenService {
 
     List<ProcessResponse> process =
         processRepository.findByServiceOrderBySortOrderAsc(child).stream()
-            .map(p -> childrenMapper.toProcessResponse(p, processDetailRepository.findByProcess(p)))
+            .map(p -> childrenMapper.toProcessResponse(p, processDetailRepository.findByProcessOrderBySortOrderAsc(p)))
             .toList();
 
     List<org.law_app.backend.dto.response.PricingResponse> pricing =

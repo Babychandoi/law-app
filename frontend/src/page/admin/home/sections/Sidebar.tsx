@@ -75,13 +75,6 @@ const Sidebar: React.FC<{
       path: '/2025/luatpoip/admin/services',
       onlyAdmin: true,
     },
-    {
-      category: 'Ảnh dịch vụ',
-      icon: '🖼️',
-      key: 'service-images',
-      path: '/2025/luatpoip/admin/service-images',
-      onlyAdmin: true,
-    },
   ];
 
   const handleTabChange = (key: string, path: string) => {

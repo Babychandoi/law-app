@@ -98,6 +98,16 @@ export interface ServicePayload {
   parentServiceId?: string;
 }
 
+// Tạo nhóm dịch vụ cha (hiện trong navbar). Trả về boolean theo ServiceController.
+export const createParentService = async (
+  title: string,
+  href: string,
+  icon?: string
+): Promise<boolean> => {
+  const response = await axiosClient.post<boolean>(`/services`, { title, href, icon });
+  return response.data;
+};
+
 export const createService = async (
   data: ServicePayload
 ): Promise<ApiResponse<AdminChildrenService>> => {

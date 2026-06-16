@@ -10,5 +10,7 @@ import org.springframework.stereotype.Repository;
 public interface ProcessDetailRepository extends JpaRepository<ProcessDetail, String> {
   List<ProcessDetail> findByProcess(Process process);
 
+  List<ProcessDetail> findByProcessOrderBySortOrderAsc(Process process);
+
   void deleteByProcess(Process process);
 }

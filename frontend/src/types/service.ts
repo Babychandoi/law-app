@@ -8,6 +8,7 @@ export interface ServiceResponse {
   id: string;
   title: string;
   href: string;
+  icon?: string;
   children?: Service[];
 }
 export interface ChildrenServiceResponse {

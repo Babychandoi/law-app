@@ -177,20 +177,8 @@ export const services = [
           'Quá trình thẩm định được thực hiện qua 4 giai đoạn chính bởi Cục Sở hữu trí tuệ.',
         details: [
           {
-            type: 'Giai đoạn 3: Thẩm định nội dung',
-            desc: 'Thẩm định khả năng đáp ứng tiêu chuẩn bảo hộ nhãn hiệu',
-            time: '18-20 tháng sau công bố',
-            accuracy: '',
-          },
-          {
             type: 'Giai đoạn 1: Thẩm định hình thức',
             desc: 'Thẩm định tính hợp lệ của hồ sơ đăng ký',
-            time: '01-02 tháng',
-            accuracy: '',
-          },
-          {
-            type: 'Giai đoạn 4: Cấp văn bằng',
-            desc: 'Cấp giấy chứng nhận đăng ký nhãn hiệu',
             time: '01-02 tháng',
             accuracy: '',
           },
@@ -198,6 +186,18 @@ export const services = [
             type: 'Giai đoạn 2: Công bố đơn',
             desc: 'Công bố trên Công báo sở hữu công nghiệp',
             time: '02 tháng sau khi đơn hợp lệ',
+            accuracy: '',
+          },
+          {
+            type: 'Giai đoạn 3: Thẩm định nội dung',
+            desc: 'Thẩm định khả năng đáp ứng tiêu chuẩn bảo hộ nhãn hiệu',
+            time: '18-20 tháng sau công bố',
+            accuracy: '',
+          },
+          {
+            type: 'Giai đoạn 4: Cấp văn bằng',
+            desc: 'Cấp giấy chứng nhận đăng ký nhãn hiệu',
+            time: '01-02 tháng',
             accuracy: '',
           },
         ],

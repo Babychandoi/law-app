@@ -1,12 +1,14 @@
-import { ExternalLink, Layers, Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
+import { ExternalLink, FolderPlus, Layers, Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 import {
   AdminChildrenService,
+  createParentService,
   deleteService,
   getAllChildrenServices,
 } from '../../../../../service/admin';
+import { iconOptions } from '../../../../../shared/config/menuIcons';
 import ServiceEditor from './ServiceEditor';
 
 /**
@@ -33,6 +35,52 @@ const ServiceManager: React.FC = () => {
   useEffect(() => {
     fetchServices();
   }, []);
+
+  const handleAddParent = async () => {
+    const { value: title } = await Swal.fire({
+      title: 'Thêm nhóm dịch vụ',
+      input: 'text',
+      inputLabel: 'Tên nhóm (hiện trên menu, vd: Sở hữu trí tuệ)',
+      inputPlaceholder: 'Sở hữu trí tuệ',
+      showCancelButton: true,
+      confirmButtonText: 'Tạo',
+      cancelButtonText: 'Hủy',
+      confirmButtonColor: '#b45309',
+      inputValidator: (v) => (!v?.trim() ? 'Vui lòng nhập tên nhóm' : undefined),
+    });
+    if (!title) return;
+    const { value: href } = await Swal.fire({
+      title: 'Đường dẫn trang nhóm',
+      input: 'text',
+      inputLabel: 'Vd: /dich-vu-doanh-nghiep (chữ thường, không dấu)',
+      inputValue: '/',
+      showCancelButton: true,
+      confirmButtonText: 'Tạo nhóm',
+      cancelButtonText: 'Hủy',
+      confirmButtonColor: '#b45309',
+    });
+    if (!href) return;
+    const { value: icon } = await Swal.fire({
+      title: 'Chọn biểu tượng cho nhóm',
+      input: 'select',
+      inputOptions: Object.fromEntries(iconOptions.map((o) => [o.value, o.label])),
+      inputPlaceholder: 'Chọn icon',
+      showCancelButton: true,
+      confirmButtonText: 'Tạo nhóm',
+      cancelButtonText: 'Bỏ qua icon',
+      confirmButtonColor: '#b45309',
+    });
+    try {
+      await createParentService(
+        title.trim(),
+        href.trim().startsWith('/') ? href.trim() : `/${href.trim()}`,
+        icon || undefined
+      );
+      toast.success(`Đã tạo nhóm "${title}". Menu cập nhật sau khi gán dịch vụ vào nhóm này.`);
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Tạo nhóm thất bại.');
+    }
+  };
 
   const handleDelete = async (service: AdminChildrenService) => {
     const confirm = await Swal.fire({
@@ -78,14 +126,24 @@ const ServiceManager: React.FC = () => {
             Thêm dịch vụ mới hoặc sửa nội dung trang — trang web cập nhật ngay, không cần sửa code.
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => setEditing('new')}
-          className="inline-flex items-center gap-2 rounded-md bg-amber-700 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-800"
-        >
-          <Plus className="h-4 w-4" />
-          Thêm dịch vụ
-        </button>
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={handleAddParent}
+            className="inline-flex items-center gap-2 rounded-md border border-amber-700 px-4 py-2 text-sm font-semibold text-amber-700 hover:bg-amber-50"
+          >
+            <FolderPlus className="h-4 w-4" />
+            Thêm nhóm
+          </button>
+          <button
+            type="button"
+            onClick={() => setEditing('new')}
+            className="inline-flex items-center gap-2 rounded-md bg-amber-700 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-800"
+          >
+            <Plus className="h-4 w-4" />
+            Thêm dịch vụ
+          </button>
+        </div>
       </div>
 
       {loading ? (

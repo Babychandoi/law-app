@@ -15,6 +15,7 @@ public class ServiceResponse {
   String id;
   String title;
   String href;
+  String icon;
   String description;
   String image;
   List<ServiceResponse> children;

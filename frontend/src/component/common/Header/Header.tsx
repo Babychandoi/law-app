@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { contactInfo, menuIconMap } from '../../../shared/config/site';
 import { useMenuItems } from '../../../shared/hooks/useMenuItems';
+import { dynamicIconMap } from '../../../shared/config/menuIcons';
 import { ServiceResponse } from '../../../types/service';
 
 const focusClass =
@@ -16,8 +17,10 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
       : 'text-gray-700 hover:bg-gray-50 hover:text-brand-goldDark',
   ].join(' ');
 
-function MenuIcon({ id, size = 17 }: { id: string; size?: number }) {
-  const Icon = menuIconMap[id as keyof typeof menuIconMap];
+function MenuIcon({ id, icon, size = 17 }: { id: string; icon?: string; size?: number }) {
+  // Ưu tiên icon động (nhóm tạo qua admin), fallback map tĩnh theo id
+  const Icon =
+    (icon ? dynamicIconMap[icon] : undefined) ?? menuIconMap[id as keyof typeof menuIconMap];
   return Icon ? <Icon size={size} aria-hidden="true" /> : null;
 }
 
@@ -26,7 +29,7 @@ function DesktopMenuItem({ item }: { item: ServiceResponse }) {
     return (
       <li>
         <NavLink to={item.href} className={navLinkClass}>
-          <MenuIcon id={item.id} />
+          <MenuIcon id={item.id} icon={item.icon} />
           <span>{item.title}</span>
         </NavLink>
       </li>
@@ -36,7 +39,7 @@ function DesktopMenuItem({ item }: { item: ServiceResponse }) {
   return (
     <li className="group relative">
       <NavLink to={item.href} className={navLinkClass} aria-haspopup="true">
-        <MenuIcon id={item.id} />
+        <MenuIcon id={item.id} icon={item.icon} />
         <span>{item.title}</span>
         <ChevronDown
           size={15}
@@ -97,7 +100,7 @@ function MobileMenuItem({
             ].join(' ')
           }
         >
-          <MenuIcon id={item.id} />
+          <MenuIcon id={item.id} icon={item.icon} />
           <span>{item.title}</span>
         </NavLink>
         {!!item.children?.length && (

@@ -22,6 +22,7 @@ public abstract class ServiceMapper {
         .id(services.getId())
         .title(services.getTitle())
         .href(services.getHref())
+        .icon(services.getIcon())
         .build();
   }
 
@@ -65,6 +66,7 @@ public abstract class ServiceMapper {
     Services services = new Services();
     services.setTitle(serviceRequest.getTitle());
     services.setHref(serviceRequest.getHref());
+    services.setIcon(serviceRequest.getIcon());
     return services;
   }
 

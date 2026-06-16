@@ -19,6 +19,7 @@ public class ProcessDetail {
   String id;
 
   String type;
+  Integer sortOrder;
 
   @Column(name = "description", length = 10000)
   String desc;

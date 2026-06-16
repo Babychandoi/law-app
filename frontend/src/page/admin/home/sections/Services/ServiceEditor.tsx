@@ -1,14 +1,5 @@
-import {
-  ArrowDown,
-  ArrowLeft,
-  ArrowUp,
-  Loader2,
-  Plus,
-  Save,
-  Trash2,
-  Upload,
-} from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { ArrowDown, ArrowLeft, ArrowUp, Loader2, Plus, Save, Trash2, Upload } from 'lucide-react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import {
   AdminChildrenService,
@@ -20,8 +11,13 @@ import {
   updateService,
   uploadFile,
 } from '../../../../../service/admin';
+import ServicePageView from '../../../../service/ServicePageView';
 import { getServicePage, getServices } from '../../../../../service/service';
-import { ServiceSection, ServiceSectionItem } from '../../../../../types/servicePage';
+import {
+  ServicePageData,
+  ServiceSection,
+  ServiceSectionItem,
+} from '../../../../../types/servicePage';
 
 /* ===== helpers ===== */
 
@@ -46,10 +42,17 @@ const SECTION_TYPES: { value: string; label: string }[] = [
   { value: 'comparison', label: 'Bảng so sánh 2 cột' },
 ];
 
+interface ProcessDetailForm {
+  type: string; // tiêu đề giai đoạn con
+  desc: string; // mô tả
+  time: string; // thời gian (vd "01-02 tháng")
+}
+
 interface ProcessStepForm {
   step: string;
   title: string;
   description: string;
+  details: ProcessDetailForm[];
 }
 
 interface PricingForm {
@@ -99,6 +102,44 @@ export default function ServiceEditor({ service, onClose }: Props) {
   const [process, setProcess] = useState<ProcessStepForm[]>([]);
   const [pricing, setPricing] = useState<PricingForm[]>([]);
 
+  // Dữ liệu cho tab "Xem trước trang" — ghép từ trạng thái đang nhập, ảnh đổi sang URL đầy đủ
+  const previewData: ServicePageData = useMemo(
+    () => ({
+      id: serviceId || 'preview',
+      title: general.title || 'Tên dịch vụ',
+      href: general.href || '/',
+      description: general.description,
+      image: resolveImg(general.image),
+      hero: hero.title || hero.description ? { ...hero } : null,
+      sections: sections.map((s) => ({
+        ...s,
+        image: s.image ? resolveImg(s.image) : undefined,
+        items: (s.items ?? []).map((it) => ({
+          ...it,
+          image: it.image ? resolveImg(it.image) : undefined,
+        })),
+      })),
+      process: process.map((p, i) => ({
+        id: String(i),
+        step: p.step,
+        title: p.title,
+        description: p.description,
+        details: p.details.map((d) => ({ type: d.type, desc: d.desc, time: d.time })),
+      })),
+      pricing: pricing.map((p, i) => ({
+        id: String(i),
+        title: p.title,
+        price: p.price,
+        currency: p.currency,
+        description: p.description,
+        featured: p.featured,
+        features: p.features.filter(Boolean),
+        image: p.image ? resolveImg(p.image) : undefined,
+      })),
+    }),
+    [serviceId, general, hero, sections, process, pricing]
+  );
+
   // nhóm dịch vụ cha
   useEffect(() => {
     getServices()
@@ -128,6 +169,11 @@ export default function ServiceEditor({ service, onClose }: Props) {
             step: p.step || '',
             title: p.title || '',
             description: p.description || '',
+            details: (p.details || []).map((d: any) => ({
+              type: d.type || '',
+              desc: d.desc || '',
+              time: d.time || '',
+            })),
           }))
         );
         setPricing(
@@ -253,9 +299,12 @@ export default function ServiceEditor({ service, onClose }: Props) {
         })}
       </div>
 
+      {/* Bố cục: trái = form nhập theo tab, phải = preview toàn trang (cập nhật ngay) */}
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+        <div className="min-w-0">
       {/* ===== TAB: CHUNG ===== */}
       {tab === 'general' && (
-        <div className="max-w-2xl space-y-4">
+        <div className="space-y-4">
           <div>
             <label className={labelCls}>Tên dịch vụ *</label>
             <input
@@ -337,7 +386,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
 
       {/* ===== TAB: HERO ===== */}
       {tab === 'hero' && (
-        <div className="max-w-2xl space-y-4">
+        <div className="space-y-4">
           <div>
             <label className={labelCls}>Tiêu đề lớn *</label>
             <input
@@ -391,7 +440,8 @@ export default function ServiceEditor({ service, onClose }: Props) {
 
       {/* ===== TAB: QUY TRÌNH ===== */}
       {tab === 'process' && (
-        <div className="max-w-3xl space-y-4">
+        <div className="space-y-4">
+          <div className="space-y-4">
           {process.map((step, i) => (
             <div key={i} className="rounded-lg border border-gray-200 bg-white p-4">
               <div className="mb-3 flex items-center justify-between">
@@ -435,15 +485,126 @@ export default function ServiceEditor({ service, onClose }: Props) {
                   )
                 }
               />
+
+              {/* Giai đoạn con (tùy chọn) — hiện dạng lưới chi tiết ngoài trang */}
+              <div className="mt-3 space-y-2 border-t border-dashed border-gray-200 pt-3">
+                <p className="text-xs font-semibold text-gray-500">
+                  Giai đoạn con (tùy chọn — để trống nếu bước không chia nhỏ)
+                </p>
+                {step.details.map((d, di) => (
+                  <div key={di} className="rounded border border-gray-100 bg-gray-50 p-2.5">
+                    <div className="flex items-start gap-2">
+                      <div className="flex-1 space-y-2">
+                        <div className="grid gap-2 sm:grid-cols-[1fr_140px]">
+                          <input
+                            className={inputCls}
+                            value={d.type}
+                            placeholder="Tên giai đoạn (VD: Thẩm định hình thức)"
+                            onChange={(e) =>
+                              setProcess(
+                                process.map((s, x) =>
+                                  x === i
+                                    ? {
+                                        ...s,
+                                        details: s.details.map((dd, y) =>
+                                          y === di ? { ...dd, type: e.target.value } : dd
+                                        ),
+                                      }
+                                    : s
+                                )
+                              )
+                            }
+                          />
+                          <input
+                            className={inputCls}
+                            value={d.time}
+                            placeholder="Thời gian"
+                            onChange={(e) =>
+                              setProcess(
+                                process.map((s, x) =>
+                                  x === i
+                                    ? {
+                                        ...s,
+                                        details: s.details.map((dd, y) =>
+                                          y === di ? { ...dd, time: e.target.value } : dd
+                                        ),
+                                      }
+                                    : s
+                                )
+                              )
+                            }
+                          />
+                        </div>
+                        <input
+                          className={inputCls}
+                          value={d.desc}
+                          placeholder="Mô tả giai đoạn"
+                          onChange={(e) =>
+                            setProcess(
+                              process.map((s, x) =>
+                                x === i
+                                  ? {
+                                      ...s,
+                                      details: s.details.map((dd, y) =>
+                                        y === di ? { ...dd, desc: e.target.value } : dd
+                                      ),
+                                    }
+                                  : s
+                              )
+                            )
+                          }
+                        />
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setProcess(
+                            process.map((s, x) =>
+                              x === i
+                                ? { ...s, details: s.details.filter((_, y) => y !== di) }
+                                : s
+                            )
+                          )
+                        }
+                        className="mt-1 text-red-400 hover:text-red-600"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() =>
+                    setProcess(
+                      process.map((s, x) =>
+                        x === i
+                          ? { ...s, details: [...s.details, { type: '', desc: '', time: '' }] }
+                          : s
+                      )
+                    )
+                  }
+                  className={btnGhost}
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  Thêm giai đoạn
+                </button>
+              </div>
             </div>
           ))}
+          </div>
           <div className="flex gap-3">
             <button
               type="button"
               onClick={() =>
                 setProcess([
                   ...process,
-                  { step: String(process.length + 1).padStart(2, '0'), title: '', description: '' },
+                  {
+                    step: String(process.length + 1).padStart(2, '0'),
+                    title: '',
+                    description: '',
+                    details: [],
+                  },
                 ])
               }
               className={btnGhost}
@@ -468,7 +629,8 @@ export default function ServiceEditor({ service, onClose }: Props) {
 
       {/* ===== TAB: BẢNG GIÁ ===== */}
       {tab === 'pricing' && (
-        <div className="max-w-3xl space-y-4">
+        <div className="space-y-4">
+          <div className="space-y-4">
           {pricing.map((plan, i) => (
             <div key={i} className="rounded-lg border border-gray-200 bg-white p-4">
               <div className="mb-3 flex items-center justify-between">
@@ -592,6 +754,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
               </label>
             </div>
           ))}
+          </div>
           <div className="flex gap-3">
             <button
               type="button"
@@ -635,6 +798,30 @@ export default function ServiceEditor({ service, onClose }: Props) {
           </div>
         </div>
       )}
+        </div>
+
+        {/* Cột phải: preview toàn trang, cập nhật ngay theo nội dung đang nhập */}
+        <div className="min-w-0">
+          <div className="xl:sticky xl:top-4">
+            <p className="mb-2 text-sm font-semibold text-gray-500">
+              Xem trước — trang hiển thị như thế này (chưa cần lưu)
+            </p>
+            <div className="overflow-hidden rounded-xl border-2 border-gray-300 shadow-sm">
+              <div className="flex items-center gap-2 border-b border-gray-200 bg-gray-100 px-4 py-2">
+                <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
+                <span className="h-2.5 w-2.5 rounded-full bg-yellow-400" />
+                <span className="h-2.5 w-2.5 rounded-full bg-green-400" />
+                <span className="ml-3 truncate rounded bg-white px-3 py-0.5 font-mono text-xs text-gray-500">
+                  luatpoip.com{general.href || '/...'}
+                </span>
+              </div>
+              <div className="max-h-[80vh] overflow-y-auto">
+                <ServicePageView data={previewData} />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -686,12 +873,13 @@ function SectionsEditor({
   };
 
   return (
-    <div className="max-w-3xl space-y-5">
+    <div className="space-y-5">
       <p className="text-sm text-gray-500">
-        Nội dung trang gồm nhiều khối (section) xếp theo thứ tự. Chọn kiểu khối phù hợp; khối nào
-        không cần thì xóa — trang chỉ hiện những gì có dữ liệu.
+        Nội dung trang gồm nhiều khối (section) xếp theo thứ tự (trái → phải, trên → dưới). Chọn
+        kiểu khối phù hợp; khối nào không cần thì xóa — trang chỉ hiện những gì có dữ liệu.
       </p>
 
+      <div className="space-y-5">
       {sections.map((section, i) => {
         const labels = itemLabels(section.type);
         return (
@@ -856,6 +1044,7 @@ function SectionsEditor({
           </div>
         );
       })}
+      </div>
 
       <div className="flex gap-3">
         <button

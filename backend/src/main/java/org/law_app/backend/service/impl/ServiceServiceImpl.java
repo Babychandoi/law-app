@@ -67,10 +67,12 @@ public class ServiceServiceImpl implements ServiceService {
     try {
       Services service = serviceMapper.toServices(serviceRequest);
       serviceRepository.save(service);
-      for (ServiceRequest childService : serviceRequest.getChildren()) {
-        ChildrenServices childrenService = serviceMapper.toChildrenServices(childService);
-        childrenService.setParentService(service);
-        childrenServiceRepository.save(childrenService);
+      if (serviceRequest.getChildren() != null) {
+        for (ServiceRequest childService : serviceRequest.getChildren()) {
+          ChildrenServices childrenService = serviceMapper.toChildrenServices(childService);
+          childrenService.setParentService(service);
+          childrenServiceRepository.save(childrenService);
+        }
       }
       return true;
 

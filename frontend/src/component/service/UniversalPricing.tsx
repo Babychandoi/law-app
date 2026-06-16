@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, Star } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { PricingPlan } from '../../types/service';
 import { toast } from 'react-toastify';
 
@@ -29,211 +29,71 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
     }
   };
 
-  const renderCardVariant = () => (
-    <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
+  // Thiết kế thống nhất: card trắng bo lớn, viền/điểm nhấn vàng, badge "PHỔ BIẾN"
+  const renderPlans = () => (
+    <div className="mx-auto flex max-w-6xl flex-wrap justify-center gap-8">
       {plans.map((plan) => (
         <div
           key={plan.id}
-          className={`w-full max-w-sm bg-white rounded-lg shadow-sm overflow-hidden transition-transform duration-300  ${
-            plan.featured ? 'ring-2 ring-brand-goldDark relative' : ''
+          className={`relative flex w-full min-w-[320px] max-w-sm flex-col rounded-2xl border-2 bg-white p-8 ${
+            plan.featured ? 'border-brand-gold shadow-soft' : 'border-brand-line'
           }`}
-          style={{
-            flex: plans.length < 3 ? '0 0 auto' : '1 1 0',
-            minWidth: '320px',
-            maxWidth: plans.length === 1 ? '400px' : '350px',
-          }}
         >
           {plan.featured && (
-            <div className="absolute top-4 right-4 bg-brand-goldDark text-white px-3 py-1 rounded-full text-sm font-semibold">
+            <span className="absolute -top-3 right-6 rounded-md bg-brand-gold px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
               Phổ biến
-            </div>
+            </span>
           )}
 
-          {/* Image */}
           {plan.image && (
-            <div
-              className="relative h-48 overflow-hidden"
-              style={{
-                borderRadius: '0.5rem',
-                padding: '0.5rem',
-              }}
-            >
-              <img
-                src={plan.image}
-                alt={plan.imageAlt || plan.title}
-                className="w-full h-full object-cover transition-transform duration-300 "
-              />
-            </div>
+            <img
+              src={plan.image}
+              alt={plan.imageAlt || plan.title}
+              className="mb-6 h-40 w-full rounded-lg border border-brand-line object-cover"
+              loading="lazy"
+              decoding="async"
+            />
           )}
 
-          {/* Content */}
-          <div className="p-6">
-            {/* Title */}
-            <h3 className="text-xl font-bold text-gray-900 mb-4 text-center">{plan.title}</h3>
+          <h3 className="text-center text-2xl font-bold text-brand-ink">{plan.title}</h3>
 
-            {/* Price */}
-            <div className="text-center mb-6">
-              <div className="flex items-center justify-center">
-                {plan.currency && (
-                  <span className="text-gray-600 text-sm mr-1">{plan.currency}</span>
-                )}
-                <span className="text-3xl font-bold text-brand-goldDark">{plan.price}</span>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <hr className="border-brand-line mb-4" />
-
-            {/* Description */}
-            {plan.description && (
-              <div className="px-8 py-6">
-                <p className="text-gray-700 text-center leading-relaxed">{plan.description}</p>
-              </div>
-            )}
-
-            {/* Features */}
-            {plan.features && plan.features.length > 0 && (
-              <div className="px-8 pb-8">
-                <ul className="space-y-4">
-                  {plan.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-start">
-                      <div className="flex-shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mt-0.5 mr-3">
-                        <Check className="w-3 h-3 text-green-600" />
-                      </div>
-                      <span className="text-gray-700 text-sm leading-relaxed">
-                        {typeof feature === 'string' ? feature : feature.text}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* Custom Content */}
-            {plan.customContent && <div className="mb-6">{plan.customContent}</div>}
-
-            {/* CTA Button */}
-            <div className="text-center">
-              <button
-                type="button"
-                onClick={() => handlePlanClick(plan.id)}
-                className={`w-full px-6 py-3 rounded-lg font-semibold text-white transition-colors duration-300 ${
-                  plan.featured
-                    ? 'bg-brand-goldDark hover:bg-brand-goldDark'
-                    : 'bg-gray-800 hover:bg-gray-900'
-                }`}
-              >
-                {plan.buttonText || 'Đăng ký tư vấn'}
-              </button>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-
-  const renderFeatureVariant = () => (
-    <div className="flex flex-wrap justify-center gap-8 max-w-6xl mx-auto">
-      {plans.map((plan, index) => (
-        <div
-          key={plan.id}
-          className={`w-full max-w-sm relative bg-white rounded-lg shadow-soft overflow-hidden transform transition-all duration-300  hover:shadow-soft ${
-            plan.featured ? 'ring-4 ring-brand-goldDark ring-opacity-50' : ''
-          }`}
-          style={{
-            flex: plans.length < 3 ? '0 0 auto' : '1 1 0',
-            minWidth: '320px',
-            maxWidth: plans.length === 1 ? '400px' : '350px',
-          }}
-        >
-          {/* Featured Badge */}
-          {plan.featured && (
-            <div className="absolute top-0 right-0 bg-brand-goldDark text-white px-4 py-2 rounded-bl-2xl z-10">
-              <Star className="w-4 h-4 inline-block mr-1" />
-              <span className="text-sm font-semibold">Phổ biến</span>
-            </div>
-          )}
-
-          {/* Header */}
-          <div
-            className={`px-8 py-8 text-center ${
-              plan.featured ? 'bg-brand-goldDark text-white' : 'bg-gray-50'
-            }`}
-          >
-            <h3
-              className={`text-2xl font-bold mb-4 ${
-                plan.featured ? 'text-white' : 'text-gray-900'
-              }`}
-            >
-              {plan.title}
-            </h3>
-
-            <div className="mb-4">
-              <span
-                className={`text-4xl font-bold ${plan.featured ? 'text-white' : 'text-gray-900'}`}
-              >
-                {plan.price}
+          <div className="mt-4 text-center">
+            <span className="text-4xl font-bold text-brand-goldDark">{plan.price}</span>
+            {plan.currency && (
+              <span className="ml-1 align-top text-sm font-semibold text-brand-goldDark">
+                {plan.currency}
               </span>
-              {plan.currency && (
-                <span
-                  className={`text-sm font-medium ml-2 ${
-                    plan.featured ? 'text-white' : 'text-gray-600'
-                  }`}
-                >
-                  {plan.currency}
-                </span>
-              )}
-            </div>
-
-            <div
-              className={`w-16 h-1 mx-auto rounded-full ${
-                plan.featured ? 'bg-white bg-opacity-50' : 'bg-brand-goldDark'
-              }`}
-            ></div>
+            )}
           </div>
 
-          {/* Description */}
+          <div className="mx-auto mt-5 h-px w-16 bg-brand-line" aria-hidden="true" />
+
           {plan.description && (
-            <div className="px-8 py-6">
-              <p className="text-gray-700 text-center leading-relaxed">{plan.description}</p>
-            </div>
+            <p className="mt-5 text-center leading-7 text-brand-muted">{plan.description}</p>
           )}
 
-          {/* Features */}
           {plan.features && plan.features.length > 0 && (
-            <div className="px-8 pb-8">
-              <ul className="space-y-4">
-                {plan.features.map((feature, featureIndex) => (
-                  <li key={featureIndex} className="flex items-start">
-                    <div className="flex-shrink-0 w-5 h-5 bg-green-100 rounded-full flex items-center justify-center mt-0.5 mr-3">
-                      <Check className="w-3 h-3 text-green-600" />
-                    </div>
-                    <span className="text-gray-700 text-sm leading-relaxed">
-                      {typeof feature === 'string' ? feature : feature.text}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            <ul className="mt-6 space-y-3.5">
+              {plan.features.map((feature, i) => (
+                <li key={i} className="flex items-start gap-3">
+                  <Check className="mt-1 h-4 w-4 shrink-0 text-brand-gold" aria-hidden="true" />
+                  <span className="text-sm leading-6 text-gray-700">
+                    {typeof feature === 'string' ? feature : feature.text}
+                  </span>
+                </li>
+              ))}
+            </ul>
           )}
 
-          {/* Custom Content */}
-          {plan.customContent && <div className="px-8 pb-6">{plan.customContent}</div>}
+          {plan.customContent && <div className="mt-6">{plan.customContent}</div>}
 
-          {/* CTA Button */}
-          <div className="px-8 pb-8">
-            <button
-              type="button"
-              onClick={() => handlePlanClick(plan.id)}
-              className={`w-full py-4 px-6 rounded-xl font-semibold text-center transition-all duration-300  ${
-                plan.featured
-                  ? 'bg-brand-goldDark text-white shadow-sm hover:shadow-soft'
-                  : 'bg-gray-100 text-gray-900 hover:bg-gray-200 border-2 border-transparent hover:border-brand-line'
-              }`}
-            >
-              {plan.buttonText || 'Đăng ký tư vấn'}
-            </button>
-          </div>
+          <button
+            type="button"
+            onClick={() => handlePlanClick(plan.id)}
+            className="mt-8 w-full rounded-xl bg-brand-gold px-6 py-3.5 font-semibold text-white transition-colors hover:bg-brand-goldDark"
+          >
+            {plan.buttonText || 'Đăng ký tư vấn'}
+          </button>
         </div>
       ))}
     </div>
@@ -251,8 +111,8 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
           {subtitle && <p className="text-gray-600 mt-4 max-w-2xl mx-auto">{subtitle}</p>}
         </div>
 
-        {/* Pricing Cards */}
-        {variant === 'card' ? renderCardVariant() : renderFeatureVariant()}
+        {/* Pricing Cards — một thiết kế thống nhất cho mọi variant */}
+        {renderPlans()}
 
         {/* Additional Info */}
         <div className="text-center mt-12">

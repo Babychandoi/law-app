@@ -14,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 public class ServiceRequest {
   String title;
   String href;
+  String icon;
   String description;
   String image;
   List<ServiceRequest> children;
