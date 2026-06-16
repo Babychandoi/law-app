@@ -16,6 +16,7 @@ services:
     depends_on:
       - frontend
       - backend
+      - gateway
       - minio
     networks:
       - law-app-network
@@ -30,6 +31,8 @@ services:
         REACT_APP_API_URL: ${REACT_APP_API_URL}
         REACT_APP_WS_URL: ${REACT_APP_WS_URL}
         REACT_APP_CHAT_WS_URL: ${REACT_APP_CHAT_WS_URL}
+        REACT_APP_GATEWAY_URL: ${REACT_APP_GATEWAY_URL}
+        REACT_APP_STAFF_WS_URL: ${REACT_APP_STAFF_WS_URL}
     container_name: law-app-frontend
     networks:
       - law-app-network
@@ -52,6 +55,62 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
+    networks:
+      - law-app-network
+    restart: unless-stopped
+
+  # ==================== API GATEWAY ====================
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: law-app-gateway
+    env_file:
+      - .env
+    depends_on:
+      - backend
+      - chat-service
+    networks:
+      - law-app-network
+    restart: unless-stopped
+
+  # ==================== CHAT SERVICE (internal staff chat) ====================
+  chat-service:
+    build:
+      context: ./chat-service
+      dockerfile: Dockerfile
+    container_name: law-app-chat
+    env_file:
+      - .env
+    depends_on:
+      mongodb:
+        condition: service_started
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    networks:
+      - law-app-network
+    restart: unless-stopped
+
+  # ==================== RABBITMQ (STOMP broker relay) ====================
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: law-app-rabbitmq
+    mem_limit: 384m
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./docker/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
     networks:
       - law-app-network
     restart: unless-stopped
@@ -151,6 +210,8 @@ services:
       mc alias set myminio http://minio:9000 $${MINIO_ACCESS_KEY} $${MINIO_SECRET_KEY};
       mc mb myminio/$${MINIO_BUCKET_IMAGES} --ignore-existing;
       mc anonymous set public myminio/$${MINIO_BUCKET_IMAGES};
+      mc mb myminio/$${MINIO_BUCKET_STAFF_FILES} --ignore-existing;
+      mc anonymous set public myminio/$${MINIO_BUCKET_STAFF_FILES};
       exit 0;
       "
     networks:
@@ -167,6 +228,7 @@ services:
     depends_on:
       - frontend
       - backend
+      - gateway
       - minio
     networks:
       - law-app-network
@@ -177,6 +239,7 @@ volumes:
   mongodb_data:
   redis_data:
   minio_data:
+  rabbitmq_data:
 
 networks:
   law-app-network:

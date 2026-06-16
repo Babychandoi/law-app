@@ -12,6 +12,10 @@ ingress:
   - hostname: api.luatpoip.com
     service: http://backend:8080
 
+  # API Gateway (staff-chat + future microservices)
+  - hostname: gateway.luatpoip.com
+    service: http://gateway:8081
+
   # MinIO – file upload/download (cho phép body lớn)
   - hostname: minio.luatpoip.com
     service: http://minio:9000

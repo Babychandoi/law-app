@@ -69,6 +69,12 @@ const Sidebar: React.FC<{
       onlyAdmin: true,
     },
     {
+      category: 'Chat nội bộ',
+      icon: '🗨️',
+      key: 'team-chat',
+      path: '/2025/luatpoip/admin/team-chat',
+    },
+    {
       category: 'Quản lý dịch vụ',
       icon: '🧩',
       key: 'services',

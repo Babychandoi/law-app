@@ -21,6 +21,7 @@ import LandingPage from '../page/landing/LandingPage';
 import DynamicServicePage from '../page/service/DynamicServicePage';
 import ServiceImages from '../page/admin/home/sections/ServiceImages';
 import ServiceManager from '../page/admin/home/sections/Services';
+import TeamChat from '../page/admin/home/sections/TeamChat';
 
 export const publicRoutes: RouteObject = {
   path: '/',
@@ -56,6 +57,7 @@ export const adminRoutes: RouteObject[] = [
       { path: 'chats', element: <ChatManagement /> },
       { path: 'service-images', element: <ServiceImages /> },
       { path: 'services', element: <ServiceManager /> },
+      { path: 'team-chat', element: <TeamChat /> },
     ],
   },
 ];
