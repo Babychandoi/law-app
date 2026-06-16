@@ -40,10 +40,10 @@
     </dependencyManagement>
 
     <dependencies>
-        <!-- Reactive gateway (WebFlux-based) -->
+        <!-- Reactive gateway (WebFlux-based). 2025.0.0 renamed the starter. -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
+            <artifactId>spring-cloud-starter-gateway-server-webflux</artifactId>
         </dependency>
 
         <dependency>

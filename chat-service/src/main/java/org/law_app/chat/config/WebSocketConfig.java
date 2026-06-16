@@ -1,9 +1,9 @@
 package org.law_app.chat.config;
 
-import lombok.RequiredArgsConstructor;
 import org.law_app.chat.security.StompAuthChannelInterceptor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -21,7 +21,6 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
  * </ul>
  */
 @Configuration
-@RequiredArgsConstructor
 @EnableWebSocketMessageBroker
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
@@ -41,6 +40,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
   private String allowedOrigins;
 
   private final StompAuthChannelInterceptor authInterceptor;
+
+  // @Lazy breaks the init cycle: the interceptor transitively needs SimpMessagingTemplate, which is
+  // created by the broker config this class drives.
+  public WebSocketConfig(@Lazy StompAuthChannelInterceptor authInterceptor) {
+    this.authInterceptor = authInterceptor;
+  }
 
   @Override
   public void configureMessageBroker(MessageBrokerRegistry config) {
