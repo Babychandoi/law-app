@@ -11,6 +11,13 @@ const axiosClient = axios.create({
   withCredentials: true, // send/receive httpOnly auth cookies
 });
 
+// Never refresh-retry the refresh/login calls themselves (would loop). /auth/me IS allowed to
+// refresh-retry: an expired-but-refreshable session should recover transparently.
+function isAuthEndpoint(url?: string): boolean {
+  if (!url) return false;
+  return url.includes('/auth/refresh') || url.includes('/auth/login');
+}
+
 // Tokens now live in httpOnly cookies — nothing to inject from JS.
 axiosClient.interceptors.response.use(
   (response) => response,
@@ -19,13 +26,18 @@ axiosClient.interceptors.response.use(
     if (!originalRequest) {
       return Promise.reject(error);
     }
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // On 401, try a one-shot refresh and replay. Do NOT redirect here — a 401 is a normal
+    // "not logged in" signal (e.g. /auth/me on the login page). Redirecting caused a reload loop.
+    // Navigation is the caller's responsibility.
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isAuthEndpoint(originalRequest.url)
+    ) {
       originalRequest._retry = true;
       const refreshed = await tryRefreshToken();
       if (refreshed) {
         return axiosClient(originalRequest);
-      } else {
-        window.location.href = '/2025/luatpoip/admin/login';
       }
     }
     return Promise.reject(error);
