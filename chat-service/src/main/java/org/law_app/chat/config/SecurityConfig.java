@@ -7,13 +7,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -23,6 +24,9 @@ public class SecurityConfig {
 
   @Value("${cors.allowed-origins}")
   private String allowedOrigins;
+
+  @Value("${auth.cookie.domain:}")
+  private String cookieDomain;
 
   private final RevocationFilter revocationFilter;
   private final org.law_app.chat.security.CookieBearerTokenResolver cookieBearerTokenResolver;
@@ -36,8 +40,17 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    CsrfTokenRequestAttributeHandler csrfHandler = new CsrfTokenRequestAttributeHandler();
+    csrfHandler.setCsrfRequestAttributeName(null);
+
     http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-        .csrf(AbstractHttpConfigurer::disable)
+        // Double-submit CSRF, same scheme as the monolith (shared XSRF-TOKEN cookie). WebSocket
+        // handshake is exempt (no cookie-driven state-change there).
+        .csrf(
+            csrf ->
+                csrf.csrfTokenRepository(csrfTokenRepository())
+                    .csrfTokenRequestHandler(csrfHandler)
+                    .ignoringRequestMatchers("/ws-staff/**"))
         .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(
             auth ->
@@ -74,6 +87,20 @@ public class SecurityConfig {
               : auths;
         });
     return converter;
+  }
+
+  @Bean
+  public CookieCsrfTokenRepository csrfTokenRepository() {
+    CookieCsrfTokenRepository repo = CookieCsrfTokenRepository.withHttpOnlyFalse();
+    repo.setCookieCustomizer(
+        c -> {
+          c.path("/");
+          c.sameSite("Lax");
+          if (cookieDomain != null && !cookieDomain.isBlank()) {
+            c.domain(cookieDomain);
+          }
+        });
+    return repo;
   }
 
   @Bean

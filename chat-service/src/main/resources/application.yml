@@ -25,6 +25,11 @@ spring:
 jwt:
   signerKey: ${JWT_SIGNER_KEY}
 
+# ================= AUTH COOKIES (CSRF token cookie domain, shared with monolith) =================
+auth:
+  cookie:
+    domain: ${AUTH_COOKIE_DOMAIN:}
+
 # ================= RABBITMQ STOMP RELAY (scale-out broker) =================
 rabbitmq:
   stomp:

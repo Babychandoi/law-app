@@ -2,13 +2,15 @@ package org.law_app.backend.security;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
@@ -47,6 +49,20 @@ public class SecurityConfig {
   @Autowired private CustomJwtDecoder customJwtDecoder;
   @Autowired private CookieBearerTokenResolver cookieBearerTokenResolver;
 
+  @Value("${auth.cookie.domain:}")
+  private String cookieDomain;
+
+  // Auth-bootstrap + public unauthenticated POSTs: no CSRF token exists yet / no cookie session.
+  private final String[] CsrfIgnored =
+      new String[] {
+        "/auth/login",
+        "/auth/refresh",
+        "/auth/logout",
+        "/customer",
+        "/news/subscribe",
+        "/jobs/apply"
+      };
+
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
     http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -76,9 +92,34 @@ public class SecurityConfig {
                             .jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 .authenticationEntryPoint(new JwtAuthenticationEntryPoint()));
 
-    http.csrf(AbstractHttpConfigurer::disable);
+    // CSRF: double-submit cookie. Server sets a JS-readable XSRF-TOKEN cookie; the SPA echoes it
+    // back in the X-XSRF-TOKEN header on POST/PUT/DELETE, and Spring compares the two. Required now
+    // that auth rides in cookies (header bearer tokens were inherently CSRF-safe).
+    CsrfTokenRequestAttributeHandler csrfHandler = new CsrfTokenRequestAttributeHandler();
+    csrfHandler.setCsrfRequestAttributeName(null); // opt out of deferred/BREACH token, plain value
+
+    http.csrf(
+        csrf ->
+            csrf.csrfTokenRepository(csrfTokenRepository())
+                .csrfTokenRequestHandler(csrfHandler)
+                .ignoringRequestMatchers(CsrfIgnored));
 
     return http.build();
+  }
+
+  @Bean
+  public CookieCsrfTokenRepository csrfTokenRepository() {
+    CookieCsrfTokenRepository repo = CookieCsrfTokenRepository.withHttpOnlyFalse();
+    // Share the token cookie across *.luatpoip.com so gateway/api/frontend all see it.
+    repo.setCookieCustomizer(
+        c -> {
+          c.path("/");
+          c.sameSite("Lax");
+          if (cookieDomain != null && !cookieDomain.isBlank()) {
+            c.domain(cookieDomain);
+          }
+        });
+    return repo;
   }
 
   @Bean
@@ -91,7 +132,7 @@ public class SecurityConfig {
             "https://luatpoip.com",
             "https://www.luatpoip.com")); // Nguồn gốc được phép
     configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-XSRF-TOKEN"));
     configuration.setAllowCredentials(true);
 
     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

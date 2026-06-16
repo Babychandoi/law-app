@@ -9,6 +9,9 @@ const axiosClient = axios.create({
   },
   timeout: 20000,
   withCredentials: true, // send/receive httpOnly auth cookies
+  // CSRF double-submit: axios reads the XSRF-TOKEN cookie and echoes it as X-XSRF-TOKEN.
+  xsrfCookieName: 'XSRF-TOKEN',
+  xsrfHeaderName: 'X-XSRF-TOKEN',
 });
 
 // Never refresh-retry the refresh/login calls themselves (would loop). /auth/me IS allowed to
