@@ -45,6 +45,7 @@ public class SecurityConfig {
       };
 
   @Autowired private CustomJwtDecoder customJwtDecoder;
+  @Autowired private CookieBearerTokenResolver cookieBearerTokenResolver;
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -67,6 +68,7 @@ public class SecurityConfig {
     http.oauth2ResourceServer(
         oauth2 ->
             oauth2
+                .bearerTokenResolver(cookieBearerTokenResolver)
                 .jwt(
                     jwtConfigurer ->
                         jwtConfigurer

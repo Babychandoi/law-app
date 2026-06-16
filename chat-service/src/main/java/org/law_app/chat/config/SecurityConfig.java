@@ -25,9 +25,13 @@ public class SecurityConfig {
   private String allowedOrigins;
 
   private final RevocationFilter revocationFilter;
+  private final org.law_app.chat.security.CookieBearerTokenResolver cookieBearerTokenResolver;
 
-  public SecurityConfig(RevocationFilter revocationFilter) {
+  public SecurityConfig(
+      RevocationFilter revocationFilter,
+      org.law_app.chat.security.CookieBearerTokenResolver cookieBearerTokenResolver) {
     this.revocationFilter = revocationFilter;
+    this.cookieBearerTokenResolver = cookieBearerTokenResolver;
   }
 
   @Bean
@@ -46,7 +50,10 @@ public class SecurityConfig {
                     .anyRequest()
                     .authenticated())
         .oauth2ResourceServer(
-            oauth2 -> oauth2.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter())))
+            oauth2 ->
+                oauth2
+                    .bearerTokenResolver(cookieBearerTokenResolver)
+                    .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter())))
         .addFilterAfter(revocationFilter, UsernamePasswordAuthenticationFilter.class);
     return http.build();
   }

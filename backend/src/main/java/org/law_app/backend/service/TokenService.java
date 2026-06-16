@@ -10,6 +10,9 @@ public interface TokenService {
 
   String generateRefreshToken(User user);
 
+  /** Short-lived token (minutes) used only for the WebSocket/STOMP CONNECT handshake. */
+  String generateWsToken(User user);
+
   void saveRefreshToken(String userId, String refreshToken, long ttlSeconds);
 
   void revokeAccessToken(String token) throws ParseException, JOSEException;

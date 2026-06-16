@@ -48,6 +48,14 @@ public class TokenServiceImpl implements TokenService {
     return generateToken(user, "refresh", REFRESHABLE_DURATION);
   }
 
+  // WebSocket handshake token: short TTL so exposing it to JS (for the STOMP CONNECT header) is
+  // low-risk compared to the long-lived access token now kept in an httpOnly cookie.
+  private static final long WS_TOKEN_DURATION = 5 * 60; // 5 minutes
+
+  public String generateWsToken(User user) {
+    return generateToken(user, "ws", WS_TOKEN_DURATION);
+  }
+
   private String generateToken(User user, String type, long validitySeconds) {
     JWSHeader jwsHeader = new JWSHeader(JWSAlgorithm.HS512);
     JWTClaimsSet claimsSet =

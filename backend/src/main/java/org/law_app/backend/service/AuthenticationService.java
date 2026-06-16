@@ -32,4 +32,7 @@ public interface AuthenticationService {
   Boolean changeActive(String id, Active active);
 
   UserResponse myProfile(String id);
+
+  /** Mint a short-lived token for the WebSocket/STOMP handshake for the given user. */
+  String issueWsToken(String userId);
 }

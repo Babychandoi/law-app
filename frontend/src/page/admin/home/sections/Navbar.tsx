@@ -162,13 +162,8 @@ const Navbar: React.FC = () => {
 
   const hanldeLogout = async () => {
     try {
-      const token = sessionStorage.getItem('accessToken');
-      if (!token) {
-        return;
-      }
-      const response = await logout(token);
+      const response = await logout();
       if (response.code === 200) {
-        sessionStorage.clear();
         window.location.href = '/2025/luatpoip/admin/login';
       } else {
         toast.error('Không thể đăng xuất');

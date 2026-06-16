@@ -3,8 +3,7 @@ import { Eye, EyeOff, User, Lock, Shield } from 'lucide-react';
 import { login } from '../../../service/admin';
 import { Login } from '../../../types/admin';
 import { useNavigate } from 'react-router-dom';
-import { checkToken } from '../../../service/admin';
-import { tryRefreshToken } from '../../../service/axiosClient';
+import { getMe } from '../../../service/auth';
 const LoginForm: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState<Login>({ username: '', password: '' });
@@ -13,25 +12,11 @@ const LoginForm: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = sessionStorage.getItem('accessToken');
-    if (token) {
-      checkToken(token)
-        .then(async (res) => {
-          if (res.code === 200 && res.data.valid) {
-            navigate('/2025/luatpoip/admin');
-          } else {
-            const refreshed = await tryRefreshToken();
-            if (refreshed) {
-              navigate('/2025/luatpoip/admin');
-            } else {
-              sessionStorage.clear();
-            }
-          }
-        })
-        .catch(() => {
-          sessionStorage.clear();
-        });
-    }
+    // Already logged in? The cookie is sent automatically; /auth/me confirms (with refresh retry
+    // handled by the axios interceptor on 401).
+    getMe(true).then((me) => {
+      if (me) navigate('/2025/luatpoip/admin');
+    });
   }, [navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,9 +59,7 @@ const LoginForm: React.FC = () => {
       try {
         const response = await login(formData);
         if (response.code === 200 && response.data) {
-          const token = response.data;
-          sessionStorage.setItem('accessToken', token.token);
-          sessionStorage.setItem('refreshToken', token.refreshToken);
+          // Tokens are set as httpOnly cookies by the backend; nothing to store in JS.
           navigate('/2025/luatpoip/admin');
         } else {
           // Handle non-200 response codes

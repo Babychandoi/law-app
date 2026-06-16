@@ -8,16 +8,10 @@ const axiosClient = axios.create({
     'Content-Type': 'application/json',
   },
   timeout: 20000,
+  withCredentials: true, // send/receive httpOnly auth cookies
 });
 
-axiosClient.interceptors.request.use((config) => {
-  const token = sessionStorage.getItem('accessToken');
-  if (token && config.headers) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
+// Tokens now live in httpOnly cookies — nothing to inject from JS.
 axiosClient.interceptors.response.use(
   (response) => response,
   async (error) => {
@@ -25,18 +19,12 @@ axiosClient.interceptors.response.use(
     if (!originalRequest) {
       return Promise.reject(error);
     }
-    if (
-      error.response?.status === 401 &&
-      !originalRequest._retry &&
-      sessionStorage.getItem('refreshToken')
-    ) {
+    if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
       const refreshed = await tryRefreshToken();
       if (refreshed) {
-        originalRequest.headers.Authorization = `Bearer ${sessionStorage.getItem('accessToken')}`;
         return axiosClient(originalRequest);
       } else {
-        sessionStorage.clear();
         window.location.href = '/2025/luatpoip/admin/login';
       }
     }
@@ -45,25 +33,29 @@ axiosClient.interceptors.response.use(
 );
 
 export default axiosClient;
+
+let refreshInFlight: Promise<boolean> | null = null;
+
+/**
+ * Refresh the access token. The refresh token is sent automatically as an httpOnly cookie; the
+ * backend rotates both and sets new cookies. Concurrent 401s share one in-flight refresh.
+ */
 export async function tryRefreshToken(): Promise<boolean> {
-  const refreshToken = sessionStorage.getItem('refreshToken');
-  if (!refreshToken) return false;
-  try {
-    const response = await axios.post<ApiResponse<LoginResponse>>(
-      `${process.env.REACT_APP_API_URL}/auth/refresh`,
-      { refreshToken },
-      { timeout: 20000 }
-    );
-
-    const data = response.data.data;
-    if (!data?.token || !data?.refreshToken) return false;
-
-    sessionStorage.setItem('accessToken', data.token);
-    sessionStorage.setItem('refreshToken', data.refreshToken);
-
-    return true;
-  } catch (error) {
-    toast.error('Đăng nhập không thành công');
-    return false;
-  }
+  if (refreshInFlight) return refreshInFlight;
+  refreshInFlight = (async () => {
+    try {
+      const response = await axios.post<ApiResponse<LoginResponse>>(
+        `${process.env.REACT_APP_API_URL}/auth/refresh`,
+        {},
+        { timeout: 20000, withCredentials: true }
+      );
+      // Success = backend set fresh cookies (HTTP 200). Body tokens are legacy and ignored.
+      return response.data.code === 200;
+    } catch (error) {
+      return false;
+    } finally {
+      refreshInFlight = null;
+    }
+  })();
+  return refreshInFlight;
 }

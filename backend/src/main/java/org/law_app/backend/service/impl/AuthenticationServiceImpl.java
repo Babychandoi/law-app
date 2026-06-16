@@ -245,4 +245,13 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       throw new AppException(ErrorCode.USER_NOT_EXISTED);
     }
   }
+
+  @Override
+  public String issueWsToken(String userId) {
+    User user =
+        userRepository
+            .findById(userId)
+            .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    return tokenService.generateWsToken(user);
+  }
 }

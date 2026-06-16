@@ -1,6 +1,7 @@
 import { Menu, X } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { getMe } from '../../../../service/auth';
 
 const Sidebar: React.FC<{
   sidebarOpen: boolean;
@@ -10,15 +11,9 @@ const Sidebar: React.FC<{
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const navigate = useNavigate();
 
-  // ✅ Decode JWT để lấy scope
+  // Role comes from /auth/me now (token is in an httpOnly cookie, not readable by JS).
   useEffect(() => {
-    const token = sessionStorage.getItem('accessToken');
-    if (token) {
-      try {
-        const payload = JSON.parse(atob(token.split('.')[1]));
-        setIsAdmin(payload.scope === 'ADMIN');
-      } catch (err) {}
-    }
+    getMe().then((me) => setIsAdmin(me?.role === 'ADMIN'));
   }, []);
 
   const menuItems = [

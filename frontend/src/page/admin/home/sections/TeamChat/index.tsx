@@ -1,24 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Send, Paperclip, Users, Plus, Search } from 'lucide-react';
 import teamChatService from '../../../../../service/teamChat';
+import { getMe } from '../../../../../service/auth';
 import { ConversationSummary, StaffUser, TeamMessage } from '../../../../../types/teamChat';
 import { useTeamChatSocket } from './useTeamChatSocket';
 
-/** Decode the userId (JWT subject) from the access token, same approach as Sidebar. */
-function currentUserId(): string {
-  const token = sessionStorage.getItem('accessToken');
-  if (!token) return '';
-  try {
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.sub ?? '';
-  } catch {
-    return '';
-  }
-}
-
 export default function TeamChat() {
-  const me = useMemo(currentUserId, []);
+  // userId comes from /auth/me (token is httpOnly now, not decodable in JS).
+  const [me, setMe] = useState<string>('');
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [messages, setMessages] = useState<TeamMessage[]>([]);
@@ -64,6 +54,11 @@ export default function TeamChat() {
         return next;
       }),
   });
+
+  // Resolve current user id once.
+  useEffect(() => {
+    getMe().then((u) => setMe(u?.id ?? ''));
+  }, []);
 
   // Initial load
   useEffect(() => {

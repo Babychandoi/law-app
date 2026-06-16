@@ -1,5 +1,7 @@
 .env
-.env.*.local.env
+.env.*
+.env.*.local
+!.env.example
 
 # Cloudflare Tunnel secrets / binary
 cloudflared/credentials.json

@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Client, IMessage } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
+import { getWsToken } from '../../../../../service/auth';
 import { InboxEvent, TeamMessage } from '../../../../../types/teamChat';
 
 const WS_URL = process.env.REACT_APP_STAFF_WS_URL as string;
@@ -15,9 +16,9 @@ interface Handlers {
 }
 
 /**
- * Single STOMP connection to the staff-chat service (through the gateway). Auth is the
- * sessionStorage access token, sent in the CONNECT Authorization header and verified by the
- * service's CONNECT interceptor.
+ * Single STOMP connection to the staff-chat service (through the gateway). Auth is a short-lived
+ * ws-token fetched from /auth/ws-token right before connect (the access token is an httpOnly cookie
+ * that JS cannot read), sent in the CONNECT Authorization header and verified by the service.
  */
 export function useTeamChatSocket(handlers: Handlers) {
   const clientRef = useRef<Client | null>(null);
@@ -27,23 +28,27 @@ export function useTeamChatSocket(handlers: Handlers) {
   handlersRef.current = handlers;
 
   useEffect(() => {
-    const token = sessionStorage.getItem('accessToken');
-    if (!token) return;
+    let disposed = false;
 
-    setState('CONNECTING');
+    // The ws-token is short-lived and fetched right before each (re)connect. beforeConnect runs
+    // again on every STOMP reconnect, so an expired token is automatically replaced.
     const client = new Client({
       webSocketFactory: () => new SockJS(WS_URL),
       reconnectDelay: 5000,
       heartbeatIncoming: 10000,
       heartbeatOutgoing: 10000,
-      connectHeaders: { Authorization: `Bearer ${token}` },
+      beforeConnect: async () => {
+        const wsToken = await getWsToken();
+        if (wsToken) {
+          client.connectHeaders = { Authorization: `Bearer ${wsToken}` };
+        }
+      },
       onConnect: () => {
+        if (disposed) return;
         setState('CONNECTED');
-        // Per-user inbox (badges, new conversations)
         client.subscribe('/user/queue/staff/inbox', (m: IMessage) => {
           handlersRef.current.onInbox?.(JSON.parse(m.body));
         });
-        // Presence broadcast
         client.subscribe('/topic/staff/presence', (m: IMessage) => {
           const e = JSON.parse(m.body);
           handlersRef.current.onPresence?.(e.userId, e.online);
@@ -53,9 +58,11 @@ export function useTeamChatSocket(handlers: Handlers) {
       onStompError: () => setState('DISCONNECTED'),
     });
 
+    setState('CONNECTING');
     client.activate();
     clientRef.current = client;
     return () => {
+      disposed = true;
       client.deactivate();
       clientRef.current = null;
     };

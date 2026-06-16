@@ -1,6 +1,9 @@
 package org.law_app.backend.controller;
 
 import com.nimbusds.jose.JOSEException;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.text.ParseException;
 import java.util.List;
 import lombok.AccessLevel;
@@ -13,7 +16,9 @@ import org.law_app.backend.dto.response.ApiResponse;
 import org.law_app.backend.dto.response.AuthenticationResponse;
 import org.law_app.backend.dto.response.IntrospectResponse;
 import org.law_app.backend.dto.response.UserResponse;
+import org.law_app.backend.security.CookieUtil;
 import org.law_app.backend.service.AuthenticationService;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,15 +28,29 @@ import org.springframework.web.bind.annotation.*;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class AuthenticationController {
   AuthenticationService authenticationService;
+  CookieUtil cookieUtil;
 
   @PostMapping("/login")
-  ApiResponse<AuthenticationResponse> authenticate(@RequestBody AuthenticationRequest request) {
+  ApiResponse<AuthenticationResponse> authenticate(
+      @RequestBody AuthenticationRequest request, HttpServletResponse response) {
     var result = authenticationService.authenticate(request);
+    if (result.isAuthenticated()) {
+      setAuthCookies(response, result.getToken(), result.getRefreshToken());
+    }
+    // Tokens go to httpOnly cookies only — never expose them in the JSON body to JS.
+    stripTokens(result);
     return ApiResponse.<AuthenticationResponse>builder()
         .code(200)
         .data(result)
         .message(result.isAuthenticated() ? "Login successful" : "Login failed")
         .build();
+  }
+
+  /** Mint a short-lived token for the WebSocket/STOMP handshake (cookie auth can't reach STOMP). */
+  @GetMapping("/ws-token")
+  ApiResponse<String> wsToken() {
+    String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+    return ApiResponse.<String>builder().data(authenticationService.issueWsToken(userId)).build();
   }
 
   @PostMapping("/users")
@@ -54,17 +73,62 @@ public class AuthenticationController {
   }
 
   @PostMapping("/logout")
-  ApiResponse<Void> logout(@RequestBody LogoutRequest request)
+  ApiResponse<Void> logout(
+      @RequestBody(required = false) LogoutRequest request,
+      HttpServletRequest httpRequest,
+      HttpServletResponse response)
       throws ParseException, JOSEException {
-    authenticationService.logout(request);
+    // Prefer the access-token cookie; fall back to the body for older clients.
+    String token = readCookie(httpRequest, CookieUtil.ACCESS_COOKIE);
+    if (token == null && request != null) {
+      token = request.getToken();
+    }
+    if (token != null) {
+      authenticationService.logout(LogoutRequest.builder().token(token).build());
+    }
+    response.addHeader(HttpHeaders.SET_COOKIE, cookieUtil.clearAccessCookie().toString());
+    response.addHeader(HttpHeaders.SET_COOKIE, cookieUtil.clearRefreshCookie().toString());
     return ApiResponse.<Void>builder().message("Logout successful").build();
   }
 
   @PostMapping("/refresh")
-  ApiResponse<AuthenticationResponse> authenticate(@RequestBody RefreshRequest request)
+  ApiResponse<AuthenticationResponse> authenticate(
+      @RequestBody(required = false) RefreshRequest request,
+      HttpServletRequest httpRequest,
+      HttpServletResponse response)
       throws ParseException, JOSEException {
-    var result = authenticationService.refreshToken(request);
+    // Prefer the refresh-token cookie (scoped to /auth); fall back to the body.
+    String refreshToken = readCookie(httpRequest, CookieUtil.REFRESH_COOKIE);
+    if (refreshToken == null && request != null) {
+      refreshToken = request.getRefreshToken();
+    }
+    var result =
+        authenticationService.refreshToken(
+            RefreshRequest.builder().refreshToken(refreshToken).build());
+    setAuthCookies(response, result.getToken(), result.getRefreshToken());
+    stripTokens(result);
     return ApiResponse.<AuthenticationResponse>builder().data(result).build();
+  }
+
+  /** Blank the token fields so they live only in httpOnly cookies, never in the JSON body. */
+  private void stripTokens(AuthenticationResponse result) {
+    result.setToken(null);
+    result.setRefreshToken(null);
+  }
+
+  private void setAuthCookies(HttpServletResponse response, String access, String refresh) {
+    response.addHeader(HttpHeaders.SET_COOKIE, cookieUtil.accessCookie(access).toString());
+    response.addHeader(HttpHeaders.SET_COOKIE, cookieUtil.refreshCookie(refresh).toString());
+  }
+
+  private String readCookie(HttpServletRequest request, String name) {
+    if (request.getCookies() == null) return null;
+    for (Cookie c : request.getCookies()) {
+      if (name.equals(c.getName()) && c.getValue() != null && !c.getValue().isBlank()) {
+        return c.getValue();
+      }
+    }
+    return null;
   }
 
   @GetMapping("/users")

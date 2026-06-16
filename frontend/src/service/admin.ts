@@ -239,12 +239,9 @@ export const myProfile = async (): Promise<ApiResponse<User>> => {
   const response = await axiosClient.get<ApiResponse<User>>(`/auth/me`);
   return response.data;
 };
-export const logout = async (token: string): Promise<ApiResponse<void>> => {
-  const form = {
-    token: token,
-  };
-  const response = await axiosClient.post<ApiResponse<void>>(`/auth/logout`, form);
-  sessionStorage.clear();
+export const logout = async (): Promise<ApiResponse<void>> => {
+  // Auth is the httpOnly cookie; backend clears cookies + blacklists the token.
+  const response = await axiosClient.post<ApiResponse<void>>(`/auth/logout`, {});
   return response.data;
 };
 export const getNotificationById = async (): Promise<ApiResponse<Notification[]>> => {

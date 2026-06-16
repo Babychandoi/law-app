@@ -3,38 +3,26 @@ import Sidebar from './sections/Sidebar';
 import Navbar from './sections/Navbar';
 import { Outlet } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { checkToken } from '../../../service/admin';
+import { getMe } from '../../../service/auth';
 import { tryRefreshToken } from '../../../service/axiosClient';
+
+// Proactively refresh a bit before the access token expires (default valid-duration ~1h). Keeps
+// the session alive without waiting for a 401. Interval kept modest so an expired idle tab recovers.
+const PROACTIVE_REFRESH_MS = 10 * 60 * 1000; // 10 minutes
 
 const AdminDashboard: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
   useEffect(() => {
-    const fetchData = async () => {
-      const token = sessionStorage.getItem('accessToken');
-      if (!token) {
-        sessionStorage.clear();
-        return navigate('/2025/luatpoip/admin/login');
-      }
+    // Gate on the cookie session. On 401 the axios interceptor tries a refresh transparently.
+    getMe(true).then((me) => {
+      if (!me) navigate('/2025/luatpoip/admin/login');
+    });
 
-      try {
-        const response = await checkToken(token);
-        if (response.code !== 200 || !response.data.valid) {
-          const refreshed = await tryRefreshToken();
-          if (refreshed) {
-            return;
-          } else {
-            sessionStorage.clear();
-            navigate('/2025/luatpoip/admin/login');
-          }
-        }
-      } catch (error) {
-        sessionStorage.clear();
-        navigate('/2025/luatpoip/admin/login');
-      }
-    };
-
-    fetchData();
+    const timer = setInterval(() => {
+      tryRefreshToken();
+    }, PROACTIVE_REFRESH_MS);
+    return () => clearInterval(timer);
   }, [navigate]);
   return (
     <div className="flex h-screen bg-gray-100">

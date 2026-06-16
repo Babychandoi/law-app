@@ -38,6 +38,11 @@ public class StompAuthChannelInterceptor implements ChannelInterceptor {
       }
       try {
         Jwt jwt = jwtDecoder.decode(bearer.substring(7));
+        // Only the dedicated short-lived ws-token (type=ws) is accepted for STOMP. The long-lived
+        // access token now lives in an httpOnly cookie and never reaches JS / this header.
+        if (!"ws".equals(jwt.getClaimAsString("type"))) {
+          throw new IllegalArgumentException("STOMP CONNECT requires a ws-token");
+        }
         String userId = jwt.getSubject();
         accessor.setUser(new StompPrincipal(userId));
         presenceService.markOnline(userId);

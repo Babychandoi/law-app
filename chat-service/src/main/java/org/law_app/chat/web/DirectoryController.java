@@ -1,15 +1,16 @@
 package org.law_app.chat.web;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.law_app.chat.security.CookieBearerTokenResolver;
 import org.law_app.chat.service.FileStorageService;
 import org.law_app.chat.service.PresenceService;
 import org.law_app.chat.service.StaffDirectoryService;
 import org.law_app.chat.service.StaffDirectoryService.StaffUser;
-import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,12 +25,28 @@ public class DirectoryController {
   private final FileStorageService fileStorageService;
   private final PresenceService presenceService;
 
-  /** Staff directory, proxied from the monolith with the caller's token. */
+  /** Staff directory, proxied from the monolith with the caller's token (cookie or header). */
   @GetMapping("/users")
-  public ApiResponse<List<StaffUser>> users(
-      @RequestHeader(HttpHeaders.AUTHORIZATION) String authorization) {
-    String token = authorization.startsWith("Bearer ") ? authorization.substring(7) : authorization;
-    return ApiResponse.ok(directoryService.listStaff(token));
+  public ApiResponse<List<StaffUser>> users(HttpServletRequest request) {
+    return ApiResponse.ok(directoryService.listStaff(extractToken(request)));
+  }
+
+  /** The access token arrives as an httpOnly cookie (forwarded by the gateway) or a header. */
+  private String extractToken(HttpServletRequest request) {
+    if (request.getCookies() != null) {
+      for (Cookie c : request.getCookies()) {
+        if (CookieBearerTokenResolver.ACCESS_COOKIE.equals(c.getName())
+            && c.getValue() != null
+            && !c.getValue().isBlank()) {
+          return c.getValue();
+        }
+      }
+    }
+    String auth = request.getHeader("Authorization");
+    if (auth != null && auth.startsWith("Bearer ")) {
+      return auth.substring(7);
+    }
+    return null;
   }
 
   /** Online userIds, for presence dots in the directory/inbox. */

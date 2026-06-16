@@ -67,6 +67,14 @@ jwt:
   valid-duration: ${JWT_VALID_DURATION}
   refreshable-duration: ${JWT_REFRESHABLE_DURATION}
 
+# ================= AUTH COOKIES =================
+auth:
+  cookie:
+    # Shared across *.luatpoip.com so api/gateway/frontend see the same cookie. Empty in dev.
+    domain: ${AUTH_COOKIE_DOMAIN:}
+    # Must be true in prod (HTTPS). Set false for local http dev.
+    secure: ${AUTH_COOKIE_SECURE:true}
+
 # ================= MINIO =================
 minio:
   url: ${MINIO_URL}
