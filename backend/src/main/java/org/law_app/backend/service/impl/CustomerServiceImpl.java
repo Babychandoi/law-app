@@ -12,6 +12,8 @@ import org.law_app.backend.entity.ChildrenServices;
 import org.law_app.backend.entity.Customer;
 import org.law_app.backend.entity.CustomerService;
 import org.law_app.backend.entity.Notification;
+import org.law_app.backend.event.CaseEvent;
+import org.law_app.backend.event.CaseEventPublisher;
 import org.law_app.backend.mapper.CustomerMapper;
 import org.law_app.backend.repository.ChildrenServiceRepository;
 import org.law_app.backend.repository.CustomerRepository;
@@ -33,6 +35,7 @@ public class CustomerServiceImpl implements CustomerServices {
   ChildrenServiceRepository childrenServiceRepository;
   CustomerMapper customerMapper;
   NotificationService notificationService;
+  CaseEventPublisher caseEventPublisher;
 
   @Transactional
   @Override
@@ -59,6 +62,22 @@ public class CustomerServiceImpl implements CustomerServices {
       customerService = customerServiceRepository.save(customerService);
       Notification notification = Notification.builder().customerService(customerService).build();
       notificationService.createNotification(notification);
+
+      // Sync to CRM read-replica (best-effort).
+      caseEventPublisher.publish(
+          CaseEventPublisher.RK_CREATED,
+          CaseEvent.builder()
+              .caseId(customerService.getId())
+              .customerId(customer.getId())
+              .customerEmail(customer.getEmail())
+              .customerPhone(customer.getPhone())
+              .serviceName(service.getTitle())
+              .name(customerService.getName())
+              .description(customerService.getDescription())
+              .status(customerService.getStatus().name())
+              .createdAt(customerService.getCreatedAt())
+              .updatedAt(customerService.getUpdatedAt())
+              .build());
       return true; // Return true if creation is successful
     } catch (Exception e) {
       log.error("Error creating customer service: {}", e.getMessage());
@@ -87,6 +106,16 @@ public class CustomerServiceImpl implements CustomerServices {
           customerService.setUpdatedAt(new java.util.Date());
       }
       customerServiceRepository.save(customerService);
+
+      caseEventPublisher.publish(
+          CaseEventPublisher.RK_STATUS_CHANGED,
+          CaseEvent.builder()
+              .caseId(customerService.getId())
+              .status(customerService.getStatus().name())
+              .updatedAt(customerService.getUpdatedAt())
+              .completedAt(customerService.getCompletedAt())
+              .canceledAt(customerService.getCanceledAt())
+              .build());
       return true; // Return true if update is successful
     } catch (Exception e) {
       log.error("Error updating status of customer service: {}", e.getMessage());
@@ -162,5 +191,33 @@ public class CustomerServiceImpl implements CustomerServices {
       log.error("Error retrieving customer service by ID: {}", e.getMessage());
       throw e; // Propagate the exception
     }
+  }
+
+  @Override
+  @Transactional(readOnly = true)
+  public int backfillCrm() {
+    List<CustomerService> all = customerServiceRepository.findAll();
+    for (CustomerService cs : all) {
+      Customer c = cs.getCustomer();
+      ChildrenServices s = cs.getService();
+      caseEventPublisher.publish(
+          CaseEventPublisher.RK_CREATED,
+          CaseEvent.builder()
+              .caseId(cs.getId())
+              .customerId(c != null ? c.getId() : null)
+              .customerEmail(c != null ? c.getEmail() : null)
+              .customerPhone(c != null ? c.getPhone() : null)
+              .serviceName(s != null ? s.getTitle() : null)
+              .name(cs.getName())
+              .description(cs.getDescription())
+              .status(cs.getStatus() != null ? cs.getStatus().name() : null)
+              .createdAt(cs.getCreatedAt())
+              .updatedAt(cs.getUpdatedAt())
+              .completedAt(cs.getCompletedAt())
+              .canceledAt(cs.getCanceledAt())
+              .build());
+    }
+    log.info("CRM backfill published {} cases", all.size());
+    return all.size();
   }
 }

@@ -70,6 +70,7 @@ services:
     depends_on:
       - backend
       - chat-service
+      - crm-service
     networks:
       - law-app-network
     restart: unless-stopped
@@ -91,6 +92,31 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
+    networks:
+      - law-app-network
+    restart: unless-stopped
+
+  # ==================== CRM SERVICE (customer-care microservice) ====================
+  crm-service:
+    build:
+      context: ./crm-service
+      dockerfile: Dockerfile
+    container_name: law-app-crm
+    env_file:
+      - .env
+    environment:
+      # Override the shared monolith datasource env so CRM points at its OWN database.
+      # (Spring relaxed-binding makes SPRING_DATASOURCE_URL from .env win over application.yml.)
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/law_app_crm?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
     networks:
       - law-app-network
     restart: unless-stopped

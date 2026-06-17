@@ -70,6 +70,19 @@ const Sidebar: React.FC<{
       path: '/2025/luatpoip/admin/team-chat',
     },
     {
+      category: 'CRM chăm sóc',
+      icon: '🤝',
+      key: 'crm',
+      path: '/2025/luatpoip/admin/crm',
+    },
+    {
+      category: 'Cấu hình CRM',
+      icon: '⚙️',
+      key: 'crm-config',
+      path: '/2025/luatpoip/admin/crm/config',
+      onlyAdmin: true,
+    },
+    {
       category: 'Quản lý dịch vụ',
       icon: '🧩',
       key: 'services',

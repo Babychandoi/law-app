@@ -29,6 +29,12 @@ spring:
               predicates:
                 - Path=/ws-staff/**
 
+            # ---- CRM microservice (REST) ----
+            - id: crm-service
+              uri: ${CRM_SERVICE_URI:http://law-app-crm:8083}
+              predicates:
+                - Path=/crm/**
+
             # ---- Monolith WebSocket (guest chat + notifications) ----
             - id: monolith-ws
               uri: ${MONOLITH_WS_URI:ws://law-app-backend:8080}

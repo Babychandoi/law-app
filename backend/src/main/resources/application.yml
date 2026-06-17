@@ -34,6 +34,13 @@ spring:
       host: ${SPRING_DATA_REDIS_HOST}
       port: ${SPRING_DATA_REDIS_PORT}
 
+  # ================= RABBITMQ (AMQP — publish CRM events) =================
+  rabbitmq:
+    host: ${RABBITMQ_AMQP_HOST:law-app-rabbitmq}
+    port: ${RABBITMQ_AMQP_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASS:guest}
+
   # ================= FILE UPLOAD =================
   servlet:
     multipart:

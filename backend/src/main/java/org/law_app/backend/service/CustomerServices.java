@@ -22,4 +22,7 @@ public interface CustomerServices {
   Page<CustomerResponse> getAllCustomerServices(Pageable pageable);
 
   CustomerDetailResponse getCustomerServiceById(String id);
+
+  /** Republish every existing case to RabbitMQ so the CRM read-replica can backfill. */
+  int backfillCrm();
 }

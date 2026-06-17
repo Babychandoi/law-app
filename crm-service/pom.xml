@@ -6,7 +6,6 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <!-- ================= PARENT ================= -->
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -14,139 +13,65 @@
         <relativePath/>
     </parent>
 
-    <groupId>org.example</groupId>
-    <artifactId>backend</artifactId>
+    <groupId>org.law_app</groupId>
+    <artifactId>crm-service</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>backend</name>
-    <description>Spring Boot 3 Backend</description>
+    <name>crm-service</name>
+    <description>CRM customer-care microservice for law-app</description>
 
-    <!-- ================= PROPERTIES ================= -->
     <properties>
-        <!-- Java 21 is required by the Docker/runtime target. -->
         <java.version>21</java.version>
-
-        <mapstruct.version>1.5.5.Final</mapstruct.version>
         <lombok.version>1.18.32</lombok.version>
-
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <!-- ================= DEPENDENCIES ================= -->
     <dependencies>
-        <!-- ===== IMAGE COMPRESSION (tự nén ảnh khi upload) ===== -->
-        <dependency>
-            <groupId>net.coobird</groupId>
-            <artifactId>thumbnailator</artifactId>
-            <version>0.4.20</version>
-        </dependency>
-        <dependency>
-            <groupId>org.sejda.imageio</groupId>
-            <artifactId>webp-imageio</artifactId>
-            <version>0.1.6</version>
-        </dependency>
-
-        <!-- ===== EMAIL (JavaMail/Jakarta Mail) ===== -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
-
-        <!-- ===== WEB / CORE ===== -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
-        <!-- Validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- ===== DATA ===== -->
+        <!-- Own MySQL database (read-replica of cases + care data) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-
-        <!-- MySQL -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
             <scope>runtime</scope>
         </dependency>
 
-        <!-- MongoDB - THÊM MỚI -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-mongodb</artifactId>
-        </dependency>
-
-        <!-- Redis -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
-        </dependency>
-
-        <!-- AMQP (publish CRM domain events to RabbitMQ) -->
+        <!-- Consume case events from RabbitMQ -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
-        <!-- ===== SECURITY ===== -->
+        <!-- JWT resource server (shared HS512 secret, cookie auth) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
         </dependency>
 
-        <!-- ===== WEBSOCKET ===== -->
+        <!-- Redis: shared token revocation check (revoked:{jti}) -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-websocket</artifactId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
-        <!-- ===== STORAGE ===== -->
-        <dependency>
-            <groupId>io.minio</groupId>
-            <artifactId>minio</artifactId>
-            <version>8.5.7</version>
-        </dependency>
-        
-        <!-- ===== CLOUDINARY ===== -->
-        <dependency>
-            <groupId>com.cloudinary</groupId>
-            <artifactId>cloudinary-http5</artifactId>
-            <version>2.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.cloudinary</groupId>
-            <artifactId>cloudinary-taglib</artifactId>
-            <version>2.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>io.github.cdimascio</groupId>
-            <artifactId>dotenv-java</artifactId>
-            <version>2.2.4</version>
-        </dependency>
-
-        <!-- ===== ENV FILE LOADER ===== -->
         <dependency>
             <groupId>me.paulschwarz</groupId>
             <artifactId>spring-dotenv</artifactId>
             <version>4.0.0</version>
         </dependency>
 
-        <!-- ===== MAPSTRUCT ===== -->
-        <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${mapstruct.version}</version>
-        </dependency>
-
-        <!-- ===== LOMBOK ===== -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -154,30 +79,17 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- Lombok + MapStruct binding (BẮT BUỘC) -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok-mapstruct-binding</artifactId>
-            <version>0.2.0</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- ===== DEV ===== -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
-
-        <!-- ===== TEST ===== -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- Spring Boot Configuration Processor -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-configuration-processor</artifactId>
@@ -185,11 +97,8 @@
         </dependency>
     </dependencies>
 
-    <!-- ================= BUILD ================= -->
     <build>
         <plugins>
-
-            <!-- Compiler -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -203,22 +112,13 @@
                             <artifactId>lombok</artifactId>
                             <version>${lombok.version}</version>
                         </path>
-                        <path>
-                            <groupId>org.mapstruct</groupId>
-                            <artifactId>mapstruct-processor</artifactId>
-                            <version>${mapstruct.version}</version>
-                        </path>
                     </annotationProcessorPaths>
                 </configuration>
             </plugin>
-
-            <!-- Spring Boot -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
-
-            <!-- Formatting -->
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
@@ -234,8 +134,6 @@
                     </java>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
-
 </project>

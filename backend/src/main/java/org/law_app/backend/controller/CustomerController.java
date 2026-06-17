@@ -40,6 +40,16 @@ public class CustomerController {
         .build();
   }
 
+  /** Republish all cases to RabbitMQ so the CRM service can backfill its read-replica. */
+  @PostMapping("/crm/backfill")
+  @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+  ApiResponse<Integer> backfillCrm() {
+    return ApiResponse.<Integer>builder()
+        .message("CRM backfill published")
+        .data(customerServices.backfillCrm())
+        .build();
+  }
+
   @GetMapping("/service/{serviceId}")
   ApiResponse<List<CustomerResponse>> getCustomerServicesByServiceId(
       @PathVariable String serviceId,
