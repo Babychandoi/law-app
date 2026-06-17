@@ -120,7 +120,7 @@ export default function CarePopup({
             <label className="text-sm">
               Hành động *
               <select
-                className="w-full border rounded px-2 py-1.5 mt-1"
+                className="w-full border border-brand-line rounded-lg px-3 py-2 mt-1 focus:border-brand-gold outline-none"
                 value={actionId}
                 onChange={(e) => setActionId(e.target.value ? Number(e.target.value) : '')}
               >
@@ -133,7 +133,7 @@ export default function CarePopup({
             <label className="text-sm">
               Kết quả
               <select
-                className="w-full border rounded px-2 py-1.5 mt-1"
+                className="w-full border border-brand-line rounded-lg px-3 py-2 mt-1 focus:border-brand-gold outline-none"
                 value={resultId}
                 onChange={(e) => onResultChange(e.target.value ? Number(e.target.value) : '')}
               >
@@ -146,7 +146,7 @@ export default function CarePopup({
             <label className="text-sm">
               Trạng thái chăm sóc mới
               <select
-                className="w-full border rounded px-2 py-1.5 mt-1"
+                className="w-full border border-brand-line rounded-lg px-3 py-2 mt-1 focus:border-brand-gold outline-none"
                 value={newStatusId}
                 onChange={(e) => setNewStatusId(e.target.value ? Number(e.target.value) : '')}
               >
@@ -160,7 +160,7 @@ export default function CarePopup({
               Hẹn chăm lại {requireFollowUp && <span className="text-red-500">*</span>}
               <input
                 type="datetime-local"
-                className="w-full border rounded px-2 py-1.5 mt-1"
+                className="w-full border border-brand-line rounded-lg px-3 py-2 mt-1 focus:border-brand-gold outline-none"
                 value={followUpAt}
                 onChange={(e) => setFollowUpAt(e.target.value)}
               />
@@ -169,7 +169,7 @@ export default function CarePopup({
           <label className="text-sm block">
             Ghi chú
             <textarea
-              className="w-full border rounded px-2 py-1.5 mt-1"
+              className="w-full border border-brand-line rounded-lg px-3 py-2 mt-1 focus:border-brand-gold outline-none"
               rows={2}
               value={note}
               onChange={(e) => setNote(e.target.value)}
