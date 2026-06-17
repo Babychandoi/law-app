@@ -14,6 +14,7 @@ import org.law_app.crm.web.CrmDtos.AssignRequest;
 import org.law_app.crm.web.CrmDtos.CareLogRequest;
 import org.law_app.crm.web.CrmDtos.CaseRow;
 import org.law_app.crm.web.CrmDtos.TagsRequest;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -47,9 +48,18 @@ public class CrmCaseController {
       @RequestParam(defaultValue = "30") int size) {
     PageRequest pageable =
         PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "caseCreatedAt"));
+    // Non-admins only ever see cases assigned to themselves, regardless of the requested filter.
+    String effectiveAssignedTo = CurrentUser.isAdmin() ? assignedTo : "me";
     Page<CaseRow> result =
         caseService.search(
-            CurrentUser.id(), keyword, status, careStatusId, assignedTo, followUp, tagId, pageable);
+            CurrentUser.id(),
+            keyword,
+            status,
+            careStatusId,
+            effectiveAssignedTo,
+            followUp,
+            tagId,
+            pageable);
     return ApiResponse.<List<CaseRow>>builder()
         .code(200)
         .data(result.getContent())
@@ -62,7 +72,9 @@ public class CrmCaseController {
         .build();
   }
 
+  /** Only admins assign cases. */
   @PutMapping("/cases/{id}/assign")
+  @PreAuthorize("hasRole('ADMIN')")
   public ApiResponse<CaseRow> assign(
       @PathVariable String id, @RequestBody AssignRequest req, HttpServletRequest request) {
     CaseRow row = caseService.assign(id, req.userId());
@@ -73,6 +85,23 @@ public class CrmCaseController {
     }
     return ApiResponse.ok(row);
   }
+
+  /** Change the case status (Mới→Đang xử lý→...). Admin or the assignee only; proxied to monolith
+   * which is the source of truth and re-syncs back via event. */
+  @PutMapping("/cases/{id}/status")
+  public ApiResponse<Void> changeStatus(
+      @PathVariable String id, @RequestBody StatusRequest req, HttpServletRequest request) {
+    var c = caseService.requireCase(id);
+    boolean allowed = CurrentUser.isAdmin() || CurrentUser.id().equals(c.getAssignedUserId());
+    if (!allowed) {
+      throw new org.springframework.web.server.ResponseStatusException(
+          org.springframework.http.HttpStatus.FORBIDDEN, "Chỉ người phụ trách hoặc admin");
+    }
+    directoryService.changeCaseStatus(extractToken(request), id, req.status());
+    return ApiResponse.ok(null, "Đã đổi trạng thái");
+  }
+
+  public record StatusRequest(String status) {}
 
   @GetMapping("/cases/{id}/care-logs")
   public ApiResponse<List<CareLog>> careLogs(@PathVariable String id) {

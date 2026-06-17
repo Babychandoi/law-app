@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Search, HeartHandshake, UserCog } from 'lucide-react';
 import crmService, { CaseFilter } from '../../../../../service/crm';
+import { getMe } from '../../../../../service/auth';
 import { CASE_STATUS_VI, CASE_STATUS_OPTIONS, caseStatusLabel } from './caseStatus';
 import { CareAction, CareResult, CareStatus, CaseRow, StaffUser, Tag } from '../../../../../types/crm';
 import CarePopup from './CarePopup';
@@ -25,6 +26,8 @@ export default function CRM() {
   const [filter, setFilter] = useState<CaseFilter>({ assignedTo: 'me', page: 0, size: 30 });
   const [active, setActive] = useState<CaseRow | null>(null);
   const [loading, setLoading] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [me, setMe] = useState<string>('');
 
   const staffLabel = useCallback((s: StaffUser) => s.fullName || s.username || s.id.slice(0, 8), []);
   const staffName = useCallback(
@@ -48,10 +51,18 @@ export default function CRM() {
   }, [filter]);
 
   useEffect(() => {
+    getMe().then((u) => {
+      const admin = u?.role === 'ADMIN';
+      setIsAdmin(admin);
+      setMe(u?.id ?? '');
+      // Admin nhìn tất cả mặc định; nhân viên chỉ thấy việc của mình.
+      setFilter((f) => ({ ...f, assignedTo: admin ? '' : 'me' }));
+    });
     crmService.careStatuses().then(setStatuses).catch(() => undefined);
     crmService.careActions().then(setActions).catch(() => undefined);
     crmService.careResults().then(setResults).catch(() => undefined);
     crmService.tags().then(setTags).catch(() => undefined);
+    // Chỉ admin cần danh bạ để giao việc.
     crmService.staff().then(setStaff).catch(() => undefined);
   }, []);
 
@@ -66,6 +77,19 @@ export default function CRM() {
       load();
     } catch {
       toast.error('Gán thất bại');
+    }
+  };
+
+  // Đổi trạng thái vụ việc tại chỗ (admin hoặc người phụ trách).
+  const canChangeStatus = (row: CaseRow) => isAdmin || row.assignedUserId === me;
+  const changeStatus = async (row: CaseRow, status: string) => {
+    if (status === row.status) return;
+    try {
+      await crmService.changeStatus(row.id, status);
+      toast.success('Đã đổi trạng thái vụ việc');
+      load();
+    } catch {
+      toast.error('Đổi trạng thái thất bại');
     }
   };
 
@@ -91,16 +115,21 @@ export default function CRM() {
           />
         </div>
         {[
-          {
-            val: filter.assignedTo ?? '',
-            set: (v: string) => setFilter((f) => ({ ...f, assignedTo: v, page: 0 })),
-            opts: [
-              { v: 'me', label: 'Tôi phụ trách' },
-              { v: 'none', label: 'Chưa có người phụ trách' },
-              { v: 'any', label: 'Đã có người phụ trách' },
-              { v: '', label: 'Tất cả' },
-            ],
-          },
+          // Bộ lọc người phụ trách chỉ dành cho admin; nhân viên luôn chỉ thấy việc của mình.
+          ...(isAdmin
+            ? [
+                {
+                  val: filter.assignedTo ?? '',
+                  set: (v: string) => setFilter((f) => ({ ...f, assignedTo: v, page: 0 })),
+                  opts: [
+                    { v: '', label: 'Tất cả' },
+                    { v: 'me', label: 'Tôi phụ trách' },
+                    { v: 'none', label: 'Chưa có người phụ trách' },
+                    { v: 'any', label: 'Đã có người phụ trách' },
+                  ],
+                },
+              ]
+            : []),
           {
             val: filter.followUp ?? '',
             set: (v: string) => setFilter((f) => ({ ...f, followUp: v, page: 0 })),
@@ -178,16 +207,20 @@ export default function CRM() {
                     </div>
                   </td>
                   <td className="px-3">
-                    <select
-                      className="border border-brand-line rounded-lg px-2 py-1.5 text-xs bg-white max-w-[140px] focus:border-brand-gold outline-none"
-                      value={r.assignedUserId ?? ''}
-                      onChange={(e) => assign(r, e.target.value)}
-                    >
-                      <option value="">Chưa giao</option>
-                      {staff.map((s) => (
-                        <option key={s.id} value={s.id}>{staffLabel(s)}</option>
-                      ))}
-                    </select>
+                    {isAdmin ? (
+                      <select
+                        className="border border-brand-line rounded-lg px-2 py-1.5 text-xs bg-white max-w-[140px] focus:border-brand-gold outline-none"
+                        value={r.assignedUserId ?? ''}
+                        onChange={(e) => assign(r, e.target.value)}
+                      >
+                        <option value="">Chưa giao</option>
+                        {staff.map((s) => (
+                          <option key={s.id} value={s.id}>{staffLabel(s)}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <span className="text-sm text-brand-ink">{staffName(r.assignedUserId)}</span>
+                    )}
                   </td>
                   <td className="px-3">
                     {cs ? (
@@ -211,7 +244,21 @@ export default function CRM() {
                     )}
                   </td>
                   <td className="px-3">
-                    {r.status ? (
+                    {canChangeStatus(r) ? (
+                      // Click để đổi trạng thái vụ việc ngay (badge màu, là 1 select ẩn viền).
+                      <select
+                        value={r.status ?? ''}
+                        onChange={(e) => changeStatus(r, e.target.value)}
+                        title="Đổi trạng thái vụ việc"
+                        className={`appearance-none cursor-pointer px-2 py-0.5 rounded text-xs font-medium border-0 outline-none ${
+                          CASE_STATUS_VI[r.status ?? '']?.cls ?? 'bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {STATUS_OPTIONS.map((s) => (
+                          <option key={s} value={s}>{CASE_STATUS_VI[s]?.label ?? s}</option>
+                        ))}
+                      </select>
+                    ) : r.status ? (
                       <span
                         className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
                           CASE_STATUS_VI[r.status]?.cls ?? 'bg-gray-100 text-gray-600'

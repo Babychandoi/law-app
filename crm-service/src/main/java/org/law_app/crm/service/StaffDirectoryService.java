@@ -39,6 +39,16 @@ public class StaffDirectoryService {
 
   public record AssignNotify(String userId, String caseId, String serviceName) {}
 
+  /** Change case status on the monolith (source of truth). It re-syncs back via case event. */
+  public void changeCaseStatus(String token, String caseId, String status) {
+    restClient
+        .put()
+        .uri("/customer/status/{id}?status={s}", caseId, status)
+        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+        .retrieve()
+        .toBodilessEntity();
+  }
+
   public List<StaffUser> listStaff(String token) {
     try {
       ApiEnvelope<List<StaffUser>> resp =

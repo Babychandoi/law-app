@@ -72,6 +72,9 @@ const crmService = {
   assign: async (caseId: string, userId: string | null): Promise<CaseRow> =>
     (await gatewayClient.put<ApiResponse<CaseRow>>(`/crm/cases/${caseId}/assign`, { userId })).data
       .data,
+  changeStatus: async (caseId: string, status: string): Promise<void> => {
+    await gatewayClient.put(`/crm/cases/${caseId}/status`, { status });
+  },
   careLogs: async (caseId: string): Promise<CareLog[]> =>
     (await gatewayClient.get<ApiResponse<CareLog[]>>(`/crm/cases/${caseId}/care-logs`)).data.data ??
     [],
