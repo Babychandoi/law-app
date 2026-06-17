@@ -2,10 +2,11 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import { Search, HeartHandshake, UserCog } from 'lucide-react';
 import crmService, { CaseFilter } from '../../../../../service/crm';
+import { CASE_STATUS_VI, CASE_STATUS_OPTIONS, caseStatusLabel } from './caseStatus';
 import { CareAction, CareResult, CareStatus, CaseRow, StaffUser, Tag } from '../../../../../types/crm';
 import CarePopup from './CarePopup';
 
-const STATUS_OPTIONS = ['NEW', 'RECEIVED', 'PROCESSING', 'COMPLETED', 'CANCELED'];
+const STATUS_OPTIONS = CASE_STATUS_OPTIONS;
 const FOLLOWUP_OPTIONS = [
   { v: '', label: 'Hẹn chăm: tất cả' },
   { v: 'today', label: 'Hôm nay' },
@@ -140,7 +141,7 @@ export default function CRM() {
         >
           <option value="">Vụ việc: tất cả</option>
           {STATUS_OPTIONS.map((s) => (
-            <option key={s} value={s}>{s}</option>
+            <option key={s} value={s}>{CASE_STATUS_VI[s]?.label ?? s}</option>
           ))}
         </select>
       </div>
@@ -210,9 +211,17 @@ export default function CRM() {
                     )}
                   </td>
                   <td className="px-3">
-                    <span className="inline-block px-2 py-0.5 rounded text-xs bg-gray-100 text-gray-600">
-                      {r.status ?? '—'}
-                    </span>
+                    {r.status ? (
+                      <span
+                        className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+                          CASE_STATUS_VI[r.status]?.cls ?? 'bg-gray-100 text-gray-600'
+                        }`}
+                      >
+                        {caseStatusLabel(r.status)}
+                      </span>
+                    ) : (
+                      <span className="text-brand-muted">—</span>
+                    )}
                   </td>
                   <td className="px-3">
                     <div className="flex flex-wrap gap-1">

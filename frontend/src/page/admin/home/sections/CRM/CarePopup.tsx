@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import { X } from 'lucide-react';
 import crmService from '../../../../../service/crm';
+import { caseStatusLabel } from './caseStatus';
 import { CareAction, CareLog, CareResult, CareStatus, CaseRow, Tag } from '../../../../../types/crm';
 
 interface Props {
@@ -90,7 +91,7 @@ export default function CarePopup({
         <div className="p-4 bg-gray-50 text-sm grid grid-cols-2 gap-2">
           <div>Email: {caseRow.customerEmail ?? '—'}</div>
           <div>SĐT: {caseRow.customerPhone ?? '—'}</div>
-          <div>Trạng thái vụ việc: {caseRow.status ?? '—'}</div>
+          <div>Trạng thái vụ việc: {caseStatusLabel(caseRow.status)}</div>
           <div>Người phụ trách: {staffName(caseRow.assignedUserId)}</div>
         </div>
 
