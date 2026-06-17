@@ -103,6 +103,15 @@ const AdminChatDashboard: React.FC = () => {
     }
   }, []);
 
+  const fetchStats = useCallback(async () => {
+    try {
+      const data = await chatService.fetchStats(currentAdmin.id);
+      setStats(data);
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  }, [currentAdmin.id]);
+
   const connectWebSocket = useCallback(() => {
     try {
       if (!WS_URL) {
@@ -125,8 +134,10 @@ const AdminChatDashboard: React.FC = () => {
             try {
               const newMessage: ChatMessage = JSON.parse(message.body);
 
-              // Update conversations list
+              // Realtime: refresh the conversation list + stats on every new message
+              // (replaces the old 30s polling).
               fetchConversations();
+              fetchStats();
 
               // If this message is for the currently selected conversation, add it to messages
               if (selectedConversation === newMessage.guestId) {
@@ -197,7 +208,7 @@ const AdminChatDashboard: React.FC = () => {
       console.error('Error connecting WebSocket:', error);
       setIsConnected(false);
     }
-  }, [selectedConversation, fetchConversations, currentAdmin.id]);
+  }, [selectedConversation, fetchConversations, fetchStats, currentAdmin.id]);
 
   const fetchMessages = useCallback(async (guestId: string) => {
     try {
@@ -207,15 +218,6 @@ const AdminChatDashboard: React.FC = () => {
       console.error('Error fetching messages:', error);
     }
   }, []);
-
-  const fetchStats = useCallback(async () => {
-    try {
-      const data = await chatService.fetchStats(currentAdmin.id);
-      setStats(data);
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-    }
-  }, [currentAdmin.id]);
 
   const markConversationAsRead = useCallback(async (guestId: string) => {
     try {
@@ -391,16 +393,8 @@ const AdminChatDashboard: React.FC = () => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchStats();
-      if (!selectedConversation) {
-        fetchConversations();
-      }
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [fetchStats, fetchConversations, selectedConversation]);
+  // Polling removed — conversations + stats now refresh in real time via the
+  // /topic/admin/messages WebSocket handler.
 
   return (
     <div className="flex h-[calc(100vh-64px)] bg-gray-100">
