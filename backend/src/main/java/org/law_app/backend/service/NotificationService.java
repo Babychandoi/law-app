@@ -14,4 +14,7 @@ public interface NotificationService {
   void createNotification(Notification notification);
 
   void createChatNotification(String guestId, String messageContent);
+
+  /** Notify a single staff member that a case was assigned to them (used by the CRM service). */
+  void notifyCaseAssigned(String userId, String caseId, String serviceName);
 }

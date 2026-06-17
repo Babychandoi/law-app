@@ -168,4 +168,34 @@ public class NotificationServiceImpl implements NotificationService {
       log.error("Error creating chat notification for guest {}: {}", guestId, e.getMessage());
     }
   }
+
+  @Override
+  public void notifyCaseAssigned(String userId, String caseId, String serviceName) {
+    try {
+      User user = userRepository.findById(userId).orElse(null);
+      if (user == null) {
+        log.warn("notifyCaseAssigned: user {} not found", userId);
+        return;
+      }
+      Notification notification =
+          notificationRepository.save(
+              Notification.builder()
+                  .title("Bạn được giao một vụ việc")
+                  .content("Vụ việc: " + (serviceName != null ? serviceName : "(không tên)"))
+                  .type("CRM_ASSIGN")
+                  .link("/2025/luatpoip/admin/crm")
+                  .referenceId(caseId)
+                  .createdAt(new Date())
+                  .build());
+
+      NotificationUser nu =
+          NotificationUser.builder().notification(notification).user(user).read(false).build();
+      notificationUserRepository.save(nu);
+      notificationUserRepository.flush();
+      notifyUser(nu);
+      log.info("Notified user {} of assigned case {}", userId, caseId);
+    } catch (Exception e) {
+      log.error("Error notifying case assignment to {}: {}", userId, e.getMessage());
+    }
+  }
 }

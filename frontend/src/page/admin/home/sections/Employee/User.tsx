@@ -277,7 +277,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSave }) => {
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark transition-colors"
               disabled={isLoading}
             >
-              <option value="USER">Người dùng</option>
+              <option value="USER">Nhân viên</option>
               <option value="ADMIN">Quản trị viên</option>
             </select>
           </div>

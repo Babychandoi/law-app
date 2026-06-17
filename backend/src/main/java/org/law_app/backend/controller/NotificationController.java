@@ -42,4 +42,13 @@ public class NotificationController {
         .data(notificationService.markNotificationAsRead(id))
         .build();
   }
+
+  /** Called by the CRM service when a case is assigned, to notify the assignee. */
+  @PostMapping("/assign-case")
+  public ApiResponse<Void> notifyCaseAssigned(@RequestBody AssignNotifyRequest req) {
+    notificationService.notifyCaseAssigned(req.userId(), req.caseId(), req.serviceName());
+    return ApiResponse.<Void>builder().message("Notified").build();
+  }
+
+  public record AssignNotifyRequest(String userId, String caseId, String serviceName) {}
 }

@@ -51,7 +51,7 @@ const UserTable: React.FC<UserTableProps> = ({
                       : 'bg-brand-surface text-brand-goldDark'
                   }`}
                 >
-                  <option value="USER">Người dùng</option>
+                  <option value="USER">Nhân viên</option>
                   <option value="ADMIN">Quản trị viên</option>
                 </select>
               </td>

@@ -129,10 +129,10 @@ const Sidebar: React.FC<{
             </div>
             <div>
               <div className="text-white font-medium">
-                Xin chào, {isAdmin ? 'Admin' : 'Người dùng'}
+                Xin chào, {isAdmin ? 'Quản trị viên' : 'Nhân viên'}
               </div>
               <div className="text-white/70 text-sm">
-                {isAdmin ? 'Quản trị viên' : 'Khách truy cập'}
+                {isAdmin ? 'Quản trị viên' : 'Nhân viên'}
               </div>
             </div>
           </div>

@@ -22,6 +22,23 @@ public class StaffDirectoryService {
     this.restClient = RestClient.builder().baseUrl(monolithBaseUrl).build();
   }
 
+  /** Ask the monolith to create an in-app notification for the assignee (best-effort). */
+  public void notifyCaseAssigned(String token, String userId, String caseId, String serviceName) {
+    try {
+      restClient
+          .post()
+          .uri("/notifications/assign-case")
+          .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+          .body(new AssignNotify(userId, caseId, serviceName))
+          .retrieve()
+          .toBodilessEntity();
+    } catch (Exception e) {
+      log.error("Failed to notify case assignment to {}: {}", userId, e.getMessage());
+    }
+  }
+
+  public record AssignNotify(String userId, String caseId, String serviceName) {}
+
   public List<StaffUser> listStaff(String token) {
     try {
       ApiEnvelope<List<StaffUser>> resp =

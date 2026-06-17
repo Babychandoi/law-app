@@ -63,8 +63,15 @@ public class CrmCaseController {
   }
 
   @PutMapping("/cases/{id}/assign")
-  public ApiResponse<CaseRow> assign(@PathVariable String id, @RequestBody AssignRequest req) {
-    return ApiResponse.ok(caseService.assign(id, req.userId()));
+  public ApiResponse<CaseRow> assign(
+      @PathVariable String id, @RequestBody AssignRequest req, HttpServletRequest request) {
+    CaseRow row = caseService.assign(id, req.userId());
+    // Notify the newly-assigned staff member (skip when un-assigning / assigning to self).
+    if (req.userId() != null && !req.userId().isBlank() && !req.userId().equals(CurrentUser.id())) {
+      directoryService.notifyCaseAssigned(
+          extractToken(request), req.userId(), id, row.serviceName());
+    }
+    return ApiResponse.ok(row);
   }
 
   @GetMapping("/cases/{id}/care-logs")
