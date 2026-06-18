@@ -193,13 +193,13 @@ public class ChatService {
       if (!m.getUserId().equals(senderId)) {
         messagingTemplate.convertAndSendToUser(
             m.getUserId(),
-            "/queue/staff/inbox",
+            "/queue/staff.inbox",
             new InboxEvent("NEW_MESSAGE", conv.getId(), m.getUnreadCount()));
       }
     }
 
     MessageDto dto = toMessageDto(saved);
-    messagingTemplate.convertAndSend("/topic/staff/conv/" + conv.getId(), dto);
+    messagingTemplate.convertAndSend("/topic/staff.conv." + conv.getId(), dto);
     return dto;
   }
 

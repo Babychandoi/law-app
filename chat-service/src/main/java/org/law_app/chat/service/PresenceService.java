@@ -27,7 +27,7 @@ public class PresenceService {
     boolean wasOffline = Boolean.FALSE.equals(redis.hasKey(PRESENCE_PREFIX + userId));
     redis.opsForValue().set(PRESENCE_PREFIX + userId, "1", TTL);
     if (wasOffline) {
-      messagingTemplate.convertAndSend("/topic/staff/presence", new PresenceEvent(userId, true));
+      messagingTemplate.convertAndSend("/topic/staff.presence", new PresenceEvent(userId, true));
     }
   }
 
@@ -38,7 +38,7 @@ public class PresenceService {
 
   public void markOffline(String userId) {
     redis.delete(PRESENCE_PREFIX + userId);
-    messagingTemplate.convertAndSend("/topic/staff/presence", new PresenceEvent(userId, false));
+    messagingTemplate.convertAndSend("/topic/staff.presence", new PresenceEvent(userId, false));
   }
 
   public boolean isOnline(String userId) {

@@ -33,7 +33,7 @@ public class ChatWsController {
   public void typing(@Payload TypingRequest req, Principal principal) {
     presenceService.heartbeat(principal.getName());
     messagingTemplate.convertAndSend(
-        "/topic/staff/conv/" + req.conversationId(),
+        "/topic/staff.conv." + req.conversationId(),
         Map.of("event", "TYPING", "userId", principal.getName()));
   }
 }

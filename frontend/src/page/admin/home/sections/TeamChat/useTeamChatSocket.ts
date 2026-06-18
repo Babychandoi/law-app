@@ -46,10 +46,10 @@ export function useTeamChatSocket(handlers: Handlers) {
       onConnect: () => {
         if (disposed) return;
         setState('CONNECTED');
-        client.subscribe('/user/queue/staff/inbox', (m: IMessage) => {
+        client.subscribe('/user/queue/staff.inbox', (m: IMessage) => {
           handlersRef.current.onInbox?.(JSON.parse(m.body));
         });
-        client.subscribe('/topic/staff/presence', (m: IMessage) => {
+        client.subscribe('/topic/staff.presence', (m: IMessage) => {
           const e = JSON.parse(m.body);
           handlersRef.current.onPresence?.(e.userId, e.online);
         });
@@ -74,7 +74,7 @@ export function useTeamChatSocket(handlers: Handlers) {
     if (!client || !client.connected) return;
     if (convSubRef.current?.id === conversationId) return;
     convSubRef.current?.unsub();
-    const sub = client.subscribe(`/topic/staff/conv/${conversationId}`, (m: IMessage) => {
+    const sub = client.subscribe(`/topic/staff.conv.${conversationId}`, (m: IMessage) => {
       const body = JSON.parse(m.body);
       if (body.event === 'TYPING') {
         handlersRef.current.onTyping?.(body.userId);
