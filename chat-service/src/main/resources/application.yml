@@ -8,7 +8,14 @@ spring:
   # ================= MONGODB (staff-chat DB, isolated from monolith) =================
   data:
     mongodb:
+      # Build connection from chat-specific vars ONLY. We deliberately do NOT reference
+      # SPRING_DATA_MONGODB_* (those belong to the monolith and point at law_app_chat).
+      # The DB name is in the URI; do not also set `database` (it's ignored when uri is present
+      # and only invites confusion). Default DB = law-app-staff-chat, isolated from the monolith.
       uri: mongodb://root:${MONGO_ROOT_PASSWORD}@${CHAT_MONGODB_HOST:law-app-mongodb}:${CHAT_MONGODB_PORT:27017}/${CHAT_MONGODB_DATABASE:law-app-staff-chat}?authSource=admin
+      # Create the @Indexed/unique indexes (e.g. unique directKey) on startup. Without this,
+      # Spring Boot does NOT auto-create them, so the directKey uniqueness was never enforced.
+      auto-index-creation: true
 
     # ================= REDIS (presence + shared token revocation) =================
     redis:

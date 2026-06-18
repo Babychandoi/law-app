@@ -23,6 +23,7 @@ import org.law_app.chat.dto.Dtos.SendMessageRequest;
 import org.law_app.chat.repository.ConversationRepository;
 import org.law_app.chat.repository.MembershipRepository;
 import org.law_app.chat.repository.MessageRepository;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -50,25 +51,34 @@ public class ChatService {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cannot DM yourself");
     }
     String directKey = directKey(me, targetUserId);
-    Conversation conv =
-        conversationRepo
-            .findByDirectKey(directKey)
-            .orElseGet(
-                () -> {
-                  Instant now = Instant.now();
-                  Conversation c =
-                      Conversation.builder()
-                          .type(ConversationType.DIRECT)
-                          .createdBy(me)
-                          .directKey(directKey)
-                          .createdAt(now)
-                          .updatedAt(now)
-                          .build();
-                  c = conversationRepo.save(c);
-                  ensureMembership(c.getId(), me, MemberRole.OWNER, now);
-                  ensureMembership(c.getId(), targetUserId, MemberRole.MEMBER, now);
-                  return c;
-                });
+    List<Conversation> existing = conversationRepo.findByDirectKeyOrderByCreatedAtAsc(directKey);
+    Conversation conv;
+    if (!existing.isEmpty()) {
+      // Reuse the oldest; tolerate legacy duplicates from before the unique index.
+      conv = existing.get(0);
+    } else {
+      Instant now = Instant.now();
+      try {
+        conv =
+            conversationRepo.save(
+                Conversation.builder()
+                    .type(ConversationType.DIRECT)
+                    .createdBy(me)
+                    .directKey(directKey)
+                    .createdAt(now)
+                    .updatedAt(now)
+                    .build());
+        ensureMembership(conv.getId(), me, MemberRole.OWNER, now);
+        ensureMembership(conv.getId(), targetUserId, MemberRole.MEMBER, now);
+      } catch (DuplicateKeyException race) {
+        // A concurrent request created the same DM first (unique directKey index). Reuse it.
+        conv =
+            conversationRepo.findByDirectKeyOrderByCreatedAtAsc(directKey).stream()
+                .findFirst()
+                .orElseThrow(
+                    () -> new ResponseStatusException(HttpStatus.CONFLICT, "Conversation race"));
+      }
+    }
     return toSummary(conv, me);
   }
 

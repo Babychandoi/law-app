@@ -83,6 +83,10 @@ services:
     container_name: law-app-chat
     env_file:
       - .env
+    environment:
+      # Override the monolith's MongoDB DB name that leaks in via .env, so chat-service uses its
+      # OWN isolated database instead of writing into law_app_chat (the guest-chat DB).
+      SPRING_DATA_MONGODB_DATABASE: ${CHAT_MONGODB_DATABASE:-law-app-staff-chat}
     depends_on:
       mongodb:
         condition: service_started
