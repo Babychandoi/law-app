@@ -51,9 +51,18 @@ export default function TeamChat() {
 
   const socket = useTeamChatSocket({
     onMessage: (msg) => {
-      // Only fires for the conversation currently subscribed (the open one): just append.
+      // Only fires for the conversation currently subscribed (the open one): append it.
       if (msg.conversationId === activeIdRef.current) {
         setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
+        // A message arriving in the OPEN conversation is read immediately — clear its unread so
+        // the badge doesn't grow while the user is looking at it. Skip our own echo.
+        if (msg.senderId !== meRef.current) {
+          teamChatService
+            .markRead(msg.conversationId)
+            .then(refreshConversations)
+            .catch(() => undefined);
+          return;
+        }
       }
       refreshConversations();
     },
@@ -123,6 +132,8 @@ export default function TeamChat() {
     if (!text || !activeId) return;
     socket.sendMessage(activeId, text);
     setDraft('');
+    // Sending = I'm clearly viewing this conversation -> clear any unread on it.
+    teamChatService.markRead(activeId).then(refreshConversations).catch(() => undefined);
   };
 
   const handleDraftChange = (v: string) => {
