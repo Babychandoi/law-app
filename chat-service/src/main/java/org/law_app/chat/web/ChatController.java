@@ -11,6 +11,7 @@ import org.law_app.chat.dto.Dtos.CreateGroupRequest;
 import org.law_app.chat.dto.Dtos.LinkRequest;
 import org.law_app.chat.dto.Dtos.MessageDto;
 import org.law_app.chat.service.ChatService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +39,8 @@ public class ChatController {
     return ApiResponse.ok(chatService.openDirect(CurrentUser.id(), req.targetUserId()));
   }
 
+  /** Only admins may create group/channel conversations and name them. */
+  @PreAuthorize("hasRole('ADMIN')")
   @PostMapping("/conversations/group")
   public ApiResponse<ConversationSummary> createGroup(@Valid @RequestBody CreateGroupRequest req) {
     return ApiResponse.ok(chatService.createGroup(CurrentUser.id(), req));

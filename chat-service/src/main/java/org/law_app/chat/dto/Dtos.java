@@ -60,8 +60,12 @@ public final class Dtos {
       Instant createdAt,
       Instant editedAt) {}
 
-  /** Pushed over /user/queue/staff/inbox to bump badges and surface new conversations. */
-  public record InboxEvent(String type, String conversationId, int unreadCount) {}
+  /**
+   * Pushed over /user/queue/staff.inbox to bump badges and surface new conversations. Carries
+   * senderId + preview so the client can notify (toast/sound/browser) without opening the chat.
+   */
+  public record InboxEvent(
+      String type, String conversationId, int unreadCount, String senderId, String preview) {}
 
   public record PresenceEvent(String userId, boolean online) {}
 }

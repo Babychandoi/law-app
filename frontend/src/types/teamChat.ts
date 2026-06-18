@@ -52,4 +52,6 @@ export interface InboxEvent {
   type: string;
   conversationId: string;
   unreadCount: number;
+  senderId?: string | null;
+  preview?: string | null;
 }

@@ -194,7 +194,8 @@ public class ChatService {
         messagingTemplate.convertAndSendToUser(
             m.getUserId(),
             "/queue/staff.inbox",
-            new InboxEvent("NEW_MESSAGE", conv.getId(), m.getUnreadCount()));
+            new InboxEvent(
+                "NEW_MESSAGE", conv.getId(), m.getUnreadCount(), senderId, previewOf(saved)));
       }
     }
 
@@ -231,8 +232,8 @@ public class ChatService {
     for (Membership m : membershipRepo.findByConversationId(conversationId)) {
       messagingTemplate.convertAndSendToUser(
           m.getUserId(),
-          "/queue/staff/inbox",
-          new InboxEvent(eventType, conversationId, m.getUnreadCount()));
+          "/queue/staff.inbox",
+          new InboxEvent(eventType, conversationId, m.getUnreadCount(), null, null));
     }
   }
 

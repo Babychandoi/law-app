@@ -1,14 +1,22 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Send, Paperclip, Users, Plus, Search } from 'lucide-react';
+import { Send, Paperclip, Users, Plus, Search, UserPlus, UsersRound, X } from 'lucide-react';
 import teamChatService from '../../../../../service/teamChat';
 import { getMe } from '../../../../../service/auth';
 import { ConversationSummary, StaffUser, TeamMessage } from '../../../../../types/teamChat';
 import { useTeamChatSocket } from './useTeamChatSocket';
+import {
+  ensureNotificationPermission,
+  playPing,
+  showBrowserNotification,
+} from './notify';
+
+type NewMode = null | 'direct' | 'group';
 
 export default function TeamChat() {
-  // userId comes from /auth/me (token is httpOnly now, not decodable in JS).
+  // userId/role come from /auth/me (token is httpOnly now, not decodable in JS).
   const [me, setMe] = useState<string>('');
+  const [isAdmin, setIsAdmin] = useState(false);
   const [conversations, setConversations] = useState<ConversationSummary[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [messages, setMessages] = useState<TeamMessage[]>([]);
@@ -16,36 +24,61 @@ export default function TeamChat() {
   const [staff, setStaff] = useState<StaffUser[]>([]);
   const [online, setOnline] = useState<Set<string>>(new Set());
   const [typingUser, setTypingUser] = useState<string | null>(null);
-  const [showNew, setShowNew] = useState(false);
+  const [newMode, setNewMode] = useState<NewMode>(null);
   const [search, setSearch] = useState('');
+  // Group-create state
+  const [groupName, setGroupName] = useState('');
+  const [groupMembers, setGroupMembers] = useState<Set<string>>(new Set());
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // activeId in a ref so the socket callback (registered once) sees the current value.
+  const activeIdRef = useRef<string | null>(null);
+  activeIdRef.current = activeId;
 
   const staffName = useCallback(
     (id: string) => staff.find((s) => s.id === id)?.fullName ?? id.slice(0, 8),
     [staff]
   );
+  const staffNameRef = useRef(staffName);
+  staffNameRef.current = staffName;
 
   const refreshConversations = useCallback(async () => {
     setConversations(await teamChatService.listConversations());
   }, []);
 
+  const meRef = useRef(me);
+  meRef.current = me;
+
   const socket = useTeamChatSocket({
     onMessage: (msg) => {
-      setMessages((prev) =>
-        msg.conversationId === activeId && !prev.some((m) => m.id === msg.id)
-          ? [...prev, msg]
-          : prev
-      );
+      // Only fires for the conversation currently subscribed (the open one): just append.
+      if (msg.conversationId === activeIdRef.current) {
+        setMessages((prev) => (prev.some((m) => m.id === msg.id) ? prev : [...prev, msg]));
+      }
       refreshConversations();
     },
     onTyping: (userId) => {
-      if (userId !== me) {
+      if (userId !== meRef.current) {
         setTypingUser(userId);
         setTimeout(() => setTypingUser(null), 3000);
       }
     },
-    onInbox: () => refreshConversations(),
+    onInbox: (ev) => {
+      // Cross-conversation new-message signal (the active conv is handled by onMessage).
+      if (
+        ev.type === 'NEW_MESSAGE' &&
+        ev.senderId &&
+        ev.senderId !== meRef.current &&
+        ev.conversationId !== activeIdRef.current
+      ) {
+        const who = staffNameRef.current(ev.senderId);
+        const preview = ev.preview ?? 'Tin nhắn mới';
+        playPing();
+        toast.info(`${who}: ${preview}`);
+        showBrowserNotification(`Tin nhắn mới từ ${who}`, preview);
+      }
+      refreshConversations();
+    },
     onPresence: (userId, isOnline) =>
       setOnline((prev) => {
         const next = new Set(prev);
@@ -55,9 +88,12 @@ export default function TeamChat() {
       }),
   });
 
-  // Resolve current user id once.
+  // Resolve current user once.
   useEffect(() => {
-    getMe().then((u) => setMe(u?.id ?? ''));
+    getMe().then((u) => {
+      setMe(u?.id ?? '');
+      setIsAdmin(u?.role === 'ADMIN');
+    });
   }, []);
 
   // Initial load
@@ -67,7 +103,6 @@ export default function TeamChat() {
     teamChatService.presence().then((ids) => setOnline(new Set(ids))).catch(() => undefined);
   }, [refreshConversations]);
 
-  // Open a conversation
   const openConversation = useCallback(
     async (id: string) => {
       setActiveId(id);
@@ -109,14 +144,51 @@ export default function TeamChat() {
     }
   };
 
+  const closeNew = () => {
+    setNewMode(null);
+    setSearch('');
+    setGroupName('');
+    setGroupMembers(new Set());
+  };
+
   const startDirect = async (userId: string) => {
     try {
       const conv = await teamChatService.openDirect(userId);
-      setShowNew(false);
+      closeNew();
       await refreshConversations();
       openConversation(conv.id);
     } catch {
       toast.error('Không mở được cuộc trò chuyện');
+    }
+  };
+
+  const toggleGroupMember = (userId: string) =>
+    setGroupMembers((prev) => {
+      const next = new Set(prev);
+      if (next.has(userId)) next.delete(userId);
+      else next.add(userId);
+      return next;
+    });
+
+  const createGroup = async () => {
+    const name = groupName.trim();
+    if (!name) {
+      toast.warning('Nhập tên nhóm');
+      return;
+    }
+    if (groupMembers.size === 0) {
+      toast.warning('Chọn ít nhất 1 thành viên');
+      return;
+    }
+    try {
+      const conv = await teamChatService.createGroup(name, Array.from(groupMembers), 'GROUP');
+      closeNew();
+      await refreshConversations();
+      openConversation(conv.id);
+      toast.success('Đã tạo nhóm');
+    } catch (e: unknown) {
+      const status = (e as { response?: { status?: number } })?.response?.status;
+      toast.error(status === 403 ? 'Chỉ admin được tạo nhóm' : 'Không tạo được nhóm');
     }
   };
 
@@ -126,27 +198,53 @@ export default function TeamChat() {
       : c.name ?? 'Nhóm';
 
   const filteredStaff = staff.filter(
-    (s) => s.id !== me && s.fullName?.toLowerCase().includes(search.toLowerCase())
+    (s) => s.id !== me && (s.fullName ?? '').toLowerCase().includes(search.toLowerCase())
   );
 
   const active = conversations.find((c) => c.id === activeId) ?? null;
+  const totalUnread = conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
 
   return (
     <div className="flex h-[calc(100vh-7rem)] bg-white rounded-xl shadow-soft overflow-hidden">
       {/* Sidebar: conversation list */}
       <aside className="w-80 border-r border-brand-line flex flex-col">
         <div className="p-4 border-b border-brand-line flex items-center justify-between">
-          <h2 className="font-semibold text-brand-ink">Chat nội bộ</h2>
-          <button
-            onClick={() => setShowNew((s) => !s)}
-            className="p-2 rounded-lg hover:bg-brand-surface text-brand-gold"
-            title="Cuộc trò chuyện mới"
-          >
-            <Plus size={18} />
-          </button>
+          <h2 className="font-semibold text-brand-ink flex items-center gap-2">
+            Chat nội bộ
+            {totalUnread > 0 && (
+              <span className="text-xs bg-red-500 text-white rounded-full px-2 py-0.5">
+                {totalUnread}
+              </span>
+            )}
+          </h2>
+          <div className="flex items-center gap-1">
+            <button
+              onClick={() => {
+                ensureNotificationPermission();
+                setNewMode(newMode === 'direct' ? null : 'direct');
+              }}
+              className="p-2 rounded-lg hover:bg-brand-surface text-brand-gold"
+              title="Nhắn riêng"
+            >
+              <Plus size={18} />
+            </button>
+            {isAdmin && (
+              <button
+                onClick={() => {
+                  ensureNotificationPermission();
+                  setNewMode(newMode === 'group' ? null : 'group');
+                }}
+                className="p-2 rounded-lg hover:bg-brand-surface text-brand-goldDark"
+                title="Tạo nhóm (admin)"
+              >
+                <UsersRound size={18} />
+              </button>
+            )}
+          </div>
         </div>
 
-        {showNew && (
+        {/* New direct */}
+        {newMode === 'direct' && (
           <div className="p-3 border-b border-brand-line bg-brand-surface">
             <div className="flex items-center gap-2 mb-2 bg-white rounded-lg px-2 border border-brand-line">
               <Search size={14} className="text-brand-muted" />
@@ -182,6 +280,64 @@ export default function TeamChat() {
           </div>
         )}
 
+        {/* New group (admin only) */}
+        {newMode === 'group' && isAdmin && (
+          <div className="p-3 border-b border-brand-line bg-brand-surface space-y-2">
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-semibold text-brand-ink">Tạo nhóm mới</span>
+              <button onClick={closeNew} className="text-brand-muted hover:text-brand-ink">
+                <X size={16} />
+              </button>
+            </div>
+            <input
+              value={groupName}
+              onChange={(e) => setGroupName(e.target.value)}
+              placeholder="Tên nhóm..."
+              className="w-full rounded-lg border border-brand-line px-3 py-2 text-sm outline-none focus:border-brand-gold"
+            />
+            <div className="flex items-center gap-2 bg-white rounded-lg px-2 border border-brand-line">
+              <Search size={14} className="text-brand-muted" />
+              <input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Tìm thành viên..."
+                className="flex-1 py-2 text-sm outline-none"
+              />
+            </div>
+            <div className="text-xs text-brand-muted">Đã chọn: {groupMembers.size}</div>
+            <div className="max-h-40 overflow-y-auto">
+              {filteredStaff.map((s) => {
+                const checked = groupMembers.has(s.id);
+                return (
+                  <button
+                    key={s.id}
+                    onClick={() => toggleGroupMember(s.id)}
+                    className={`w-full flex items-center gap-2 p-2 rounded-lg text-left ${
+                      checked ? 'bg-brand-gold/15' : 'hover:bg-white'
+                    }`}
+                  >
+                    <span
+                      className={`w-4 h-4 rounded border grid place-items-center ${
+                        checked ? 'bg-brand-gold border-brand-gold text-white' : 'border-brand-line'
+                      }`}
+                    >
+                      {checked && '✓'}
+                    </span>
+                    <span className="text-sm text-brand-ink">{s.fullName}</span>
+                    <span className="text-xs text-brand-muted">{s.position}</span>
+                  </button>
+                );
+              })}
+            </div>
+            <button
+              onClick={createGroup}
+              className="w-full flex items-center justify-center gap-2 rounded-lg bg-brand-gold text-white py-2 text-sm hover:bg-brand-goldDark"
+            >
+              <UserPlus size={16} /> Tạo nhóm
+            </button>
+          </div>
+        )}
+
         <div className="flex-1 overflow-y-auto">
           {conversations.map((c) => (
             <button
@@ -192,7 +348,7 @@ export default function TeamChat() {
               }`}
             >
               <span className="w-10 h-10 rounded-full bg-brand-gold/20 text-brand-goldDark grid place-items-center font-semibold">
-                {convTitle(c).charAt(0)}
+                {c.type === 'DIRECT' ? convTitle(c).charAt(0) : <UsersRound size={18} />}
               </span>
               <span className="flex-1 min-w-0">
                 <span className="flex justify-between items-center">
@@ -220,7 +376,7 @@ export default function TeamChat() {
           <>
             <header className="p-4 border-b border-brand-line flex items-center gap-3">
               <span className="w-9 h-9 rounded-full bg-brand-gold/20 text-brand-goldDark grid place-items-center font-semibold">
-                {convTitle(active).charAt(0)}
+                {active.type === 'DIRECT' ? convTitle(active).charAt(0) : <UsersRound size={18} />}
               </span>
               <div>
                 <div className="font-semibold text-brand-ink">{convTitle(active)}</div>
@@ -289,7 +445,9 @@ export default function TeamChat() {
               <input
                 value={draft}
                 onChange={(e) => handleDraftChange(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
+                onKeyDown={(e) =>
+                  e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())
+                }
                 placeholder="Nhập tin nhắn..."
                 className="flex-1 rounded-full border border-brand-line px-4 py-2 outline-none focus:border-brand-gold"
               />
