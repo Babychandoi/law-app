@@ -24,8 +24,11 @@ spring:
                 - RewritePath=/staff-chat/(?<segment>.*), /chat/${segment}
 
             # ---- Staff chat microservice (WebSocket / SockJS) ----
+            # http:// (NOT ws://): SockJS uses HTTP polling for /info,/xhr and only upgrades the
+            # websocket transport. Spring Cloud Gateway auto-upgrades when it sees the Upgrade
+            # header, so a ws:// uri would break the plain-HTTP /info handshake (400).
             - id: chat-service-ws
-              uri: ${CHAT_SERVICE_WS_URI:ws://law-app-chat:8082}
+              uri: ${CHAT_SERVICE_WS_URI:http://law-app-chat:8082}
               predicates:
                 - Path=/ws-staff/**
 
@@ -36,8 +39,9 @@ spring:
                 - Path=/crm/**
 
             # ---- Monolith WebSocket (guest chat + notifications) ----
+            # http:// for the same SockJS reason as chat-service-ws above.
             - id: monolith-ws
-              uri: ${MONOLITH_WS_URI:ws://law-app-backend:8080}
+              uri: ${MONOLITH_WS_URI:http://law-app-backend:8080}
               predicates:
                 - Path=/ws/**
 
