@@ -63,10 +63,11 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
   @Override
   public void registerStompEndpoints(StompEndpointRegistry registry) {
-    registry
-        .addEndpoint("/ws-staff")
-        .setAllowedOriginPatterns(allowedOrigins.split(","))
-        .withSockJS();
+    // CORS is enforced ONCE at the gateway (the only thing that reaches this service). If we also
+    // set specific allowed origins here, SockJS adds its own Access-Control-Allow-Origin header on
+    // top of the gateway's -> duplicate header -> browser rejects. Allow all here; the gateway is
+    // the real boundary.
+    registry.addEndpoint("/ws-staff").setAllowedOriginPatterns("*").withSockJS();
   }
 
   @Override

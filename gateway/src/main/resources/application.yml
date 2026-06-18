@@ -13,6 +13,10 @@ spring:
             connect-timeout: 5000
             # Generous response timeout; WebSocket routes are exempt from this anyway.
             response-timeout: 60s
+          # SockJS adds its own CORS header on /ws-staff on top of the gateway's globalcors ->
+          # duplicate Access-Control-Allow-Origin. Collapse any duplicated CORS headers to one.
+          default-filters:
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
           routes:
             # ---- Staff chat microservice (REST) ----
             # Public prefix /staff-chat/** keeps it distinct from the monolith's guest /chat/**.
