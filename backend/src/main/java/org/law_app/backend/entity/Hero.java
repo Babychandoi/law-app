@@ -20,6 +20,8 @@ public class Hero {
 
   String title;
   String subtitle;
+
+  @Column(columnDefinition = "TEXT")
   String description;
 
   @OneToOne(fetch = FetchType.LAZY)
