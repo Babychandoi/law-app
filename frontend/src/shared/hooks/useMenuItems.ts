@@ -14,16 +14,17 @@ export function useMenuItems(): ServiceResponse[] {
   useEffect(() => {
     getServices()
       .then((res) => {
-        const groups = (res.data || []).filter((g) => g.children && g.children.length > 0);
+        // Giữ MỌI nhóm có href (kể cả nhóm chưa có dịch vụ con). Nhóm có con -> dropdown;
+        // nhóm rỗng -> Header tự render thành link đơn tới href của nhóm.
+        const groups = (res.data || []).filter((g) => g.href);
         if (!groups.length) return;
 
-        // Mỗi nhóm cha thành 1 mục dropdown trên navbar
         const serviceMenus: ServiceResponse[] = groups.map((g) => ({
           id: g.id,
           title: g.title,
           href: g.href || '/dich-vu',
           icon: g.icon,
-          children: g.children,
+          children: g.children ?? [],
         }));
 
         // Chèn các nhóm dịch vụ sau "Về chúng tôi", trước "Bản tin/Tuyển dụng/Liên hệ"
