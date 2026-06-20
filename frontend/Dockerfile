@@ -18,23 +18,12 @@ COPY package.json package-lock.json* ./
 # Install dependencies
 RUN npm ci --legacy-peer-deps
 
-# Copy source code
+# Copy source code (includes .env.production -> CRA bakes PROD urls into the bundle).
+# No REACT_APP_* build args: the single source of truth is frontend/.env.production,
+# so the prod build can never accidentally fall back to localhost.
 COPY . .
 
-# Build args
-ARG REACT_APP_API_URL
-ARG REACT_APP_WS_URL
-ARG REACT_APP_CHAT_WS_URL
-ARG REACT_APP_GATEWAY_URL
-ARG REACT_APP_STAFF_WS_URL
-
-ENV REACT_APP_API_URL=${REACT_APP_API_URL}
-ENV REACT_APP_WS_URL=${REACT_APP_WS_URL}
-ENV REACT_APP_CHAT_WS_URL=${REACT_APP_CHAT_WS_URL}
-ENV REACT_APP_GATEWAY_URL=${REACT_APP_GATEWAY_URL}
-ENV REACT_APP_STAFF_WS_URL=${REACT_APP_STAFF_WS_URL}
-
-# Build React
+# Build React (NODE_ENV=production -> CRA reads .env.production)
 RUN npm run build
 
 # ==================== PRODUCTION STAGE ====================

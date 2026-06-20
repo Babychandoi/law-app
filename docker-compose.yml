@@ -23,16 +23,12 @@ services:
     restart: unless-stopped
 
   # ==================== FRONTEND ====================
+  # Prod urls come from frontend/.env.production (CRA bakes them at `npm run build`),
+  # not from build args — so the bundle can never fall back to localhost.
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        REACT_APP_API_URL: ${REACT_APP_API_URL}
-        REACT_APP_WS_URL: ${REACT_APP_WS_URL}
-        REACT_APP_CHAT_WS_URL: ${REACT_APP_CHAT_WS_URL}
-        REACT_APP_GATEWAY_URL: ${REACT_APP_GATEWAY_URL}
-        REACT_APP_STAFF_WS_URL: ${REACT_APP_STAFF_WS_URL}
     container_name: law-app-frontend
     networks:
       - law-app-network
