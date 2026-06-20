@@ -158,7 +158,9 @@ function InfoSection({ section, alt }: { section: ServiceSection; alt: boolean }
               <div>
                 {item.title && <h3 className="font-semibold text-brand-ink">{item.title}</h3>}
                 {item.description && (
-                  <p className={`text-sm leading-6 text-brand-muted ${item.title ? 'mt-1' : ''}`}>
+                  <p
+                    className={`whitespace-pre-line text-sm leading-6 text-brand-muted ${item.title ? 'mt-1' : ''}`}
+                  >
                     {item.description}
                   </p>
                 )}
@@ -188,7 +190,9 @@ function BenefitsSection({ section, alt }: { section: ServiceSection; alt: boole
             <div>
               <h3 className="font-semibold text-brand-ink">{item.title}</h3>
               {item.description && (
-                <p className="mt-2 text-[15px] leading-7 text-brand-muted">{item.description}</p>
+                <p className="mt-2 whitespace-pre-line text-[15px] leading-7 text-brand-muted">
+                  {item.description}
+                </p>
               )}
             </div>
           </div>
@@ -220,7 +224,9 @@ function CardsSection({ section, alt }: { section: ServiceSection; alt: boolean 
             <div className="p-5">
               <h3 className="font-semibold text-brand-ink">{item.title}</h3>
               {item.description && (
-                <p className="mt-2 text-sm leading-6 text-brand-muted">{item.description}</p>
+                <p className="mt-2 whitespace-pre-line text-sm leading-6 text-brand-muted">
+                  {item.description}
+                </p>
               )}
             </div>
           </article>
@@ -248,7 +254,9 @@ function ConditionsSection({ section, alt }: { section: ServiceSection; alt: boo
               <div>
                 <h3 className="font-semibold text-brand-ink">{item.title}</h3>
                 {item.description && (
-                  <p className="mt-1 text-sm leading-6 text-brand-muted">{item.description}</p>
+                  <p className="mt-1 whitespace-pre-line text-sm leading-6 text-brand-muted">
+                    {item.description}
+                  </p>
                 )}
               </div>
             </li>
@@ -286,7 +294,9 @@ function FaqSection({ section }: { section: ServiceSection }) {
                   />
                 </button>
                 {isOpen && (
-                  <p className="pb-5 text-[15px] leading-7 text-brand-muted">{item.description}</p>
+                  <p className="whitespace-pre-line pb-5 text-[15px] leading-7 text-brand-muted">
+                    {item.description}
+                  </p>
                 )}
               </div>
             );
@@ -315,8 +325,12 @@ function ComparisonSection({ section, alt }: { section: ServiceSection; alt: boo
             {(section.items ?? []).map((item, i) => (
               <tr key={item.id || i}>
                 <td className="px-5 py-3.5 font-semibold text-brand-ink">{item.title}</td>
-                <td className="px-5 py-3.5 leading-6 text-brand-muted">{item.description}</td>
-                <td className="px-5 py-3.5 leading-6 text-brand-muted">{item.secondary}</td>
+                <td className="whitespace-pre-line px-5 py-3.5 leading-6 text-brand-muted">
+                  {item.description}
+                </td>
+                <td className="whitespace-pre-line px-5 py-3.5 leading-6 text-brand-muted">
+                  {item.secondary}
+                </td>
               </tr>
             ))}
           </tbody>
