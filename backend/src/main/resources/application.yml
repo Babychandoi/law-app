@@ -60,6 +60,11 @@ spring:
           starttls:
             enable: true
 
+# ================= APP NOTIFICATIONS =================
+app:
+  # Inbox nhận thông báo khi có khách đăng ký dịch vụ. Mặc định = email gửi đi.
+  notification-email: ${ADMIN_NOTIFICATION_EMAIL:${EMAIL_USERNAME}}
+
 # ================= LOGGING =================
 logging:
   level:

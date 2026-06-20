@@ -19,7 +19,9 @@ import org.law_app.backend.repository.ChildrenServiceRepository;
 import org.law_app.backend.repository.CustomerRepository;
 import org.law_app.backend.repository.CustomerServiceRepository;
 import org.law_app.backend.service.CustomerServices;
+import org.law_app.backend.service.EmailService;
 import org.law_app.backend.service.NotificationService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,11 @@ public class CustomerServiceImpl implements CustomerServices {
   CustomerMapper customerMapper;
   NotificationService notificationService;
   CaseEventPublisher caseEventPublisher;
+  EmailService emailService;
+
+  @Value("${app.notification-email}")
+  @lombok.experimental.NonFinal
+  String adminEmail;
 
   @Transactional
   @Override
@@ -78,10 +85,62 @@ public class CustomerServiceImpl implements CustomerServices {
               .createdAt(customerService.getCreatedAt())
               .updatedAt(customerService.getUpdatedAt())
               .build());
+
+      // Gửi email (best-effort, @Async — lỗi mail không làm hỏng đăng ký).
+      sendRegistrationEmails(customer, service, customerService);
+
       return true; // Return true if creation is successful
     } catch (Exception e) {
       log.error("Error creating customer service: {}", e.getMessage());
       throw e; // Propagate the exception
+    }
+  }
+
+  /** Báo admin có khách đăng ký + gửi xác nhận cho khách (nếu khách có email). */
+  private void sendRegistrationEmails(
+      Customer customer, ChildrenServices service, CustomerService cs) {
+    String serviceName = service.getTitle();
+    String name = cs.getName() == null || cs.getName().isBlank() ? "Khách hàng" : cs.getName();
+    String phone = customer.getPhone() == null ? "(không có)" : customer.getPhone();
+    String email = customer.getEmail();
+    String note = cs.getDescription() == null ? "" : cs.getDescription();
+
+    // 1) Thông báo nội bộ cho admin/công ty.
+    if (adminEmail != null && !adminEmail.isBlank()) {
+      String adminSubject = "[Đăng ký dịch vụ] " + serviceName + " — " + name;
+      String adminBody =
+          "<h2>Khách hàng mới đăng ký dịch vụ</h2>"
+              + "<p><b>Dịch vụ:</b> "
+              + serviceName
+              + "</p>"
+              + "<p><b>Họ tên:</b> "
+              + name
+              + "</p>"
+              + "<p><b>Điện thoại:</b> "
+              + phone
+              + "</p>"
+              + "<p><b>Email:</b> "
+              + (email == null ? "(không có)" : email)
+              + "</p>"
+              + "<p><b>Ghi chú:</b> "
+              + note
+              + "</p>";
+      emailService.sendEmail(adminEmail, adminSubject, adminBody);
+    }
+
+    // 2) Email xác nhận cho khách (chỉ khi có email hợp lệ).
+    if (email != null && !email.isBlank()) {
+      String custSubject = "Xác nhận đăng ký dịch vụ — Luật Poip";
+      String custBody =
+          "<p>Xin chào <b>"
+              + name
+              + "</b>,</p>"
+              + "<p>Cảm ơn bạn đã đăng ký dịch vụ <b>"
+              + serviceName
+              + "</b> tại Luật Poip. "
+              + "Chúng tôi đã nhận được yêu cầu và sẽ liên hệ với bạn trong thời gian sớm nhất.</p>"
+              + "<p>Trân trọng,<br/>Đội ngũ Luật Poip</p>";
+      emailService.sendEmail(email, custSubject, custBody);
     }
   }
 
