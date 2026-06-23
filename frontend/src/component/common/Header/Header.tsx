@@ -185,7 +185,7 @@ export default function Header() {
           aria-label="Luật Poip - Trang chủ"
         >
           <img
-            src="/assets/images/logo-poip-v2.webp"
+            src="/assets/images/logo-poip-v3.webp"
             alt="Luật Poip"
             width="160"
             height="53"
