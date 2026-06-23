@@ -185,10 +185,11 @@ export default function Header() {
           aria-label="Luật Poip - Trang chủ"
         >
           <img
-            src="/assets/images/logo-poip-v2.png"
+            src="/assets/images/logo-poip-v2.webp"
             alt="Luật Poip"
             width="160"
             height="53"
+            fetchPriority="high"
             decoding="async"
             className="public-header-logo h-[53px] w-40 object-contain"
           />

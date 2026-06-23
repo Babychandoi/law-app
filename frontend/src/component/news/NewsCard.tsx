@@ -26,6 +26,8 @@ export const NewsCard = ({ item, onClick }: NewsCardProps) => {
         <img
           src={item.image}
           alt=""
+          width={384}
+          height={216}
           className="aspect-video w-full object-cover"
           loading="lazy"
           decoding="async"

@@ -89,6 +89,8 @@ export default function New() {
                       <img
                         src={item.image}
                         alt={item.title}
+                        width={320}
+                        height={240}
                         loading="lazy"
                         decoding="async"
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
