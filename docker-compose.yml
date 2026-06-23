@@ -40,8 +40,12 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: law-app-backend
+    mem_limit: 900m
     env_file:
       - .env
+    environment:
+      # Cap JVM heap to ~70% of mem_limit so the container is not OOM-killed (exit 137).
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=70"
     depends_on:
       mysql:
         condition: service_healthy
@@ -61,8 +65,11 @@ services:
       context: ./gateway
       dockerfile: Dockerfile
     container_name: law-app-gateway
+    mem_limit: 500m
     env_file:
       - .env
+    environment:
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=70"
     depends_on:
       - backend
       - chat-service
@@ -77,9 +84,11 @@ services:
       context: ./chat-service
       dockerfile: Dockerfile
     container_name: law-app-chat
+    mem_limit: 700m
     env_file:
       - .env
     environment:
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=70"
       # Override the monolith's MongoDB DB name that leaks in via .env, so chat-service uses its
       # OWN isolated database instead of writing into law_app_chat (the guest-chat DB).
       SPRING_DATA_MONGODB_DATABASE: ${CHAT_MONGODB_DATABASE:-law-app-staff-chat}
@@ -102,9 +111,11 @@ services:
       context: ./crm-service
       dockerfile: Dockerfile
     container_name: law-app-crm
+    mem_limit: 700m
     env_file:
       - .env
     environment:
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=70"
       # Override the shared monolith datasource env so CRM points at its OWN database.
       # (Spring relaxed-binding makes SPRING_DATASOURCE_URL from .env win over application.yml.)
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/law_app_crm?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh
