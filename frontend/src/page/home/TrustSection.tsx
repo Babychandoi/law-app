@@ -24,8 +24,11 @@ export default function TrustSection() {
         <div className="relative">
           <img
             src="/assets/images/law-team.webp"
+            width="960"
+            height="720"
             alt="Đội ngũ Luật Poip trao đổi phương án pháp lý"
             loading="lazy"
+            decoding="async"
             className="aspect-[4/3] w-full object-cover"
           />
           <div className="border border-t-0 border-brand-line bg-brand-surface p-5">

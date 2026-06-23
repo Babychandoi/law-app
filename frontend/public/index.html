@@ -19,15 +19,38 @@
 
     <!-- ✅ Thêm Google Ads tag ở đây -->
     <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17438859267"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag() {
-        dataLayer.push(arguments);
-      }
-      gtag('js', new Date());
+      window.gtag =
+        window.gtag ||
+        function gtag() {
+          window.dataLayer.push(arguments);
+        };
 
-      gtag('config', 'AW-17438859267');
+      function loadGoogleAds() {
+        if (window.__googleAdsLoaded) return;
+        window.__googleAdsLoaded = true;
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'https://www.googletagmanager.com/gtag/js?id=AW-17438859267';
+        document.head.appendChild(script);
+        window.gtag('js', new Date());
+        window.gtag('config', 'AW-17438859267');
+      }
+
+      function scheduleGoogleAds() {
+        if ('requestIdleCallback' in window) {
+          window.requestIdleCallback(loadGoogleAds, { timeout: 4000 });
+        } else {
+          window.setTimeout(loadGoogleAds, 3000);
+        }
+      }
+
+      if (document.readyState === 'complete') {
+        scheduleGoogleAds();
+      } else {
+        window.addEventListener('load', scheduleGoogleAds, { once: true });
+      }
     </script>
     <!-- ✅ Hết phần thêm -->
     <script type="application/ld+json">

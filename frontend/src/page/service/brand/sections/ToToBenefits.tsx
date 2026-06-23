@@ -79,9 +79,12 @@ const ToToBenefits = () => {
                 <div className="text-center p-8">
                   <img
                     src="/assets/images/dangkynhanhieu.webp"
+                    width="900"
+                    height="1200"
                     alt="Giấy chứng nhận đăng ký nhãn hiệu"
                     className="w-full h-auto rounded-lg shadow-sm"
                     loading="lazy"
+                    decoding="async"
                   />
                 </div>
 

@@ -1,72 +1,85 @@
+import { lazy, Suspense } from 'react';
+import type { ReactElement } from 'react';
 import { RouteObject } from 'react-router-dom';
-import PublicLayout from './layouts/PublicLayout';
-import About from '../page/aboutUs';
-import Contact from '../page/contact';
-import Home from '../page/home/Home';
-import Job from '../page/recruitment/Job';
-import Recruitment from '../page/recruitment/recruitment';
-import Service from '../page/service';
-import ServiceDif from '../page/servicedif';
-import News from '../page/news';
-import NewsDetail from '../page/news/section/New';
-import Login from '../page/admin/login/login';
-import AdminHome from '../page/admin/home';
-import ChatManagement from '../page/admin/home/sections/Chat';
-import CustomerManagement from '../page/admin/home/sections/Customer';
-import EmployeeManagement from '../page/admin/home/sections/Employee';
-import JobApplications from '../page/admin/home/sections/JobApplications';
-import PostManagement from '../page/admin/home/sections/Post';
-import Subscribers from '../page/admin/home/sections/Subscribers';
-import LandingPage from '../page/landing/LandingPage';
-import DynamicServicePage from '../page/service/DynamicServicePage';
-import ServiceImages from '../page/admin/home/sections/ServiceImages';
-import ServiceManager from '../page/admin/home/sections/Services';
-import CRM from '../page/admin/home/sections/CRM';
-import CrmConfig from '../page/admin/home/sections/CRM/Config';
-import TeamChat from '../page/admin/home/sections/TeamChat';
+
+const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
+const About = lazy(() => import('../page/aboutUs'));
+const Contact = lazy(() => import('../page/contact'));
+const Home = lazy(() => import('../page/home/Home'));
+const Job = lazy(() => import('../page/recruitment/Job'));
+const Recruitment = lazy(() => import('../page/recruitment/recruitment'));
+const Service = lazy(() => import('../page/service'));
+const ServiceDif = lazy(() => import('../page/servicedif'));
+const News = lazy(() => import('../page/news'));
+const NewsDetail = lazy(() => import('../page/news/section/New'));
+const Login = lazy(() => import('../page/admin/login/login'));
+const AdminHome = lazy(() => import('../page/admin/home'));
+const ChatManagement = lazy(() => import('../page/admin/home/sections/Chat'));
+const CustomerManagement = lazy(() => import('../page/admin/home/sections/Customer'));
+const EmployeeManagement = lazy(() => import('../page/admin/home/sections/Employee'));
+const JobApplications = lazy(() => import('../page/admin/home/sections/JobApplications'));
+const PostManagement = lazy(() => import('../page/admin/home/sections/Post'));
+const Subscribers = lazy(() => import('../page/admin/home/sections/Subscribers'));
+const LandingPage = lazy(() => import('../page/landing/LandingPage'));
+const DynamicServicePage = lazy(() => import('../page/service/DynamicServicePage'));
+const ServiceImages = lazy(() => import('../page/admin/home/sections/ServiceImages'));
+const ServiceManager = lazy(() => import('../page/admin/home/sections/Services'));
+const CRM = lazy(() => import('../page/admin/home/sections/CRM'));
+const CrmConfig = lazy(() => import('../page/admin/home/sections/CRM/Config'));
+const TeamChat = lazy(() => import('../page/admin/home/sections/TeamChat'));
+
+function RouteFallback() {
+  return (
+    <div className="flex min-h-[40vh] items-center justify-center bg-white" role="status">
+      <span className="sr-only">Dang tai noi dung</span>
+    </div>
+  );
+}
+
+function withSuspense(element: ReactElement) {
+  return <Suspense fallback={<RouteFallback />}>{element}</Suspense>;
+}
 
 export const publicRoutes: RouteObject = {
   path: '/',
-  element: <PublicLayout />,
+  element: withSuspense(<PublicLayout />),
   children: [
-    { index: true, element: <Home /> },
-    { path: 've-chung-toi', element: <About /> },
-    { path: 'lien-he', element: <Contact /> },
-    { path: 'tuyen-dung', element: <Recruitment /> },
-    { path: 'tuyen-dung/vi-tri/:id', element: <Job /> },
-    { path: 'dich-vu', element: <Service /> },
-    { path: 'dich-vu-khac', element: <ServiceDif /> },
-    // 9 trang dịch vụ cũ (hardcode) đã chuyển sang trang động — route :slug bên dưới
-    { path: 'tin-tuc', element: <News /> },
-    { path: 'tin-tuc/:id', element: <NewsDetail /> },
-    // Trang dịch vụ động (CMS): mọi đường dẫn chưa khai báo sẽ tra DB theo href.
-    // Các route tĩnh phía trên luôn được ưu tiên khớp trước.
-    { path: ':slug', element: <DynamicServicePage /> },
+    { index: true, element: withSuspense(<Home />) },
+    { path: 've-chung-toi', element: withSuspense(<About />) },
+    { path: 'lien-he', element: withSuspense(<Contact />) },
+    { path: 'tuyen-dung', element: withSuspense(<Recruitment />) },
+    { path: 'tuyen-dung/vi-tri/:id', element: withSuspense(<Job />) },
+    { path: 'dich-vu', element: withSuspense(<Service />) },
+    { path: 'dich-vu-khac', element: withSuspense(<ServiceDif />) },
+    { path: 'tin-tuc', element: withSuspense(<News />) },
+    { path: 'tin-tuc/:id', element: withSuspense(<NewsDetail />) },
+    { path: ':slug', element: withSuspense(<DynamicServicePage />) },
   ],
 };
 
 export const adminRoutes: RouteObject[] = [
-  { path: '/2025/luatpoip/admin/login', element: <Login /> },
+  { path: '/2025/luatpoip/admin/login', element: withSuspense(<Login />) },
   {
     path: '/2025/luatpoip/admin',
-    element: <AdminHome />,
+    element: withSuspense(<AdminHome />),
     children: [
-      { path: 'employees', element: <EmployeeManagement /> },
-      { path: 'posts', element: <PostManagement /> },
-      { path: 'customers', element: <CustomerManagement /> },
-      { path: 'applications', element: <JobApplications /> },
-      { path: 'subscribers', element: <Subscribers /> },
-      { path: 'chats', element: <ChatManagement /> },
-      { path: 'service-images', element: <ServiceImages /> },
-      { path: 'services', element: <ServiceManager /> },
-      { path: 'team-chat', element: <TeamChat /> },
-      { path: 'crm', element: <CRM /> },
-      { path: 'crm/config', element: <CrmConfig /> },
+      { path: 'employees', element: withSuspense(<EmployeeManagement />) },
+      { path: 'posts', element: withSuspense(<PostManagement />) },
+      { path: 'customers', element: withSuspense(<CustomerManagement />) },
+      { path: 'applications', element: withSuspense(<JobApplications />) },
+      { path: 'subscribers', element: withSuspense(<Subscribers />) },
+      { path: 'chats', element: withSuspense(<ChatManagement />) },
+      { path: 'service-images', element: withSuspense(<ServiceImages />) },
+      { path: 'services', element: withSuspense(<ServiceManager />) },
+      { path: 'team-chat', element: withSuspense(<TeamChat />) },
+      { path: 'crm', element: withSuspense(<CRM />) },
+      { path: 'crm/config', element: withSuspense(<CrmConfig />) },
     ],
   },
 ];
 
-// Landing page chạy ads — layout riêng, KHÔNG dùng PublicLayout (không nav/footer)
-export const landingRoutes: RouteObject[] = [{ path: '/lp/:slug', element: <LandingPage /> }];
+export const landingRoutes: RouteObject[] = [
+  { path: '/lp/:slug', element: withSuspense(<LandingPage />) },
+];
 
 export const appRoutes: RouteObject[] = [...adminRoutes, ...landingRoutes, publicRoutes];

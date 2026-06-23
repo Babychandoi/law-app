@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { ApiResponse, LoginResponse } from '../types/admin';
-import { toast } from 'react-toastify';
 
 const axiosClient = axios.create({
   baseURL: process.env.REACT_APP_API_URL,

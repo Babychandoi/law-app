@@ -2,6 +2,8 @@
 .env.*
 .env.*.local
 !.env.example
+# .env in any subdirectory (crm-service, chat-service, gateway, ...)
+**/.env
 
 # Cloudflare Tunnel secrets / binary
 cloudflared/credentials.json

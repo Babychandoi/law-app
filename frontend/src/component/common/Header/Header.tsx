@@ -189,6 +189,7 @@ export default function Header() {
             alt="Luật Poip"
             width="160"
             height="53"
+            decoding="async"
             className="public-header-logo h-[53px] w-40 object-contain"
           />
         </Link>

@@ -25,7 +25,11 @@ const initialForm: CustomerService = {
 const inputClass =
   'min-h-12 w-full rounded-md border border-gray-300 bg-white px-4 py-3 text-base text-gray-950 outline-none transition-colors placeholder:text-gray-500 hover:border-brand-gold focus:border-brand-goldDark focus:ring-2 focus:ring-brand-gold/25';
 
-export default function ConsultationForm() {
+interface ConsultationFormProps {
+  sectionId?: string;
+}
+
+export default function ConsultationForm({ sectionId = 'contact-form' }: ConsultationFormProps) {
   const [formData, setFormData] = useState<CustomerService>(initialForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serviceOptions, setServiceOptions] = useState<ServiceItem[]>([]);
@@ -129,7 +133,7 @@ export default function ConsultationForm() {
 
   return (
     <section
-      id="contact-form"
+      id={sectionId}
       className="scroll-mt-28 bg-brand-ink py-16 text-white sm:py-20"
       aria-labelledby="consultation-heading"
     >

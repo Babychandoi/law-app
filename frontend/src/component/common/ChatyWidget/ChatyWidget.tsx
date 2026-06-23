@@ -1,7 +1,8 @@
 import { Mail, MapPin, MessageCircle, Phone, Plus, X } from 'lucide-react';
-import { useState } from 'react';
-import ChatBox from '../../chat/ChatBox';
+import { lazy, Suspense, useState } from 'react';
 import { contactInfo } from '../../../shared/config/site';
+
+const ChatBox = lazy(() => import('../../chat/ChatBox'));
 
 const contactActions = [
   { id: 'phone', label: `Gọi ${contactInfo.hotline}`, href: contactInfo.phoneHref, icon: Phone },
@@ -30,7 +31,16 @@ export default function ChatyWidget() {
     <>
       {showChat && (
         <div className="fixed inset-x-3 bottom-24 z-50 sm:inset-x-auto sm:right-5 sm:w-96">
-          <ChatBox onClose={() => setShowChat(false)} />
+          <Suspense
+            fallback={
+              <div
+                className="h-96 rounded-lg border border-brand-line bg-white shadow-soft"
+                aria-hidden="true"
+              />
+            }
+          >
+            <ChatBox onClose={() => setShowChat(false)} />
+          </Suspense>
         </div>
       )}
 
