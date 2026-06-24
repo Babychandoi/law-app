@@ -15,9 +15,9 @@ test('homepage hero presents the primary consultation paths', () => {
     })
   ).toBeInTheDocument();
   expect(screen.getByRole('button', { name: /nhận tư vấn ban đầu/i })).toBeInTheDocument();
-  expect(screen.getByRole('link', { name: /gọi 0346.903.548/i })).toHaveAttribute(
+  expect(screen.getByRole('link', { name: /gọi 0947.600.064/i })).toHaveAttribute(
     'href',
-    'tel:0346903548'
+    'tel:0947600064'
   );
   expect(screen.getByRole('link', { name: /nhắn zalo/i })).toBeInTheDocument();
 });

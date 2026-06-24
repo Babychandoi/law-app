@@ -18,11 +18,11 @@ import {
 import { ServiceResponse } from '../../types/service';
 
 export const contactInfo = {
-  hotline: '0346.903.548',
-  phoneHref: 'tel:0346903548',
+  hotline: '0947.600.064',
+  phoneHref: 'tel:0947600064',
   email: 'luatpoip@gmail.com',
   emailHref: 'mailto:luatpoip@gmail.com',
-  zaloHref: 'https://zalo.me/0346903548',
+  zaloHref: 'https://zalo.me/0947600064',
   messengerHref: 'https://m.me/61577813197981',
   mapHref: 'https://maps.app.goo.gl/JgpZ9sgqkDv3Y9NU7',
 };

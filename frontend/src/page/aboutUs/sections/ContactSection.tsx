@@ -4,7 +4,7 @@ import { ContactSectionProps } from '../types';
 
 const ContactSection = ({ title, buttonText }: ContactSectionProps) => {
   const contactItems = [
-    { label: 'Hotline', value: '0346.903.548', href: 'tel:0346903548', icon: Phone },
+    { label: 'Hotline', value: '0947.600.064', href: 'tel:0947600064', icon: Phone },
     { label: 'Email', value: 'luatpoip@gmail.com', href: 'mailto:luatpoip@gmail.com', icon: Mail },
     { label: 'Khu vực hỗ trợ', value: 'Toàn quốc', href: '/lien-he', icon: MapPin },
   ];
