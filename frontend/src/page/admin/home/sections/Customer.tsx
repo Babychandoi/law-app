@@ -100,16 +100,22 @@ const CustomerManagement: React.FC = () => {
 
       socket.onopen = () => {};
 
-      socket.onmessage = async (event) => {
-        await fetchCustomers();
+      // Debounce: gom nhiều thông báo gần nhau thành 1 lần fetch (tránh gọi lại
+      // toàn bộ danh sách liên tục khi có nhiều sự kiện realtime dồn dập).
+      let refetchTimer: ReturnType<typeof setTimeout> | null = null;
+      socket.onmessage = () => {
+        if (refetchTimer) clearTimeout(refetchTimer);
+        refetchTimer = setTimeout(() => {
+          fetchCustomers();
+        }, 800);
       };
 
-      socket.onerror = (err) => {
-        console.error('WebSocket error:', err);
+      socket.onerror = () => {
         toast.error('Lỗi kết nối đến máy chủ thông báo');
       };
 
       return () => {
+        if (refetchTimer) clearTimeout(refetchTimer);
         socket.close();
       };
     }

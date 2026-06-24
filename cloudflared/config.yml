@@ -1,6 +1,12 @@
 tunnel: 89915047-c0df-4906-a383-845af53c76cc
 credentials-file: /etc/cloudflared/credentials.json
 
+# Tái dùng kết nối tới origin (container) để giảm overhead bắt tay mỗi request.
+originRequest:
+  keepAliveConnections: 64
+  keepAliveTimeout: 90s
+  connectTimeout: 30s
+
 ingress:
   # Frontend (React SPA)
   - hostname: luatpoip.com

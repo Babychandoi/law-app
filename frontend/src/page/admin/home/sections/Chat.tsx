@@ -112,6 +112,17 @@ const AdminChatDashboard: React.FC = () => {
     }
   }, [currentAdmin.id]);
 
+  // Debounce: khi nhiều tin nhắn đến dồn dập, gom việc refresh list+stats thành 1 lần
+  // (tránh gọi lại API liên tục mỗi tin — mỗi request tốn ~400ms qua tunnel).
+  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const debouncedRefresh = useCallback(() => {
+    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+    refreshTimerRef.current = setTimeout(() => {
+      fetchConversations();
+      fetchStats();
+    }, 800);
+  }, [fetchConversations, fetchStats]);
+
   const connectWebSocket = useCallback(() => {
     try {
       if (!WS_URL) {
@@ -134,10 +145,8 @@ const AdminChatDashboard: React.FC = () => {
             try {
               const newMessage: ChatMessage = JSON.parse(message.body);
 
-              // Realtime: refresh the conversation list + stats on every new message
-              // (replaces the old 30s polling).
-              fetchConversations();
-              fetchStats();
+              // Realtime: refresh the conversation list + stats (debounced to coalesce bursts).
+              debouncedRefresh();
 
               // If this message is for the currently selected conversation, add it to messages
               if (selectedConversation === newMessage.guestId) {
@@ -208,7 +217,7 @@ const AdminChatDashboard: React.FC = () => {
       console.error('Error connecting WebSocket:', error);
       setIsConnected(false);
     }
-  }, [selectedConversation, fetchConversations, fetchStats, currentAdmin.id]);
+  }, [selectedConversation, fetchConversations, fetchStats, debouncedRefresh, currentAdmin.id]);
 
   const fetchMessages = useCallback(async (guestId: string) => {
     try {
