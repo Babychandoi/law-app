@@ -2,9 +2,10 @@ package org.law_app.backend.config;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponseWrapper;
 import java.io.IOException;
 import java.util.List;
 import org.springframework.core.annotation.Order;
@@ -13,14 +14,21 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * Adds an edge-cacheable Cache-Control header to a whitelist of PUBLIC, user-independent GET
- * endpoints so Cloudflare can serve repeat requests from its edge instead of crossing the tunnel
- * back to this machine (~400ms saved per cache HIT).
+ * Makes a whitelist of PUBLIC, user-independent GET endpoints edge-cacheable so Cloudflare can serve
+ * repeat requests from its edge instead of crossing the tunnel back to this machine (~400ms saved
+ * per cache HIT).
  *
- * <p>Safety: only GET, only the explicit whitelist, and only when the request carries NO
- * Authorization header / auth cookie (so authenticated/admin responses are never cached). {@code
- * s-maxage} targets the CDN; {@code max-age=0} keeps browsers revalidating so users never see stale
- * data for long.
+ * <p>Two things are needed for Cloudflare to actually cache:
+ *
+ * <ol>
+ *   <li>{@code Cache-Control: s-maxage} on the response (added here).
+ *   <li>NO {@code Set-Cookie} on the response — Cloudflare BYPASSES cache for any response carrying a
+ *       cookie. Spring Security's CSRF support sets an XSRF-TOKEN cookie on every request, so for
+ *       these public GETs we suppress it via a response wrapper.
+ * </ol>
+ *
+ * <p>Safety: only GET, only the explicit whitelist, and never when the request is authenticated
+ * (Authorization header or auth cookie present).
  */
 @Component
 @Order(50)
@@ -28,7 +36,6 @@ public class PublicCacheFilter extends OncePerRequestFilter {
 
   private static final long S_MAXAGE_SECONDS = 300; // 5 phút ở Cloudflare edge
 
-  // Path prefixes that are public + the same for everyone + change infrequently.
   private static final List<String> CACHEABLE_PREFIXES =
       List.of(
           "/services",
@@ -44,8 +51,10 @@ public class PublicCacheFilter extends OncePerRequestFilter {
       throws ServletException, IOException {
 
     if (isCacheable(request)) {
-      response.setHeader(
-          "Cache-Control", "public, max-age=0, s-maxage=" + S_MAXAGE_SECONDS);
+      response.setHeader("Cache-Control", "public, max-age=0, s-maxage=" + S_MAXAGE_SECONDS);
+      // Suppress any Set-Cookie (e.g. CSRF XSRF-TOKEN) so Cloudflare will cache the response.
+      chain.doFilter(request, new NoCookieResponseWrapper(response));
+      return;
     }
     chain.doFilter(request, response);
   }
@@ -76,5 +85,29 @@ public class PublicCacheFilter extends OncePerRequestFilter {
       }
     }
     return false;
+  }
+
+  /** Drops Set-Cookie writes so the response stays cacheable by the CDN. */
+  private static class NoCookieResponseWrapper extends HttpServletResponseWrapper {
+    NoCookieResponseWrapper(HttpServletResponse response) {
+      super(response);
+    }
+
+    @Override
+    public void addCookie(Cookie cookie) {
+      // swallow
+    }
+
+    @Override
+    public void setHeader(String name, String value) {
+      if ("Set-Cookie".equalsIgnoreCase(name)) return;
+      super.setHeader(name, value);
+    }
+
+    @Override
+    public void addHeader(String name, String value) {
+      if ("Set-Cookie".equalsIgnoreCase(name)) return;
+      super.addHeader(name, value);
+    }
   }
 }
