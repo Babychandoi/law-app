@@ -184,15 +184,17 @@ export default function Header() {
           className={`flex shrink-0 items-center ${focusClass}`}
           aria-label="Luật Poip - Trang chủ"
         >
-          <img
-            src="/assets/images/logo-poip-v3.webp"
-            alt="Luật Poip"
-            width="160"
-            height="53"
-            fetchPriority="high"
-            decoding="async"
-            className="public-header-logo h-[53px] w-40 object-contain"
-          />
+          <picture>
+            <source srcSet="/assets/images/logo-poip-v3.avif" type="image/avif" />
+            <img
+              src="/assets/images/logo-poip-v3.webp"
+              alt="Luật Poip"
+              width="160"
+              height="53"
+              decoding="async"
+              className="public-header-logo h-[53px] w-40 object-contain"
+            />
+          </picture>
         </Link>
 
         <nav className="hidden xl:block" aria-label="Điều hướng chính">
