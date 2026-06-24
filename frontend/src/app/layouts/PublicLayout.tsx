@@ -1,53 +1,8 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '../../component/common/Header/Header';
+import Footer from '../../component/common/Footer/Footer';
 import ChatyWidget from '../../component/common/ChatyWidget/ChatyWidget';
 import ScrollToTop from '../../component/common/ScrollToTop';
-
-const Footer = lazy(() => import('../../component/common/Footer/Footer'));
-
-function FooterFallback() {
-  return <div style={{ minHeight: 360 }} aria-hidden="true" />;
-}
-
-function DeferredFooter() {
-  const [shouldRender, setShouldRender] = useState(false);
-  const ref = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (shouldRender) return;
-    const element = ref.current;
-    if (!element) return;
-
-    if (!('IntersectionObserver' in window)) {
-      setShouldRender(true);
-      return;
-    }
-
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setShouldRender(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin: '900px 0px' }
-    );
-
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, [shouldRender]);
-
-  return (
-    <div ref={ref} style={!shouldRender ? { minHeight: 360 } : undefined}>
-      {shouldRender ? (
-        <Suspense fallback={<FooterFallback />}>
-          <Footer />
-        </Suspense>
-      ) : null}
-    </div>
-  );
-}
 
 export default function PublicLayout() {
   return (
@@ -64,7 +19,7 @@ export default function PublicLayout() {
         <Outlet />
       </main>
       <ChatyWidget />
-      <DeferredFooter />
+      <Footer />
     </div>
   );
 }

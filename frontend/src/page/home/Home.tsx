@@ -44,7 +44,7 @@ function LazyWhenVisible({
           observer.disconnect();
         }
       },
-      { rootMargin: '700px 0px' }
+      { rootMargin: '1500px 0px' }
     );
 
     observer.observe(element);
