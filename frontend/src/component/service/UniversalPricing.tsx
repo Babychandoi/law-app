@@ -29,13 +29,21 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
     }
   };
 
+  // Số cột tối đa theo số lượng plan để 1-2 card không bị kéo giãn xấu
+  const colsClass =
+    {
+      1: 'lg:grid-cols-1 max-w-md',
+      2: 'sm:grid-cols-2 max-w-3xl',
+      3: 'sm:grid-cols-2 lg:grid-cols-3 max-w-6xl',
+    }[plans.length] || 'sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 max-w-7xl';
+
   // Thiết kế thống nhất: card trắng bo lớn, viền/điểm nhấn vàng, badge "PHỔ BIẾN"
   const renderPlans = () => (
-    <div className="mx-auto flex max-w-6xl flex-wrap justify-center gap-8">
+    <div className={`mx-auto grid grid-cols-1 gap-8 ${colsClass}`}>
       {plans.map((plan) => (
         <div
           key={plan.id}
-          className={`relative flex w-full min-w-[320px] max-w-sm flex-col rounded-2xl border-2 bg-white p-8 ${
+          className={`relative flex flex-col rounded-2xl border-2 bg-white p-8 ${
             plan.featured ? 'border-brand-gold shadow-soft' : 'border-brand-line'
           }`}
         >

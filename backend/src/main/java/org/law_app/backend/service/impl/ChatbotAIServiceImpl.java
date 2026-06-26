@@ -5,13 +5,16 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.law_app.backend.common.SenderType;
 import org.law_app.backend.entity.ChildrenServices;
+import org.law_app.backend.entity.ChatMessage;
 import org.law_app.backend.entity.Company;
 import org.law_app.backend.entity.Location;
 import org.law_app.backend.entity.News;
 import org.law_app.backend.entity.PhoneContact;
 import org.law_app.backend.entity.Services;
 import org.law_app.backend.entity.Social;
+import org.law_app.backend.repository.ChatMessageRepository;
 import org.law_app.backend.repository.ChildrenServiceRepository;
 import org.law_app.backend.repository.CompanyRepository;
 import org.law_app.backend.repository.LocationRepository;
@@ -30,25 +33,38 @@ import org.springframework.web.client.RestTemplate;
 @RequiredArgsConstructor
 public class ChatbotAIServiceImpl implements ChatbotAIService {
 
-  @Value("${deepseek.api.key:}")
-  private String deepseekApiKey;
+  @Value("${ai.chat.provider-name:AI provider}")
+  private String aiProviderName;
 
-  @Value("${deepseek.api.url:https://api.deepseek.com/v1/chat/completions}")
-  private String deepseekApiUrl;
+  @Value("${ai.chat.api.key:}")
+  private String aiApiKey;
 
-  @Value("${deepseek.model:deepseek-chat}")
+  @Value("${ai.chat.api.url:}")
+  private String aiApiUrl;
+
+  @Value("${ai.chat.api.key-required:true}")
+  private boolean aiApiKeyRequired;
+
+  @Value("${ai.chat.model:AI-PRO}")
   private String model;
 
-  @Value("${deepseek.temperature:0.7}")
+  @Value("${ai.chat.temperature:0.7}")
   private double temperature;
 
-  @Value("${deepseek.max-tokens:8192}")
+  @Value("${ai.chat.max-tokens:8192}")
   private int maxTokens;
+
+  @Value("${ai.chat.http-referer:}")
+  private String aiHttpReferer;
+
+  @Value("${ai.chat.x-title:}")
+  private String aiTitle;
 
   @Value("${chatbot.enabled:true}")
   private boolean chatbotEnabled;
 
   private final RestTemplate restTemplate = new RestTemplate();
+  private final ChatMessageRepository chatMessageRepository;
   private final NewsRepository newsRepository;
   private final ServiceRepository serviceRepository;
   private final SocialRepository socialRepository;
@@ -90,6 +106,13 @@ public class ChatbotAIServiceImpl implements ChatbotAIService {
           + // Social info will be inserted here
           "%s\n\n"
           + // Contact info will be inserted here
+          "BO NHO HOI THOAI:\n"
+          + "- Ban duoc cung cap cac tin nhan gan nhat cua cung khach hang trong messages cua request\n"
+          + "- Hay dung lich su nay de theo doi thong tin khach da cung cap nhu ten, nhu cau, ma ho so tam, dich vu quan tam\n"
+          + "- Neu khach hoi lai thong tin da co trong lich su, hay nhac lai dung thong tin do\n"
+          + "- Khong noi rang ban khong the nho neu thong tin dang co trong lich su hoi thoai duoc cung cap\n"
+          + "- Khong tu nhan luu tru dai han; chi dung ngu canh hoi thoai hien tai\n\n"
+          +
           "CÁCH TRẢ LỜI:\n"
           + "- Trả lời ngắn gọn, rõ ràng (tối đa 3-4 câu)\n"
           + "- Thân thiện và chuyên nghiệp\n"
@@ -106,8 +129,11 @@ public class ChatbotAIServiceImpl implements ChatbotAIService {
 
   @Override
   public String generateResponse(String guestId, String message) {
-    if (!chatbotEnabled || deepseekApiKey == null || deepseekApiKey.isEmpty()) {
-      log.warn("Chatbot is disabled or DeepSeek API key is not configured");
+    String chatCompletionsUrl = resolveChatCompletionsUrl(aiApiUrl);
+    if (!chatbotEnabled
+        || !hasText(chatCompletionsUrl)
+        || (aiApiKeyRequired && !hasText(aiApiKey))) {
+      log.warn("Chatbot is disabled or {} API configuration is incomplete", aiProviderName);
       return null;
     }
 
@@ -124,24 +150,10 @@ public class ChatbotAIServiceImpl implements ChatbotAIService {
           String.format(
               SYSTEM_PROMPT_TEMPLATE, companyInfo, servicesInfo, newsInfo, socialInfo, contactInfo);
 
-      // Get or create conversation history
-      List<Map<String, String>> history =
-          conversationHistory.computeIfAbsent(guestId, k -> new ArrayList<>());
+      List<Map<String, String>> history = loadConversationHistory(guestId, message);
+      conversationHistory.put(guestId, history);
 
-      // Add user message to history
-      Map<String, String> userMessage = new HashMap<>();
-      userMessage.put("role", "user");
-      userMessage.put("content", message);
-      history.add(userMessage);
-
-      // Keep only recent messages
-      if (history.size() > MAX_HISTORY_SIZE * 2) {
-        history =
-            new ArrayList<>(history.subList(history.size() - MAX_HISTORY_SIZE * 2, history.size()));
-        conversationHistory.put(guestId, history);
-      }
-
-      // Build messages array for DeepSeek API (OpenAI format)
+      // Build messages array for OpenAI-compatible chat completions APIs.
       List<Map<String, String>> messages = new ArrayList<>();
 
       // Add system prompt
@@ -153,22 +165,30 @@ public class ChatbotAIServiceImpl implements ChatbotAIService {
       // Add conversation history
       messages.addAll(history);
 
-      // Prepare request body for DeepSeek
+      // Prepare request body for an OpenAI-compatible chat completions API.
       Map<String, Object> requestBody = new HashMap<>();
       requestBody.put("model", model);
       requestBody.put("messages", messages);
       requestBody.put("max_tokens", maxTokens);
       requestBody.put("temperature", temperature);
+      requestBody.put("stream", false);
 
       HttpHeaders headers = new HttpHeaders();
       headers.setContentType(MediaType.APPLICATION_JSON);
-      headers.setBearerAuth(deepseekApiKey);
+      if (hasText(aiApiKey)) {
+        headers.setBearerAuth(aiApiKey.trim());
+      }
+      if (hasText(aiHttpReferer)) {
+        headers.set("HTTP-Referer", aiHttpReferer.trim());
+      }
+      if (hasText(aiTitle)) {
+        headers.set("X-Title", aiTitle.trim());
+      }
 
       HttpEntity<Map<String, Object>> request = new HttpEntity<>(requestBody, headers);
 
-      // Call DeepSeek API
       ResponseEntity<Map> response =
-          restTemplate.exchange(deepseekApiUrl, HttpMethod.POST, request, Map.class);
+          restTemplate.exchange(chatCompletionsUrl, HttpMethod.POST, request, Map.class);
 
       if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
         Map<String, Object> responseBody = response.getBody();
@@ -184,19 +204,102 @@ public class ChatbotAIServiceImpl implements ChatbotAIService {
           assistantMessage.put("role", "assistant");
           assistantMessage.put("content", aiResponse);
           history.add(assistantMessage);
+          conversationHistory.put(guestId, trimHistory(history));
 
-          log.info("AI response generated for guest: {} using DeepSeek", guestId);
+          log.info("AI response generated for guest: {} using {}", guestId, aiProviderName);
           return aiResponse;
         }
       }
 
-      log.error("Failed to get valid response from DeepSeek API");
+      log.error("Failed to get valid response from {} API", aiProviderName);
       return null;
 
     } catch (Exception e) {
       log.error("Error generating AI response for guest {}: {}", guestId, e.getMessage(), e);
       return null;
     }
+  }
+
+  private String resolveChatCompletionsUrl(String configuredUrl) {
+    if (!hasText(configuredUrl)) {
+      return "";
+    }
+
+    String trimmedUrl = configuredUrl.trim();
+    String normalizedUrl =
+        trimmedUrl.endsWith("/") ? trimmedUrl.substring(0, trimmedUrl.length() - 1) : trimmedUrl;
+    if (normalizedUrl.endsWith("/v1")) {
+      return normalizedUrl + "/chat/completions";
+    }
+    return trimmedUrl;
+  }
+
+  private boolean hasText(String value) {
+    return value != null && !value.trim().isEmpty();
+  }
+
+  private List<Map<String, String>> loadConversationHistory(String guestId, String currentMessage) {
+    List<Map<String, String>> history = new ArrayList<>();
+
+    if (hasText(guestId)) {
+      try {
+        List<ChatMessage> persistedMessages =
+            chatMessageRepository.findTop20ByGuestIdOrderByCreatedAtDesc(guestId);
+        Collections.reverse(persistedMessages);
+
+        for (ChatMessage chatMessage : persistedMessages) {
+          Map<String, String> aiMessage = toAiMessage(chatMessage);
+          if (aiMessage != null) {
+            history.add(aiMessage);
+          }
+        }
+      } catch (Exception e) {
+        log.warn(
+            "Could not load persisted chat history for guest {}: {}", guestId, e.getMessage());
+      }
+    }
+
+    if (history.isEmpty() || !latestUserMessageMatches(history, currentMessage)) {
+      Map<String, String> userMessage = new HashMap<>();
+      userMessage.put("role", "user");
+      userMessage.put("content", currentMessage);
+      history.add(userMessage);
+    }
+
+    return trimHistory(history);
+  }
+
+  private Map<String, String> toAiMessage(ChatMessage chatMessage) {
+    if (chatMessage == null
+        || !hasText(chatMessage.getContent())
+        || chatMessage.getSenderType() == null) {
+      return null;
+    }
+
+    Map<String, String> aiMessage = new HashMap<>();
+    aiMessage.put("role", chatMessage.getSenderType() == SenderType.GUEST ? "user" : "assistant");
+    aiMessage.put("content", chatMessage.getContent());
+    return aiMessage;
+  }
+
+  private boolean latestUserMessageMatches(
+      List<Map<String, String>> history, String currentMessage) {
+    if (history.isEmpty()) {
+      return false;
+    }
+
+    Map<String, String> lastMessage = history.get(history.size() - 1);
+    return "user".equals(lastMessage.get("role"))
+        && Objects.equals(lastMessage.get("content"), currentMessage);
+  }
+
+  private List<Map<String, String>> trimHistory(List<Map<String, String>> history) {
+    int maxMessages = MAX_HISTORY_SIZE * 2;
+    if (history.size() <= maxMessages) {
+      return new ArrayList<>(history);
+    }
+
+    return new ArrayList<>(history.subList(history.size() - maxMessages, history.size()));
   }
 
   /** Get company information from database */

@@ -95,6 +95,7 @@ export const menuIconMap = {
   about: Users,
   services: Shield,
   'other-services': Briefcase,
+  'more-services': Briefcase,
   news: Newspaper,
   qa: Users,
   contact: MessageCircle,

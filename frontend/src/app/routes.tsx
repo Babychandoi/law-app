@@ -27,6 +27,12 @@ const ServiceManager = lazy(() => import('../page/admin/home/sections/Services')
 const CRM = lazy(() => import('../page/admin/home/sections/CRM'));
 const CrmConfig = lazy(() => import('../page/admin/home/sections/CRM/Config'));
 const TeamChat = lazy(() => import('../page/admin/home/sections/TeamChat'));
+const DocumentLayout = lazy(() => import('../page/documents/DocumentLayout'));
+const TemplateList = lazy(() => import('../page/documents/TemplateList'));
+const TemplateUpload = lazy(() => import('../page/documents/TemplateUpload'));
+const TemplateFieldEditor = lazy(() => import('../page/documents/TemplateFieldEditor'));
+const GenerateDocument = lazy(() => import('../page/documents/GenerateDocument'));
+const GeneratedDocumentList = lazy(() => import('../page/documents/GeneratedDocumentList'));
 
 function RouteFallback() {
   return (
@@ -78,8 +84,27 @@ export const adminRoutes: RouteObject[] = [
   },
 ];
 
+export const documentRoutes: RouteObject[] = [
+  {
+    path: '/2025/luatpoip/tai-lieu',
+    element: withSuspense(<DocumentLayout />),
+    children: [
+      { index: true, element: withSuspense(<TemplateList />) },
+      { path: 'templates/new', element: withSuspense(<TemplateUpload />) },
+      { path: 'templates/:id/edit', element: withSuspense(<TemplateFieldEditor />) },
+      { path: 'generate/:templateId', element: withSuspense(<GenerateDocument />) },
+      { path: 'generated', element: withSuspense(<GeneratedDocumentList />) },
+    ],
+  },
+];
+
 export const landingRoutes: RouteObject[] = [
   { path: '/lp/:slug', element: withSuspense(<LandingPage />) },
 ];
 
-export const appRoutes: RouteObject[] = [...adminRoutes, ...landingRoutes, publicRoutes];
+export const appRoutes: RouteObject[] = [
+  ...adminRoutes,
+  ...documentRoutes,
+  ...landingRoutes,
+  publicRoutes,
+];

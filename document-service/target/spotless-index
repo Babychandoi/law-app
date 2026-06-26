@@ -1,0 +1,27 @@
+jiNNalQRbV3QQCWk4fIaJTiuh1jPxJXfUo3m7sZwuUU=
+src\main\java\org\law_app\document\config\JwtConfig.java 2026-06-25T05:47:20.906689900Z
+src\main\java\org\law_app\document\config\MinioConfig.java 2026-06-25T05:47:20.957636100Z
+src\main\java\org\law_app\document\config\MongoConfig.java 2026-06-25T05:47:20.984069500Z
+src\main\java\org\law_app\document\config\SecurityConfig.java 2026-06-25T05:47:21.136065800Z
+src\main\java\org\law_app\document\DocumentServiceApplication.java 2026-06-25T05:47:21.170051Z
+src\main\java\org\law_app\document\domain\DocumentFieldInputType.java 2026-06-25T05:47:21.205333600Z
+src\main\java\org\law_app\document\domain\DocumentTemplate.java 2026-06-25T05:47:21.270842300Z
+src\main\java\org\law_app\document\domain\DocumentTemplateField.java 2026-06-25T05:47:21.318894200Z
+src\main\java\org\law_app\document\domain\DocumentTemplateStatus.java 2026-06-25T05:47:21.350082100Z
+src\main\java\org\law_app\document\domain\GeneratedDocument.java 2026-06-25T05:47:21.442604600Z
+src\main\java\org\law_app\document\repository\DocumentTemplateRepository.java 2026-06-25T05:47:21.487561500Z
+src\main\java\org\law_app\document\repository\GeneratedDocumentRepository.java 2026-06-25T05:47:21.567403300Z
+src\main\java\org\law_app\document\security\CookieBearerTokenResolver.java 2026-06-25T05:47:21.628377200Z
+src\main\java\org\law_app\document\security\RevocationFilter.java 2026-06-25T05:47:21.700759Z
+src\main\java\org\law_app\document\service\DocumentTemplateService.java 2026-06-25T08:44:29.240533500Z
+src\main\java\org\law_app\document\service\DocumentTemplateServiceImpl.java 2026-06-25T08:45:00.824800500Z
+src\main\java\org\law_app\document\service\DocxTemplateEngine.java 2026-06-25T08:48:48.560887200Z
+src\main\java\org\law_app\document\service\GeneratedDocumentService.java 2026-06-25T05:47:22.179209Z
+src\main\java\org\law_app\document\service\GeneratedDocumentServiceImpl.java 2026-06-25T05:47:22.282754800Z
+src\main\java\org\law_app\document\service\MinioDocumentStorageService.java 2026-06-25T05:47:22.344939700Z
+src\main\java\org\law_app\document\web\ApiResponse.java 2026-06-25T05:47:22.367464700Z
+src\main\java\org\law_app\document\web\CurrentUser.java 2026-06-25T05:47:22.478948200Z
+src\main\java\org\law_app\document\web\DocumentTemplateController.java 2026-06-25T08:45:24.045596600Z
+src\main\java\org\law_app\document\web\Dtos.java 2026-06-25T08:44:14.683380300Z
+src\main\java\org\law_app\document\web\GeneratedDocumentController.java 2026-06-25T05:47:22.695516300Z
+src\main\java\org\law_app\document\web\GlobalExceptionHandler.java 2026-06-25T05:47:22.748316100Z

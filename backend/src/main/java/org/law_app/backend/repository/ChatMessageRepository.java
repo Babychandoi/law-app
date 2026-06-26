@@ -11,6 +11,8 @@ import org.springframework.stereotype.Repository;
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
   List<ChatMessage> findByGuestIdOrderByCreatedAtAsc(String guestId);
 
+  List<ChatMessage> findTop20ByGuestIdOrderByCreatedAtDesc(String guestId);
+
   @Query("{ 'guestId': ?0, 'isRead': false }")
   List<ChatMessage> findUnreadMessagesByGuestId(String guestId);
 

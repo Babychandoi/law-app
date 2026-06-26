@@ -42,6 +42,12 @@ spring:
               predicates:
                 - Path=/crm/**
 
+            # ---- Document template microservice (REST) ----
+            - id: document-service
+              uri: ${DOCUMENT_SERVICE_URI:http://document-service:8084}
+              predicates:
+                - Path=/documents/**
+
             # ---- Monolith WebSocket (guest chat + notifications) ----
             # http:// for the same SockJS reason as chat-service-ws above.
             - id: monolith-ws

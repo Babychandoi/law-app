@@ -1,17 +1,18 @@
-import { ChevronDown, Mail, Menu, Phone, X } from 'lucide-react';
+import { ChevronDown, Mail, Menu, MoreHorizontal, Phone, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { contactInfo, menuIconMap } from '../../../shared/config/site';
 import { useMenuItems } from '../../../shared/hooks/useMenuItems';
 import { dynamicIconMap } from '../../../shared/config/menuIcons';
 import { ServiceResponse } from '../../../types/service';
+import { useOverflowMenu } from './useOverflowMenu';
 
 const focusClass =
   'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-goldDark';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
-    `inline-flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors ${focusClass}`,
+    `inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors ${focusClass}`,
     isActive
       ? 'bg-brand-surface text-brand-goldDark'
       : 'text-gray-700 hover:bg-gray-50 hover:text-brand-goldDark',
@@ -67,6 +68,58 @@ function DesktopMenuItem({ item }: { item: ServiceResponse }) {
               </span>
               <span>{child.title}</span>
             </NavLink>
+          ))}
+        </div>
+      </div>
+    </li>
+  );
+}
+
+// Dropdown "⋯" gom các mục bị tràn khỏi navbar. Mỗi mục cha hiện như một link;
+// nếu có dịch vụ con thì liệt kê con thụt vào dưới, để không mất đường dẫn nào.
+function MoreMenuItem({ items }: { items: ServiceResponse[] }) {
+  const childLinkClass = ({ isActive }: { isActive: boolean }) =>
+    [
+      `flex min-h-11 items-center gap-3 rounded-md px-3 py-3 text-sm transition-colors ${focusClass}`,
+      isActive
+        ? 'bg-brand-surface text-brand-goldDark'
+        : 'text-gray-700 hover:bg-gray-50 hover:text-brand-goldDark',
+    ].join(' ');
+
+  return (
+    <li className="group relative">
+      <button type="button" className={navLinkClass({ isActive: false })} aria-haspopup="true">
+        <MoreHorizontal size={18} aria-hidden="true" />
+        <span className="sr-only">Thêm</span>
+        <ChevronDown
+          size={15}
+          aria-hidden="true"
+          className="transition group-hover:rotate-180 group-focus-within:rotate-180"
+        />
+      </button>
+      <div className="invisible absolute right-0 top-full z-50 w-80 translate-y-2 opacity-0 transition group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:visible group-focus-within:translate-y-0 group-focus-within:opacity-100">
+        <div className="mt-2 max-h-[70vh] overflow-y-auto rounded-lg border border-brand-line bg-white p-2 shadow-soft">
+          {items.map((item) => (
+            <div key={item.id}>
+              <NavLink to={item.href} className={childLinkClass}>
+                <span className="text-brand-goldDark">
+                  <MenuIcon id={item.id} icon={item.icon} size={16} />
+                </span>
+                <span className="font-medium">{item.title}</span>
+              </NavLink>
+              {!!item.children?.length && (
+                <div className="ml-4 border-l border-brand-line pl-2">
+                  {item.children.map((child) => (
+                    <NavLink key={child.id} to={child.href} className={childLinkClass}>
+                      <span className="text-brand-goldDark">
+                        <MenuIcon id={child.id} size={15} />
+                      </span>
+                      <span>{child.title}</span>
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </div>
@@ -145,6 +198,9 @@ function MobileMenuItem({
 
 export default function Header() {
   const menuItems = useMenuItems(); // dropdown dịch vụ nạp từ DB, fallback menu tĩnh
+  const { containerRef, measureRef, visibleCount } = useOverflowMenu(menuItems.length);
+  const visibleItems = menuItems.slice(0, visibleCount);
+  const overflowItems = menuItems.slice(visibleCount);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
   const location = useLocation();
@@ -197,12 +253,33 @@ export default function Header() {
           </picture>
         </Link>
 
-        <nav className="hidden xl:block" aria-label="Điều hướng chính">
-          <ul className="flex items-center gap-1">
+        <nav className="relative hidden min-w-0 flex-1 xl:block" aria-label="Điều hướng chính">
+          {/* Hàng đo ẩn: chứa mọi mục + nút "⋯" để lấy bề rộng, không hiển thị/không bắt sự kiện */}
+          <ul
+            ref={measureRef}
+            aria-hidden="true"
+            className="pointer-events-none invisible absolute left-0 top-0 flex flex-nowrap items-center gap-1"
+          >
             {menuItems.map((item) => (
               <DesktopMenuItem key={item.id} item={item} />
             ))}
+            <li>
+              <span className={navLinkClass({ isActive: false })}>
+                <MoreHorizontal size={18} aria-hidden="true" />
+                <ChevronDown size={15} aria-hidden="true" />
+              </span>
+            </li>
           </ul>
+
+          {/* Hàng thật: chỉ render số mục vừa khít + dropdown "⋯" cho phần dư */}
+          <div ref={containerRef} className="min-w-0">
+            <ul className="flex flex-nowrap items-center justify-end gap-1">
+              {visibleItems.map((item) => (
+                <DesktopMenuItem key={item.id} item={item} />
+              ))}
+              {overflowItems.length > 0 && <MoreMenuItem items={overflowItems} />}
+            </ul>
+          </div>
         </nav>
 
         <a

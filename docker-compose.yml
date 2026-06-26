@@ -46,6 +46,9 @@ services:
     environment:
       # Cap JVM heap to ~70% of mem_limit so the container is not OOM-killed (exit 137).
       JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=70"
+    # Reach the 9Router (AI chat) instance running on the host at host.docker.internal.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       mysql:
         condition: service_healthy
@@ -74,6 +77,7 @@ services:
       - backend
       - chat-service
       - crm-service
+      - document-service
     networks:
       - law-app-network
     restart: unless-stopped
@@ -130,6 +134,38 @@ services:
         condition: service_healthy
     networks:
       - law-app-network
+    restart: unless-stopped
+
+  # ==================== DOCUMENT SERVICE (Word template generation) ====================
+  document-service:
+    build:
+      context: ./document-service
+      dockerfile: Dockerfile
+    container_name: law-app-documents
+    mem_limit: 700m
+    env_file:
+      - .env
+    environment:
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=70"
+      DOCUMENT_MONGODB_HOST: law-app-mongodb
+      DOCUMENT_MONGODB_PORT: 27017
+      DOCUMENT_MONGODB_DATABASE: ${DOCUMENT_MONGODB_DATABASE:-law-app-documents}
+      # Use container-name DNS aliases (these resolve reliably on the running prod network).
+      SPRING_DATA_REDIS_HOST: law-app-redis
+      SPRING_DATA_REDIS_PORT: 6379
+      MINIO_URL: http://law-app-minio:9000
+    depends_on:
+      mongodb:
+        condition: service_started
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    networks:
+      law-app-network:
+        aliases:
+          - document-service
+          - law-app-documents
     restart: unless-stopped
 
   # ==================== RABBITMQ (STOMP broker relay) ====================
@@ -249,6 +285,8 @@ services:
       mc anonymous set public myminio/$${MINIO_BUCKET_IMAGES};
       mc mb myminio/$${MINIO_BUCKET_STAFF_FILES} --ignore-existing;
       mc anonymous set public myminio/$${MINIO_BUCKET_STAFF_FILES};
+      mc mb myminio/$${MINIO_BUCKET_DOCUMENT_TEMPLATES} --ignore-existing;
+      mc mb myminio/$${MINIO_BUCKET_GENERATED_DOCUMENTS} --ignore-existing;
       exit 0;
       "
     networks:
