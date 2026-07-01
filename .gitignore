@@ -13,3 +13,6 @@ cloudflared.exe
 certbot/conf/live/
 certbot/conf/archive/
 certbot/conf/keys/
+
+# Build output (Maven / Java) — build ra, khong commit
+**/target/
