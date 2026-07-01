@@ -26,7 +26,7 @@ export default function TrustSection() {
             src="/assets/images/law-team.webp"
             width="960"
             height="720"
-            alt="Đội ngũ Luật Poip trao đổi phương án pháp lý"
+            alt="Đội ngũ Luật Poip Legal trao đổi phương án pháp lý"
             loading="lazy"
             decoding="async"
             className="aspect-[4/3] w-full object-cover"
@@ -47,7 +47,7 @@ export default function TrustSection() {
         </div>
 
         <div>
-          <p className="text-sm font-semibold text-brand-goldDark">Vì sao chọn Luật Poip</p>
+          <p className="text-sm font-semibold text-brand-goldDark">Vì sao chọn Luật Poip Legal</p>
           <h2
             id="trust-heading"
             className="mt-3 max-w-2xl text-3xl font-semibold leading-tight tracking-[-0.02em] text-gray-950 md:text-4xl"
@@ -55,7 +55,7 @@ export default function TrustSection() {
             Chuyên môn pháp lý đi cùng hướng dẫn thực tế
           </h2>
           <p className="mt-5 max-w-2xl text-base leading-8 text-gray-700">
-            Luật Poip không chỉ xử lý thủ tục. Đội ngũ tập trung giúp khách hàng hiểu rủi ro, chuẩn
+            Luật Poip Legal không chỉ xử lý thủ tục. Đội ngũ tập trung giúp khách hàng hiểu rủi ro, chuẩn
             bị đúng tài liệu và theo dõi công việc một cách chủ động.
           </p>
 
@@ -76,7 +76,7 @@ export default function TrustSection() {
               to="/ve-chung-toi"
               className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-ink px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-black"
             >
-              Tìm hiểu về Luật Poip
+              Tìm hiểu về Luật Poip Legal
               <ArrowRight size={17} aria-hidden="true" />
             </Link>
             <a

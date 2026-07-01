@@ -10,7 +10,7 @@ import { Seo } from '../../../component/Seo';
 export default function Index() {
   const [hero] = useState<Hero>({
     title: 'Dịch vụ xin giấy phép mạng xã hội',
-    subtitle: 'Poip Law',
+    subtitle: 'Poip Legal Law',
     description: 'Dịch vụ chuyên nghiêp - nhanh chóng - tiết kiệm chi phí',
   });
   const [process] = useState<Process[]>([
@@ -56,8 +56,8 @@ export default function Index() {
   return (
     <>
       <Seo
-        title="Dịch vụ xin giấy phép mạng xã hội - Luật Poip"
-        keywords="Dịch vụ xin giấy phép mạng xã hội, giấy phép mạng xã hội, luật sư sở hữu trí tuệ, Luật Poip"
+        title="Dịch vụ xin giấy phép mạng xã hội - Luật Poip Legal"
+        keywords="Dịch vụ xin giấy phép mạng xã hội, giấy phép mạng xã hội, luật sư sở hữu trí tuệ, Luật Poip Legal"
         description="Cung cấp dịch vụ xin giấy phép mạng xã hội nhanh chóng, chuyên nghiệp và tiết kiệm chi phí. Đội ngũ chuyên gia giàu kinh nghiệm hỗ trợ tư vấn miễn phí."
       />
       <HeroService

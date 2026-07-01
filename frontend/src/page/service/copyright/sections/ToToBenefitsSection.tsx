@@ -12,18 +12,18 @@ const ToToBenefitsSection: React.FC = () => {
     {
       icon: <Zap className="w-8 h-8" />,
       title: 'ĐƠN GIẢN - NHANH CHÓNG',
-      description: 'Chỉ với 3 bước đơn giản - Mọi thủ tục Luật Poip lo hết',
+      description: 'Chỉ với 3 bước đơn giản - Mọi thủ tục Luật Poip Legal lo hết',
     },
     {
       icon: <DollarSign className="w-8 h-8" />,
       title: 'TIẾT KIỆM CHI PHÍ',
-      description: 'Mức phí được Luật Poip hỗ trợ',
+      description: 'Mức phí được Luật Poip Legal hỗ trợ',
     },
     {
       icon: <Target className="w-8 h-8" />,
       title: 'KẾT QUẢ BẢO HỘ ĐẠT 100%',
       description:
-        'Luật Poip cam kết về kết quả cho Khách hàng - Hoàn lại tiền cho KH khi kết quả không như mong muốn',
+        'Luật Poip Legal cam kết về kết quả cho Khách hàng - Hoàn lại tiền cho KH khi kết quả không như mong muốn',
     },
   ];
 

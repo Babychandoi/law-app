@@ -27,7 +27,7 @@ VALUES
 
 INSERT INTO company (id, name, representative, tax_code, website_name, email)
 VALUES
-  ('51111111-1111-1111-1111-111111111111', 'Công ty Luật Poip', 'Đại diện công ty', '0100100001', 'luatpoip.com', 'contact@luatpoip.com');
+  ('51111111-1111-1111-1111-111111111111', 'Công ty Luật Poip Legal', 'Đại diện công ty', '0100100001', 'luatpoip.com', 'contact@luatpoip.com');
 
 INSERT INTO location (id, type, address, color, company_id)
 VALUES

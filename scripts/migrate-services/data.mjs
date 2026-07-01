@@ -7,7 +7,7 @@ export const services = [
     href: '/dang-ky-bao-ho-nhan-hieu',
     hero: {
       title: 'Dịch vụ đăng ký nhãn hiệu thương hiệu độc quyền',
-      subtitle: 'Poip Law',
+      subtitle: 'Poip Legal Law',
       description:
         'Đội ngũ Luật Sư chuyên môn cao, hỗ trợ đăng ký nhãn hiệu nhanh chóng, hợp pháp, tránh mọi rủi ro tranh chấp.',
     },
@@ -98,7 +98,7 @@ export const services = [
         type: 'benefits',
         title: 'LỢI ÍCH KHI ĐĂNG KÝ BẢO HỘ NHÃN HIỆU TẠI POIP',
         subtitle:
-          'Luật sư tại Luật Poip mang lại nhiều lợi ích cho việc đăng ký bảo hộ nhãn hiệu, bao gồm:',
+          'Luật sư tại Luật Poip Legal mang lại nhiều lợi ích cho việc đăng ký bảo hộ nhãn hiệu, bao gồm:',
         image: '/assets/images/dangkynhanhieu.webp',
         items: [
           {
@@ -114,7 +114,7 @@ export const services = [
           {
             title: 'Đạt tỷ lệ thành công cao',
             description:
-              'Sử dụng dịch vụ luật sư tại Luật Poip tăng khả năng đạt tỷ lệ thành công cao trong việc đăng ký bảo hộ nhãn hiệu.',
+              'Sử dụng dịch vụ luật sư tại Luật Poip Legal tăng khả năng đạt tỷ lệ thành công cao trong việc đăng ký bảo hộ nhãn hiệu.',
           },
           {
             title: 'Chi phí hợp lý',
@@ -124,7 +124,7 @@ export const services = [
           {
             title: 'Đại diện sở hữu công nghiệp',
             description:
-              'Luật Poip là tổ chức Đại diện SHCN uy tín tại Việt Nam, có đầy đủ năng lực tư vấn và thực thi xác lập quyền SHCN cho khách hàng trong và ngoài nước.',
+              'Luật Poip Legal là tổ chức Đại diện SHCN uy tín tại Việt Nam, có đầy đủ năng lực tư vấn và thực thi xác lập quyền SHCN cho khách hàng trong và ngoài nước.',
           },
         ],
       },
@@ -154,17 +154,17 @@ export const services = [
         step: 'BƯỚC 2',
         title: 'Nộp hồ sơ đăng ký bảo hộ nhãn hiệu',
         description:
-          'Poip Law hỗ trợ toàn bộ quá trình soạn thảo và nộp hồ sơ một cách nhanh chóng và chính xác.',
+          'Poip Legal Law hỗ trợ toàn bộ quá trình soạn thảo và nộp hồ sơ một cách nhanh chóng và chính xác.',
         details: [
           {
             type: '1. Soạn hồ sơ',
-            desc: 'Poip Law sẽ hỗ trợ Quý Khách hàng soạn thảo bộ hồ sơ hoàn chỉnh.',
+            desc: 'Poip Legal Law sẽ hỗ trợ Quý Khách hàng soạn thảo bộ hồ sơ hoàn chỉnh.',
             time: 'Không quá 01 ngày làm việc',
             accuracy: '',
           },
           {
             type: '2. Nộp hồ sơ tại Cục Sở hữu trí tuệ',
-            desc: 'Poip Law sẽ thay mặt Quý Khách hàng nộp hồ sơ.',
+            desc: 'Poip Legal Law sẽ thay mặt Quý Khách hàng nộp hồ sơ.',
             time: 'Không quá 01 ngày làm việc',
             accuracy: '',
           },
@@ -227,7 +227,7 @@ export const services = [
     href: '/dang-ky-bao-ho-ban-quyen',
     hero: {
       title: 'Đăng ký bảo hộ bản quyền',
-      subtitle: 'Poip Law',
+      subtitle: 'Poip Legal Law',
       description:
         'Tư vấn bởi đội ngũ Luật Sư có chuyên môn và kinh nghiệm trong lĩnh vực bảo hộ bản quyền',
     },
@@ -286,16 +286,16 @@ export const services = [
         items: [
           {
             title: 'ĐƠN GIẢN - NHANH CHÓNG',
-            description: 'Chỉ với 3 bước đơn giản - Mọi thủ tục Luật Poip lo hết',
+            description: 'Chỉ với 3 bước đơn giản - Mọi thủ tục Luật Poip Legal lo hết',
           },
           {
             title: 'TIẾT KIỆM CHI PHÍ',
-            description: 'Mức phí được Luật Poip hỗ trợ',
+            description: 'Mức phí được Luật Poip Legal hỗ trợ',
           },
           {
             title: 'KẾT QUẢ BẢO HỘ ĐẠT 100%',
             description:
-              'Luật Poip cam kết về kết quả cho Khách hàng - Hoàn lại tiền cho KH khi kết quả không như mong muốn',
+              'Luật Poip Legal cam kết về kết quả cho Khách hàng - Hoàn lại tiền cho KH khi kết quả không như mong muốn',
           },
         ],
       },
@@ -304,19 +304,19 @@ export const services = [
       {
         step: 'BƯỚC 1',
         title: 'BƯỚC 1',
-        description: 'Poip Law tiếp nhận yêu cầu dịch vụ và tiến hành tư vấn dịch vụ',
+        description: 'Poip Legal Law tiếp nhận yêu cầu dịch vụ và tiến hành tư vấn dịch vụ',
         details: [],
       },
       {
         step: 'BƯỚC 2',
         title: 'BƯỚC 2',
-        description: 'Ký kết hợp đồng và khách hàng cung cấp giấy tờ theo yêu cầu cho Poip Law',
+        description: 'Ký kết hợp đồng và khách hàng cung cấp giấy tờ theo yêu cầu cho Poip Legal Law',
         details: [],
       },
       {
         step: 'BƯỚC 3',
         title: 'BƯỚC 3',
-        description: 'Poip Law tiến hành đăng ký bản quyền và bàn giao kết quả cho khách hàng',
+        description: 'Poip Legal Law tiến hành đăng ký bản quyền và bàn giao kết quả cho khách hàng',
         details: [],
       },
     ],
@@ -356,7 +356,7 @@ export const services = [
     href: '/bao-ho-kieu-dang-cong-nghiep',
     hero: {
       title: 'Đăng ký bảo hộ kiểu dáng',
-      subtitle: 'Poip Law',
+      subtitle: 'Poip Legal Law',
       description:
         'Tư vấn bởi đội ngũ Luật Sư có chuyên môn và kinh nghiệm trong lĩnh vực bảo hộ kiểu dáng.',
     },
@@ -499,7 +499,7 @@ export const services = [
       {
         step: 'BƯỚC 1',
         title: 'BƯỚC 1',
-        description: 'Poip Law tiếp nhận yêu cầu dịch vụ và tiến hành tư vấn dịch vụ',
+        description: 'Poip Legal Law tiếp nhận yêu cầu dịch vụ và tiến hành tư vấn dịch vụ',
         details: [],
       },
       {
@@ -518,7 +518,7 @@ export const services = [
         step: 'BƯỚC 4',
         title: 'BƯỚC 4',
         description:
-          'Luật Poip nộp hồ sơ đăng ký lên cơ quan nhà nước có thẩm quyền và theo dõi quá trình xử lý đơn',
+          'Luật Poip Legal nộp hồ sơ đăng ký lên cơ quan nhà nước có thẩm quyền và theo dõi quá trình xử lý đơn',
         details: [],
       },
     ],
@@ -530,7 +530,7 @@ export const services = [
     href: '/bao-ho-sang-che-giai-phap-huu-ich',
     hero: {
       title: 'Dịch vụ đăng ký bảo hộ sáng chế',
-      subtitle: 'Poip Law',
+      subtitle: 'Poip Legal Law',
       description:
         'Tư vấn bởi đội ngũ Luật Sư có chuyên môn và kinh nghiệm trong lĩnh vực bảo hộ sáng chế.',
     },
@@ -610,11 +610,11 @@ export const services = [
         type: 'benefits',
         title: 'ĐĂNG KÝ BẢO HỘ SÁNG CHẾ TẠI POIP LAW',
         content:
-          'Tại sao chọn Poip Law ?\nVới đội ngũ chuyên gia giàu kinh nghiệm và quy trình làm việc chuyên nghiệp, Poip Law cam kết mang đến dịch vụ đăng ký bảo hộ sáng chế tốt nhất với chi phí hợp lý nhất.',
+          'Tại sao chọn Poip Legal Law ?\nVới đội ngũ chuyên gia giàu kinh nghiệm và quy trình làm việc chuyên nghiệp, Poip Legal Law cam kết mang đến dịch vụ đăng ký bảo hộ sáng chế tốt nhất với chi phí hợp lý nhất.',
         items: [
           {
             title: 'ĐƠN GIẢN - NHANH CHÓNG',
-            description: 'Hoàn toàn do Poip Law thực hiện - Khách hàng chỉ việc nhận kết quả',
+            description: 'Hoàn toàn do Poip Legal Law thực hiện - Khách hàng chỉ việc nhận kết quả',
           },
           {
             title: 'TỶ LỆ THÀNH CÔNG LÊN ĐẾN 99%',
@@ -622,7 +622,7 @@ export const services = [
           },
           {
             title: 'TIẾT KIỆM CHI PHÍ',
-            description: 'Mức phí được Poip Law hỗ trợ tối đa - Mức phí rẻ nhất thị trường',
+            description: 'Mức phí được Poip Legal Law hỗ trợ tối đa - Mức phí rẻ nhất thị trường',
           },
         ],
       },
@@ -659,7 +659,7 @@ export const services = [
       {
         step: 'BƯỚC 1',
         title: 'BƯỚC 1',
-        description: 'Poip Law tiếp nhận yêu cầu dịch vụ và tiến hành tư vấn dịch vụ',
+        description: 'Poip Legal Law tiếp nhận yêu cầu dịch vụ và tiến hành tư vấn dịch vụ',
         details: [],
       },
       {
@@ -689,7 +689,7 @@ export const services = [
     href: '/xu-ly-xam-pham',
     hero: {
       title: 'Dịch vụ xử lý xâm phạm sở hữu trí tuệ',
-      subtitle: 'Poip Law',
+      subtitle: 'Poip Legal Law',
       description:
         'Tư vấn bởi đội ngũ luật sư có chuyên môn và kinh nghiệm trong lĩnh vực sở hữu trí tuệ.',
     },
@@ -698,7 +698,7 @@ export const services = [
         type: 'cards',
         title: 'CÁC DỊCH VỤ MÀ LUẬT POIP CUNG CẤP',
         content:
-          'Cam kết chất lượng dịch vụ\nPoip Law cam kết cung cấp dịch vụ pháp lý chuyên nghiệp, uy tín và hiệu quả nhất cho khách hàng trong lĩnh vực sở hữu trí tuệ.',
+          'Cam kết chất lượng dịch vụ\nPoip Legal Law cam kết cung cấp dịch vụ pháp lý chuyên nghiệp, uy tín và hiệu quả nhất cho khách hàng trong lĩnh vực sở hữu trí tuệ.',
         items: [
           { title: 'Thủ tục phản đối đơn đăng ký bảo hộ nhãn hiệu tại Việt Nam.' },
           {
@@ -753,7 +753,7 @@ export const services = [
     href: '/ma-so-ma-vach',
     hero: {
       title: 'Dịch vụ đăng ký mã số mã vạch',
-      subtitle: 'Poip Law',
+      subtitle: 'Poip Legal Law',
       description: 'Cấp mã ngay trong vòng 1 -> 2 ngày làm việc.',
     },
     sections: [
@@ -762,7 +762,7 @@ export const services = [
         title: 'MÃ SỐ MÃ VẠCH',
         subtitle: 'CHỨNG MINH THƯ CỦA SẢN PHẨM',
         content:
-          'Mã số mã vạch là một thẻ chứng minh xuất xứ và lưu thông của sản phẩm trên các thị trường quốc tế. Mỗi sản phẩm được gắn một mã số duy nhất, tương tự như mã số điện thoại trong viễn thông. Mã vạch là dãy số dưới dạng vạch đặc biệt để máy đọc được.\nHiện nay, có hai loại chính là mã số 1 chiều và mã số hai chiều. Các hệ thống mã vạch phổ biến bao gồm EAN-13, CODE 39, và QR CODE. Luật Poip cung cấp dịch vụ đăng ký mã EAN-13 cho khách hàng.',
+          'Mã số mã vạch là một thẻ chứng minh xuất xứ và lưu thông của sản phẩm trên các thị trường quốc tế. Mỗi sản phẩm được gắn một mã số duy nhất, tương tự như mã số điện thoại trong viễn thông. Mã vạch là dãy số dưới dạng vạch đặc biệt để máy đọc được.\nHiện nay, có hai loại chính là mã số 1 chiều và mã số hai chiều. Các hệ thống mã vạch phổ biến bao gồm EAN-13, CODE 39, và QR CODE. Luật Poip Legal cung cấp dịch vụ đăng ký mã EAN-13 cho khách hàng.',
         image: '/assets/images/masomavach.webp',
         items: [],
       },
@@ -798,27 +798,27 @@ export const services = [
         type: 'benefits',
         title: 'ĐĂNG KÝ MÃ SỐ MÃ VẠCH TẠI LUẬT POIP',
         subtitle:
-          'Luật sư tại Luật Poip có thể mang lại nhiều lợi ích cho việc đăng ký mã số mã vạch, bao gồm:',
+          'Luật sư tại Luật Poip Legal có thể mang lại nhiều lợi ích cho việc đăng ký mã số mã vạch, bao gồm:',
         items: [
           {
             title: 'TƯ VẤN CHUYÊN NGHIỆP',
             description:
-              'Dịch vụ của Luật Poip cung cấp tư vấn chuyên nghiệp, giúp bạn hiểu rõ quy trình đăng ký mã vạch và đảm bảo tuân thủ đúng quy định.',
+              'Dịch vụ của Luật Poip Legal cung cấp tư vấn chuyên nghiệp, giúp bạn hiểu rõ quy trình đăng ký mã vạch và đảm bảo tuân thủ đúng quy định.',
           },
           {
             title: 'THỦ TỤC NHANH CHÓNG',
             description:
-              'Đăng ký mã vạch thông qua Luật Poip giúp bạn tiết kiệm thời gian với quy trình đăng ký nhanh chóng và hiệu quả.',
+              'Đăng ký mã vạch thông qua Luật Poip Legal giúp bạn tiết kiệm thời gian với quy trình đăng ký nhanh chóng và hiệu quả.',
           },
           {
             title: 'TIẾT KIỆM CHI PHÍ',
             description:
-              'Sử dụng dịch vụ của Luật Poip giúp bạn tiết kiệm tiền bạc so với việc tự thực hiện thủ tục đăng ký.',
+              'Sử dụng dịch vụ của Luật Poip Legal giúp bạn tiết kiệm tiền bạc so với việc tự thực hiện thủ tục đăng ký.',
           },
           {
             title: 'CẤP MÃ TRONG VÒNG 1 NGÀY',
             description:
-              'Một lợi ích đáng chú ý, Luật Poip thường cấp mã vạch cho bạn trong vòng 1 ngày, giúp bạn triển khai sản phẩm nhanh chóng.',
+              'Một lợi ích đáng chú ý, Luật Poip Legal thường cấp mã vạch cho bạn trong vòng 1 ngày, giúp bạn triển khai sản phẩm nhanh chóng.',
           },
         ],
       },
@@ -840,7 +840,7 @@ export const services = [
         step: 'BƯỚC 3',
         title: 'BƯỚC 3',
         description:
-          'Luật Poip tiến hành đăng ký mã số mã vạch và bàn giao kết quả cho khách hàng',
+          'Luật Poip Legal tiến hành đăng ký mã số mã vạch và bàn giao kết quả cho khách hàng',
         details: [],
       },
     ],
@@ -862,8 +862,8 @@ export const services = [
     href: '/giay-phep-doanh-nghiep-khoa-hoc-cong-nghe',
     hero: {
       title: 'Giấy phép Doanh nghiệp Khoa học Công nghệ',
-      subtitle: 'Poip Law',
-      description: 'Dich vụ cấp Giấy chứng nhận Doanh nghiệp Khoa học và Công nghệ tại Poip Law',
+      subtitle: 'Poip Legal Law',
+      description: 'Dich vụ cấp Giấy chứng nhận Doanh nghiệp Khoa học và Công nghệ tại Poip Legal Law',
     },
     sections: [
       {
@@ -931,7 +931,7 @@ export const services = [
       {
         step: 'BƯỚC 2',
         title: 'BƯỚC 2',
-        description: 'Khách hàng cung cấp thông tin - Luật Poip tiến hành soạn thảo hồ sơ',
+        description: 'Khách hàng cung cấp thông tin - Luật Poip Legal tiến hành soạn thảo hồ sơ',
         details: [],
       },
       {
@@ -955,7 +955,7 @@ export const services = [
     href: '/dang-ky-giay-phep-mang-xa-hoi',
     hero: {
       title: 'Dịch vụ xin giấy phép mạng xã hội',
-      subtitle: 'Poip Law',
+      subtitle: 'Poip Legal Law',
       description: 'Dịch vụ chuyên nghiêp - nhanh chóng - tiết kiệm chi phí',
     },
     sections: [
@@ -1041,7 +1041,7 @@ export const services = [
     href: '/tu-van-soan-thao-hop-dong',
     hero: {
       title: 'Dịch vụ Tư vấn soạn thảo Hợp đồng',
-      subtitle: 'Poip Law',
+      subtitle: 'Poip Legal Law',
       description: 'Tư vấn bởi đội ngũ Luật Sư có chuyên môn và kinh nghiệm trong lĩnh vực',
     },
     sections: [
@@ -1050,7 +1050,7 @@ export const services = [
         title: 'CÁC DẠNG HỢP ĐỒNG',
         subtitle: 'MÀ LUẬT POIP TƯ VẤN SOẠN THẢO',
         content:
-          'Cần hỗ trợ tư vấn pháp lý?\nĐội ngũ luật sư chuyên nghiệp của Poip sẵn sàng hỗ trợ bạn soạn thảo và tư vấn chi tiết cho từng loại hợp đồng',
+          'Cần hỗ trợ tư vấn pháp lý?\nĐội ngũ luật sư chuyên nghiệp của Poip Legal sẵn sàng hỗ trợ bạn soạn thảo và tư vấn chi tiết cho từng loại hợp đồng',
         items: [
           { title: 'Hợp đồng lao động' },
           { title: 'Hợp đồng mua bán' },
@@ -1068,20 +1068,20 @@ export const services = [
         type: 'benefits',
         title: 'LỢI ÍCH KHI SỬ DỤNG DỊCH VỤ CỦA LUẬT POIP',
         content:
-          'Sẵn sàng trải nghiệm?\nHãy để Poip Law đồng hành cùng bạn trong mọi vấn đề pháp lý',
+          'Sẵn sàng trải nghiệm?\nHãy để Poip Legal Law đồng hành cùng bạn trong mọi vấn đề pháp lý',
         items: [
           {
             title: 'ĐƠN GIẢN - NHANH CHÓNG',
-            description: 'Chỉ với 3 bước đơn giản - Mọi thủ tục Luật Poip lo hết',
+            description: 'Chỉ với 3 bước đơn giản - Mọi thủ tục Luật Poip Legal lo hết',
           },
           {
             title: 'TIẾT KIỆM CHI PHÍ',
-            description: 'Mức phí được Luật Poip hỗ trợ',
+            description: 'Mức phí được Luật Poip Legal hỗ trợ',
           },
           {
             title: 'KẾT QUẢ HƠN MONG ĐỢI - HỖ TRỢ CHỈNH SỬA THEO YÊU CẦU',
             description:
-              'Luật Poip cam kết về kết quả cho Khách hàng - Hoàn lại tiền cho KH khi kết quả không như mong muốn',
+              'Luật Poip Legal cam kết về kết quả cho Khách hàng - Hoàn lại tiền cho KH khi kết quả không như mong muốn',
           },
         ],
       },

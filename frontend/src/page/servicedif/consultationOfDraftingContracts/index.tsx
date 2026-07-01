@@ -9,7 +9,7 @@ import { Seo } from '../../../component/Seo';
 export default function Index() {
   const [hero] = useState<Hero>({
     title: 'Dịch vụ Tư vấn soạn thảo Hợp đồng',
-    subtitle: 'Poip Law',
+    subtitle: 'Poip Legal Law',
     description: 'Tư vấn bởi đội ngũ Luật Sư có chuyên môn và kinh nghiệm trong lĩnh vực',
   });
   const [process] = useState<Process[]>([
@@ -38,9 +38,9 @@ export default function Index() {
   return (
     <>
       <Seo
-        title="Dịch vụ Tư vấn soạn thảo Hợp đồng - Luật Poip"
-        keywords="Dịch vụ tư vấn soạn thảo hợp đồng, hợp đồng thương mại, hợp đồng dân sự, luật sư hợp đồng, Luật Poip"
-        description="Luật Poip cung cấp dịch vụ tư vấn soạn thảo hợp đồng từ A đến Z. Đội ngũ chuyên viên giỏi, nhiều kinh nghiệm."
+        title="Dịch vụ Tư vấn soạn thảo Hợp đồng - Luật Poip Legal"
+        keywords="Dịch vụ tư vấn soạn thảo hợp đồng, hợp đồng thương mại, hợp đồng dân sự, luật sư hợp đồng, Luật Poip Legal"
+        description="Luật Poip Legal cung cấp dịch vụ tư vấn soạn thảo hợp đồng từ A đến Z. Đội ngũ chuyên viên giỏi, nhiều kinh nghiệm."
       />
       <HeroService
         title={hero.title}

@@ -89,7 +89,7 @@ export default function LegalServicesSection() {
           <div className="max-w-2xl lg:justify-self-end">
             <p className="text-base leading-7 text-gray-700">
               Mỗi nhu cầu pháp lý có một lộ trình khác nhau. Bắt đầu từ nhóm dịch vụ phù hợp, hoặc
-              liên hệ để đội ngũ Luật Poip giúp xác định bước tiếp theo.
+              liên hệ để đội ngũ Luật Poip Legal giúp xác định bước tiếp theo.
             </p>
             <Link
               to="/dich-vu"

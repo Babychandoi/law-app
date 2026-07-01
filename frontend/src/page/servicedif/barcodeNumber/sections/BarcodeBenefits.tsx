@@ -26,22 +26,22 @@ const BarcodeBenefits: React.FC = () => {
     {
       title: 'TƯ VẤN CHUYÊN NGHIỆP',
       description:
-        'Dịch vụ của Luật Poip cung cấp tư vấn chuyên nghiệp, giúp bạn hiểu rõ quy trình đăng ký mã vạch và đảm bảo tuân thủ đúng quy định.',
+        'Dịch vụ của Luật Poip Legal cung cấp tư vấn chuyên nghiệp, giúp bạn hiểu rõ quy trình đăng ký mã vạch và đảm bảo tuân thủ đúng quy định.',
     },
     {
       title: 'THỦ TỤC NHANH CHÓNG',
       description:
-        'Đăng ký mã vạch thông qua Luật Poip giúp bạn tiết kiệm thời gian với quy trình đăng ký nhanh chóng và hiệu quả.',
+        'Đăng ký mã vạch thông qua Luật Poip Legal giúp bạn tiết kiệm thời gian với quy trình đăng ký nhanh chóng và hiệu quả.',
     },
     {
       title: 'TIẾT KIỆM CHI PHÍ',
       description:
-        'Sử dụng dịch vụ của Luật Poip giúp bạn tiết kiệm tiền bạc so với việc tự thực hiện thủ tục đăng ký.',
+        'Sử dụng dịch vụ của Luật Poip Legal giúp bạn tiết kiệm tiền bạc so với việc tự thực hiện thủ tục đăng ký.',
     },
     {
       title: 'CẤP MÃ TRONG VÒNG 1 NGÀY',
       description:
-        'Một lợi ích đáng chú ý, Luật Poip thường cấp mã vạch cho bạn trong vòng 1 ngày, giúp bạn triển khai sản phẩm nhanh chóng.',
+        'Một lợi ích đáng chú ý, Luật Poip Legal thường cấp mã vạch cho bạn trong vòng 1 ngày, giúp bạn triển khai sản phẩm nhanh chóng.',
     },
   ];
 
@@ -72,7 +72,7 @@ const BarcodeBenefits: React.FC = () => {
       <div className="mt-10 mb-8 text-center">
         <h2 className="text-3xl font-bold text-gray-800">ĐĂNG KÝ MÃ SỐ MÃ VẠCH TẠI LUẬT POIP</h2>
         <h5 className="text-lg text-gray-600 mt-2">
-          Luật sư tại Luật Poip có thể mang lại nhiều lợi ích cho việc đăng ký mã số mã vạch, bao
+          Luật sư tại Luật Poip Legal có thể mang lại nhiều lợi ích cho việc đăng ký mã số mã vạch, bao
           gồm:
         </h5>
       </div>

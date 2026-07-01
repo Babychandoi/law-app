@@ -23,7 +23,7 @@ const ContactSection = ({ title, buttonText }: ContactSectionProps) => {
             {title}
           </h2>
           <p className="mt-4 leading-7 text-gray-300">
-            Chia sẻ nhu cầu của bạn để đội ngũ Luật Poip xác định hướng xử lý và bước chuẩn bị phù
+            Chia sẻ nhu cầu của bạn để đội ngũ Luật Poip Legal xác định hướng xử lý và bước chuẩn bị phù
             hợp.
           </p>
         </div>

@@ -16,7 +16,7 @@ const ToToBenefitsComponent: React.FC = () => {
     {
       id: 1,
       title: 'ĐƠN GIẢN - NHANH CHÓNG',
-      description: 'Chỉ với 3 bước đơn giản - Mọi thủ tục Luật Poip lo hết',
+      description: 'Chỉ với 3 bước đơn giản - Mọi thủ tục Luật Poip Legal lo hết',
       icon: <Zap className="w-8 h-8" />,
       color: 'text-emerald-600',
       bgGradient: ' ',
@@ -25,7 +25,7 @@ const ToToBenefitsComponent: React.FC = () => {
     {
       id: 2,
       title: 'TIẾT KIỆM CHI PHÍ',
-      description: 'Mức phí được Luật Poip hỗ trợ',
+      description: 'Mức phí được Luật Poip Legal hỗ trợ',
       icon: <DollarSign className="w-8 h-8" />,
       color: 'text-brand-goldDark',
       bgGradient: ' ',
@@ -35,7 +35,7 @@ const ToToBenefitsComponent: React.FC = () => {
       id: 3,
       title: 'KẾT QUẢ HƠN MONG ĐỢI - HỖ TRỢ CHỈNH SỬA THEO YÊU CẦU',
       description:
-        'Luật Poip cam kết về kết quả cho Khách hàng - Hoàn lại tiền cho KH khi kết quả không như mong muốn',
+        'Luật Poip Legal cam kết về kết quả cho Khách hàng - Hoàn lại tiền cho KH khi kết quả không như mong muốn',
       icon: <Award className="w-8 h-8" />,
       color: 'text-brand-goldDark',
       bgGradient: ' ',
@@ -141,7 +141,7 @@ const ToToBenefitsComponent: React.FC = () => {
             <div className="bg-white rounded-xl px-8 py-12">
               <h3 className="text-3xl font-bold text-brand-ink mb-4">Sẵn sàng trải nghiệm?</h3>
               <p className="text-slate-600 text-lg mb-8">
-                Hãy để Poip Law đồng hành cùng bạn trong mọi vấn đề pháp lý
+                Hãy để Poip Legal Law đồng hành cùng bạn trong mọi vấn đề pháp lý
               </p>
               <button
                 type="button"

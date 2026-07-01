@@ -75,7 +75,7 @@ export default function LandingForm({ source, serviceTitleMatch, id }: LandingFo
       await Swal.fire({
         icon: 'success',
         title: 'Đã nhận yêu cầu tư vấn',
-        text: res.message || 'Đội ngũ Luật Poip sẽ liên hệ với bạn trong thời gian sớm nhất.',
+        text: res.message || 'Đội ngũ Luật Poip Legal sẽ liên hệ với bạn trong thời gian sớm nhất.',
       });
       setName('');
       setPhone('+84');

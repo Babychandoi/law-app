@@ -41,7 +41,7 @@ export default function DocumentLayout() {
       <header className="sticky top-0 z-20 border-b border-brand-line bg-white/90 backdrop-blur">
         <div className="mx-auto max-w-7xl px-4 py-4 flex flex-wrap items-center justify-between gap-3">
           <div>
-            <p className="text-xs uppercase tracking-[0.25em] text-brand-goldDark">Poip Law</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-brand-goldDark">Poip Legal Law</p>
             <h1 className="text-2xl font-semibold">Hồ sơ theo mẫu</h1>
           </div>
           <div className="flex items-center gap-2 text-sm">

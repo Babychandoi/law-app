@@ -1,5 +1,5 @@
 ---
-name: Luật Poip
+name: Luật Poip Legal
 description: Clear, credible legal guidance that turns uncertainty into consultation.
 colors:
   counsel-ink: "#171717"
@@ -74,13 +74,13 @@ components:
     padding: "12px 16px"
 ---
 
-# Design System: Luật Poip
+# Design System: Luật Poip Legal
 
 ## 1. Overview
 
 **Creative North Star: "Clear Counsel"**
 
-Luật Poip should feel like a focused consultation with a trusted legal expert: composed, direct, and easy to follow. The dominant public-site system uses deep near-black, restrained gold, white, and a quiet off-white surface to establish authority without making the experience severe or distant.
+Luật Poip Legal should feel like a focused consultation with a trusted legal expert: composed, direct, and easy to follow. The dominant public-site system uses deep near-black, restrained gold, white, and a quiet off-white surface to establish authority without making the experience severe or distant.
 
 Hierarchy and plain-language content do the persuasive work. Imagery demonstrates real legal and business contexts; color marks important actions and navigation states. The system explicitly rejects flashy gradients, excessive animations, generic corporate templates, and dense legal jargon.
 

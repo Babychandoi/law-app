@@ -103,11 +103,11 @@ public class JobApplicationEmailServiceImpl implements JobApplicationEmailServic
 
                         <p>Nếu có bất kỳ thắc mắc nào, vui lòng liên hệ với chúng tôi qua email này.</p>
 
-                        <p style="margin-top: 30px;">Trân trọng,<br><strong>Đội ngũ Tuyển dụng - Luật Poip</strong></p>
+                        <p style="margin-top: 30px;">Trân trọng,<br><strong>Đội ngũ Tuyển dụng - Luật Poip Legal</strong></p>
                     </div>
                     <div class="footer">
                         <p>Email này được gửi tự động, vui lòng không trả lời trực tiếp.</p>
-                        <p>© 2026 Luật Poip. All rights reserved.</p>
+                        <p>© 2026 Luật Poip Legal. All rights reserved.</p>
                     </div>
                 </div>
             </body>
@@ -153,11 +153,11 @@ public class JobApplicationEmailServiceImpl implements JobApplicationEmailServic
 
                         %s
 
-                        <p style="margin-top: 30px;">Trân trọng,<br><strong>Đội ngũ Tuyển dụng - Luật Poip</strong></p>
+                        <p style="margin-top: 30px;">Trân trọng,<br><strong>Đội ngũ Tuyển dụng - Luật Poip Legal</strong></p>
                     </div>
                     <div class="footer">
                         <p>Email này được gửi tự động, vui lòng không trả lời trực tiếp.</p>
-                        <p>© 2026 Luật Poip. All rights reserved.</p>
+                        <p>© 2026 Luật Poip Legal. All rights reserved.</p>
                     </div>
                 </div>
             </body>
@@ -224,7 +224,7 @@ public class JobApplicationEmailServiceImpl implements JobApplicationEmailServic
       case "ACCEPTED":
         return """
                     <p><strong>Chúc mừng!</strong> Đơn ứng tuyển của bạn đã được chấp nhận.</p>
-                    <p>Chúng tôi rất vui mừng được chào đón bạn tham gia vào đội ngũ của Luật Poip.</p>
+                    <p>Chúng tôi rất vui mừng được chào đón bạn tham gia vào đội ngũ của Luật Poip Legal.</p>
                     <p>Đội ngũ nhân sự sẽ liên hệ với bạn trong thời gian sớm nhất để:</p>
                     <ul>
                         <li>Thông báo chi tiết về vị trí công việc</li>
@@ -235,10 +235,10 @@ public class JobApplicationEmailServiceImpl implements JobApplicationEmailServic
 
       case "REJECTED":
         return """
-                    <p>Cảm ơn bạn đã dành thời gian ứng tuyển vào vị trí <strong>%s</strong> tại Luật Poip.</p>
+                    <p>Cảm ơn bạn đã dành thời gian ứng tuyển vào vị trí <strong>%s</strong> tại Luật Poip Legal.</p>
                     <p>Sau khi xem xét kỹ lưỡng, chúng tôi rất tiếc phải thông báo rằng chúng tôi quyết định không tiếp tục với đơn ứng tuyển của bạn lần này.</p>
                     <p>Quyết định này không phản ánh năng lực của bạn mà do chúng tôi đã tìm được ứng viên phù hợp hơn với yêu cầu cụ thể của vị trí này.</p>
-                    <p>Chúng tôi đánh giá cao sự quan tâm của bạn và khuyến khích bạn tiếp tục theo dõi các cơ hội nghề nghiệp khác tại Luật Poip.</p>
+                    <p>Chúng tôi đánh giá cao sự quan tâm của bạn và khuyến khích bạn tiếp tục theo dõi các cơ hội nghề nghiệp khác tại Luật Poip Legal.</p>
                     <p><strong>Chúc bạn thành công trong sự nghiệp!</strong></p>
                     """
             .formatted(jobTitle);

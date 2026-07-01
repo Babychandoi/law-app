@@ -32,7 +32,7 @@ const Contact = () => {
         Thông tin liên hệ
       </h2>
       <p className="mt-4 leading-7 text-brand-muted">
-        Liên hệ qua kênh thuận tiện nhất. Đội ngũ Luật Poip sẽ phản hồi và hướng dẫn bước tiếp theo.
+        Liên hệ qua kênh thuận tiện nhất. Đội ngũ Luật Poip Legal sẽ phản hồi và hướng dẫn bước tiếp theo.
       </p>
 
       {hasError && (
@@ -52,7 +52,7 @@ const Contact = () => {
             </div>
             <div>
               <h3 id="company-contact-title" className="font-semibold text-brand-ink">
-                {contact?.company.name || 'Luật Poip'}
+                {contact?.company.name || 'Luật Poip Legal'}
               </h3>
               <p className="mt-1 text-sm leading-6 text-brand-muted">
                 Tư vấn và đại diện sở hữu trí tuệ cho doanh nghiệp, nhà sáng tạo và chủ sở hữu

@@ -16,7 +16,7 @@ export default function LandingPage() {
   }, []);
 
   useEffect(() => {
-    if (config) document.title = `${config.eyebrow} | Luật Poip`;
+    if (config) document.title = `${config.eyebrow} | Luật Poip Legal`;
   }, [config]);
 
   if (!config) {
@@ -24,7 +24,7 @@ export default function LandingPage() {
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-brand-surface px-6 text-center">
         <h1 className="text-2xl font-semibold text-brand-ink">Không tìm thấy trang</h1>
         <a href="/" className="text-brand-goldDark underline">
-          Về trang chủ Luật Poip
+          Về trang chủ Luật Poip Legal
         </a>
       </div>
     );
@@ -42,7 +42,7 @@ export default function LandingPage() {
       <header className="border-b border-brand-line bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
           <span className="text-lg font-semibold tracking-tight text-brand-ink">
-            Luật <span className="text-brand-goldDark">Poip</span>
+            Luật <span className="text-brand-goldDark">Poip Legal</span>
           </span>
           <a
             href={contactInfo.phoneHref}

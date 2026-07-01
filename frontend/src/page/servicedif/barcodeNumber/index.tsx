@@ -11,7 +11,7 @@ import { Seo } from '../../../component/Seo';
 export default function Index() {
   const [hero] = useState<Hero>({
     title: 'Dịch vụ đăng ký mã số mã vạch',
-    subtitle: 'Poip Law',
+    subtitle: 'Poip Legal Law',
     description: 'Cấp mã ngay trong vòng 1 -> 2 ngày làm việc.',
   });
   const [process] = useState<Process[]>([
@@ -33,7 +33,7 @@ export default function Index() {
       id: '239fdb9d-c859-4b05-a49d-ecb78b27261e',
       step: 'BƯỚC 3',
       title: 'BƯỚC 3',
-      description: 'Luật Poip tiến hành đăng ký mã số mã vạch và bàn giao kết quả cho khách hàng',
+      description: 'Luật Poip Legal tiến hành đăng ký mã số mã vạch và bàn giao kết quả cho khách hàng',
       details: [],
     },
   ]);
@@ -51,9 +51,9 @@ export default function Index() {
   return (
     <>
       <Seo
-        title="Dịch vụ đăng ký mã số mã vạch - Luật Poip"
-        keywords="Dịch vụ đăng ký mã số mã vạch, đăng ký mã vạch, cấp mã vạch, luật sư sở hữu trí tuệ, Luật Poip"
-        description="Với đội ngũ chuyên gia và luật sư giàu kinh nghiệm, Luật Poip cam kết cung cấp cho khách hàng dịch vụ đăng ký mã số mã vạch nhanh chóng, chính xác và hiệu quả."
+        title="Dịch vụ đăng ký mã số mã vạch - Luật Poip Legal"
+        keywords="Dịch vụ đăng ký mã số mã vạch, đăng ký mã vạch, cấp mã vạch, luật sư sở hữu trí tuệ, Luật Poip Legal"
+        description="Với đội ngũ chuyên gia và luật sư giàu kinh nghiệm, Luật Poip Legal cam kết cung cấp cho khách hàng dịch vụ đăng ký mã số mã vạch nhanh chóng, chính xác và hiệu quả."
       />
       <HeroService
         title={hero.title}
@@ -70,7 +70,7 @@ export default function Index() {
       />
       <BarcodeSection />
       <BarcodeBenefits />
-      <UniversalProcess title="Quy trình đăng ký mã số mã vạch tại Luật Poip" steps={process} />
+      <UniversalProcess title="Quy trình đăng ký mã số mã vạch tại Luật Poip Legal" steps={process} />
       <PricingComponent
         title="CHI PHÍ ĐĂNG KÝ MÃ SỐ MÃ VẠCH TẠI POIP LAW"
         plans={pricingPlans}

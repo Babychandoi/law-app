@@ -10,9 +10,9 @@ Vietnamese businesses, founders, and creators who need practical support with in
 
 ## Product Purpose
 
-Luật Poip explains complex legal and intellectual-property services in clear Vietnamese, establishes professional trust, and turns qualified visitor interest into consultation leads through form submissions, phone calls, and Zalo contacts.
+Luật Poip Legal explains complex legal and intellectual-property services in clear Vietnamese, establishes professional trust, and turns qualified visitor interest into consultation leads through form submissions, phone calls, and Zalo contacts.
 
-Success means visitors can quickly identify the relevant service, understand its value and process, and confidently contact Luật Poip for consultation.
+Success means visitors can quickly identify the relevant service, understand its value and process, and confidently contact Luật Poip Legal for consultation.
 
 ## Brand Personality
 
@@ -22,7 +22,7 @@ Authoritative, clear, and approachable. The voice should communicate legal exper
 
 - Flashy gradients that compete with the legal content or weaken professional credibility.
 - Excessive animations that distract visitors or slow down decision-making.
-- Generic corporate templates that make Luật Poip indistinguishable from other service businesses.
+- Generic corporate templates that make Luật Poip Legal indistinguishable from other service businesses.
 - Dense legal jargon that forces visitors to interpret specialist language before they can act.
 
 ## Design Principles

@@ -31,7 +31,7 @@ export default function New() {
         <>
           <Seo
             title={news.title}
-            keywords="Bản tin pháp luật, tin tức pháp luật, sở hữu trí tuệ, bảo hộ nhãn hiệu, bản quyền, giấy phép, tư vấn pháp luật, Luật Poip, mã số mã vạch, đăng ký nhãn hiệu, đăng ký bản quyền, kiểu dáng công nghiệp"
+            keywords="Bản tin pháp luật, tin tức pháp luật, sở hữu trí tuệ, bảo hộ nhãn hiệu, bản quyền, giấy phép, tư vấn pháp luật, Luật Poip Legal, mã số mã vạch, đăng ký nhãn hiệu, đăng ký bản quyền, kiểu dáng công nghiệp"
             description={news.subtitle}
           />
           <BlogPost news={news} />

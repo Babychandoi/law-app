@@ -15,7 +15,7 @@ export default function VideoSection() {
             <iframe
               className="h-full w-full"
               src="https://www.youtube.com/embed/wp3XxhYfQ90"
-              title="Giới thiệu về Luật Poip"
+              title="Giới thiệu về Luật Poip Legal"
               loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
@@ -23,12 +23,12 @@ export default function VideoSection() {
           </div>
           <div className="flex items-center gap-3 border-t border-white/15 px-5 py-4 text-white">
             <PlayCircle className="shrink-0 text-brand-gold" size={22} aria-hidden="true" />
-            <p className="text-sm font-medium">Tìm hiểu cách Luật Poip đồng hành cùng khách hàng</p>
+            <p className="text-sm font-medium">Tìm hiểu cách Luật Poip Legal đồng hành cùng khách hàng</p>
           </div>
         </div>
 
         <div>
-          <p className="text-sm font-semibold text-brand-goldDark">Gặp gỡ Luật Poip</p>
+          <p className="text-sm font-semibold text-brand-goldDark">Gặp gỡ Luật Poip Legal</p>
           <h2
             id="video-heading"
             className="mt-3 text-3xl font-semibold leading-tight tracking-[-0.02em] text-gray-950 md:text-4xl"

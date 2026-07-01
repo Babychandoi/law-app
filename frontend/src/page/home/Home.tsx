@@ -62,9 +62,9 @@ export default function Home() {
   return (
     <>
       <Seo
-        title="Dịch Vụ Sở Hữu Trí Tuệ - Luật Poip"
-        description="Luật Poip cung cấp dịch vụ sở hữu trí tuệ, chúng tôi hỗ trợ tư vấn miễn phí. Mọi thắc mắc về luật hãy liên hệ chúng tôi."
-        keywords="Dịch vụ sở hữu trí tuệ, tư vấn pháp luật, bảo hộ nhãn hiệu, bản quyền, giấy phép, luật sư sở hữu trí tuệ, Luật Poip"
+        title="Dịch Vụ Sở Hữu Trí Tuệ - Luật Poip Legal"
+        description="Luật Poip Legal cung cấp dịch vụ sở hữu trí tuệ, chúng tôi hỗ trợ tư vấn miễn phí. Mọi thắc mắc về luật hãy liên hệ chúng tôi."
+        keywords="Dịch vụ sở hữu trí tuệ, tư vấn pháp luật, bảo hộ nhãn hiệu, bản quyền, giấy phép, luật sư sở hữu trí tuệ, Luật Poip Legal"
       />
       <Slide />
       <Legal />
@@ -96,7 +96,7 @@ export default function Home() {
           <section className="bg-brand-surface py-16 sm:py-20" aria-labelledby="office-heading">
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
               <div className="mb-8 max-w-2xl">
-                <p className="text-sm font-semibold text-brand-goldDark">Văn phòng Luật Poip</p>
+                <p className="text-sm font-semibold text-brand-goldDark">Văn phòng Luật Poip Legal</p>
                 <h2
                   id="office-heading"
                   className="mt-3 text-3xl font-semibold tracking-[-0.02em] text-gray-950 md:text-4xl"
@@ -112,7 +112,7 @@ export default function Home() {
                 height={420}
                 language="vi"
                 borderRadius="8px"
-                ariaLabel="Bản đồ văn phòng Luật Poip"
+                ariaLabel="Bản đồ văn phòng Luật Poip Legal"
               />
             </div>
           </section>

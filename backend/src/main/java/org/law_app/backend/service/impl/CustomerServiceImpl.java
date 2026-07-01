@@ -130,16 +130,16 @@ public class CustomerServiceImpl implements CustomerServices {
 
     // 2) Email xác nhận cho khách (chỉ khi có email hợp lệ).
     if (email != null && !email.isBlank()) {
-      String custSubject = "Xác nhận đăng ký dịch vụ — Luật Poip";
+      String custSubject = "Xác nhận đăng ký dịch vụ — Luật Poip Legal";
       String custBody =
           "<p>Xin chào <b>"
               + name
               + "</b>,</p>"
               + "<p>Cảm ơn bạn đã đăng ký dịch vụ <b>"
               + serviceName
-              + "</b> tại Luật Poip. "
+              + "</b> tại Luật Poip Legal. "
               + "Chúng tôi đã nhận được yêu cầu và sẽ liên hệ với bạn trong thời gian sớm nhất.</p>"
-              + "<p>Trân trọng,<br/>Đội ngũ Luật Poip</p>";
+              + "<p>Trân trọng,<br/>Đội ngũ Luật Poip Legal</p>";
       emailService.sendEmail(email, custSubject, custBody);
     }
   }

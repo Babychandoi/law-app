@@ -10,8 +10,8 @@ import { Seo } from '../../../component/Seo';
 export default function Index() {
   const [hero] = useState<Hero>({
     title: 'Giấy phép Doanh nghiệp Khoa học Công nghệ',
-    subtitle: 'Poip Law',
-    description: 'Dich vụ cấp Giấy chứng nhận Doanh nghiệp Khoa học và Công nghệ tại Poip Law',
+    subtitle: 'Poip Legal Law',
+    description: 'Dich vụ cấp Giấy chứng nhận Doanh nghiệp Khoa học và Công nghệ tại Poip Legal Law',
   });
   const [process] = useState<Process[]>([
     {
@@ -25,7 +25,7 @@ export default function Index() {
       id: '8cb48a78-f83a-4829-a99a-4b587a084cca',
       step: 'BƯỚC 2',
       title: 'BƯỚC 2',
-      description: 'Khách hàng cung cấp thông tin - Luật Poip tiến hành soạn thảo hồ sơ',
+      description: 'Khách hàng cung cấp thông tin - Luật Poip Legal tiến hành soạn thảo hồ sơ',
       details: [],
     },
     {
@@ -47,8 +47,8 @@ export default function Index() {
   return (
     <>
       <Seo
-        title="Giấy phép Doanh nghiệp Khoa học Công nghệ - Luật Poip"
-        keywords="Dịch vụ đăng ký giấy phép doanh nghiệp khoa học công nghệ, giấy phép doanh nghiệp khoa học công nghệ, tư vấn pháp luật, luật sư sở hữu trí tuệ, Luật Poip"
+        title="Giấy phép Doanh nghiệp Khoa học Công nghệ - Luật Poip Legal"
+        keywords="Dịch vụ đăng ký giấy phép doanh nghiệp khoa học công nghệ, giấy phép doanh nghiệp khoa học công nghệ, tư vấn pháp luật, luật sư sở hữu trí tuệ, Luật Poip Legal"
         description="Luật Taga là một trong những đơn vị cung cấp dịch vụ đăng ký giấy phép Doanh nghiệp Khoa học Công nghệ hàng đầu với đội ngũ chuyên gia giàu kinh nghiệm hỗ trợ tư vấn miễn phí."
       />
       <HeroService

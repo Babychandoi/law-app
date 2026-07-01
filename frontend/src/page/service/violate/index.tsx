@@ -8,7 +8,7 @@ import { Seo } from '../../../component/Seo';
 export default function Index() {
   const [hero] = useState<Hero>({
     title: 'Dịch vụ xử lý xâm phạm sở hữu trí tuệ',
-    subtitle: 'Poip Law',
+    subtitle: 'Poip Legal Law',
     description:
       'Tư vấn bởi đội ngũ luật sư có chuyên môn và kinh nghiệm trong lĩnh vực sở hữu trí tuệ.',
   });
@@ -16,8 +16,8 @@ export default function Index() {
   return (
     <>
       <Seo
-        title="Dịch vụ xử lý xâm phạm sở hữu trí tuệ - Luật Poip"
-        keywords="Dịch vụ xử lý xâm phạm sở hữu trí tuệ, tư vấn pháp luật, luật sư sở hữu trí tuệ, Luật Poip"
+        title="Dịch vụ xử lý xâm phạm sở hữu trí tuệ - Luật Poip Legal"
+        keywords="Dịch vụ xử lý xâm phạm sở hữu trí tuệ, tư vấn pháp luật, luật sư sở hữu trí tuệ, Luật Poip Legal"
         description="Dịch vụ xử lý xâm phạm sở hữu trí tuệ, tư vấn miễn phí bởi đội ngũ chuyên gia sở hữu trí tuệ giàu kinh nghiệm và tận tâm."
       />
       <HeroService

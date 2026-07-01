@@ -44,7 +44,7 @@ export default function Index() {
   ]);
   const [hero] = useState<Hero>({
     title: 'Đăng ký bảo hộ bản quyền',
-    subtitle: 'Poip Law',
+    subtitle: 'Poip Legal Law',
     description:
       'Tư vấn bởi đội ngũ Luật Sư có chuyên môn và kinh nghiệm trong lĩnh vực bảo hộ bản quyền',
   });
@@ -53,29 +53,29 @@ export default function Index() {
       id: '13c1a480-6ea2-4b48-aaa0-471e3a91f073',
       step: 'BƯỚC 1',
       title: 'BƯỚC 1',
-      description: 'Poip Law tiếp nhận yêu cầu dịch vụ và tiến hành tư vấn dịch vụ',
+      description: 'Poip Legal Law tiếp nhận yêu cầu dịch vụ và tiến hành tư vấn dịch vụ',
       details: [],
     },
     {
       id: 'a98c2324-1e3e-4f17-86f9-bbacddfcf831',
       step: 'BƯỚC 2',
       title: 'BƯỚC 2',
-      description: 'Ký kết hợp đồng và khách hàng cung cấp giấy tờ theo yêu cầu cho Poip Law',
+      description: 'Ký kết hợp đồng và khách hàng cung cấp giấy tờ theo yêu cầu cho Poip Legal Law',
       details: [],
     },
     {
       id: '1e67c8af-9275-489d-aacb-9f9a51b679a5',
       step: 'BƯỚC 3',
       title: 'BƯỚC 3',
-      description: 'Poip Law tiến hành đăng ký bản quyền và bàn giao kết quả cho khách hàng',
+      description: 'Poip Legal Law tiến hành đăng ký bản quyền và bàn giao kết quả cho khách hàng',
       details: [],
     },
   ]);
   return (
     <>
       <Seo
-        title="Dịch vụ đăng ký bản quyền - Luật Poip"
-        keywords="Dịch vụ đăng ký bản quyền, bảo hộ bản quyền, luật sư sở hữu trí tuệ, Luật Poip"
+        title="Dịch vụ đăng ký bản quyền - Luật Poip Legal"
+        keywords="Dịch vụ đăng ký bản quyền, bảo hộ bản quyền, luật sư sở hữu trí tuệ, Luật Poip Legal"
         description="Dịch vụ đăng ký bản quyền, tư vấn miễn phí bởi đội ngũ chuyên gia sở hữu trí tuệ giàu kinh nghiệm và tận tâm."
       />
       <HeroService

@@ -87,15 +87,15 @@ const JobListing: React.FC = () => {
   return (
     <div className="container mx-auto px-4 py-8" style={{ marginTop: '20px' }}>
       <Seo
-        title="Tuyển dụng - Luật Poip"
-        keywords="Tuyển dụng, việc làm, cơ hội nghề nghiệp, luật sư, Luật Poip"
-        description="Khám phá cơ hội nghề nghiệp tại Luật Poip. Tham gia đội ngũ chuyên nghiệp của chúng tôi và phát triển sự nghiệp trong lĩnh vực pháp luật."
+        title="Tuyển dụng - Luật Poip Legal"
+        keywords="Tuyển dụng, việc làm, cơ hội nghề nghiệp, luật sư, Luật Poip Legal"
+        description="Khám phá cơ hội nghề nghiệp tại Luật Poip Legal. Tham gia đội ngũ chuyên nghiệp của chúng tôi và phát triển sự nghiệp trong lĩnh vực pháp luật."
       />
       {/* Tiêu đề trang */}
       <div className="mb-12 text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-4 text-brand-ink">Tuyển dụng</h1>
         <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-          Gia nhập đội ngũ chuyên nghiệp của Luật Poip - Nơi bạn phát triển sự nghiệp cùng chúng tôi
+          Gia nhập đội ngũ chuyên nghiệp của Luật Poip Legal - Nơi bạn phát triển sự nghiệp cùng chúng tôi
         </p>
         <div className="w-24 h-1 bg-[#f2c64d] mx-auto"></div>
       </div>

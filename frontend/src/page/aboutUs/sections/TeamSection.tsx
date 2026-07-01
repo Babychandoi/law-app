@@ -13,7 +13,7 @@ const TeamSection = ({ title, content, image }: TeamSectionProps) => {
       <div className="container mx-auto grid items-center gap-10 px-4 sm:px-6 md:grid-cols-2 lg:px-8">
         <img
           src={image}
-          alt="Đội ngũ chuyên gia của Luật Poip"
+          alt="Đội ngũ chuyên gia của Luật Poip Legal"
           className="h-80 w-full rounded-lg border border-brand-line object-cover shadow-sm md:h-[30rem]"
           loading="lazy"
           decoding="async"

@@ -97,7 +97,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
     parentServiceId: '',
   });
   const [parents, setParents] = useState<{ id: string; title: string }[]>([]);
-  const [hero, setHero] = useState({ title: '', subtitle: 'Poip Law', description: '' });
+  const [hero, setHero] = useState({ title: '', subtitle: 'Poip Legal Law', description: '' });
   const [sections, setSections] = useState<ServiceSection[]>([]);
   const [process, setProcess] = useState<ProcessStepForm[]>([]);
   const [pricing, setPricing] = useState<PricingForm[]>([]);
@@ -159,7 +159,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
         if (page.hero) {
           setHero({
             title: page.hero.title || '',
-            subtitle: page.hero.subtitle || 'Poip Law',
+            subtitle: page.hero.subtitle || 'Poip Legal Law',
             description: page.hero.description || '',
           });
         }

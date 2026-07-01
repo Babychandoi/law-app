@@ -15,7 +15,7 @@ export const jobs: Job[] = [
   {
     id: 1,
     title: 'Tuyển dụng Chuyên viên Kinh doanh',
-    company: 'Công ty Luật Poip',
+    company: 'Công ty Luật Poip Legal',
     jobType: 'Toàn thời gian',
     location: 'Hà Nội',
     postedDate: 'Posted 2 năm ago',

@@ -172,11 +172,11 @@ const JobComponent: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white" style={{ marginTop: '30px' }}>
       <Seo
-        title={job.title + ' - Luật Poip'}
-        keywords="Tuyển dụng, việc làm, cơ hội nghề nghiệp, luật sư, Luật Poip"
+        title={job.title + ' - Luật Poip Legal'}
+        keywords="Tuyển dụng, việc làm, cơ hội nghề nghiệp, luật sư, Luật Poip Legal"
         description={
           job.title +
-          ' tại Luật Poip. Tham gia đội ngũ chuyên nghiệp của chúng tôi và phát triển sự nghiệp trong lĩnh vực pháp luật.'
+          ' tại Luật Poip Legal. Tham gia đội ngũ chuyên nghiệp của chúng tôi và phát triển sự nghiệp trong lĩnh vực pháp luật.'
         }
       />
       {/* Header */}

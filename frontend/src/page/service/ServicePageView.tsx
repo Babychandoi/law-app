@@ -22,7 +22,7 @@ export default function ServicePageView({ data }: { data: ServicePageData }) {
     <div>
       <HeroService
         title={hero?.title || data.title}
-        subtitle={hero?.subtitle || 'Poip Law'}
+        subtitle={hero?.subtitle || 'Poip Legal Law'}
         description={hero?.description || data.description}
       />
 

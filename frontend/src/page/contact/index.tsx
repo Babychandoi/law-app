@@ -12,9 +12,9 @@ export default function Contact() {
   return (
     <>
       <Seo
-        title="Liên hệ - Luật Poip"
-        keywords="Liên hệ Luật Poip, tư vấn pháp luật, dịch vụ sở hữu trí tuệ, bảo hộ nhãn hiệu, bản quyền, giấy phép, luật sư sở hữu trí tuệ, Luật Poip"
-        description="Liên hệ với Luật Poip để được tư vấn miễn phí về các dịch vụ sở hữu trí tuệ, bảo hộ nhãn hiệu, bản quyền, giấy phép và các vấn đề pháp lý khác."
+        title="Liên hệ - Luật Poip Legal"
+        keywords="Liên hệ Luật Poip Legal, tư vấn pháp luật, dịch vụ sở hữu trí tuệ, bảo hộ nhãn hiệu, bản quyền, giấy phép, luật sư sở hữu trí tuệ, Luật Poip Legal"
+        description="Liên hệ với Luật Poip Legal để được tư vấn miễn phí về các dịch vụ sở hữu trí tuệ, bảo hộ nhãn hiệu, bản quyền, giấy phép và các vấn đề pháp lý khác."
       />
       <HeroSection
         title="Liên hệ với chúng tôi"

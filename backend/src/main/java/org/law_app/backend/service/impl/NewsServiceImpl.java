@@ -215,7 +215,7 @@ public class NewsServiceImpl implements NewsService {
       CustomerSubscribe customerSubscribe =
           CustomerSubscribe.builder().email(email).createdAt(LocalDateTime.now()).build();
       customerSubscribeRepository.save(customerSubscribe);
-      String title = "Chào mừng bạn đến với luật Poip";
+      String title = "Chào mừng bạn đến với luật Poip Legal";
       String content =
           """
                 <!DOCTYPE html>
@@ -373,7 +373,7 @@ public class NewsServiceImpl implements NewsService {
                 <body>
                     <div class="email-container">
                         <div class="header">
-                            <h1>⚖️ Luật Poip </h1>
+                            <h1>⚖️ Luật Poip Legal </h1>
                             <p>Cập nhật tin tức pháp luật mới nhất</p>
                         </div>
 
@@ -386,7 +386,7 @@ public class NewsServiceImpl implements NewsService {
 
                             <p>Xin chào,</p>
 
-                            <p>Cảm ơn bạn đã đăng ký nhận bản tin từ <strong>luật Poip</strong>! Chúng tôi rất vui mừng được đồng hành cùng bạn trong việc cập nhật những thông tin pháp luật mới nhất và hữu ích nhất.</p>
+                            <p>Cảm ơn bạn đã đăng ký nhận bản tin từ <strong>luật Poip Legal</strong>! Chúng tôi rất vui mừng được đồng hành cùng bạn trong việc cập nhật những thông tin pháp luật mới nhất và hữu ích nhất.</p>
 
                             <div class="benefits">
                                 <h3>📚 Bạn sẽ nhận được:</h3>
@@ -395,14 +395,14 @@ public class NewsServiceImpl implements NewsService {
                                     <li>Phân tích chuyên sâu về các văn bản pháp luật mới</li>
                                     <li>Tư vấn pháp lý từ các chuyên gia</li>
                                     <li>Thông báo về các thay đổi quan trọng trong hệ thống pháp luật</li>
-                                    <li>Mẹo và hướng dẫn sử dụng ứng dụng luật Poip hiệu quả</li>
+                                    <li>Mẹo và hướng dẫn sử dụng ứng dụng luật Poip Legal hiệu quả</li>
                                 </ul>
                             </div>
 
                             <p>Đăng ký của bạn đã được xác nhận thành công. Bạn sẽ nhận được email đầu tiên trong thời gian sớm nhất.</p>
 
                             <div class="cta-button">
-                                <a href="https://luatpoip.com">Khám phá luật Poip ngay</a>
+                                <a href="https://luatpoip.com">Khám phá luật Poip Legal ngay</a>
                             </div>
 
                             <p style="margin-top: 30px; font-size: 14px; color: #888888;">
@@ -412,7 +412,7 @@ public class NewsServiceImpl implements NewsService {
                         </div>
 
                         <div class="footer">
-                            <p><strong>Luật Poip</strong> - Trang hỗ trợ và giải đáp thắc mắc về luật</p>
+                            <p><strong>Luật Poip Legal</strong> - Trang hỗ trợ và giải đáp thắc mắc về luật</p>
                             <p>Địa chỉ: 70 Ngách 6 Ngõ 10 Tả Thanh Oai, Đại Thanh, Hà Nội, Việt Nam</p>
                             <p>Email: luatpoip@gmail.com | Hotline: 0868.193.345</p>
 
@@ -423,7 +423,7 @@ public class NewsServiceImpl implements NewsService {
                             </div>
 
                             <p style="margin-top: 20px; font-size: 12px;">
-                                Bạn nhận được email này vì đã đăng ký nhận tin tức từ luật Poip.<br>
+                                Bạn nhận được email này vì đã đăng ký nhận tin tức từ luật Poip Legal.<br>
                             </p>
                         </div>
                     </div>
@@ -433,7 +433,7 @@ public class NewsServiceImpl implements NewsService {
 
       emailService.sendEmail(email, title, content);
       log.info("Subscribing email: {}", email);
-      return "Cảm ơn bạn đã đăng ký nhận tin tức từ luật Poip!";
+      return "Cảm ơn bạn đã đăng ký nhận tin tức từ luật Poip Legal!";
     } catch (Exception e) {
       log.error("Error subscribing email: {}", e.getMessage());
       throw new RuntimeException("Lỗi hệ thống, vui lòng thử lại sau!");

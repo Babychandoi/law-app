@@ -10,11 +10,11 @@ import { Seo } from '../../component/Seo';
 
 const HomePage: React.FC = () => {
   const aboutContent = [
-    'Dịch vụ Sở hữu trí tuệ – Luật Poip',
+    'Dịch vụ Sở hữu trí tuệ – Luật Poip Legal',
     'Đối tác đáng tin cậy của doanh nghiệp bạn',
-    'Luật Poip tự hào là Đại diện Sở hữu công nghiệp được Cục Sở hữu trí tuệ cấp phép, đồng thời là Tổ chức tư vấn, dịch vụ quyền tác giả, quyền liên quan do Cục Bản quyền cấp phép. Chúng tôi cam kết đồng hành cùng doanh nghiệp trong việc bảo vệ tài sản trí tuệ một cách toàn diện, hợp pháp và hiệu quả.',
-    'Với đội ngũ chuyên gia giàu kinh nghiệm, Luật Poip cung cấp các giải pháp tối ưu, giúp khách hàng thực hiện thủ tục đăng ký một cách nhanh chóng, chính xác, đảm bảo tiết kiệm thời gian và chi phí.',
-    'Tại Luật Poip, khách hàng luôn là trung tâm của mọi hoạt động. Chúng tôi không ngừng nỗ lực để mang đến dịch vụ chất lượng cao, giúp doanh nghiệp an tâm phát triển và khẳng định vị thế trên thị trường.',
+    'Luật Poip Legal tự hào là Đại diện Sở hữu công nghiệp được Cục Sở hữu trí tuệ cấp phép, đồng thời là Tổ chức tư vấn, dịch vụ quyền tác giả, quyền liên quan do Cục Bản quyền cấp phép. Chúng tôi cam kết đồng hành cùng doanh nghiệp trong việc bảo vệ tài sản trí tuệ một cách toàn diện, hợp pháp và hiệu quả.',
+    'Với đội ngũ chuyên gia giàu kinh nghiệm, Luật Poip Legal cung cấp các giải pháp tối ưu, giúp khách hàng thực hiện thủ tục đăng ký một cách nhanh chóng, chính xác, đảm bảo tiết kiệm thời gian và chi phí.',
+    'Tại Luật Poip Legal, khách hàng luôn là trung tâm của mọi hoạt động. Chúng tôi không ngừng nỗ lực để mang đến dịch vụ chất lượng cao, giúp doanh nghiệp an tâm phát triển và khẳng định vị thế trên thị trường.',
   ];
 
   const services: Service[] = [
@@ -45,19 +45,19 @@ const HomePage: React.FC = () => {
   ];
 
   const teamContent = [
-    'Tại Luật Poip, đội ngũ luật sư chuyên môn về sở hữu trí tuệ được tuyển chọn kỹ lưỡng từ các trường đại học hàng đầu tại Việt Nam và các nước khác. Các luật sư của Luật Poip đều có trình độ học vị cao, kinh nghiệm trong lĩnh vực sở hữu trí tuệ và luôn cập nhật kiến thức mới nhất.',
-    'Bên cạnh đó, Luật Poip còn có đội ngũ chuyên viên tư vấn bảo hộ nhãn hiệu, bao gồm các chuyên gia nghiên cứu thị trường, thiết kế đồ họa và bảo hộ sở hữu trí tuệ. Các chuyên viên này có khả năng đánh giá sâu sắc về sự phù hợp của một nhãn hiệu với thị trường, thiết kế một logo độc đáo và thu hút khách hàng, và đăng ký bảo hộ cho các sản phẩm và dịch vụ của khách hàng.',
-    'Với đội ngũ nhân sự giàu kinh nghiệm và chuyên môn cao, Luật Poip luôn cam kết mang đến cho khách hàng những dịch vụ tốt nhất về sở hữu trí tuệ và đạt được các mục tiêu kinh doanh của mình.',
+    'Tại Luật Poip Legal, đội ngũ luật sư chuyên môn về sở hữu trí tuệ được tuyển chọn kỹ lưỡng từ các trường đại học hàng đầu tại Việt Nam và các nước khác. Các luật sư của Luật Poip Legal đều có trình độ học vị cao, kinh nghiệm trong lĩnh vực sở hữu trí tuệ và luôn cập nhật kiến thức mới nhất.',
+    'Bên cạnh đó, Luật Poip Legal còn có đội ngũ chuyên viên tư vấn bảo hộ nhãn hiệu, bao gồm các chuyên gia nghiên cứu thị trường, thiết kế đồ họa và bảo hộ sở hữu trí tuệ. Các chuyên viên này có khả năng đánh giá sâu sắc về sự phù hợp của một nhãn hiệu với thị trường, thiết kế một logo độc đáo và thu hút khách hàng, và đăng ký bảo hộ cho các sản phẩm và dịch vụ của khách hàng.',
+    'Với đội ngũ nhân sự giàu kinh nghiệm và chuyên môn cao, Luật Poip Legal luôn cam kết mang đến cho khách hàng những dịch vụ tốt nhất về sở hữu trí tuệ và đạt được các mục tiêu kinh doanh của mình.',
   ];
 
   return (
     <div className="min-h-screen bg-brand-surface   ">
       <Seo
-        title="Về chúng tôi - Luật Poip"
-        keywords="Về Luật Poip, dịch vụ pháp lý, sở hữu trí tuệ, bảo hộ nhãn hiệu, bản quyền, giấy phép, tư vấn pháp lý, luật sư sở hữu trí tuệ, Luật Poip"
-        description="Luật Poip - Đại diện Sở hữu công nghiệp được cấp phép, cung cấp dịch vụ pháp lý, bảo hộ nhãn hiệu, bản quyền, giấy phép, tư vấn pháp lý cho doanh nghiệp."
+        title="Về chúng tôi - Luật Poip Legal"
+        keywords="Về Luật Poip Legal, dịch vụ pháp lý, sở hữu trí tuệ, bảo hộ nhãn hiệu, bản quyền, giấy phép, tư vấn pháp lý, luật sư sở hữu trí tuệ, Luật Poip Legal"
+        description="Luật Poip Legal - Đại diện Sở hữu công nghiệp được cấp phép, cung cấp dịch vụ pháp lý, bảo hộ nhãn hiệu, bản quyền, giấy phép, tư vấn pháp lý cho doanh nghiệp."
       />
-      <HeroSection title="Dịch vụ sở hữu trí tuệ" subtitle="Poip Law" />
+      <HeroSection title="Dịch vụ sở hữu trí tuệ" subtitle="Poip Legal Law" />
       <AboutSection
         title="VỀ CHÚNG TÔI"
         content={aboutContent}

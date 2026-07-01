@@ -1,7 +1,7 @@
 {
   "schemaVersion": 2,
   "generatedAt": "2026-06-10T16:00:00+07:00",
-  "title": "Design System: Luật Poip",
+  "title": "Design System: Luật Poip Legal",
   "extensions": {
     "colorMeta": {
       "counsel-ink": {
@@ -201,7 +201,7 @@
   ],
   "narrative": {
     "northStar": "Clear Counsel",
-    "overview": "Luật Poip should feel like a focused consultation with a trusted legal expert: composed, direct, and easy to follow. Hierarchy and plain-language content do the persuasive work; color marks important actions and navigation states.",
+    "overview": "Luật Poip Legal should feel like a focused consultation with a trusted legal expert: composed, direct, and easy to follow. Hierarchy and plain-language content do the persuasive work; color marks important actions and navigation states.",
     "keyCharacteristics": [
       "Restrained black, gold, white, and quiet off-white palette.",
       "Clear information hierarchy with practical Vietnamese copy.",

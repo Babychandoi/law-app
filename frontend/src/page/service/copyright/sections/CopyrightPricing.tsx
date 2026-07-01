@@ -39,13 +39,13 @@ const TrademarkPricing = () => {
       price: 'Liên hệ',
       currency: '',
       description:
-        'Tư vấn đăng ký bảo hộ nhãn hiệu theo nhu cầu của Quý khách hàng. Vui lòng liên hệ với Luật Poip để được tư vấn chi tiết.',
+        'Tư vấn đăng ký bảo hộ nhãn hiệu theo nhu cầu của Quý khách hàng. Vui lòng liên hệ với Luật Poip Legal để được tư vấn chi tiết.',
       features: [
         'Bao gồm gói cơ bản',
         'Bao gồm gói nâng cao',
         'Tư vấn thiết kế nhãn hiệu, thiết kế Logo, bộ nhận diện thương hiệu',
         'Tư vấn tùy theo nhu cầu đặc biệt của quý khách hàng',
-        'Liên hệ với Luật Poip để được tư vấn chi tiết',
+        'Liên hệ với Luật Poip Legal để được tư vấn chi tiết',
       ],
       featured: false,
     },

@@ -30,7 +30,7 @@ export default function Index() {
   ]);
   const [hero] = useState<Hero>({
     title: 'Dịch vụ đăng ký nhãn hiệu thương hiệu độc quyền',
-    subtitle: 'Poip Law',
+    subtitle: 'Poip Legal Law',
     description:
       'Đội ngũ Luật Sư chuyên môn cao, hỗ trợ đăng ký nhãn hiệu nhanh chóng, hợp pháp, tránh mọi rủi ro tranh chấp.',
   });
@@ -61,17 +61,17 @@ export default function Index() {
       step: 'BƯỚC 2',
       title: 'Nộp hồ sơ đăng ký bảo hộ nhãn hiệu',
       description:
-        'Poip Law hỗ trợ toàn bộ quá trình soạn thảo và nộp hồ sơ một cách nhanh chóng và chính xác.',
+        'Poip Legal Law hỗ trợ toàn bộ quá trình soạn thảo và nộp hồ sơ một cách nhanh chóng và chính xác.',
       details: [
         {
           accuracy: '',
-          desc: 'Poip Law sẽ hỗ trợ Quý Khách hàng soạn thảo bộ hồ sơ hoàn chỉnh.',
+          desc: 'Poip Legal Law sẽ hỗ trợ Quý Khách hàng soạn thảo bộ hồ sơ hoàn chỉnh.',
           time: 'Không quá 01 ngày làm việc',
           type: '1. Soạn hồ sơ',
         },
         {
           accuracy: '',
-          desc: 'Poip Law sẽ thay mặt Quý Khách hàng nộp hồ sơ.',
+          desc: 'Poip Legal Law sẽ thay mặt Quý Khách hàng nộp hồ sơ.',
           time: 'Không quá 01 ngày làm việc',
           type: '2. Nộp hồ sơ tại Cục Sở hữu trí tuệ',
         },
@@ -114,8 +114,8 @@ export default function Index() {
   return (
     <>
       <Seo
-        title="Dịch vụ đăng ký nhãn hiệu thương hiệu độc quyền - Luật Poip"
-        keywords="Dịch vụ đăng ký nhãn hiệu, đăng ký thương hiệu, bảo hộ nhãn hiệu, luật sư sở hữu trí tuệ, Luật Poip"
+        title="Dịch vụ đăng ký nhãn hiệu thương hiệu độc quyền - Luật Poip Legal"
+        keywords="Dịch vụ đăng ký nhãn hiệu, đăng ký thương hiệu, bảo hộ nhãn hiệu, luật sư sở hữu trí tuệ, Luật Poip Legal"
         description="Dịch vụ đăng ký nhãn hiệu độc quyền, tư vấn miễn phí bởi đội ngũ chuyên gia sở hữu trí tuệ giàu kinh nghiệm và tận tâm."
       />
       <HeroService

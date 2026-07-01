@@ -106,7 +106,7 @@ export default function ConsultationForm({ sectionId = 'contact-form' }: Consult
       await Swal.fire({
         icon: 'success',
         title: 'Đã nhận yêu cầu tư vấn',
-        text: response.message || 'Đội ngũ Luật Poip sẽ liên hệ với bạn trong thời gian sớm nhất.',
+        text: response.message || 'Đội ngũ Luật Poip Legal sẽ liên hệ với bạn trong thời gian sớm nhất.',
       });
 
       window.gtag?.('event', 'conversion', {
@@ -147,7 +147,7 @@ export default function ConsultationForm({ sectionId = 'contact-form' }: Consult
             Chia sẻ nhu cầu, nhận hướng xử lý rõ ràng
           </h2>
           <p className="mt-5 max-w-xl text-base leading-8 text-white/75">
-            Điền thông tin để đội ngũ Luật Poip hiểu nhu cầu và chuẩn bị nội dung trao đổi phù hợp.
+            Điền thông tin để đội ngũ Luật Poip Legal hiểu nhu cầu và chuẩn bị nội dung trao đổi phù hợp.
             Bạn cũng có thể gọi hoặc nhắn Zalo nếu cần phản hồi nhanh.
           </p>
 
@@ -299,7 +299,7 @@ export default function ConsultationForm({ sectionId = 'contact-form' }: Consult
 
             <div className="flex flex-col gap-4 border-t border-brand-line pt-6 sm:flex-row sm:items-center sm:justify-between">
               <p className="max-w-md text-xs leading-5 text-gray-600">
-                Bằng việc gửi yêu cầu, bạn đồng ý để Luật Poip liên hệ nhằm hỗ trợ nội dung tư vấn
+                Bằng việc gửi yêu cầu, bạn đồng ý để Luật Poip Legal liên hệ nhằm hỗ trợ nội dung tư vấn
                 đã cung cấp.
               </p>
               <button

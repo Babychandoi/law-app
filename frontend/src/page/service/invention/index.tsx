@@ -12,7 +12,7 @@ import { Seo } from '../../../component/Seo';
 export default function Index() {
   const [hero] = useState<Hero>({
     title: 'Dịch vụ đăng ký bảo hộ sáng chế',
-    subtitle: 'Poip Law',
+    subtitle: 'Poip Legal Law',
     description:
       'Tư vấn bởi đội ngũ Luật Sư có chuyên môn và kinh nghiệm trong lĩnh vực bảo hộ sáng chế.',
   });
@@ -21,7 +21,7 @@ export default function Index() {
       id: 'e3a161c0-bb7f-4b18-900e-c9dc6f6361cc',
       step: 'BƯỚC 1',
       title: 'BƯỚC 1',
-      description: 'Poip Law tiếp nhận yêu cầu dịch vụ và tiến hành tư vấn dịch vụ',
+      description: 'Poip Legal Law tiếp nhận yêu cầu dịch vụ và tiến hành tư vấn dịch vụ',
       details: [],
     },
     {
@@ -80,8 +80,8 @@ export default function Index() {
   return (
     <>
       <Seo
-        title="Dịch vụ đăng ký bảo hộ sáng chế - Luật Poip"
-        keywords="Dịch vụ đăng ký sáng chế, bảo hộ sáng chế, luật sư sở hữu trí tuệ, Luật Poip"
+        title="Dịch vụ đăng ký bảo hộ sáng chế - Luật Poip Legal"
+        keywords="Dịch vụ đăng ký sáng chế, bảo hộ sáng chế, luật sư sở hữu trí tuệ, Luật Poip Legal"
         description="Dịch vụ đăng ký sáng chế, tư vấn miễn phí bởi đội ngũ chuyên gia sở hữu trí tuệ giàu kinh nghiệm và tận tâm."
       />
       <HeroService

@@ -19,7 +19,7 @@ const ToToBenefits = () => {
       icon: <TrendingUp className="w-6 h-6" />,
       title: 'Đạt tỷ lệ thành công cao',
       description:
-        'Sử dụng dịch vụ luật sư tại Luật Poip tăng khả năng đạt tỷ lệ thành công cao trong việc đăng ký bảo hộ nhãn hiệu.',
+        'Sử dụng dịch vụ luật sư tại Luật Poip Legal tăng khả năng đạt tỷ lệ thành công cao trong việc đăng ký bảo hộ nhãn hiệu.',
     },
     {
       icon: <DollarSign className="w-6 h-6" />,
@@ -30,7 +30,7 @@ const ToToBenefits = () => {
       icon: <Shield className="w-6 h-6" />,
       title: 'Đại diện sở hữu công nghiệp',
       description:
-        'Luật Poip là tổ chức Đại diện SHCN uy tín tại Việt Nam, có đầy đủ năng lực tư vấn và thực thi xác lập quyền SHCN cho khách hàng trong và ngoài nước.',
+        'Luật Poip Legal là tổ chức Đại diện SHCN uy tín tại Việt Nam, có đầy đủ năng lực tư vấn và thực thi xác lập quyền SHCN cho khách hàng trong và ngoài nước.',
     },
   ];
 
@@ -44,7 +44,7 @@ const ToToBenefits = () => {
           </h2>
           <div className="w-32 h-1 bg-brand-goldDark mx-auto mb-6"></div>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Luật sư tại Luật Poip mang lại nhiều lợi ích cho việc đăng ký bảo hộ nhãn hiệu, bao gồm:
+            Luật sư tại Luật Poip Legal mang lại nhiều lợi ích cho việc đăng ký bảo hộ nhãn hiệu, bao gồm:
           </p>
         </div>
 

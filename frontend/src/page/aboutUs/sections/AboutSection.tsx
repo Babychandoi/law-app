@@ -6,7 +6,7 @@ const AboutSection = ({ title, content, image }: AboutSectionProps) => (
     <div className="container mx-auto grid items-center gap-10 px-4 sm:px-6 md:grid-cols-2 lg:px-8">
       <img
         src={image}
-        alt="Đội ngũ Luật Poip tư vấn sở hữu trí tuệ"
+        alt="Đội ngũ Luật Poip Legal tư vấn sở hữu trí tuệ"
         className="h-80 w-full rounded-lg border border-brand-line object-cover shadow-sm md:h-[28rem]"
         loading="lazy"
         decoding="async"

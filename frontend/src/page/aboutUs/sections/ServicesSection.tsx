@@ -52,7 +52,7 @@ const ServicesSection = ({ title, services, image }: ServicesSectionProps) => (
         <aside className="overflow-hidden rounded-lg border border-brand-line bg-white">
           <img
             src={image}
-            alt="Tư vấn các nhóm dịch vụ pháp lý tại Luật Poip"
+            alt="Tư vấn các nhóm dịch vụ pháp lý tại Luật Poip Legal"
             className="h-72 w-full object-cover lg:h-[calc(100%-7rem)]"
             loading="lazy"
             decoding="async"

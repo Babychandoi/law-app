@@ -56,7 +56,7 @@ export default function DynamicServicePage() {
   if (status === 'group') {
     return (
       <div>
-        <Seo title={`${groupTitle} - Luật Poip`} description={`Các dịch vụ ${groupTitle} tại Luật Poip`} />
+        <Seo title={`${groupTitle} - Luật Poip Legal`} description={`Các dịch vụ ${groupTitle} tại Luật Poip Legal`} />
         <ServiceDirectory
           serviceTitle={groupTitle}
           heading={groupTitle}
@@ -83,7 +83,7 @@ export default function DynamicServicePage() {
         <h1 className="text-2xl font-semibold text-brand-ink">Không tìm thấy trang</h1>
         <p className="text-brand-muted">Trang bạn tìm không tồn tại hoặc đã được di chuyển.</p>
         <Link to="/dich-vu" className="font-semibold text-brand-goldDark underline">
-          Xem các dịch vụ của Luật Poip
+          Xem các dịch vụ của Luật Poip Legal
         </Link>
       </div>
     );
@@ -92,9 +92,9 @@ export default function DynamicServicePage() {
   return (
     <div>
       <Seo
-        title={`${page.title} - Luật Poip`}
+        title={`${page.title} - Luật Poip Legal`}
         description={page.description || page.hero?.description || page.title}
-        keywords={`${page.title}, Luật Poip, sở hữu trí tuệ`}
+        keywords={`${page.title}, Luật Poip Legal, sở hữu trí tuệ`}
       />
       <ServicePageView data={page} />
       <ConsultationForm />

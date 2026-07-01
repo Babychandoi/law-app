@@ -1,6 +1,6 @@
 # Law App
 
-Monorepo cho website Luật Poip gồm React CRA frontend, Spring Boot backend, MySQL, MongoDB, Redis, MinIO và Nginx.
+Monorepo cho website Luật Poip Legal gồm React CRA frontend, Spring Boot backend, MySQL, MongoDB, Redis, MinIO và Nginx.
 
 ## Yêu cầu local
 

@@ -59,7 +59,7 @@ export const landingConfigs: LandingConfig[] = [
     heroTitle: 'Bảo hộ thương hiệu của bạn',
     heroHighlight: 'trước khi quá muộn',
     heroSubtitle:
-      'Đăng ký nhãn hiệu độc quyền để không ai được dùng tên, logo của bạn. Luật Poip tra cứu khả năng bảo hộ, soạn hồ sơ và theo dõi đến khi có văn bằng.',
+      'Đăng ký nhãn hiệu độc quyền để không ai được dùng tên, logo của bạn. Luật Poip Legal tra cứu khả năng bảo hộ, soạn hồ sơ và theo dõi đến khi có văn bằng.',
     heroPoints: commonHeroPoints,
     benefitsTitle: 'Vì sao nên đăng ký nhãn hiệu sớm',
     benefits: [
@@ -96,7 +96,7 @@ export const landingConfigs: LandingConfig[] = [
       {
         question: 'Đăng ký nhãn hiệu mất bao lâu?',
         answer:
-          'Trung bình 18–24 tháng theo quy trình của Cục Sở hữu trí tuệ. Luật Poip theo dõi toàn bộ để hồ sơ không bị gián đoạn.',
+          'Trung bình 18–24 tháng theo quy trình của Cục Sở hữu trí tuệ. Luật Poip Legal theo dõi toàn bộ để hồ sơ không bị gián đoạn.',
       },
       {
         question: 'Tôi nên tra cứu trước khi nộp không?',
@@ -106,7 +106,7 @@ export const landingConfigs: LandingConfig[] = [
       {
         question: 'Chi phí gồm những gì?',
         answer:
-          'Gồm phí dịch vụ và lệ phí nhà nước. Luật Poip báo phí trọn gói theo số nhóm sản phẩm trước khi bắt đầu.',
+          'Gồm phí dịch vụ và lệ phí nhà nước. Luật Poip Legal báo phí trọn gói theo số nhóm sản phẩm trước khi bắt đầu.',
       },
     ],
     finalCtaTitle: 'Nhận tư vấn đăng ký nhãn hiệu miễn phí',
@@ -140,7 +140,7 @@ export const landingConfigs: LandingConfig[] = [
     faqs: [
       { question: 'Đăng ký bản quyền mất bao lâu?', answer: 'Thường khoảng 15–30 ngày làm việc kể từ khi hồ sơ hợp lệ.' },
       { question: 'Phần mềm có đăng ký bản quyền được không?', answer: 'Có. Phần mềm máy tính được bảo hộ dưới dạng quyền tác giả.' },
-      { question: 'Cần chuẩn bị gì?', answer: 'Bản sao tác phẩm, thông tin tác giả/chủ sở hữu. Luật Poip hướng dẫn chi tiết theo từng loại.' },
+      { question: 'Cần chuẩn bị gì?', answer: 'Bản sao tác phẩm, thông tin tác giả/chủ sở hữu. Luật Poip Legal hướng dẫn chi tiết theo từng loại.' },
     ],
     finalCtaTitle: 'Nhận tư vấn đăng ký bản quyền miễn phí',
     finalCtaSubtitle: 'Để lại thông tin, luật sư sẽ tư vấn loại hình phù hợp và báo phí trọn gói.',
@@ -186,7 +186,7 @@ export const landingConfigs: LandingConfig[] = [
     heroTitle: 'Bảo hộ sáng chế,',
     heroHighlight: 'giải pháp kỹ thuật của bạn',
     heroSubtitle:
-      'Đăng ký sáng chế / giải pháp hữu ích để độc quyền giải pháp kỹ thuật. Luật Poip tra cứu, soạn bản mô tả và theo đuổi hồ sơ đến cùng.',
+      'Đăng ký sáng chế / giải pháp hữu ích để độc quyền giải pháp kỹ thuật. Luật Poip Legal tra cứu, soạn bản mô tả và theo đuổi hồ sơ đến cùng.',
     heroPoints: commonHeroPoints,
     benefitsTitle: 'Vì sao nên bảo hộ sáng chế',
     benefits: [
@@ -205,8 +205,8 @@ export const landingConfigs: LandingConfig[] = [
     faqTitle: 'Câu hỏi thường gặp',
     faqs: [
       { question: 'Sáng chế và giải pháp hữu ích khác gì?', answer: 'Giải pháp hữu ích có yêu cầu thấp hơn về trình độ sáng tạo và thời hạn bảo hộ ngắn hơn sáng chế.' },
-      { question: 'Quy trình mất bao lâu?', answer: 'Sáng chế thường kéo dài vài năm do phải thẩm định nội dung kỹ thuật. Luật Poip theo dõi toàn bộ.' },
-      { question: 'Cần chuẩn bị gì?', answer: 'Mô tả giải pháp kỹ thuật, bản vẽ (nếu có). Luật Poip hỗ trợ hoàn thiện bản mô tả.' },
+      { question: 'Quy trình mất bao lâu?', answer: 'Sáng chế thường kéo dài vài năm do phải thẩm định nội dung kỹ thuật. Luật Poip Legal theo dõi toàn bộ.' },
+      { question: 'Cần chuẩn bị gì?', answer: 'Mô tả giải pháp kỹ thuật, bản vẽ (nếu có). Luật Poip Legal hỗ trợ hoàn thiện bản mô tả.' },
     ],
     finalCtaTitle: 'Nhận tư vấn bảo hộ sáng chế miễn phí',
     finalCtaSubtitle: 'Để lại thông tin, luật sư sẽ tra cứu sơ bộ và tư vấn hướng bảo hộ.',
@@ -219,9 +219,9 @@ export const landingConfigs: LandingConfig[] = [
     heroTitle: 'Bị làm nhái, làm giả?',
     heroHighlight: 'Xử lý dứt điểm',
     heroSubtitle:
-      'Đối thủ dùng trái phép nhãn hiệu, sao chép sản phẩm của bạn? Luật Poip thu thập chứng cứ, gửi cảnh báo và phối hợp cơ quan chức năng xử lý.',
+      'Đối thủ dùng trái phép nhãn hiệu, sao chép sản phẩm của bạn? Luật Poip Legal thu thập chứng cứ, gửi cảnh báo và phối hợp cơ quan chức năng xử lý.',
     heroPoints: commonHeroPoints,
-    benefitsTitle: 'Luật Poip giúp bạn',
+    benefitsTitle: 'Luật Poip Legal giúp bạn',
     benefits: [
       { title: 'Đánh giá hành vi vi phạm', description: 'Xác định rõ hành vi có cấu thành xâm phạm quyền hay không.' },
       { title: 'Thu thập chứng cứ', description: 'Lập vi bằng, giám định và hoàn thiện hồ sơ chứng cứ vững chắc.' },
@@ -238,7 +238,7 @@ export const landingConfigs: LandingConfig[] = [
     faqTitle: 'Câu hỏi thường gặp',
     faqs: [
       { question: 'Tôi chưa có văn bằng có xử lý được không?', answer: 'Tùy trường hợp. Hãy liên hệ để luật sư đánh giá cơ sở pháp lý cụ thể của bạn.' },
-      { question: 'Chi phí xử lý vi phạm tính thế nào?', answer: 'Phụ thuộc tính chất vụ việc. Luật Poip báo phí sau khi đánh giá hồ sơ.' },
+      { question: 'Chi phí xử lý vi phạm tính thế nào?', answer: 'Phụ thuộc tính chất vụ việc. Luật Poip Legal báo phí sau khi đánh giá hồ sơ.' },
       { question: 'Mất bao lâu để xử lý?', answer: 'Tùy mức độ hợp tác của bên vi phạm và phương án lựa chọn. Luật sư sẽ tư vấn lộ trình.' },
     ],
     finalCtaTitle: 'Nhận tư vấn xử lý vi phạm miễn phí',
@@ -252,14 +252,14 @@ export const landingConfigs: LandingConfig[] = [
     heroTitle: 'Đăng ký mã số mã vạch',
     heroHighlight: 'cho sản phẩm',
     heroSubtitle:
-      'Có mã vạch để sản phẩm lên kệ siêu thị, sàn thương mại điện tử và quản lý hàng hóa chuyên nghiệp. Luật Poip làm trọn gói, nhanh gọn.',
+      'Có mã vạch để sản phẩm lên kệ siêu thị, sàn thương mại điện tử và quản lý hàng hóa chuyên nghiệp. Luật Poip Legal làm trọn gói, nhanh gọn.',
     heroPoints: commonHeroPoints,
     benefitsTitle: 'Vì sao cần mã số mã vạch',
     benefits: [
       { title: 'Lên kệ siêu thị, sàn TMĐT', description: 'Nhiều siêu thị và sàn yêu cầu sản phẩm phải có mã vạch hợp lệ.' },
       { title: 'Quản lý hàng hóa', description: 'Mã vạch giúp kiểm kho, bán hàng và truy xuất nhanh chóng.' },
       { title: 'Tăng uy tín sản phẩm', description: 'Mã vạch chuẩn tạo sự chuyên nghiệp và tin tưởng với khách hàng.' },
-      { title: 'Thủ tục nhanh', description: 'Luật Poip xử lý hồ sơ và bàn giao mã trong thời gian ngắn.' },
+      { title: 'Thủ tục nhanh', description: 'Luật Poip Legal xử lý hồ sơ và bàn giao mã trong thời gian ngắn.' },
     ],
     stepsTitle: 'Quy trình làm việc',
     steps: [
@@ -271,11 +271,11 @@ export const landingConfigs: LandingConfig[] = [
     faqTitle: 'Câu hỏi thường gặp',
     faqs: [
       { question: 'Đăng ký mã vạch mất bao lâu?', answer: 'Thường nhanh, trong vài ngày đến vài tuần tùy hồ sơ.' },
-      { question: 'Một mã dùng cho bao nhiêu sản phẩm?', answer: 'Tùy loại đăng ký. Luật Poip tư vấn gói phù hợp số lượng sản phẩm của bạn.' },
-      { question: 'Cần giấy tờ gì?', answer: 'Giấy phép kinh doanh và thông tin sản phẩm. Luật Poip hướng dẫn chi tiết.' },
+      { question: 'Một mã dùng cho bao nhiêu sản phẩm?', answer: 'Tùy loại đăng ký. Luật Poip Legal tư vấn gói phù hợp số lượng sản phẩm của bạn.' },
+      { question: 'Cần giấy tờ gì?', answer: 'Giấy phép kinh doanh và thông tin sản phẩm. Luật Poip Legal hướng dẫn chi tiết.' },
     ],
     finalCtaTitle: 'Nhận tư vấn đăng ký mã vạch miễn phí',
-    finalCtaSubtitle: 'Để lại thông tin, Luật Poip sẽ tư vấn gói phù hợp và báo phí trọn gói.',
+    finalCtaSubtitle: 'Để lại thông tin, Luật Poip Legal sẽ tư vấn gói phù hợp và báo phí trọn gói.',
   },
 
   {
@@ -285,9 +285,9 @@ export const landingConfigs: LandingConfig[] = [
     heroTitle: 'Xin giấy phép',
     heroHighlight: 'thiết lập mạng xã hội',
     heroSubtitle:
-      'Vận hành website, ứng dụng có tính năng mạng xã hội cần giấy phép theo quy định. Luật Poip tư vấn điều kiện và xin giấy phép trọn gói.',
+      'Vận hành website, ứng dụng có tính năng mạng xã hội cần giấy phép theo quy định. Luật Poip Legal tư vấn điều kiện và xin giấy phép trọn gói.',
     heroPoints: commonHeroPoints,
-    benefitsTitle: 'Luật Poip giúp bạn',
+    benefitsTitle: 'Luật Poip Legal giúp bạn',
     benefits: [
       { title: 'Hoạt động hợp pháp', description: 'Có giấy phép giúp nền tảng vận hành đúng quy định, tránh bị xử phạt.' },
       { title: 'Tư vấn điều kiện', description: 'Đánh giá điều kiện về tên miền, nhân sự, kỹ thuật trước khi nộp.' },
@@ -304,7 +304,7 @@ export const landingConfigs: LandingConfig[] = [
     faqTitle: 'Câu hỏi thường gặp',
     faqs: [
       { question: 'Loại nền tảng nào cần giấy phép?', answer: 'Các nền tảng cho phép người dùng tạo, chia sẻ nội dung và tương tác. Hãy liên hệ để được tư vấn cụ thể.' },
-      { question: 'Điều kiện chính là gì?', answer: 'Liên quan tên miền, nhân sự, biện pháp kỹ thuật quản lý nội dung. Luật Poip đánh giá chi tiết theo dự án.' },
+      { question: 'Điều kiện chính là gì?', answer: 'Liên quan tên miền, nhân sự, biện pháp kỹ thuật quản lý nội dung. Luật Poip Legal đánh giá chi tiết theo dự án.' },
       { question: 'Mất bao lâu?', answer: 'Tùy mức độ hoàn thiện hồ sơ. Luật sư sẽ tư vấn lộ trình rõ ràng.' },
     ],
     finalCtaTitle: 'Nhận tư vấn xin giấy phép mạng xã hội',
@@ -318,14 +318,14 @@ export const landingConfigs: LandingConfig[] = [
     heroTitle: 'Chứng nhận',
     heroHighlight: 'doanh nghiệp khoa học công nghệ',
     heroSubtitle:
-      'Đạt chứng nhận doanh nghiệp KH&CN để hưởng ưu đãi thuế và chính sách hỗ trợ. Luật Poip tư vấn điều kiện và hoàn thiện hồ sơ.',
+      'Đạt chứng nhận doanh nghiệp KH&CN để hưởng ưu đãi thuế và chính sách hỗ trợ. Luật Poip Legal tư vấn điều kiện và hoàn thiện hồ sơ.',
     heroPoints: commonHeroPoints,
     benefitsTitle: 'Lợi ích khi được chứng nhận',
     benefits: [
       { title: 'Ưu đãi thuế', description: 'Doanh nghiệp KH&CN được hưởng ưu đãi thuế thu nhập doanh nghiệp theo quy định.' },
       { title: 'Chính sách hỗ trợ', description: 'Tiếp cận các chính sách ưu đãi về đất đai, tín dụng, hỗ trợ nghiên cứu.' },
       { title: 'Nâng tầm thương hiệu', description: 'Chứng nhận khẳng định năng lực công nghệ của doanh nghiệp.' },
-      { title: 'Hồ sơ bài bản', description: 'Luật Poip giúp chứng minh kết quả KH&CN một cách thuyết phục.' },
+      { title: 'Hồ sơ bài bản', description: 'Luật Poip Legal giúp chứng minh kết quả KH&CN một cách thuyết phục.' },
     ],
     stepsTitle: 'Quy trình làm việc',
     steps: [
@@ -336,7 +336,7 @@ export const landingConfigs: LandingConfig[] = [
     ],
     faqTitle: 'Câu hỏi thường gặp',
     faqs: [
-      { question: 'Điều kiện cơ bản là gì?', answer: 'Doanh nghiệp cần có kết quả KH&CN và đáp ứng tỷ lệ doanh thu theo quy định. Luật Poip đánh giá cụ thể.' },
+      { question: 'Điều kiện cơ bản là gì?', answer: 'Doanh nghiệp cần có kết quả KH&CN và đáp ứng tỷ lệ doanh thu theo quy định. Luật Poip Legal đánh giá cụ thể.' },
       { question: 'Ưu đãi thuế thế nào?', answer: 'Được miễn, giảm thuế thu nhập doanh nghiệp theo lộ trình quy định.' },
       { question: 'Mất bao lâu?', answer: 'Tùy độ hoàn thiện hồ sơ. Luật sư sẽ tư vấn lộ trình.' },
     ],
@@ -370,8 +370,8 @@ export const landingConfigs: LandingConfig[] = [
     faqTitle: 'Câu hỏi thường gặp',
     faqs: [
       { question: 'Soạn loại hợp đồng nào?', answer: 'Hợp đồng mua bán, dịch vụ, hợp tác, lao động, chuyển nhượng... Hãy liên hệ để tư vấn theo nhu cầu.' },
-      { question: 'Có rà soát hợp đồng có sẵn không?', answer: 'Có. Luật Poip rà soát và chỉ ra rủi ro, đề xuất chỉnh sửa.' },
-      { question: 'Phí tính thế nào?', answer: 'Tùy độ phức tạp của hợp đồng. Luật Poip báo phí trước khi làm.' },
+      { question: 'Có rà soát hợp đồng có sẵn không?', answer: 'Có. Luật Poip Legal rà soát và chỉ ra rủi ro, đề xuất chỉnh sửa.' },
+      { question: 'Phí tính thế nào?', answer: 'Tùy độ phức tạp của hợp đồng. Luật Poip Legal báo phí trước khi làm.' },
     ],
     finalCtaTitle: 'Nhận tư vấn soạn thảo hợp đồng',
     finalCtaSubtitle: 'Mô tả ngắn nhu cầu, luật sư sẽ tư vấn và báo phí trọn gói.',

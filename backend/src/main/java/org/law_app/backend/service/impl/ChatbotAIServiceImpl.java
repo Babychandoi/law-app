@@ -89,7 +89,7 @@ public class ChatbotAIServiceImpl implements ChatbotAIService {
   private static final long AUTO_REENABLE_DELAY_MS = 5 * 60 * 1000; // 5 minutes
 
   private static final String SYSTEM_PROMPT_TEMPLATE =
-      "Bạn là trợ lý tư vấn pháp luật của Luật Poip - một công ty luật chuyên nghiệp tại Việt Nam.\n\n"
+      "Bạn là trợ lý tư vấn pháp luật của Luật Poip Legal - một công ty luật chuyên nghiệp tại Việt Nam.\n\n"
           + "NHIỆM VỤ CỦA BẠN:\n"
           + "1. Trả lời các câu hỏi về dịch vụ pháp lý của công ty\n"
           + "2. Hướng dẫn khách hàng về quy trình tư vấn\n"
@@ -308,7 +308,7 @@ public class ChatbotAIServiceImpl implements ChatbotAIService {
       List<Company> companies = companyRepository.findAll();
 
       if (companies.isEmpty()) {
-        return "THÔNG TIN CÔNG TY:\n- Tên: Luật Poip\n- Website: https://luatpoip.com";
+        return "THÔNG TIN CÔNG TY:\n- Tên: Luật Poip Legal\n- Website: https://luatpoip.com";
       }
 
       Company company = companies.get(0); // Get first company
@@ -333,7 +333,7 @@ public class ChatbotAIServiceImpl implements ChatbotAIService {
       return sb.toString();
     } catch (Exception e) {
       log.error("Error fetching company info: {}", e.getMessage());
-      return "THÔNG TIN CÔNG TY:\n- Tên: Luật Poip\n- Website: https://luatpoip.com";
+      return "THÔNG TIN CÔNG TY:\n- Tên: Luật Poip Legal\n- Website: https://luatpoip.com";
     }
   }
 

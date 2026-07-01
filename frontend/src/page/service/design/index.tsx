@@ -10,7 +10,7 @@ import { Seo } from '../../../component/Seo';
 export default function Index() {
   const [hero] = useState<Hero>({
     title: 'Đăng ký bảo hộ kiểu dáng',
-    subtitle: 'Poip Law',
+    subtitle: 'Poip Legal Law',
     description:
       'Tư vấn bởi đội ngũ Luật Sư có chuyên môn và kinh nghiệm trong lĩnh vực bảo hộ kiểu dáng.',
   });
@@ -19,7 +19,7 @@ export default function Index() {
       id: '74516b43-b488-4a2b-a530-dfcc9705a1d6',
       step: 'BƯỚC 1',
       title: 'BƯỚC 1',
-      description: 'Poip Law tiếp nhận yêu cầu dịch vụ và tiến hành tư vấn dịch vụ',
+      description: 'Poip Legal Law tiếp nhận yêu cầu dịch vụ và tiến hành tư vấn dịch vụ',
       details: [],
     },
     {
@@ -41,7 +41,7 @@ export default function Index() {
       step: 'BƯỚC 4',
       title: 'BƯỚC 4',
       description:
-        'Luật Poip nộp hồ sơ đăng ký lên cơ quan nhà nước có thẩm quyền và theo dõi quá trình xử lý đơn',
+        'Luật Poip Legal nộp hồ sơ đăng ký lên cơ quan nhà nước có thẩm quyền và theo dõi quá trình xử lý đơn',
       details: [],
     },
   ]);
@@ -80,8 +80,8 @@ export default function Index() {
   return (
     <>
       <Seo
-        title="Dịch vụ đăng ký kiểu dáng công nghiệp - Luật Poip"
-        keywords="Dịch vụ đăng ký kiểu dáng công nghiệp, bảo hộ kiểu dáng, luật sư sở hữu trí tuệ, Luật Poip"
+        title="Dịch vụ đăng ký kiểu dáng công nghiệp - Luật Poip Legal"
+        keywords="Dịch vụ đăng ký kiểu dáng công nghiệp, bảo hộ kiểu dáng, luật sư sở hữu trí tuệ, Luật Poip Legal"
         description="Dịch vụ đăng ký kiểu dáng công nghiệp, tư vấn miễn phí bởi đội ngũ chuyên gia sở hữu trí tuệ giàu kinh nghiệm và tận tâm."
       />
       <HeroService

@@ -238,13 +238,13 @@ export default function Header() {
         <Link
           to="/"
           className={`flex shrink-0 items-center ${focusClass}`}
-          aria-label="Luật Poip - Trang chủ"
+          aria-label="Luật Poip Legal - Trang chủ"
         >
           <picture>
             <source srcSet="/assets/images/logo-poip-v3.avif" type="image/avif" />
             <img
               src="/assets/images/logo-poip-v3.webp"
-              alt="Luật Poip"
+              alt="Luật Poip Legal"
               width="160"
               height="53"
               decoding="async"

@@ -18,7 +18,7 @@ import { TotoCompany } from '../../../types/company';
 const fallbackCompany: TotoCompany = {
   company: {
     id: 'fallback',
-    name: 'Luật Poip',
+    name: 'Luật Poip Legal',
     representative: '',
     taxCode: '',
     websiteName: 'luatpoip.com',
@@ -147,7 +147,7 @@ export default function Footer() {
             Nhận bản tin
           </h3>
           <p className="mb-4 text-sm leading-6 text-white/70">
-            Cập nhật tin tức pháp lý và sở hữu trí tuệ mới nhất từ đội ngũ Luật Poip.
+            Cập nhật tin tức pháp lý và sở hữu trí tuệ mới nhất từ đội ngũ Luật Poip Legal.
           </p>
           <form onSubmit={handleSubmit} className="flex gap-2">
             <label htmlFor="footer-email" className="sr-only">
