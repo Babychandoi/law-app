@@ -130,7 +130,8 @@ public class SecurityConfig {
             "http://localhost:3000",
             "http://103.56.160.193:3000",
             "https://luatpoip.com",
-            "https://www.luatpoip.com")); // Nguồn gốc được phép
+            "https://www.luatpoip.com",
+            "https://stage.luatpoip.com")); // Nguồn gốc được phép (stage = test giao diện)
     configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
     configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "X-XSRF-TOKEN"));
     configuration.setAllowCredentials(true);

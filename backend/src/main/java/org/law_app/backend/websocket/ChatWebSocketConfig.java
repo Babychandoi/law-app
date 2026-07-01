@@ -26,7 +26,10 @@ public class ChatWebSocketConfig implements WebSocketMessageBrokerConfigurer {
     registry
         .addEndpoint("/ws")
         .setAllowedOriginPatterns(
-            "http://localhost:3000", "http://103.56.160.193:3000", "https://luatpoip.com")
+            "http://localhost:3000",
+            "http://103.56.160.193:3000",
+            "https://luatpoip.com",
+            "https://stage.luatpoip.com")
         .withSockJS();
   }
 
