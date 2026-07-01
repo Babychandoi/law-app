@@ -24,7 +24,7 @@ const BlogPost = ({ news }: BlogPostProps) => (
           className="prose prose-lg max-w-none
             prose-headings:font-semibold prose-headings:text-brand-ink
             prose-p:leading-8 prose-p:text-brand-muted
-            prose-a:text-brand-goldDark prose-a:underline-offset-4
+            prose-a:text-brand-primaryDark prose-a:underline-offset-4
             prose-strong:text-brand-ink
             prose-li:text-brand-muted
             prose-img:rounded-lg

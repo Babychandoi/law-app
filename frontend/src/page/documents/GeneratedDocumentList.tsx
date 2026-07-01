@@ -55,7 +55,7 @@ export default function GeneratedDocumentList() {
               <tr key={doc.id} className="border-t border-brand-line hover:bg-brand-surface/50">
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
-                    <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-gold/15 text-brand-goldDark">
+                    <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-primary/15 text-brand-primaryDark">
                       <FileText size={18} />
                     </span>
                     <span className="font-medium text-brand-ink">{doc.fileName}</span>
@@ -70,7 +70,7 @@ export default function GeneratedDocumentList() {
                 <td className="px-4 py-3 text-right">
                   <button
                     onClick={() => download(doc)}
-                    className="inline-flex items-center gap-2 rounded-lg bg-brand-gold px-3 py-2 text-white hover:bg-brand-goldDark"
+                    className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-white hover:bg-brand-primaryDark"
                   >
                     <Download size={16} /> Tải
                   </button>

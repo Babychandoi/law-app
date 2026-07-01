@@ -34,7 +34,7 @@ const IndustrialDesignProtection = () => {
         >
           <div className="flex items-center space-x-4">
             <div className="bg-brand-surface p-3 rounded-full">
-              <div className="w-6 h-6 text-brand-goldDark">
+              <div className="w-6 h-6 text-brand-primaryDark">
                 <Icon />
               </div>
             </div>
@@ -95,7 +95,7 @@ const IndustrialDesignProtection = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-goldDark rounded-full mb-6">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-primary rounded-full mb-6">
             <Lightbulb className="w-10 h-10 text-white" />
           </div>
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
@@ -192,7 +192,7 @@ const IndustrialDesignProtection = () => {
             </p>
             <button
               type="button"
-              className="bg-brand-goldDark hover:bg-brand-goldDark text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-soft"
+              className="bg-brand-primary hover:bg-brand-primaryDark text-white font-semibold py-3 px-8 rounded-lg transition-colors duration-200 shadow-sm hover:shadow-soft"
               onClick={() => {
                 const contactForm = document.getElementById('contact-form');
                 if (contactForm) {

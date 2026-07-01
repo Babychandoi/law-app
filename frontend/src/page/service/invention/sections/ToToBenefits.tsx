@@ -51,10 +51,10 @@ const getColorClasses = (color: 'blue' | 'emerald' | 'purple') => {
     blue: {
       bg: 'bg-brand-surface',
       border: 'border-brand-line',
-      icon: 'text-brand-goldDark',
-      accent: 'bg-brand-goldDark',
+      icon: 'text-brand-primaryDark',
+      accent: 'bg-brand-primary',
       gradient: ' ',
-      shadow: 'shadow-brand-gold/20',
+      shadow: 'shadow-brand-primary/20',
     },
     emerald: {
       bg: 'bg-emerald-50',
@@ -67,10 +67,10 @@ const getColorClasses = (color: 'blue' | 'emerald' | 'purple') => {
     purple: {
       bg: 'bg-brand-surface',
       border: 'border-brand-line',
-      icon: 'text-brand-goldDark',
-      accent: 'bg-brand-goldDark',
+      icon: 'text-brand-primaryDark',
+      accent: 'bg-brand-primary',
       gradient: ' ',
-      shadow: 'shadow-brand-gold/20',
+      shadow: 'shadow-brand-primary/20',
     },
   };
   return colors[color];
@@ -134,8 +134,8 @@ const ToToBenefits: React.FC = () => {
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center">
               <div className="relative inline-block mb-8">
-                <div className="absolute inset-0 bg-brand-goldDark rounded-full blur-lg opacity-30 "></div>
-                <div className="relative w-24 h-24 bg-brand-goldDark rounded-full flex items-center justify-center shadow-soft">
+                <div className="absolute inset-0 bg-brand-primary rounded-full blur-lg opacity-30 "></div>
+                <div className="relative w-24 h-24 bg-brand-primary rounded-full flex items-center justify-center shadow-soft">
                   <Lightbulb className="w-12 h-12 text-white" />
                 </div>
               </div>
@@ -144,7 +144,7 @@ const ToToBenefits: React.FC = () => {
                 {data.title}
               </h1>
 
-              <div className="w-24 h-1 bg-brand-goldDark mx-auto rounded-full"></div>
+              <div className="w-24 h-1 bg-brand-primary mx-auto rounded-full"></div>
             </div>
           </div>
         </section>
@@ -173,7 +173,7 @@ const ToToBenefits: React.FC = () => {
                 </p>
                 <button
                   type="button"
-                  className="bg-brand-goldDark text-white px-8 py-3 rounded-full font-semibold hover:shadow-sm  transition-all duration-300"
+                  className="bg-brand-primary text-white px-8 py-3 rounded-full font-semibold hover:shadow-sm  transition-all duration-300"
                   onClick={() => {
                     const contactForm = document.getElementById('contact-form');
                     if (contactForm) {

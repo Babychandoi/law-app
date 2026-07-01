@@ -417,9 +417,9 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
       case ConnectionState.CONNECTED:
         return { text: 'Đang kết nối', color: 'bg-green-400' };
       case ConnectionState.CONNECTING:
-        return { text: 'Đang kết nối...', color: 'bg-brand-goldDark' };
+        return { text: 'Đang kết nối...', color: 'bg-brand-primary' };
       case ConnectionState.RECONNECTING:
-        return { text: 'Đang kết nối lại...', color: 'bg-brand-goldDark' };
+        return { text: 'Đang kết nối lại...', color: 'bg-brand-primary' };
       case ConnectionState.ERROR:
         return { text: 'Lỗi kết nối', color: 'bg-red-400' };
       default:
@@ -432,7 +432,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
   return (
     <div className="transition-all duration-300 ease-in-out w-full sm:w-96 max-h-[600px] rounded-lg overflow-hidden shadow-soft">
       {/* Chat Header */}
-      <div className="bg-brand-goldDark text-white px-4 py-4 flex items-center justify-between shadow-sm relative overflow-hidden">
+      <div className="bg-brand-primary text-white px-4 py-4 flex items-center justify-between shadow-sm relative overflow-hidden">
         {/* Decorative elements */}
         <div className="absolute inset-0 bg-white/10"></div>
 
@@ -541,7 +541,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
             <div className="text-center text-gray-500 mt-8">
               <div className="w-16 h-16 mx-auto mb-4 bg-brand-surface rounded-full flex items-center justify-center">
                 <svg
-                  className="w-8 h-8 text-brand-goldDark"
+                  className="w-8 h-8 text-brand-primaryDark"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -568,7 +568,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
                 <div
                   className={`px-4 py-2 rounded-lg break-words shadow-sm relative ${
                     msg.senderType === 'GUEST'
-                      ? `bg-brand-goldDark text-white rounded-br-md ${
+                      ? `bg-brand-primary text-white rounded-br-md ${
                           msg.status === 'sending'
                             ? 'opacity-70'
                             : msg.status === 'failed'
@@ -623,7 +623,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
                   {/* AI Bot Indicator */}
                   {msg.senderType === 'ADMIN' && msg.adminId === 'AI-BOT' && (
                     <div className="flex items-center space-x-1 mt-2 pt-2 border-t border-gray-200">
-                      <div className="w-4 h-4 bg-brand-goldDark rounded-full flex items-center justify-center">
+                      <div className="w-4 h-4 bg-brand-primary rounded-full flex items-center justify-center">
                         <svg
                           className="w-2.5 h-2.5 text-white"
                           fill="currentColor"
@@ -657,7 +657,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
               <div className="max-w-[80%]">
                 <div className="px-4 py-3 rounded-lg bg-white border border-gray-200 rounded-bl-md shadow-sm">
                   <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 bg-brand-goldDark rounded-full flex items-center justify-center ">
+                    <div className="w-4 h-4 bg-brand-primary rounded-full flex items-center justify-center ">
                       <svg
                         className="w-2.5 h-2.5 text-white"
                         fill="currentColor"
@@ -700,7 +700,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
                 onChange={(e) => setMessage(e.target.value)}
                 onKeyDown={handleKeyPress}
                 maxLength={MAX_MESSAGE_LENGTH}
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-goldDark focus:border-transparent text-sm placeholder-gray-500"
+                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-primaryDark focus:border-transparent text-sm placeholder-gray-500"
                 placeholder={isConnected ? 'Nhập tin nhắn của bạn...' : 'Đang kết nối...'}
                 disabled={!isConnected || isConnecting}
               />
@@ -708,7 +708,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
                 type="button"
                 onClick={sendMessage}
                 disabled={!message.trim() || !isConnected || isConnecting}
-                className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-brand-goldDark hover:bg-brand-goldDark disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-full flex items-center justify-center transition-colors"
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 w-8 h-8 bg-brand-primary hover:bg-brand-primaryDark disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-full flex items-center justify-center transition-colors"
                 title="Gửi tin nhắn"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -725,7 +725,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
 
           <div className="mt-2 text-xs">
             {!isConnected && connectionState !== ConnectionState.ERROR && (
-              <div className="text-brand-goldDark flex items-center">
+              <div className="text-brand-primaryDark flex items-center">
                 <svg className="w-3 h-3 mr-1 animate-spin" fill="currentColor" viewBox="0 0 20 20">
                   <path
                     fillRule="evenodd"
@@ -739,7 +739,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
 
             {message.length > MAX_MESSAGE_LENGTH - 50 && (
               <div
-                className={`${message.length >= MAX_MESSAGE_LENGTH ? 'text-red-500' : 'text-brand-goldDark'}`}
+                className={`${message.length >= MAX_MESSAGE_LENGTH ? 'text-red-500' : 'text-brand-primaryDark'}`}
               >
                 {MAX_MESSAGE_LENGTH - message.length} ký tự còn lại
               </div>

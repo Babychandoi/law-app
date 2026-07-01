@@ -75,7 +75,7 @@ const CopyrightServices: React.FC = () => {
       <div className="max-w-6xl mx-auto px-4 mb-12">
         <div className="text-center">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-brand-surface rounded-full mb-6">
-            <TrendingUp className="w-8 h-8 text-brand-goldDark" />
+            <TrendingUp className="w-8 h-8 text-brand-primaryDark" />
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
             LUẬT POIP CUNG CẤP DỊCH VỤ ĐĂNG KÝ BẢO HỘ BẢN QUYỀN TÁC GIẢ VỚI CÁC LOẠI HÌNH SAU
@@ -92,7 +92,7 @@ const CopyrightServices: React.FC = () => {
               className="bg-white rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow duration-300"
             >
               <div className="flex flex-col items-center text-center">
-                <div className="flex items-center justify-center w-12 h-12 bg-brand-surface rounded-lg mb-4 text-brand-goldDark">
+                <div className="flex items-center justify-center w-12 h-12 bg-brand-surface rounded-lg mb-4 text-brand-primaryDark">
                   {service.icon}
                 </div>
                 <p className="text-gray-700 font-medium leading-relaxed">{service.title}</p>

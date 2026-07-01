@@ -199,7 +199,7 @@ const Navbar: React.FC = () => {
                   {unreadCount > 0 && (
                     <button
                       onClick={markAllAsRead}
-                      className="text-xs text-brand-goldDark hover:text-brand-goldDark flex items-center space-x-1"
+                      className="text-xs text-brand-primaryDark hover:text-brand-primaryDark flex items-center space-x-1"
                     >
                       <Eye size={12} />
                       <span>Đọc tất cả</span>
@@ -252,7 +252,7 @@ const Navbar: React.FC = () => {
                             <p className="text-xs text-gray-500 mt-1">{n.createdAt}</p>
                           </div>
                           {!n.read && (
-                            <div className="w-2 h-2 bg-brand-goldDark rounded-full mt-2"></div>
+                            <div className="w-2 h-2 bg-brand-primary rounded-full mt-2"></div>
                           )}
                         </div>
                       </div>
@@ -265,7 +265,7 @@ const Navbar: React.FC = () => {
                           displayedNotifications.length < notifications.length && (
                             <button
                               onClick={handleLoadMore}
-                              className="flex items-center space-x-1 text-sm text-brand-goldDark hover:text-brand-goldDark"
+                              className="flex items-center space-x-1 text-sm text-brand-primaryDark hover:text-brand-primaryDark"
                             >
                               <ChevronDown size={16} />
                               <span>
@@ -278,7 +278,7 @@ const Navbar: React.FC = () => {
                           displayedNotifications.length < notifications.length && (
                             <button
                               onClick={handleViewAll}
-                              className="flex items-center space-x-1 text-sm text-brand-goldDark hover:text-brand-goldDark"
+                              className="flex items-center space-x-1 text-sm text-brand-primaryDark hover:text-brand-primaryDark"
                             >
                               <Eye size={16} />
                               <span>Xem tất cả ({notifications.length})</span>
@@ -313,7 +313,7 @@ const Navbar: React.FC = () => {
                 <div className="p-4 border-b border-gray-200">
                   <div className="flex items-center space-x-3">
                     <div className="w-12 h-12 bg-brand-surface rounded-full flex items-center justify-center">
-                      <User2 size={24} className="text-brand-goldDark" />
+                      <User2 size={24} className="text-brand-primaryDark" />
                     </div>
                     <div>
                       <p className="font-semibold text-gray-800">{profile?.fullName}</p>

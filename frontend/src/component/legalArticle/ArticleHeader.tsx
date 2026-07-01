@@ -29,7 +29,7 @@ const ArticleHeader = ({ headerNew = {} }: HeaderProps) => {
         />
       )}
       <div className="p-6 sm:p-8 lg:p-10">
-        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand-goldDark">
+        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand-primaryDark">
           Bản tin pháp lý
         </p>
         <h1 className="mt-3 text-3xl font-semibold leading-tight text-brand-ink md:text-4xl">
@@ -43,12 +43,12 @@ const ArticleHeader = ({ headerNew = {} }: HeaderProps) => {
         <div className="mt-6 flex flex-wrap gap-5 border-t border-brand-line pt-5 text-sm text-brand-muted">
           {headerNew.author && (
             <span className="inline-flex items-center gap-2">
-              <User className="h-4 w-4 text-brand-goldDark" aria-hidden="true" />
+              <User className="h-4 w-4 text-brand-primaryDark" aria-hidden="true" />
               {headerNew.author}
             </span>
           )}
           <span className="inline-flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-brand-goldDark" aria-hidden="true" />
+            <Calendar className="h-4 w-4 text-brand-primaryDark" aria-hidden="true" />
             {formattedDate}
           </span>
         </div>

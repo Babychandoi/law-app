@@ -40,8 +40,8 @@ const getColorClasses = (color: 'blue' | 'emerald') => {
     blue: {
       bg: 'bg-brand-surface',
       border: 'border-brand-line',
-      icon: 'text-brand-goldDark',
-      accent: 'bg-brand-goldDark',
+      icon: 'text-brand-primaryDark',
+      accent: 'bg-brand-primary',
     },
     emerald: {
       bg: 'bg-emerald-50',
@@ -105,13 +105,13 @@ const PatentProtectionConditions: React.FC = () => {
           <div className="max-w-6xl mx-auto px-4">
             <div className="text-center">
               <div className="relative inline-block mb-8">
-                <div className="absolute inset-0 bg-brand-goldDark rounded-full blur-lg opacity-30 "></div>
-                <div className="relative w-24 h-24 bg-brand-goldDark rounded-full flex items-center justify-center shadow-soft">
+                <div className="absolute inset-0 bg-brand-primary rounded-full blur-lg opacity-30 "></div>
+                <div className="relative w-24 h-24 bg-brand-primary rounded-full flex items-center justify-center shadow-soft">
                   <Lightbulb className="w-12 h-12 text-white" />
                 </div>
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-brand-ink mb-4">{data.title}</h1>
-              <div className="w-24 h-1 bg-brand-goldDark mx-auto rounded-full"></div>
+              <div className="w-24 h-1 bg-brand-primary mx-auto rounded-full"></div>
             </div>
           </div>
         </section>

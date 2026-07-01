@@ -8,14 +8,14 @@ import { ServiceResponse } from '../../../types/service';
 import { useOverflowMenu } from './useOverflowMenu';
 
 const focusClass =
-  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-goldDark';
+  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primaryDark';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
     `inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors ${focusClass}`,
     isActive
-      ? 'bg-brand-surface text-brand-goldDark'
-      : 'text-gray-700 hover:bg-gray-50 hover:text-brand-goldDark',
+      ? 'bg-brand-surface text-brand-primaryDark'
+      : 'text-gray-700 hover:bg-gray-50 hover:text-brand-primaryDark',
   ].join(' ');
 
 function MenuIcon({ id, icon, size = 17 }: { id: string; icon?: string; size?: number }) {
@@ -58,12 +58,12 @@ function DesktopMenuItem({ item }: { item: ServiceResponse }) {
                 [
                   `flex min-h-11 items-center gap-3 rounded-md px-3 py-3 text-sm transition-colors ${focusClass}`,
                   isActive
-                    ? 'bg-brand-surface text-brand-goldDark'
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-brand-goldDark',
+                    ? 'bg-brand-surface text-brand-primaryDark'
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-brand-primaryDark',
                 ].join(' ')
               }
             >
-              <span className="text-brand-goldDark">
+              <span className="text-brand-primaryDark">
                 <MenuIcon id={child.id} size={16} />
               </span>
               <span>{child.title}</span>
@@ -82,8 +82,8 @@ function MoreMenuItem({ items }: { items: ServiceResponse[] }) {
     [
       `flex min-h-11 items-center gap-3 rounded-md px-3 py-3 text-sm transition-colors ${focusClass}`,
       isActive
-        ? 'bg-brand-surface text-brand-goldDark'
-        : 'text-gray-700 hover:bg-gray-50 hover:text-brand-goldDark',
+        ? 'bg-brand-surface text-brand-primaryDark'
+        : 'text-gray-700 hover:bg-gray-50 hover:text-brand-primaryDark',
     ].join(' ');
 
   return (
@@ -102,7 +102,7 @@ function MoreMenuItem({ items }: { items: ServiceResponse[] }) {
           {items.map((item) => (
             <div key={item.id}>
               <NavLink to={item.href} className={childLinkClass}>
-                <span className="text-brand-goldDark">
+                <span className="text-brand-primaryDark">
                   <MenuIcon id={item.id} icon={item.icon} size={16} />
                 </span>
                 <span className="font-medium">{item.title}</span>
@@ -111,7 +111,7 @@ function MoreMenuItem({ items }: { items: ServiceResponse[] }) {
                 <div className="ml-4 border-l border-brand-line pl-2">
                   {item.children.map((child) => (
                     <NavLink key={child.id} to={child.href} className={childLinkClass}>
-                      <span className="text-brand-goldDark">
+                      <span className="text-brand-primaryDark">
                         <MenuIcon id={child.id} size={15} />
                       </span>
                       <span>{child.title}</span>
@@ -149,7 +149,7 @@ function MobileMenuItem({
           className={({ isActive }) =>
             [
               `flex min-h-11 flex-1 items-center gap-3 rounded-md px-3 py-3 text-sm font-medium ${focusClass}`,
-              isActive ? 'bg-brand-surface text-brand-goldDark' : 'text-gray-800',
+              isActive ? 'bg-brand-surface text-brand-primaryDark' : 'text-gray-800',
             ].join(' ')
           }
         >
@@ -182,7 +182,7 @@ function MobileMenuItem({
               className={({ isActive }) =>
                 [
                   `flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-sm ${focusClass}`,
-                  isActive ? 'bg-brand-surface text-brand-goldDark' : 'text-gray-700',
+                  isActive ? 'bg-brand-surface text-brand-primaryDark' : 'text-gray-700',
                 ].join(' ')
               }
             >
@@ -212,25 +212,25 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-brand-line bg-white/95 backdrop-blur">
-      <div className="public-header-top hidden border-b border-white/10 bg-brand-ink text-white xl:block">
+      <div className="public-header-top hidden border-b border-brand-line bg-white text-brand-muted xl:block">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2 text-sm">
           <div className="flex items-center gap-5">
             <a
-              className="inline-flex items-center gap-2 hover:text-brand-gold"
+              className="inline-flex items-center gap-2 text-brand-ink hover:text-brand-primary"
               href={contactInfo.phoneHref}
             >
-              <Phone size={14} aria-hidden="true" />
+              <Phone size={14} className="text-brand-primary" aria-hidden="true" />
               <span>Hotline: {contactInfo.hotline}</span>
             </a>
             <a
-              className="inline-flex items-center gap-2 hover:text-brand-gold"
+              className="inline-flex items-center gap-2 text-brand-ink hover:text-brand-primary"
               href={contactInfo.emailHref}
             >
-              <Mail size={14} aria-hidden="true" />
+              <Mail size={14} className="text-brand-primary" aria-hidden="true" />
               <span>{contactInfo.email}</span>
             </a>
           </div>
-          <span className="text-white/75">Tư vấn sở hữu trí tuệ và pháp lý doanh nghiệp</span>
+          <span className="text-brand-muted">Tư vấn sở hữu trí tuệ và pháp lý doanh nghiệp</span>
         </div>
       </div>
 
@@ -284,7 +284,7 @@ export default function Header() {
 
         <a
           href={contactInfo.phoneHref}
-          className={`hidden min-h-11 items-center rounded-md bg-brand-goldDark px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-black xl:inline-flex ${focusClass}`}
+          className={`hidden min-h-11 items-center rounded-md bg-brand-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-primaryDark xl:inline-flex ${focusClass}`}
         >
           Gọi tư vấn
         </a>
@@ -325,7 +325,7 @@ export default function Header() {
           <div className="mt-4 grid grid-cols-2 gap-2">
             <a
               href={contactInfo.phoneHref}
-              className="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-goldDark px-3 py-2 text-center text-sm font-semibold text-white"
+              className="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-primary px-3 py-2 text-center text-sm font-semibold text-white"
             >
               Gọi ngay
             </a>

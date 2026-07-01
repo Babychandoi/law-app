@@ -45,7 +45,7 @@ export default function New() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="mb-10 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-brand-goldDark">
+            <p className="text-sm font-semibold uppercase tracking-wide text-brand-primaryDark">
               Bản tin pháp lý
             </p>
             <h2 className="mt-2 text-3xl font-semibold text-gray-950 md:text-4xl">
@@ -55,7 +55,7 @@ export default function New() {
           <button
             type="button"
             onClick={() => navigate('/tin-tuc')}
-            className="inline-flex items-center gap-2 rounded-md border border-brand-line px-4 py-2 text-sm font-semibold text-gray-800 transition hover:border-brand-gold hover:text-brand-goldDark"
+            className="inline-flex items-center gap-2 rounded-md border border-brand-line px-4 py-2 text-sm font-semibold text-gray-800 transition hover:border-brand-primary hover:text-brand-primaryDark"
           >
             Xem tất cả
             <ArrowRight size={17} />
@@ -64,12 +64,12 @@ export default function New() {
 
         {loading ? (
           <div className="flex items-center justify-center py-12 text-gray-600">
-            <Loader2 className="mr-2 h-5 w-5 animate-spin text-brand-gold" />
+            <Loader2 className="mr-2 h-5 w-5 animate-spin text-brand-primary" />
             Đang tải bản tin...
           </div>
         ) : news.length === 0 ? (
           <div className="rounded-lg border border-dashed border-brand-line p-10 text-center text-gray-500">
-            <Newspaper className="mx-auto mb-3 text-brand-gold" size={34} />
+            <Newspaper className="mx-auto mb-3 text-brand-primary" size={34} />
             Chưa có bản tin nào.
           </div>
         ) : (
@@ -77,7 +77,7 @@ export default function New() {
             {news.map((item) => (
               <article
                 key={item.id}
-                className="group overflow-hidden rounded-lg border border-brand-line bg-white shadow-sm transition hover:-translate-y-1 hover:border-brand-gold hover:shadow-soft"
+                className="group overflow-hidden rounded-lg border border-brand-line bg-white shadow-sm transition hover:-translate-y-1 hover:border-brand-primary hover:shadow-soft"
               >
                 <button
                   type="button"
@@ -96,7 +96,7 @@ export default function New() {
                         className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
                       />
                     ) : (
-                      <div className="flex h-full items-center justify-center text-brand-gold">
+                      <div className="flex h-full items-center justify-center text-brand-primary">
                         <Newspaper size={34} />
                       </div>
                     )}
@@ -108,13 +108,13 @@ export default function New() {
                         {formatDate(item.createdAt)}
                       </div>
                     )}
-                    <h3 className="line-clamp-2 min-h-[48px] text-base font-semibold leading-6 text-gray-950 group-hover:text-brand-goldDark">
+                    <h3 className="line-clamp-2 min-h-[48px] text-base font-semibold leading-6 text-gray-950 group-hover:text-brand-primaryDark">
                       {item.title}
                     </h3>
                     <p className="mt-3 line-clamp-2 min-h-[44px] text-sm leading-6 text-gray-600">
                       {item.subtitle}
                     </p>
-                    <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand-goldDark">
+                    <span className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand-primaryDark">
                       Đọc tiếp
                       <ArrowRight size={16} />
                     </span>

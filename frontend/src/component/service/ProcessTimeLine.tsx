@@ -26,7 +26,7 @@ const ProcessTimeline = ({
   <section className="bg-brand-surface py-14 sm:py-16" aria-labelledby="process-timeline-title">
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
       <div className="mx-auto mb-10 max-w-3xl text-center">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-md bg-white text-brand-goldDark shadow-sm">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-md bg-white text-brand-primaryDark shadow-sm">
           <Clock className="h-6 w-6" aria-hidden="true" />
         </div>
         <h2
@@ -53,18 +53,18 @@ const ProcessTimeline = ({
               className="rounded-lg border border-brand-line bg-white p-6"
             >
               <div className="flex items-start gap-4">
-                <div className="flex h-11 w-11 flex-none items-center justify-center rounded-md bg-brand-surface text-brand-goldDark">
+                <div className="flex h-11 w-11 flex-none items-center justify-center rounded-md bg-brand-surface text-brand-primaryDark">
                   <Icon className="h-5 w-5" aria-hidden="true" />
                 </div>
                 <div>
-                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-goldDark">
+                  <span className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-primaryDark">
                     Bước {index + 1}
                   </span>
                   <h3 className="mt-1 text-lg font-semibold text-brand-ink">{step.title}</h3>
                 </div>
               </div>
               {step.duration && (
-                <p className="mt-4 inline-flex rounded-full bg-brand-surface px-3 py-1 text-xs font-semibold text-brand-goldDark">
+                <p className="mt-4 inline-flex rounded-full bg-brand-surface px-3 py-1 text-xs font-semibold text-brand-primaryDark">
                   {step.duration}
                 </p>
               )}
