@@ -14,6 +14,10 @@ ingress:
   - hostname: www.luatpoip.com
     service: http://frontend:80
 
+  # Frontend STAGE (nhanh feat/redesign-light-theme) — test truoc khi len prod
+  - hostname: stage.luatpoip.com
+    service: http://frontend-stage:80
+
   # Backend API + WebSocket / STOMP (/ws)
   - hostname: api.luatpoip.com
     service: http://backend:8080
