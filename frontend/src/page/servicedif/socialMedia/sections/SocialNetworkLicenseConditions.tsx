@@ -31,19 +31,19 @@ interface Props {
 
 const SocialNetworkLicenseConditions: React.FC<Props> = ({
   title = 'ĐIỀU KIỆN ĐƯỢC CẤP GIẤY PHÉP THIẾT LẬP MẠNG XÃ HỘI',
-  headerIcon = <Copy className="w-8 h-8 text-brand-goldDark" />,
+  headerIcon = <Copy className="w-8 h-8 text-brand-primaryDark" />,
   conditions = [
     {
       id: 1,
       title: 'Tổ chức, doanh nghiệp hợp pháp',
       content:
         'Là tổ chức, doanh nghiệp được thành lập theo pháp luật Việt Nam có chức năng, nhiệm vụ hoặc ngành nghề đăng ký kinh doanh phù hợp với dịch vụ và nội dung thông tin cung cấp đã được đăng tải trên Cổng thông tin quốc gia về đăng ký doanh nghiệp.',
-      icon: <Building className="w-5 h-5 text-brand-goldDark" />,
+      icon: <Building className="w-5 h-5 text-brand-primaryDark" />,
     },
     {
       id: 2,
       title: 'Có tổ chức, nhân sự đáp ứng theo quy định',
-      icon: <Users className="w-5 h-5 text-brand-goldDark" />,
+      icon: <Users className="w-5 h-5 text-brand-primaryDark" />,
       subConditions: [
         {
           id: '2.1',
@@ -60,7 +60,7 @@ const SocialNetworkLicenseConditions: React.FC<Props> = ({
     {
       id: 3,
       title: 'Đăng ký tên miền và đáp ứng quy định',
-      icon: <Globe className="w-5 h-5 text-brand-goldDark" />,
+      icon: <Globe className="w-5 h-5 text-brand-primaryDark" />,
       subConditions: [
         {
           id: '3.1',
@@ -87,13 +87,13 @@ const SocialNetworkLicenseConditions: React.FC<Props> = ({
     {
       id: 4,
       title: 'Đáp ứng các điều kiện về kỹ thuật theo quy định',
-      icon: <Settings className="w-5 h-5 text-brand-goldDark" />,
+      icon: <Settings className="w-5 h-5 text-brand-primaryDark" />,
     },
     {
       id: 5,
       title:
         'Có biện pháp bảo đảm an toàn thông tin, an ninh thông tin và quản lý thông tin theo quy định',
-      icon: <Shield className="w-5 h-5 text-brand-goldDark" />,
+      icon: <Shield className="w-5 h-5 text-brand-primaryDark" />,
     },
   ],
 }) => {
@@ -117,7 +117,7 @@ const SocialNetworkLicenseConditions: React.FC<Props> = ({
           <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-lg shadow-sm mb-6">
             {headerIcon}
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-brand-goldDark leading-tight max-w-4xl mx-auto">
+          <h1 className="text-3xl md:text-4xl font-bold text-brand-primaryDark leading-tight max-w-4xl mx-auto">
             {title}
           </h1>
         </div>
@@ -142,21 +142,21 @@ const SocialNetworkLicenseConditions: React.FC<Props> = ({
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-bold text-brand-goldDark mb-2">
+                        <h3 className="text-xl font-bold text-brand-primaryDark mb-2">
                           {condition.id}. {condition.title}
                         </h3>
                         {condition.subConditions && (
                           <button
                             type="button"
-                            className="ml-4 flex min-h-11 min-w-11 flex-shrink-0 items-center justify-center rounded-md border border-brand-line text-brand-goldDark focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/30"
+                            className="ml-4 flex min-h-11 min-w-11 flex-shrink-0 items-center justify-center rounded-md border border-brand-line text-brand-primaryDark focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-primary/30"
                             onClick={() => toggleCondition(condition.id)}
                             aria-expanded={expandedConditions.has(condition.id)}
                             aria-label={`${expandedConditions.has(condition.id) ? 'Thu gọn' : 'Mở rộng'} ${condition.title}`}
                           >
                             {expandedConditions.has(condition.id) ? (
-                              <ChevronDown className="w-5 h-5 text-brand-goldDark transition-transform duration-200" />
+                              <ChevronDown className="w-5 h-5 text-brand-primaryDark transition-transform duration-200" />
                             ) : (
-                              <ChevronRight className="w-5 h-5 text-brand-goldDark transition-transform duration-200" />
+                              <ChevronRight className="w-5 h-5 text-brand-primaryDark transition-transform duration-200" />
                             )}
                           </button>
                         )}
@@ -167,7 +167,7 @@ const SocialNetworkLicenseConditions: React.FC<Props> = ({
                         </p>
                       )}
                       {condition.subConditions && !expandedConditions.has(condition.id) && (
-                        <p className="text-sm text-brand-goldDark mt-2 font-medium">
+                        <p className="text-sm text-brand-primaryDark mt-2 font-medium">
                           Nhấp để xem chi tiết ({condition.subConditions.length} mục)
                         </p>
                       )}
@@ -186,7 +186,7 @@ const SocialNetworkLicenseConditions: React.FC<Props> = ({
                           }}
                         >
                           <div className="flex items-start gap-3">
-                            <span className="font-semibold text-brand-goldDark text-sm flex-shrink-0">
+                            <span className="font-semibold text-brand-primaryDark text-sm flex-shrink-0">
                               {subCondition.id}.
                             </span>
                             <p className="text-gray-700 text-sm leading-relaxed text-justify whitespace-pre-line">

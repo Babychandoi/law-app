@@ -38,20 +38,20 @@ export default function HeroSection({
   };
 
   return (
-    <section className="public-page-hero border-b border-white/10 bg-brand-ink py-16 text-white sm:py-20">
+    <section className="public-page-hero border-b border-brand-line bg-brand-surface py-16 text-brand-ink sm:py-20">
       <div className="mx-auto grid max-w-7xl gap-8 px-4 sm:px-6 lg:grid-cols-[1fr_auto] lg:items-end">
         <div className="max-w-4xl">
-          <div className="mb-5 flex items-center gap-3 text-sm font-semibold text-brand-gold">
-            <span className="flex h-10 w-10 items-center justify-center rounded-md border border-white/15 bg-white/5">
+          <div className="mb-5 flex items-center gap-3 text-sm font-semibold text-brand-primaryDark">
+            <span className="flex h-10 w-10 items-center justify-center rounded-md border border-brand-line bg-white">
               {icon || <Scale size={20} aria-hidden="true" />}
             </span>
             <span>{subtitle}</span>
           </div>
-          <h1 className="public-page-hero-title text-4xl font-semibold leading-[1.12] tracking-[-0.025em] text-white md:text-5xl lg:text-6xl">
+          <h1 className="public-page-hero-title text-4xl font-semibold leading-[1.12] tracking-[-0.025em] text-brand-ink md:text-5xl lg:text-6xl">
             {title}
           </h1>
           {description && (
-            <p className="mt-5 max-w-3xl text-base leading-8 text-white/75 md:text-lg">
+            <p className="mt-5 max-w-3xl text-base leading-8 text-brand-muted md:text-lg">
               {description}
             </p>
           )}
@@ -61,7 +61,7 @@ export default function HeroSection({
               {phone && (
                 <a
                   href={`tel:${phone}`}
-                  className="inline-flex min-h-11 items-center gap-2 text-white underline decoration-brand-gold decoration-2 underline-offset-4 hover:text-brand-gold"
+                  className="inline-flex min-h-11 items-center gap-2 text-brand-primaryDark underline decoration-brand-primary decoration-2 underline-offset-4 hover:text-brand-primary"
                 >
                   <Phone size={17} aria-hidden="true" />
                   {phone}
@@ -70,7 +70,7 @@ export default function HeroSection({
               {email && (
                 <a
                   href={`mailto:${email}`}
-                  className="inline-flex min-h-11 items-center gap-2 text-white underline decoration-brand-gold decoration-2 underline-offset-4 hover:text-brand-gold"
+                  className="inline-flex min-h-11 items-center gap-2 text-brand-primaryDark underline decoration-brand-primary decoration-2 underline-offset-4 hover:text-brand-primary"
                 >
                   <Mail size={17} aria-hidden="true" />
                   {email}
@@ -84,7 +84,7 @@ export default function HeroSection({
           <button
             type="button"
             onClick={handleCTAClick}
-            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-goldDark px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold"
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primaryDark focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primary"
           >
             {ctaText}
             <ArrowRight size={18} aria-hidden="true" />

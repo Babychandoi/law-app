@@ -23,7 +23,7 @@ const initialForm: CustomerService = {
 };
 
 const inputClass =
-  'min-h-12 w-full rounded-md border border-gray-300 bg-white px-4 py-3 text-base text-gray-950 outline-none transition-colors placeholder:text-gray-500 hover:border-brand-gold focus:border-brand-goldDark focus:ring-2 focus:ring-brand-gold/25';
+  'min-h-12 w-full rounded-md border border-gray-300 bg-white px-4 py-3 text-base text-gray-950 outline-none transition-colors placeholder:text-gray-500 hover:border-brand-primary focus:border-brand-primaryDark focus:ring-2 focus:ring-brand-primary/25';
 
 interface ConsultationFormProps {
   sectionId?: string;
@@ -134,31 +134,31 @@ export default function ConsultationForm({ sectionId = 'contact-form' }: Consult
   return (
     <section
       id={sectionId}
-      className="scroll-mt-28 bg-brand-ink py-16 text-white sm:py-20"
+      className="scroll-mt-28 bg-brand-surface py-16 text-brand-ink sm:py-20"
       aria-labelledby="consultation-heading"
     >
       <div className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:gap-16">
         <div className="lg:sticky lg:top-32 lg:self-start">
-          <p className="text-sm font-semibold text-brand-gold">Tư vấn ban đầu</p>
+          <p className="text-sm font-semibold text-brand-primaryDark">Tư vấn ban đầu</p>
           <h2
             id="consultation-heading"
-            className="mt-3 max-w-xl text-3xl font-semibold leading-tight tracking-[-0.02em] text-white md:text-4xl"
+            className="mt-3 max-w-xl text-3xl font-semibold leading-tight tracking-[-0.02em] text-brand-ink md:text-4xl"
           >
             Chia sẻ nhu cầu, nhận hướng xử lý rõ ràng
           </h2>
-          <p className="mt-5 max-w-xl text-base leading-8 text-white/75">
+          <p className="mt-5 max-w-xl text-base leading-8 text-brand-muted">
             Điền thông tin để đội ngũ Luật Poip Legal hiểu nhu cầu và chuẩn bị nội dung trao đổi phù hợp.
             Bạn cũng có thể gọi hoặc nhắn Zalo nếu cần phản hồi nhanh.
           </p>
 
-          <div className="mt-8 space-y-4 border-y border-white/15 py-6 text-sm text-white/80">
+          <div className="mt-8 space-y-4 border-y border-brand-line py-6 text-sm text-brand-muted">
             <div className="flex items-start gap-3">
-              <Clock3 className="mt-0.5 shrink-0 text-brand-gold" size={19} aria-hidden="true" />
+              <Clock3 className="mt-0.5 shrink-0 text-brand-primary" size={19} aria-hidden="true" />
               <span>Phản hồi yêu cầu ban đầu trong vòng 24 giờ làm việc.</span>
             </div>
             <div className="flex items-start gap-3">
               <ShieldCheck
-                className="mt-0.5 shrink-0 text-brand-gold"
+                className="mt-0.5 shrink-0 text-brand-primary"
                 size={19}
                 aria-hidden="true"
               />
@@ -166,7 +166,7 @@ export default function ConsultationForm({ sectionId = 'contact-form' }: Consult
             </div>
             <div className="flex items-start gap-3">
               <CheckCircle2
-                className="mt-0.5 shrink-0 text-brand-gold"
+                className="mt-0.5 shrink-0 text-brand-primary"
                 size={19}
                 aria-hidden="true"
               />
@@ -177,7 +177,7 @@ export default function ConsultationForm({ sectionId = 'contact-form' }: Consult
           <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
             <a
               href={contactInfo.phoneHref}
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-goldDark px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-black"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primaryDark"
             >
               <Phone size={18} aria-hidden="true" />
               Gọi {contactInfo.hotline}
@@ -186,7 +186,7 @@ export default function ConsultationForm({ sectionId = 'contact-form' }: Consult
               href={contactInfo.zaloHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-white/25 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-brand-line bg-white px-5 py-3 text-sm font-semibold text-brand-ink transition-colors hover:bg-brand-surface"
             >
               <MessageCircle size={18} aria-hidden="true" />
               Nhắn Zalo
@@ -194,7 +194,7 @@ export default function ConsultationForm({ sectionId = 'contact-form' }: Consult
           </div>
         </div>
 
-        <div className="rounded-lg border border-white/15 bg-white p-5 text-gray-950 shadow-soft sm:p-8">
+        <div className="rounded-lg border border-brand-line bg-white p-5 text-gray-950 shadow-soft sm:p-8">
           <div className="mb-7 border-b border-brand-line pb-6">
             <h3 className="text-xl font-semibold text-gray-950">Thông tin cần tư vấn</h3>
             <p className="mt-2 text-sm leading-6 text-gray-600">
@@ -231,7 +231,7 @@ export default function ConsultationForm({ sectionId = 'contact-form' }: Consult
                     'aria-invalid': !!errors.phone,
                     'aria-describedby': errors.phone ? 'consultation-phone-error' : undefined,
                   }}
-                  inputClass={`!h-12 !w-full !rounded-md !border !bg-white !text-base !text-gray-950 !outline-none focus:!border-brand-goldDark focus:!ring-2 focus:!ring-brand-gold/25 ${
+                  inputClass={`!h-12 !w-full !rounded-md !border !bg-white !text-base !text-gray-950 !outline-none focus:!border-brand-primaryDark focus:!ring-2 focus:!ring-brand-primary/25 ${
                     errors.phone ? '!border-red-600' : '!border-gray-300'
                   }`}
                   containerClass="!w-full"
@@ -305,7 +305,7 @@ export default function ConsultationForm({ sectionId = 'contact-form' }: Consult
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-md bg-brand-goldDark px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
+                className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-md bg-brand-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primaryDark disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {isSubmitting ? (
                   <>
@@ -327,7 +327,7 @@ export default function ConsultationForm({ sectionId = 'contact-form' }: Consult
 
           <a
             href={contactInfo.emailHref}
-            className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-gray-700 underline decoration-brand-gold decoration-2 underline-offset-4 hover:text-brand-goldDark"
+            className="mt-5 inline-flex min-h-11 items-center gap-2 text-sm font-medium text-gray-700 underline decoration-brand-primary decoration-2 underline-offset-4 hover:text-brand-primaryDark"
           >
             <Mail size={17} aria-hidden="true" />
             Hoặc gửi email đến {contactInfo.email}

@@ -41,7 +41,7 @@ const JobComponent: React.FC = () => {
         <button
           type="button"
           onClick={() => navigate('/tuyen-dung')}
-          className="mt-4 bg-brand-goldDark text-white py-2 px-4 rounded-lg hover:bg-brand-goldDark"
+          className="mt-4 bg-brand-primary text-white py-2 px-4 rounded-lg hover:bg-brand-primaryDark"
         >
           Quay lại danh sách
         </button>
@@ -154,7 +154,7 @@ const JobComponent: React.FC = () => {
 
   const ListWithBullets = ({
     items,
-    bulletColor = 'bg-brand-goldDark',
+    bulletColor = 'bg-brand-primary',
   }: {
     items: string[];
     bulletColor?: string;
@@ -235,7 +235,7 @@ const JobComponent: React.FC = () => {
             name="candidateName"
             value={formData.candidateName}
             onChange={handleInputChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-goldDark focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-primaryDark focus:border-transparent"
             placeholder="Nguyễn Văn A"
             required
           />
@@ -251,7 +251,7 @@ const JobComponent: React.FC = () => {
             name="candidateEmail"
             value={formData.candidateEmail}
             onChange={handleInputChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-goldDark focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-primaryDark focus:border-transparent"
             placeholder="email@example.com"
             required
           />
@@ -267,7 +267,7 @@ const JobComponent: React.FC = () => {
             name="candidatePhone"
             value={formData.candidatePhone}
             onChange={handleInputChange}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-goldDark focus:border-transparent"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-brand-primaryDark focus:border-transparent"
             placeholder="0123456789"
           />
         </div>
@@ -305,7 +305,7 @@ const JobComponent: React.FC = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-brand-goldDark text-white py-3 px-6 rounded-lg hover:bg-brand-goldDark transition-colors font-semibold flex items-center justify-center disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="w-full bg-brand-primary text-white py-3 px-6 rounded-lg hover:bg-brand-primaryDark transition-colors font-semibold flex items-center justify-center disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           {loading ? (
             <>

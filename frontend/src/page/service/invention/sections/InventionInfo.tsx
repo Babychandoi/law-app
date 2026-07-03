@@ -9,7 +9,7 @@ const InventionInfo: React.FC = () => {
           <div className="flex justify-center items-center mb-4">
             <div className="w-16 h-16 bg-brand-surface rounded-full flex items-center justify-center">
               <svg
-                className="w-8 h-8 text-brand-goldDark"
+                className="w-8 h-8 text-brand-primaryDark"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -33,7 +33,7 @@ const InventionInfo: React.FC = () => {
           {/* Concept Section */}
           <div className="mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center">
-              <span className="bg-brand-goldDark text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">
+              <span className="bg-brand-primary text-white rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">
                 1
               </span>
               Khái niệm
@@ -47,9 +47,9 @@ const InventionInfo: React.FC = () => {
 
               <p className="text-gray-700 leading-relaxed">
                 Sáng chế được bảo hộ độc quyền dưới hình thức cấp{' '}
-                <span className="font-semibold text-brand-goldDark">Bằng độc quyền sáng chế</span>{' '}
+                <span className="font-semibold text-brand-primaryDark">Bằng độc quyền sáng chế</span>{' '}
                 hoặc{' '}
-                <span className="font-semibold text-brand-goldDark">
+                <span className="font-semibold text-brand-primaryDark">
                   Bằng độc quyền giải pháp hữu ích
                 </span>
                 .
@@ -84,7 +84,7 @@ const InventionInfo: React.FC = () => {
               {/* Type (i) - Products */}
               <div className="border border-gray-200 rounded-lg p-6 bg-gray-50">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                  <span className="bg-brand-goldDark text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-2">
+                  <span className="bg-brand-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-2">
                     i
                   </span>
                   Sản phẩm:
@@ -133,7 +133,7 @@ const InventionInfo: React.FC = () => {
               {/* Type (ii) - Processes */}
               <div className="border border-gray-200 rounded-lg p-6 bg-gray-50">
                 <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                  <span className="bg-brand-goldDark text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-2">
+                  <span className="bg-brand-primary text-white rounded-full w-6 h-6 flex items-center justify-center text-xs font-bold mr-2">
                     ii
                   </span>
                   Quy trình hay phương pháp

@@ -15,7 +15,7 @@ const ContractTypesComponent: React.FC = () => {
       id: 1,
       name: 'Hợp đồng lao động',
       icon: <Users className="w-6 h-6" />,
-      color: 'text-brand-goldDark',
+      color: 'text-brand-primaryDark',
       bgColor: 'bg-brand-surface hover:bg-brand-surface',
     },
     {
@@ -29,21 +29,21 @@ const ContractTypesComponent: React.FC = () => {
       id: 3,
       name: 'Hợp đồng cung cấp dịch vụ',
       icon: <FileText className="w-6 h-6" />,
-      color: 'text-brand-goldDark',
+      color: 'text-brand-primaryDark',
       bgColor: 'bg-brand-surface hover:bg-brand-surface',
     },
     {
       id: 4,
       name: 'Hợp đồng thuê tài sản',
       icon: <Scale className="w-6 h-6" />,
-      color: 'text-brand-goldDark',
+      color: 'text-brand-primaryDark',
       bgColor: 'bg-brand-surface hover:bg-brand-surface',
     },
     {
       id: 5,
       name: 'Hợp đồng đại lý',
       icon: <Users className="w-6 h-6" />,
-      color: 'text-brand-goldDark',
+      color: 'text-brand-primaryDark',
       bgColor: 'bg-brand-surface hover:bg-brand-surface',
     },
     {
@@ -57,14 +57,14 @@ const ContractTypesComponent: React.FC = () => {
       id: 7,
       name: 'Hợp đồng hợp tác',
       icon: <Users className="w-6 h-6" />,
-      color: 'text-brand-goldDark',
+      color: 'text-brand-primaryDark',
       bgColor: 'bg-brand-surface hover:bg-brand-surface',
     },
     {
       id: 8,
       name: 'Hợp đồng thuê/cho thuê',
       icon: <FileText className="w-6 h-6" />,
-      color: 'text-brand-goldDark',
+      color: 'text-brand-primaryDark',
       bgColor: 'bg-brand-surface hover:bg-brand-surface',
     },
     {
@@ -95,8 +95,8 @@ const ContractTypesComponent: React.FC = () => {
             <div className="text-center mb-16">
               <div className="flex justify-center mb-8">
                 <div className="relative">
-                  <div className="absolute inset-0 bg-brand-goldDark rounded-full blur-lg opacity-60 "></div>
-                  <div className="relative bg-brand-goldDark p-6 rounded-full shadow-soft">
+                  <div className="absolute inset-0 bg-brand-primary rounded-full blur-lg opacity-60 "></div>
+                  <div className="relative bg-brand-primary p-6 rounded-full shadow-soft">
                     <Scale className="w-16 h-16 text-white" />
                   </div>
                 </div>
@@ -107,7 +107,7 @@ const ContractTypesComponent: React.FC = () => {
               <h2 className="text-2xl md:text-3xl font-semibold text-slate-700 mb-8">
                 MÀ LUẬT POIP TƯ VẤN SOẠN THẢO
               </h2>
-              <div className="w-32 h-1 bg-brand-goldDark mx-auto rounded-full"></div>
+              <div className="w-32 h-1 bg-brand-primary mx-auto rounded-full"></div>
             </div>
 
             {/* Contract Types Grid */}
@@ -126,7 +126,7 @@ const ContractTypesComponent: React.FC = () => {
                   </div>
 
                   {/* Hover effect overlay */}
-                  <div className="absolute inset-0 bg-brand-goldDark   rounded-lg transition-all duration-200"></div>
+                  <div className="absolute inset-0 bg-brand-primary   rounded-lg transition-all duration-200"></div>
 
                   <div className="relative z-10">
                     {/* Icon */}
@@ -142,7 +142,7 @@ const ContractTypesComponent: React.FC = () => {
                     </h3>
 
                     {/* Decorative line */}
-                    <div className="w-16 h-1 bg-brand-goldDark rounded-full group-hover:w-24 transition-all duration-300"></div>
+                    <div className="w-16 h-1 bg-brand-primary rounded-full group-hover:w-24 transition-all duration-300"></div>
                   </div>
 
                   {/* Subtle pattern overlay */}
@@ -166,7 +166,7 @@ const ContractTypesComponent: React.FC = () => {
                 <button
                   type="button"
                   className="group relative inline-flex items-center justify-center px-10 py-4 text-lg font-semibold
-                                text-white bg-brand-goldDark rounded-lg shadow-sm
+                                text-white bg-brand-primary rounded-lg shadow-sm
                                 hover:shadow-soft  transition-all duration-300"
                   onClick={() => {
                     const contactForm = document.getElementById('contact-form');
@@ -176,7 +176,7 @@ const ContractTypesComponent: React.FC = () => {
                   }}
                 >
                   <span className="relative z-10">Liên hệ ngay</span>
-                  <div className="absolute inset-0 bg-brand-goldDark rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="absolute inset-0 bg-brand-primary rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                 </button>
               </div>
             </div>

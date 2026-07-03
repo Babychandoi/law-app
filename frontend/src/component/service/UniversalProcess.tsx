@@ -17,7 +17,7 @@ const UniversalProcess = ({
   <section className="bg-brand-surface py-14 sm:py-16" aria-labelledby="universal-process-title">
     <div className="container mx-auto px-4 sm:px-6 lg:px-8">
       <div className="mx-auto mb-10 max-w-3xl text-center">
-        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-goldDark">
+        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-primaryDark">
           Quy trình thực hiện
         </p>
         <h2
@@ -35,11 +35,11 @@ const UniversalProcess = ({
         {steps.map((step, index) => (
           <li key={step.id} className="rounded-lg border border-brand-line bg-white p-6 shadow-sm">
             <div className="flex items-start gap-4">
-              <span className="flex h-10 w-10 flex-none items-center justify-center rounded-md bg-brand-surface text-sm font-semibold text-brand-goldDark">
+              <span className="flex h-10 w-10 flex-none items-center justify-center rounded-md bg-brand-surface text-sm font-semibold text-brand-primaryDark">
                 {index + 1}
               </span>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-goldDark">
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-brand-primaryDark">
                   {step.step}
                 </p>
                 <h3 className="mt-1 text-lg font-semibold text-brand-ink">{step.title}</h3>
@@ -57,7 +57,7 @@ const UniversalProcess = ({
                     <div className="flex items-start justify-between gap-3">
                       <h4 className="text-sm font-semibold text-brand-ink">{detail.type}</h4>
                       {detail.time && (
-                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand-goldDark">
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand-primaryDark">
                           <Clock className="h-3.5 w-3.5" aria-hidden="true" />
                           {detail.time}
                         </span>
@@ -74,7 +74,7 @@ const UniversalProcess = ({
 
             {index < steps.length - 1 && (
               <ArrowRight
-                className="mt-5 h-5 w-5 text-brand-goldDark lg:hidden"
+                className="mt-5 h-5 w-5 text-brand-primaryDark lg:hidden"
                 aria-hidden="true"
               />
             )}

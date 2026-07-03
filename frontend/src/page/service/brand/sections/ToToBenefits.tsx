@@ -42,7 +42,7 @@ const ToToBenefits = () => {
           <h2 className="text-4xl font-bold text-gray-800 mb-4">
             LỢI ÍCH KHI ĐĂNG KÝ BẢO HỘ NHÃN HIỆU TẠI POIP
           </h2>
-          <div className="w-32 h-1 bg-brand-goldDark mx-auto mb-6"></div>
+          <div className="w-32 h-1 bg-brand-primary mx-auto mb-6"></div>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
             Luật sư tại Luật Poip Legal mang lại nhiều lợi ích cho việc đăng ký bảo hộ nhãn hiệu, bao gồm:
           </p>
@@ -57,11 +57,11 @@ const ToToBenefits = () => {
                 className="group bg-white rounded-xl p-6 shadow-sm hover:shadow-soft transition-all duration-300 "
               >
                 <div className="flex items-start space-x-4">
-                  <div className="flex-shrink-0 w-12 h-12 bg-brand-goldDark rounded-full flex items-center justify-center text-white shadow-sm  transition-transform duration-300">
+                  <div className="flex-shrink-0 w-12 h-12 bg-brand-primary rounded-full flex items-center justify-center text-white shadow-sm  transition-transform duration-300">
                     {benefit.icon}
                   </div>
                   <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-brand-goldDark transition-colors">
+                    <h3 className="text-xl font-bold text-gray-800 mb-3 group-hover:text-brand-primaryDark transition-colors">
                       {benefit.title}
                     </h3>
                     <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
@@ -89,9 +89,9 @@ const ToToBenefits = () => {
                 </div>
 
                 {/* Decorative elements */}
-                <div className="absolute top-4 right-4 w-8 h-8 bg-brand-goldDark rounded-full opacity-20"></div>
-                <div className="absolute bottom-4 left-4 w-6 h-6 bg-brand-goldDark rounded-full opacity-20"></div>
-                <div className="absolute top-1/2 left-4 w-4 h-4 bg-brand-goldDark rounded-full opacity-30"></div>
+                <div className="absolute top-4 right-4 w-8 h-8 bg-brand-primary rounded-full opacity-20"></div>
+                <div className="absolute bottom-4 left-4 w-6 h-6 bg-brand-primary rounded-full opacity-20"></div>
+                <div className="absolute top-1/2 left-4 w-4 h-4 bg-brand-primary rounded-full opacity-30"></div>
               </div>
 
               {/* Badge */}

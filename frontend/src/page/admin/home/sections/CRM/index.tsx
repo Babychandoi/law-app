@@ -138,7 +138,7 @@ export default function CRM() {
         ].map((sel, i) => (
           <select
             key={i}
-            className="border border-brand-line rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-gold outline-none"
+            className="border border-brand-line rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-primary outline-none"
             value={sel.val}
             onChange={(e) => sel.set(e.target.value)}
           >
@@ -148,7 +148,7 @@ export default function CRM() {
           </select>
         ))}
         <select
-          className="border border-brand-line rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-gold outline-none"
+          className="border border-brand-line rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-primary outline-none"
           value={filter.careStatusId ?? ''}
           onChange={(e) =>
             setFilter((f) => ({
@@ -164,7 +164,7 @@ export default function CRM() {
           ))}
         </select>
         <select
-          className="border border-brand-line rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-gold outline-none"
+          className="border border-brand-line rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-primary outline-none"
           value={filter.status ?? ''}
           onChange={(e) => setFilter((f) => ({ ...f, status: e.target.value, page: 0 }))}
         >
@@ -197,7 +197,7 @@ export default function CRM() {
                 <tr key={r.id} className="border-t border-brand-line hover:bg-brand-surface/40 transition-colors">
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-3">
-                      <span className="w-9 h-9 rounded-full bg-brand-gold/15 text-brand-goldDark grid place-items-center font-semibold shrink-0">
+                      <span className="w-9 h-9 rounded-full bg-brand-primary/15 text-brand-primaryDark grid place-items-center font-semibold shrink-0">
                         {(r.serviceName ?? r.name ?? '?').charAt(0)}
                       </span>
                       <div>
@@ -209,7 +209,7 @@ export default function CRM() {
                   <td className="px-3">
                     {isAdmin ? (
                       <select
-                        className="border border-brand-line rounded-lg px-2 py-1.5 text-xs bg-white max-w-[140px] focus:border-brand-gold outline-none"
+                        className="border border-brand-line rounded-lg px-2 py-1.5 text-xs bg-white max-w-[140px] focus:border-brand-primary outline-none"
                         value={r.assignedUserId ?? ''}
                         onChange={(e) => assign(r, e.target.value)}
                       >
@@ -288,7 +288,7 @@ export default function CRM() {
                   <td className="px-3 text-right">
                     <button
                       onClick={() => setActive(r)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-gold text-white text-xs font-medium hover:bg-brand-goldDark transition-colors"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-primary text-white text-xs font-medium hover:bg-brand-primaryDark transition-colors"
                     >
                       <HeartHandshake size={14} /> Chăm sóc
                     </button>

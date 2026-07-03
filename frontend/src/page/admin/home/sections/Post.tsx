@@ -408,7 +408,7 @@ const NewsManagement: React.FC = () => {
                   <div className="flex-1 p-6">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-brand-goldDark group-hover:bg-gradient-to-r group-hover:from-yellow-400 group-hover:to-orange-400 group-hover: transition-all duration-300">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-brand-primaryDark group-hover:bg-gradient-to-r group-hover:from-yellow-400 group-hover:to-orange-400 group-hover: transition-all duration-300">
                           {news.title}
                         </h3>
                         <p className="text-gray-600 line-clamp-2 mb-3">{news.subtitle}</p>
@@ -418,7 +418,7 @@ const NewsManagement: React.FC = () => {
                     {/* Meta Info */}
                     <div className="flex flex-wrap items-center gap-4 mb-4 text-sm">
                       <div className="flex items-center gap-2 px-3 py-1 bg-brand-surface rounded-lg">
-                        <span className="text-brand-goldDark">👤</span>
+                        <span className="text-brand-primaryDark">👤</span>
                         <span className="text-gray-700 font-medium">{news.author}</span>
                       </div>
                       <div className="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-lg">
@@ -437,7 +437,7 @@ const NewsManagement: React.FC = () => {
                         onClick={() => news.id && handleViewDetails(news.id)}
                         disabled={loading}
                         title="Xem chi tiết"
-                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-gold to-brand-goldDark hover:from-brand-gold hover:to-brand-goldDark text-white rounded-lg font-medium shadow-md hover:shadow-lg  active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-primary to-brand-primaryDark hover:from-brand-primary hover:to-brand-primaryDark text-white rounded-lg font-medium shadow-md hover:shadow-lg  active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Eye size={18} />
                         <span>Xem</span>
@@ -447,7 +447,7 @@ const NewsManagement: React.FC = () => {
                         onClick={() => handleEdit(news.id ?? '')}
                         disabled={loading}
                         title="Sửa"
-                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-gold to-brand-goldDark hover:from-brand-gold hover:to-brand-goldDark text-white rounded-lg font-medium shadow-md hover:shadow-lg  active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-primary to-brand-primaryDark hover:from-brand-primary hover:to-brand-primaryDark text-white rounded-lg font-medium shadow-md hover:shadow-lg  active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Pencil size={18} />
                         <span>Sửa</span>

@@ -57,10 +57,10 @@ export default function ChatyWidget() {
                 setShowChat(true);
                 setIsOpen(false);
               }}
-              className="group flex min-h-12 items-center gap-3 rounded-full bg-white py-1.5 pl-4 pr-1.5 text-sm font-semibold text-gray-900 shadow-soft ring-1 ring-brand-line transition-colors hover:text-brand-goldDark"
+              className="group flex min-h-12 items-center gap-3 rounded-full bg-white py-1.5 pl-4 pr-1.5 text-sm font-semibold text-gray-900 shadow-soft ring-1 ring-brand-line transition-colors hover:text-brand-primaryDark"
             >
               Chat trực tuyến
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-gold text-brand-ink">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-primary text-brand-ink">
                 <MessageCircle size={18} aria-hidden="true" />
               </span>
             </button>
@@ -72,10 +72,10 @@ export default function ChatyWidget() {
                   href={action.href}
                   target={action.target}
                   rel={action.target ? 'noreferrer' : undefined}
-                  className="group flex min-h-12 items-center gap-3 rounded-full bg-white py-1.5 pl-4 pr-1.5 text-sm font-semibold text-gray-900 shadow-soft ring-1 ring-brand-line transition-colors hover:text-brand-goldDark"
+                  className="group flex min-h-12 items-center gap-3 rounded-full bg-white py-1.5 pl-4 pr-1.5 text-sm font-semibold text-gray-900 shadow-soft ring-1 ring-brand-line transition-colors hover:text-brand-primaryDark"
                 >
                   {action.label}
-                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-ink text-white group-hover:bg-brand-goldDark">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-ink text-white group-hover:bg-brand-primaryDark">
                     <Icon size={18} aria-hidden="true" />
                   </span>
                 </a>
@@ -87,7 +87,7 @@ export default function ChatyWidget() {
         <button
           type="button"
           onClick={() => setIsOpen((value) => !value)}
-          className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-goldDark text-white shadow-soft transition-colors hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-goldDark"
+          className="flex h-14 w-14 items-center justify-center rounded-full bg-brand-primary text-white shadow-soft transition-colors hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primaryDark"
           aria-label={isOpen ? 'Đóng liên hệ nhanh' : 'Mở liên hệ nhanh'}
           aria-expanded={isOpen}
           aria-controls="quick-contact-menu"

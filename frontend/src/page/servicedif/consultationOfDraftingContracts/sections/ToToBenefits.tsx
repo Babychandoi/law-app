@@ -27,9 +27,9 @@ const ToToBenefitsComponent: React.FC = () => {
       title: 'TIẾT KIỆM CHI PHÍ',
       description: 'Mức phí được Luật Poip Legal hỗ trợ',
       icon: <DollarSign className="w-8 h-8" />,
-      color: 'text-brand-goldDark',
+      color: 'text-brand-primaryDark',
       bgGradient: ' ',
-      iconBg: 'bg-brand-goldDark',
+      iconBg: 'bg-brand-primary',
     },
     {
       id: 3,
@@ -37,9 +37,9 @@ const ToToBenefitsComponent: React.FC = () => {
       description:
         'Luật Poip Legal cam kết về kết quả cho Khách hàng - Hoàn lại tiền cho KH khi kết quả không như mong muốn',
       icon: <Award className="w-8 h-8" />,
-      color: 'text-brand-goldDark',
+      color: 'text-brand-primaryDark',
       bgGradient: ' ',
-      iconBg: 'bg-brand-goldDark',
+      iconBg: 'bg-brand-primary',
     },
   ];
 
@@ -68,7 +68,7 @@ const ToToBenefitsComponent: React.FC = () => {
           </h2>
 
           <div className="flex justify-center space-x-2 mb-8">
-            <div className="w-12 h-1 bg-brand-goldDark rounded-full"></div>
+            <div className="w-12 h-1 bg-brand-primary rounded-full"></div>
             <div className="w-12 h-1 bg-brand-surface   rounded-full"></div>
             <div className="w-12 h-1 bg-brand-surface   rounded-full"></div>
           </div>
@@ -129,7 +129,7 @@ const ToToBenefitsComponent: React.FC = () => {
 
               {/* Connection line for desktop */}
               {index < benefits.length - 1 && (
-                <div className="hidden lg:block absolute top-1/2 -right-6 w-12 h-0.5 bg-brand-goldDark opacity-30"></div>
+                <div className="hidden lg:block absolute top-1/2 -right-6 w-12 h-0.5 bg-brand-primary opacity-30"></div>
               )}
             </div>
           ))}
@@ -147,7 +147,7 @@ const ToToBenefitsComponent: React.FC = () => {
                 type="button"
                 className="group relative inline-flex items-center
               justify-center px-8 py-4 text-lg font-semibold
-              text-white bg-brand-goldDark rounded-lg
+              text-white bg-brand-primary rounded-lg
               shadow-sm hover:shadow-soft  transition-all duration-300"
                 onClick={() => {
                   const contactForm = document.getElementById('contact-form');
