@@ -6,6 +6,7 @@ import { News } from '../../../types/service';
 import { Seo } from '../../../component/Seo';
 import { Breadcrumb } from '../../../component/layout/Breadcrumb';
 import { BreadcrumbItem } from '../../../types/service';
+import ArticleHeader from '../../../component/legalArticle/ArticleHeader';
 import BlogPost from './BlogPost';
 import RecentPosts from './RecentPosts';
 
@@ -65,13 +66,24 @@ export default function New() {
         <Breadcrumb items={breadcrumbItems} />
 
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10 lg:px-8">
-          <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
-            {/* Cột nội dung chính */}
+          {/* Hero full-width: ảnh + tiêu đề + mô tả + meta */}
+          <ArticleHeader
+            headerNew={{
+              title: news.title,
+              createdAt: news.createdAt,
+              subtitle: news.subtitle,
+              author: news.author,
+              id: news.id,
+              image: news.image,
+            }}
+          />
+
+          {/* Bên dưới hero: nội dung (trái) + sidebar (phải) */}
+          <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_340px]">
             <main className="min-w-0">
               <BlogPost news={news} />
             </main>
 
-            {/* Sidebar bài viết gần đây */}
             <RecentPosts posts={recent} currentId={news.id} />
           </div>
         </div>
