@@ -23,7 +23,7 @@ export default function LandingPage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-brand-surface px-6 text-center">
         <h1 className="text-2xl font-semibold text-brand-ink">Không tìm thấy trang</h1>
-        <a href="/" className="text-brand-primaryDark underline">
+        <a href="/" className="text-brand-goldDark underline">
           Về trang chủ Luật Poip Legal
         </a>
       </div>
@@ -42,12 +42,12 @@ export default function LandingPage() {
       <header className="border-b border-brand-line bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
           <span className="text-lg font-semibold tracking-tight text-brand-ink">
-            Luật <span className="text-brand-primaryDark">Poip Legal</span>
+            Luật <span className="text-brand-goldDark">Poip Legal</span>
           </span>
           <a
             href={contactInfo.phoneHref}
             onClick={() => trackLead(`${config.slug}-header-call`)}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-brand-primaryDark"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-brand-goldDark"
           >
             <Phone size={16} aria-hidden="true" />
             {contactInfo.hotline}
@@ -56,22 +56,22 @@ export default function LandingPage() {
       </header>
 
       {/* HERO */}
-      <section className="bg-brand-surface text-brand-ink">
+      <section className="bg-brand-ink text-white">
         <div className="landing-hero-inner mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
           <div className="lg:pt-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand-primaryDark">
+            <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">
               {config.eyebrow}
             </p>
             <h1 className="landing-hero-title mt-4 text-3xl font-semibold leading-tight tracking-[-0.02em] text-balance md:text-5xl">
-              {config.heroTitle} <span className="text-brand-primary">{config.heroHighlight}</span>
+              {config.heroTitle} <span className="text-brand-gold">{config.heroHighlight}</span>
             </h1>
-            <p className="mt-5 max-w-xl text-base leading-8 text-brand-muted">{config.heroSubtitle}</p>
+            <p className="mt-5 max-w-xl text-base leading-8 text-white/80">{config.heroSubtitle}</p>
 
             <ul className="mt-7 space-y-3">
               {config.heroPoints.map((point) => (
-                <li key={point} className="flex items-start gap-3 text-sm text-brand-muted">
+                <li key={point} className="flex items-start gap-3 text-sm text-white/85">
                   <CheckCircle2
-                    className="mt-0.5 shrink-0 text-brand-primary"
+                    className="mt-0.5 shrink-0 text-brand-gold"
                     size={19}
                     aria-hidden="true"
                   />
@@ -84,7 +84,7 @@ export default function LandingPage() {
               <a
                 href={contactInfo.phoneHref}
                 onClick={() => trackLead(`${config.slug}-hero-call`)}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primaryDark"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-goldDark px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-brand-ink"
               >
                 <Phone size={18} aria-hidden="true" />
                 Gọi {contactInfo.hotline}
@@ -94,7 +94,7 @@ export default function LandingPage() {
                 target="_blank"
                 rel="noreferrer"
                 onClick={() => trackLead(`${config.slug}-hero-zalo`)}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-brand-line bg-white px-5 py-3 text-sm font-semibold text-brand-ink transition-colors hover:bg-brand-surface"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-white/25 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
               >
                 <MessageCircle size={18} aria-hidden="true" />
                 Nhắn Zalo
@@ -121,7 +121,7 @@ export default function LandingPage() {
           {config.benefits.map((b) => (
             <div key={b.title} className="flex gap-4">
               <ShieldCheck
-                className="mt-0.5 h-6 w-6 shrink-0 text-brand-primaryDark"
+                className="mt-0.5 h-6 w-6 shrink-0 text-brand-goldDark"
                 aria-hidden="true"
               />
               <div>
@@ -141,8 +141,8 @@ export default function LandingPage() {
           </h2>
           <ol className="mt-9 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {config.steps.map((s, i) => (
-              <li key={s.title} className="border-t-2 border-brand-primary pt-4">
-                <span className="text-sm font-semibold text-brand-primaryDark">Bước {i + 1}</span>
+              <li key={s.title} className="border-t-2 border-brand-gold pt-4">
+                <span className="text-sm font-semibold text-brand-goldDark">Bước {i + 1}</span>
                 <h3 className="mt-1 font-semibold text-brand-ink">{s.title}</h3>
                 <p className="mt-2 text-sm leading-7 text-brand-muted">{s.description}</p>
               </li>
@@ -169,7 +169,7 @@ export default function LandingPage() {
                 >
                   <span className="font-semibold text-brand-ink">{f.question}</span>
                   <ChevronDown
-                    className={`h-5 w-5 shrink-0 text-brand-primaryDark transition-transform ${open ? 'rotate-180' : ''}`}
+                    className={`h-5 w-5 shrink-0 text-brand-goldDark transition-transform ${open ? 'rotate-180' : ''}`}
                     aria-hidden="true"
                   />
                 </button>
@@ -181,25 +181,25 @@ export default function LandingPage() {
       </section>
 
       {/* CTA CUỐI */}
-      <section className="border-t border-brand-line bg-brand-surface text-brand-ink">
+      <section className="bg-brand-ink text-white">
         <div className="mx-auto grid max-w-6xl gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_0.9fr] lg:items-center">
           <div>
             <h2 className="text-2xl font-semibold leading-tight md:text-3xl text-balance">
               {config.finalCtaTitle}
             </h2>
-            <p className="mt-4 max-w-lg leading-8 text-brand-muted">{config.finalCtaSubtitle}</p>
+            <p className="mt-4 max-w-lg leading-8 text-white/80">{config.finalCtaSubtitle}</p>
             <div className="mt-7 flex flex-wrap gap-3">
               <button
                 type="button"
                 onClick={scrollToForm}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primaryDark"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-goldDark px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-brand-ink"
               >
                 Để lại thông tin tư vấn
               </button>
               <a
                 href={contactInfo.phoneHref}
                 onClick={() => trackLead(`${config.slug}-final-call`)}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-brand-line bg-white px-5 py-3 text-sm font-semibold text-brand-ink transition-colors hover:bg-brand-surface"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-white/25 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10"
               >
                 <Phone size={18} aria-hidden="true" />
                 Gọi {contactInfo.hotline}
@@ -218,7 +218,7 @@ export default function LandingPage() {
         <a
           href={contactInfo.phoneHref}
           onClick={() => trackLead(`${config.slug}-sticky-call`)}
-          className="flex min-h-14 items-center justify-center gap-2 text-sm font-semibold text-brand-primaryDark"
+          className="flex min-h-14 items-center justify-center gap-2 text-sm font-semibold text-brand-goldDark"
         >
           <Phone size={18} aria-hidden="true" />
           Gọi ngay
@@ -228,7 +228,7 @@ export default function LandingPage() {
           target="_blank"
           rel="noreferrer"
           onClick={() => trackLead(`${config.slug}-sticky-zalo`)}
-          className="flex min-h-14 items-center justify-center gap-2 bg-brand-primary text-sm font-semibold text-white"
+          className="flex min-h-14 items-center justify-center gap-2 bg-brand-goldDark text-sm font-semibold text-white"
         >
           <MessageCircle size={18} aria-hidden="true" />
           Nhắn Zalo

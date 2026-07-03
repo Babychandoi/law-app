@@ -2,15 +2,12 @@
 name: Luật Poip Legal
 description: Clear, credible legal guidance that turns uncertainty into consultation.
 colors:
-  counsel-ink: "#161a2e"
-  counsel-muted: "#4a5169"
-  poip-indigo: "#2f4bd6"
-  poip-indigo-deep: "#1e2f8f"
-  poip-gold: "#f0b429"
-  poip-gold-deep: "#9a6a10"
-  quiet-line: "#dfe3f5"
-  service-surface: "#f5f7ff"
-  footer-navy: "#141833"
+  counsel-ink: "#171717"
+  counsel-muted: "#5f6368"
+  poip-gold: "#c7942c"
+  poip-gold-deep: "#875f12"
+  quiet-line: "#e8e1d3"
+  service-surface: "#f8f6f1"
   white: "#ffffff"
 typography:
   display:
@@ -51,13 +48,13 @@ spacing:
   xl: "32px"
 components:
   button-primary:
-    backgroundColor: "{colors.poip-indigo}"
+    backgroundColor: "{colors.poip-gold-deep}"
     textColor: "{colors.white}"
     typography: "{typography.label}"
     rounded: "{rounded.md}"
     padding: "12px 20px"
   button-primary-hover:
-    backgroundColor: "{colors.poip-indigo-deep}"
+    backgroundColor: "{colors.counsel-ink}"
     textColor: "{colors.white}"
   button-secondary:
     backgroundColor: "{colors.white}"
@@ -97,34 +94,26 @@ Hierarchy and plain-language content do the persuasive work. Imagery demonstrate
 
 ## 2. Colors
 
-The palette pairs a confident indigo brand color with a rare gold accent over light, cool-neutral surfaces. Public pages are light by default; a single navy anchor at the footer grounds the page.
+The palette pairs professional near-black with a focused gold accent and quiet neutral surfaces.
 
 ### Primary
 
-- **Poip Indigo:** The primary brand color for consultation actions, links, active navigation states, and key highlights. Carries the brand across a predominantly light interface.
-- **Poip Indigo Deep:** The high-contrast companion for hover states and indigo text on light surfaces.
-
-### Accent
-
-- **Poip Gold:** A rare, high-value accent — reserved for premium highlights, badges, and the footer anchor. Not the primary action color anymore; use sparingly so it stays special.
-- **Poip Gold Deep:** Gold text on light surfaces where contrast is needed.
+- **Poip Gold:** The sole brand accent for primary consultation actions, important icons, active navigation states, and high-value highlights.
+- **Poip Gold Deep:** The interaction and high-contrast companion to Poip Gold, used for hover states and gold text on light surfaces.
 
 ### Neutral
 
-- **Counsel Ink:** The strongest text color (indigo-tinted near-black). Text, not a dominant background.
+- **Counsel Ink:** The primary dark surface and strongest text color.
 - **Counsel Muted:** Supporting text that remains readable and subordinate.
-- **Service Surface:** A cool off-white used as the primary light background and to separate sections.
+- **Service Surface:** A quiet off-white used to separate service and consultation sections from white.
 - **Quiet Line:** Borders and dividers that organize without adding visual noise.
-- **Footer Navy:** The single dark anchor surface, used only at the footer.
-- **White:** Content surfaces and text on indigo, gold, or navy backgrounds.
+- **White:** Primary content surfaces and text on dark or gold backgrounds.
 
 ### Named Rules
 
-**Light by default, one dark anchor.** Public surfaces are light (white / service surface). Large dark backgrounds are avoided except the footer navy, which grounds the page.
+**The One Gold Rule.** Poip Gold is the only decorative accent on the public brand surface; do not introduce unrelated blue, purple, orange, or red accents for ordinary content.
 
-**Indigo leads, gold accents.** Indigo carries brand and actions; gold is a rare accent for high-value moments. Do not introduce unrelated purple, teal, or red accents for ordinary content.
-
-**The No Spectacle Rule.** Gradients are forbidden as text fills, generic section backgrounds, button fills, and decorative glow fields. (A subtle light gradient veil over a hero photograph, used to keep dark text readable, is permitted.)
+**The No Spectacle Rule.** Gradients are forbidden as text fills, generic section backgrounds, button fills, and decorative glow fields.
 
 ## 3. Typography
 

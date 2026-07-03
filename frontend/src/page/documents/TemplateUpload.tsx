@@ -129,7 +129,7 @@ export default function TemplateUpload() {
             <input
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-brand-line px-3 py-2 outline-none focus:border-brand-primary"
+              className="mt-1 w-full rounded-lg border border-brand-line px-3 py-2 outline-none focus:border-brand-gold"
               placeholder="Ví dụ: Hợp đồng dịch vụ"
             />
           </label>
@@ -138,12 +138,12 @@ export default function TemplateUpload() {
             <textarea
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-brand-line px-3 py-2 outline-none focus:border-brand-primary"
+              className="mt-1 w-full rounded-lg border border-brand-line px-3 py-2 outline-none focus:border-brand-gold"
               rows={3}
             />
           </label>
           <label className="block cursor-pointer rounded-xl border border-dashed border-brand-line p-6 text-center hover:bg-brand-surface">
-            <Upload className="mx-auto mb-2 text-brand-primary" />
+            <Upload className="mx-auto mb-2 text-brand-gold" />
             <span className="text-sm font-medium">{file ? file.name : 'Chọn file .docx'}</span>
             <input
               type="file"
@@ -155,7 +155,7 @@ export default function TemplateUpload() {
           <button
             onClick={doUpload}
             disabled={uploading}
-            className="w-full rounded-lg bg-brand-primary px-4 py-3 font-semibold text-white hover:bg-brand-primaryDark disabled:opacity-60"
+            className="w-full rounded-lg bg-brand-gold px-4 py-3 font-semibold text-white hover:bg-brand-goldDark disabled:opacity-60"
           >
             {uploading ? 'Đang tải...' : 'Tải lên và xem trước'}
           </button>
@@ -205,7 +205,7 @@ export default function TemplateUpload() {
                   value={row.sampleText}
                   onChange={(e) => updateRow(i, { sampleText: e.target.value })}
                   placeholder="VD: Nguyễn Văn A"
-                  className="mt-1 w-full rounded border border-brand-line px-2 py-1.5 outline-none focus:border-brand-primary"
+                  className="mt-1 w-full rounded border border-brand-line px-2 py-1.5 outline-none focus:border-brand-gold"
                 />
               </label>
               <label className="block">
@@ -214,7 +214,7 @@ export default function TemplateUpload() {
                   value={row.fieldKey}
                   onChange={(e) => updateRow(i, { fieldKey: e.target.value })}
                   placeholder="customerName"
-                  className="mt-1 w-full rounded border border-brand-line px-2 py-1.5 font-mono text-sm outline-none focus:border-brand-primary"
+                  className="mt-1 w-full rounded border border-brand-line px-2 py-1.5 font-mono text-sm outline-none focus:border-brand-gold"
                 />
               </label>
               <label className="block">
@@ -223,7 +223,7 @@ export default function TemplateUpload() {
                   value={row.label}
                   onChange={(e) => updateRow(i, { label: e.target.value })}
                   placeholder="Tên khách hàng"
-                  className="mt-1 w-full rounded border border-brand-line px-2 py-1.5 outline-none focus:border-brand-primary"
+                  className="mt-1 w-full rounded border border-brand-line px-2 py-1.5 outline-none focus:border-brand-gold"
                 />
               </label>
               <label className="block">
@@ -265,7 +265,7 @@ export default function TemplateUpload() {
         <button
           onClick={apply}
           disabled={applying}
-          className="mt-4 inline-flex items-center justify-center gap-2 rounded-lg bg-brand-primary px-6 py-3 font-semibold text-white hover:bg-brand-primaryDark disabled:opacity-60"
+          className="mt-4 inline-flex items-center justify-center gap-2 rounded-lg bg-brand-gold px-6 py-3 font-semibold text-white hover:bg-brand-goldDark disabled:opacity-60"
         >
           <Wand2 size={18} /> {applying ? 'Đang xử lý...' : 'Gán key và tiếp tục'}
         </button>

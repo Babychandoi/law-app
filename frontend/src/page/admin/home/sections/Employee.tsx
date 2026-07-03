@@ -229,7 +229,7 @@ const UserManagement: React.FC = () => {
         <h2 className="text-2xl font-bold text-gray-800">Quản lý Người dùng</h2>
         <button
           onClick={handleAddNew}
-          className="bg-brand-primary hover:bg-brand-primaryDark text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
+          className="bg-brand-goldDark hover:bg-brand-goldDark text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
           disabled={isLoading}
         >
           Thêm người dùng
@@ -258,7 +258,7 @@ const UserManagement: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded-lg flex items-center gap-2">
             <svg
-              className="animate-spin h-5 w-5 text-brand-primaryDark"
+              className="animate-spin h-5 w-5 text-brand-goldDark"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"

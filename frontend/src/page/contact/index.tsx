@@ -24,7 +24,7 @@ export default function Contact() {
       <Suspense
         fallback={
           <div className="flex items-center justify-center gap-3 py-20" role="status">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-line border-t-brand-primaryDark"></div>
+            <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-line border-t-brand-goldDark"></div>
             <span className="sr-only">Đang tải bản đồ</span>
           </div>
         }

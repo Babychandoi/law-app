@@ -86,7 +86,7 @@ export default function TemplateFieldEditor() {
           </button>
           <button
             onClick={publish}
-            className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-white hover:bg-brand-primaryDark"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-gold px-4 py-2 text-white hover:bg-brand-goldDark"
           >
             <Send size={16} /> Publish
           </button>
@@ -118,7 +118,7 @@ export default function TemplateFieldEditor() {
                   <input
                     value={field.label || ''}
                     onChange={(e) => updateField(index, { label: e.target.value })}
-                    className="w-full rounded border border-brand-line px-2 py-1.5 outline-none focus:border-brand-primary"
+                    className="w-full rounded border border-brand-line px-2 py-1.5 outline-none focus:border-brand-gold"
                   />
                 </td>
                 <td className="px-4 py-3">
@@ -147,7 +147,7 @@ export default function TemplateFieldEditor() {
                   <input
                     value={field.helpText || ''}
                     onChange={(e) => updateField(index, { helpText: e.target.value })}
-                    className="w-full rounded border border-brand-line px-2 py-1.5 outline-none focus:border-brand-primary"
+                    className="w-full rounded border border-brand-line px-2 py-1.5 outline-none focus:border-brand-gold"
                   />
                 </td>
                 <td className="px-4 py-3">
@@ -162,7 +162,7 @@ export default function TemplateFieldEditor() {
                   <input
                     value={field.defaultValue || ''}
                     onChange={(e) => updateField(index, { defaultValue: e.target.value })}
-                    className="w-full rounded border border-brand-line px-2 py-1.5 outline-none focus:border-brand-primary"
+                    className="w-full rounded border border-brand-line px-2 py-1.5 outline-none focus:border-brand-gold"
                   />
                 </td>
               </tr>
@@ -170,7 +170,7 @@ export default function TemplateFieldEditor() {
           </tbody>
         </table>
       </div>
-      <Link to="/2025/luatpoip/tai-lieu" className="text-sm text-brand-primaryDark hover:underline">
+      <Link to="/2025/luatpoip/tai-lieu" className="text-sm text-brand-goldDark hover:underline">
         ← Quay lại danh sách
       </Link>
     </div>

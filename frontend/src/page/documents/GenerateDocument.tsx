@@ -60,7 +60,7 @@ export default function GenerateDocument() {
                 value={values[field.fieldKey] || ''}
                 onChange={(e) => setValues((v) => ({ ...v, [field.fieldKey]: e.target.value }))}
                 rows={4}
-                className="mt-1 w-full rounded-lg border border-brand-line px-3 py-2 outline-none focus:border-brand-primary"
+                className="mt-1 w-full rounded-lg border border-brand-line px-3 py-2 outline-none focus:border-brand-gold"
               />
             ) : (
               <input
@@ -73,7 +73,7 @@ export default function GenerateDocument() {
                 }
                 value={values[field.fieldKey] || ''}
                 onChange={(e) => setValues((v) => ({ ...v, [field.fieldKey]: e.target.value }))}
-                className="mt-1 w-full rounded-lg border border-brand-line px-3 py-2 outline-none focus:border-brand-primary"
+                className="mt-1 w-full rounded-lg border border-brand-line px-3 py-2 outline-none focus:border-brand-gold"
               />
             )}
           </label>
@@ -81,7 +81,7 @@ export default function GenerateDocument() {
         <button
           onClick={submit}
           disabled={submitting}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-3 font-semibold text-white hover:bg-brand-primaryDark disabled:opacity-60"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-gold px-4 py-3 font-semibold text-white hover:bg-brand-goldDark disabled:opacity-60"
         >
           <Wand2 size={18} /> {submitting ? 'Đang tạo...' : 'Tạo file Word'}
         </button>
@@ -101,7 +101,7 @@ export default function GenerateDocument() {
 
       <Link
         to="/2025/luatpoip/tai-lieu"
-        className="mt-5 inline-block text-sm text-brand-primaryDark hover:underline"
+        className="mt-5 inline-block text-sm text-brand-goldDark hover:underline"
       >
         ← Quay lại danh sách
       </Link>

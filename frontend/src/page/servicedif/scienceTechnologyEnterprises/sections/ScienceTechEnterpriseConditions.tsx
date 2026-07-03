@@ -28,8 +28,8 @@ const ScienceTechEnterpriseConditions: React.FC<Props> = ({
         'Đối với doanh nghiệp đã thành lập từ đủ 5 năm trở lên: có doanh thu từ việc sản xuất, kinh doanh sản phẩm hình thành từ kết quả KH&CN đạt tỷ lệ tối thiểu 30% trên tổng doanh thu.',
     },
   ],
-  headerIcon = <Lightbulb className="w-8 h-8 text-brand-primaryDark" />,
-  conditionIcon = <ChevronDown className="w-6 h-6 text-brand-primaryDark" />,
+  headerIcon = <Lightbulb className="w-8 h-8 text-brand-goldDark" />,
+  conditionIcon = <ChevronDown className="w-6 h-6 text-brand-goldDark" />,
 }) => {
   return (
     <div className="bg-brand-surface   py-16">

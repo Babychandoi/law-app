@@ -78,7 +78,7 @@ export default function LegalServicesSection() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         <div className="grid gap-8 border-b border-brand-line pb-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
           <div>
-            <p className="text-sm font-semibold text-brand-primaryDark">Dịch vụ pháp lý</p>
+            <p className="text-sm font-semibold text-brand-goldDark">Dịch vụ pháp lý</p>
             <h2
               id="services-heading"
               className="mt-3 max-w-xl text-3xl font-semibold leading-tight tracking-[-0.02em] text-gray-950 md:text-4xl"
@@ -93,7 +93,7 @@ export default function LegalServicesSection() {
             </p>
             <Link
               to="/dich-vu"
-              className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand-primaryDark underline decoration-brand-primary decoration-2 underline-offset-4 hover:text-brand-ink"
+              className="mt-4 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-brand-goldDark underline decoration-brand-gold decoration-2 underline-offset-4 hover:text-brand-ink"
             >
               Xem toàn bộ phạm vi dịch vụ
               <ArrowRight size={17} aria-hidden="true" />
@@ -119,13 +119,13 @@ export default function LegalServicesSection() {
                       <Link
                         key={service.href}
                         to={service.href}
-                        className="group grid min-h-28 grid-cols-[44px_1fr_auto] gap-4 border-b border-brand-line py-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-primaryDark"
+                        className="group grid min-h-28 grid-cols-[44px_1fr_auto] gap-4 border-b border-brand-line py-5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-goldDark"
                       >
-                        <span className="flex h-11 w-11 items-center justify-center rounded-md bg-white text-brand-primaryDark shadow-sm">
+                        <span className="flex h-11 w-11 items-center justify-center rounded-md bg-white text-brand-goldDark shadow-sm">
                           <Icon size={22} aria-hidden="true" />
                         </span>
                         <span>
-                          <span className="block text-base font-semibold text-gray-950 group-hover:text-brand-primaryDark">
+                          <span className="block text-base font-semibold text-gray-950 group-hover:text-brand-goldDark">
                             {service.title}
                           </span>
                           <span className="mt-1 block text-sm leading-6 text-gray-600">
@@ -134,7 +134,7 @@ export default function LegalServicesSection() {
                         </span>
                         <ArrowRight
                           size={18}
-                          className="mt-1 text-brand-primaryDark transition-transform group-hover:translate-x-1"
+                          className="mt-1 text-brand-goldDark transition-transform group-hover:translate-x-1"
                           aria-hidden="true"
                         />
                       </Link>

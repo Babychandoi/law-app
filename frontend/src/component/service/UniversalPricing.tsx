@@ -44,11 +44,11 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
         <div
           key={plan.id}
           className={`relative flex flex-col rounded-2xl border-2 bg-white p-8 ${
-            plan.featured ? 'border-brand-primary shadow-soft' : 'border-brand-line'
+            plan.featured ? 'border-brand-gold shadow-soft' : 'border-brand-line'
           }`}
         >
           {plan.featured && (
-            <span className="absolute -top-3 right-6 rounded-md bg-brand-primary px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
+            <span className="absolute -top-3 right-6 rounded-md bg-brand-gold px-3 py-1 text-xs font-bold uppercase tracking-wide text-white">
               Phổ biến
             </span>
           )}
@@ -66,9 +66,9 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
           <h3 className="text-center text-2xl font-bold text-brand-ink">{plan.title}</h3>
 
           <div className="mt-4 text-center">
-            <span className="text-4xl font-bold text-brand-primaryDark">{plan.price}</span>
+            <span className="text-4xl font-bold text-brand-goldDark">{plan.price}</span>
             {plan.currency && (
-              <span className="ml-1 align-top text-sm font-semibold text-brand-primaryDark">
+              <span className="ml-1 align-top text-sm font-semibold text-brand-goldDark">
                 {plan.currency}
               </span>
             )}
@@ -84,7 +84,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
             <ul className="mt-6 space-y-3.5">
               {plan.features.map((feature, i) => (
                 <li key={i} className="flex items-start gap-3">
-                  <Check className="mt-1 h-4 w-4 shrink-0 text-brand-primary" aria-hidden="true" />
+                  <Check className="mt-1 h-4 w-4 shrink-0 text-brand-gold" aria-hidden="true" />
                   <span className="text-sm leading-6 text-gray-700">
                     {typeof feature === 'string' ? feature : feature.text}
                   </span>
@@ -98,7 +98,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
           <button
             type="button"
             onClick={() => handlePlanClick(plan.id)}
-            className="mt-8 w-full rounded-xl bg-brand-primary px-6 py-3.5 font-semibold text-white transition-colors hover:bg-brand-primaryDark"
+            className="mt-8 w-full rounded-xl bg-brand-gold px-6 py-3.5 font-semibold text-white transition-colors hover:bg-brand-goldDark"
           >
             {plan.buttonText || 'Đăng ký tư vấn'}
           </button>
@@ -114,7 +114,7 @@ const PricingComponent: React.FC<PricingComponentProps> = ({
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">{title}</h2>
           {variant === 'feature' && (
-            <div className="w-24 h-1 bg-brand-primary mx-auto rounded-full"></div>
+            <div className="w-24 h-1 bg-brand-goldDark mx-auto rounded-full"></div>
           )}
           {subtitle && <p className="text-gray-600 mt-4 max-w-2xl mx-auto">{subtitle}</p>}
         </div>

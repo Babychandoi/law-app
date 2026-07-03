@@ -152,7 +152,7 @@ function InfoSection({ section, alt }: { section: ServiceSection; alt: boolean }
               className={`flex w-full items-start gap-3 rounded-lg border border-brand-line p-4 sm:w-[calc(50%-0.5rem)] ${alt ? 'bg-brand-surface' : 'bg-white'}`}
             >
               <CheckCircle2
-                className="mt-0.5 h-5 w-5 shrink-0 text-brand-primaryDark"
+                className="mt-0.5 h-5 w-5 shrink-0 text-brand-goldDark"
                 aria-hidden="true"
               />
               <div>
@@ -184,7 +184,7 @@ function BenefitsSection({ section, alt }: { section: ServiceSection; alt: boole
             className={`flex w-full gap-4 rounded-lg border border-brand-line p-5 sm:w-[calc(50%-0.625rem)] ${alt ? 'bg-brand-surface' : 'bg-white'}`}
           >
             <ShieldCheck
-              className="mt-0.5 h-6 w-6 shrink-0 text-brand-primaryDark"
+              className="mt-0.5 h-6 w-6 shrink-0 text-brand-goldDark"
               aria-hidden="true"
             />
             <div>
@@ -248,7 +248,7 @@ function ConditionsSection({ section, alt }: { section: ServiceSection; alt: boo
               key={item.id || i}
               className="flex gap-4 rounded-lg border border-brand-line bg-white p-4"
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-brand-surface text-sm font-semibold text-brand-primaryDark">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-brand-surface text-sm font-semibold text-brand-goldDark">
                 {i + 1}
               </span>
               <div>
@@ -289,7 +289,7 @@ function FaqSection({ section }: { section: ServiceSection }) {
                 >
                   <span className="font-semibold text-brand-ink">{item.title}</span>
                   <ChevronDown
-                    className={`h-5 w-5 shrink-0 text-brand-primaryDark transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                    className={`h-5 w-5 shrink-0 text-brand-goldDark transition-transform ${isOpen ? 'rotate-180' : ''}`}
                     aria-hidden="true"
                   />
                 </button>

@@ -9,13 +9,13 @@ const TrademarkBenefits = () => {
         <h1 className="text-4xl font-bold text-gray-800 mb-4">
           LỢI ÍCH KHI ĐĂNG KÝ BẢO HỘ NHÃN HIỆU
         </h1>
-        <div className="w-24 h-1 bg-brand-primary mx-auto"></div>
+        <div className="w-24 h-1 bg-brand-goldDark mx-auto"></div>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-8">
         {/* Brand Benefits Section */}
         <div className="bg-white rounded-lg shadow-sm p-8">
-          <h2 className="text-2xl font-bold text-brand-primaryDark mb-6">Lợi ích thương hiệu</h2>
+          <h2 className="text-2xl font-bold text-brand-goldDark mb-6">Lợi ích thương hiệu</h2>
 
           <div className="space-y-6">
             <div className="flex items-start space-x-4">
@@ -78,12 +78,12 @@ const TrademarkBenefits = () => {
 
         {/* Economic Benefits Section */}
         <div className="bg-white rounded-lg shadow-sm p-8">
-          <h2 className="text-2xl font-bold text-brand-primaryDark mb-6">Lợi ích kinh tế</h2>
+          <h2 className="text-2xl font-bold text-brand-goldDark mb-6">Lợi ích kinh tế</h2>
 
           <div className="space-y-6">
             <div className="flex items-start space-x-4">
               <div className="flex-shrink-0 w-8 h-8 bg-brand-surface rounded-full flex items-center justify-center">
-                <Star className="w-5 h-5 text-brand-primaryDark" />
+                <Star className="w-5 h-5 text-brand-goldDark" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
@@ -98,7 +98,7 @@ const TrademarkBenefits = () => {
 
             <div className="flex items-start space-x-4">
               <div className="flex-shrink-0 w-8 h-8 bg-brand-surface rounded-full flex items-center justify-center">
-                <Star className="w-5 h-5 text-brand-primaryDark" />
+                <Star className="w-5 h-5 text-brand-goldDark" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
@@ -113,7 +113,7 @@ const TrademarkBenefits = () => {
 
             <div className="flex items-start space-x-4">
               <div className="flex-shrink-0 w-8 h-8 bg-brand-surface rounded-full flex items-center justify-center">
-                <Star className="w-5 h-5 text-brand-primaryDark" />
+                <Star className="w-5 h-5 text-brand-goldDark" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
@@ -128,7 +128,7 @@ const TrademarkBenefits = () => {
 
             <div className="flex items-start space-x-4">
               <div className="flex-shrink-0 w-8 h-8 bg-brand-surface rounded-full flex items-center justify-center">
-                <Star className="w-5 h-5 text-brand-primaryDark" />
+                <Star className="w-5 h-5 text-brand-goldDark" />
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">

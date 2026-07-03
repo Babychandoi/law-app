@@ -88,7 +88,7 @@ export default function Home() {
         <Suspense
           fallback={
             <div className="flex items-center justify-center bg-brand-surface py-20" role="status">
-              <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-line border-t-brand-primaryDark"></div>
+              <div className="h-10 w-10 animate-spin rounded-full border-4 border-brand-line border-t-brand-goldDark"></div>
               <span className="sr-only">Đang tải bản đồ</span>
             </div>
           }
@@ -96,7 +96,7 @@ export default function Home() {
           <section className="bg-brand-surface py-16 sm:py-20" aria-labelledby="office-heading">
             <div className="mx-auto max-w-7xl px-4 sm:px-6">
               <div className="mb-8 max-w-2xl">
-                <p className="text-sm font-semibold text-brand-primaryDark">Văn phòng Luật Poip Legal</p>
+                <p className="text-sm font-semibold text-brand-goldDark">Văn phòng Luật Poip Legal</p>
                 <h2
                   id="office-heading"
                   className="mt-3 text-3xl font-semibold tracking-[-0.02em] text-gray-950 md:text-4xl"

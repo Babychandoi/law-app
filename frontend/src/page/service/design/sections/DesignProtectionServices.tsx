@@ -100,7 +100,7 @@ const DesignProtectionServices: React.FC = () => {
                 <div key={index} className="flex items-start space-x-4">
                   <div className="flex-shrink-0">
                     <div className="w-8 h-8 bg-brand-surface rounded-full flex items-center justify-center">
-                      <Star className="w-5 h-5 text-brand-primaryDark" />
+                      <Star className="w-5 h-5 text-brand-goldDark" />
                     </div>
                   </div>
                   <div className="flex-1">

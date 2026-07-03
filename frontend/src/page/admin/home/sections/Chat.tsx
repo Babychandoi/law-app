@@ -380,7 +380,7 @@ const AdminChatDashboard: React.FC = () => {
       case 'high':
         return 'text-red-600 bg-red-100';
       case 'normal':
-        return 'text-brand-primaryDark bg-brand-surface';
+        return 'text-brand-goldDark bg-brand-surface';
       case 'low':
         return 'text-gray-600 bg-gray-100';
       default:
@@ -415,10 +415,10 @@ const AdminChatDashboard: React.FC = () => {
 
           <div className="grid grid-cols-2 gap-3 mb-4">
             <div className="bg-brand-surface p-3 rounded-lg">
-              <div className="text-2xl font-bold text-brand-primaryDark">
+              <div className="text-2xl font-bold text-brand-goldDark">
                 {stats.totalConversations}
               </div>
-              <div className="text-xs text-brand-primaryDark">Tổng cuộc trò chuyện</div>
+              <div className="text-xs text-brand-goldDark">Tổng cuộc trò chuyện</div>
             </div>
             <div className="bg-red-50 p-3 rounded-lg">
               <div className="text-2xl font-bold text-red-600">{stats.unreadConversations}</div>
@@ -433,7 +433,7 @@ const AdminChatDashboard: React.FC = () => {
               placeholder="Tìm kiếm cuộc trò chuyện..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primaryDark focus:border-transparent text-sm"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent text-sm"
             />
           </div>
 
@@ -442,7 +442,7 @@ const AdminChatDashboard: React.FC = () => {
               onClick={() => setFilterStatus('all')}
               className={`px-3 py-1 rounded-full text-xs font-medium ${
                 filterStatus === 'all'
-                  ? 'bg-brand-surface text-brand-primaryDark'
+                  ? 'bg-brand-surface text-brand-goldDark'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
@@ -570,7 +570,7 @@ const AdminChatDashboard: React.FC = () => {
                             if (e.key === 'Enter') handleSaveGuestName();
                             if (e.key === 'Escape') handleCancelEditName();
                           }}
-                          className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-brand-primaryDark"
+                          className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
                           autoFocus
                         />
                         <button
@@ -617,7 +617,7 @@ const AdminChatDashboard: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   {/* <button
                     onClick={() => assignConversation(selectedConversation, currentAdmin.id)}
-                    className="px-3 py-1 bg-brand-surface text-brand-primaryDark rounded-lg text-sm hover:bg-brand-surface transition-colors"
+                    className="px-3 py-1 bg-brand-surface text-brand-goldDark rounded-lg text-sm hover:bg-brand-surface transition-colors"
                   >
                     Giao cho tôi
                   </button> */}
@@ -655,7 +655,7 @@ const AdminChatDashboard: React.FC = () => {
                     <div
                       className={`px-4 py-2 rounded-2xl break-words ${
                         message.senderType === 'ADMIN'
-                          ? 'bg-brand-primary text-white rounded-br-md'
+                          ? 'bg-brand-goldDark text-white rounded-br-md'
                           : 'bg-white text-gray-800 border border-gray-200 rounded-bl-md'
                       }`}
                     >
@@ -665,7 +665,7 @@ const AdminChatDashboard: React.FC = () => {
 
                       {message.senderType === 'ADMIN' && (
                         <div className="flex items-center justify-end mt-1 space-x-1">
-                          <CheckCheck className="w-3 h-3 text-brand-primaryDark" />
+                          <CheckCheck className="w-3 h-3 text-brand-goldDark" />
                         </div>
                       )}
                     </div>
@@ -702,7 +702,7 @@ const AdminChatDashboard: React.FC = () => {
                     onKeyDown={handleKeyPress}
                     placeholder="Nhập tin nhắn..."
                     rows={1}
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-primaryDark focus:border-transparent resize-none text-sm"
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-goldDark focus:border-transparent resize-none text-sm"
                     style={{ minHeight: '44px', maxHeight: '120px' }}
                   />
                   <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 rounded">
@@ -713,7 +713,7 @@ const AdminChatDashboard: React.FC = () => {
                 <button
                   onClick={sendMessage}
                   disabled={!newMessage.trim() || !isConnected}
-                  className="p-3 bg-brand-primary hover:bg-brand-primaryDark disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-2xl transition-colors"
+                  className="p-3 bg-brand-goldDark hover:bg-brand-goldDark disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-2xl transition-colors"
                 >
                   <Send className="w-5 h-5" />
                 </button>

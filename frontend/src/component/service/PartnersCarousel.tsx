@@ -78,19 +78,19 @@ const PartnersCarousel = () => {
               type="button"
               onClick={prevSlide}
               disabled={totalGroups <= 1}
-              className="group rounded-md border border-brand-line bg-white p-3 transition-colors duration-200 hover:border-brand-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-primary/30"
+              className="group rounded-md border border-brand-line bg-white p-3 transition-colors duration-200 hover:border-brand-gold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/30"
               aria-label="Xem nhóm đối tác trước"
             >
-              <ChevronLeft className="h-5 w-5 text-brand-primaryDark" aria-hidden="true" />
+              <ChevronLeft className="h-5 w-5 text-brand-goldDark" aria-hidden="true" />
             </button>
             <button
               type="button"
               onClick={nextSlide}
               disabled={totalGroups <= 1}
-              className="group rounded-md border border-brand-line bg-white p-3 transition-colors duration-200 hover:border-brand-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-primary/30"
+              className="group rounded-md border border-brand-line bg-white p-3 transition-colors duration-200 hover:border-brand-gold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/30"
               aria-label="Xem nhóm đối tác tiếp theo"
             >
-              <ChevronRight className="h-5 w-5 text-brand-primaryDark" aria-hidden="true" />
+              <ChevronRight className="h-5 w-5 text-brand-goldDark" aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -123,7 +123,7 @@ const PartnersCarousel = () => {
                     />
 
                     {/* Hover Overlay */}
-                    <div className="absolute inset-0 bg-brand-primary bg-opacity-0 group-hover:bg-opacity-5 rounded-lg transition-all duration-300"></div>
+                    <div className="absolute inset-0 bg-brand-goldDark bg-opacity-0 group-hover:bg-opacity-5 rounded-lg transition-all duration-300"></div>
                   </div>
 
                   {/* Tooltip */}
@@ -146,7 +146,7 @@ const PartnersCarousel = () => {
               onClick={() => setCurrentGroupIndex(index)}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${
                 currentGroupIndex === index
-                  ? 'bg-brand-primary scale-110'
+                  ? 'bg-brand-goldDark scale-110'
                   : 'bg-gray-300 hover:bg-gray-400'
               }`}
               aria-label={`Xem nhóm đối tác ${index + 1}`}
@@ -159,7 +159,7 @@ const PartnersCarousel = () => {
         <div className="text-center mt-12">
           <div className="inline-flex items-center space-x-2 text-lg text-gray-600">
             <span>Được tin tưởng bởi</span>
-            <span className="font-bold text-brand-primaryDark text-xl">{clients.length}+</span>
+            <span className="font-bold text-brand-goldDark text-xl">{clients.length}+</span>
             <span>đối tác & khách hàng</span>
           </div>
         </div>

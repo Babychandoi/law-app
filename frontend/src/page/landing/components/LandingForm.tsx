@@ -17,7 +17,7 @@ interface LandingFormProps {
 }
 
 const inputClass =
-  'min-h-12 w-full rounded-md border border-brand-line bg-white px-4 py-3 text-base text-brand-ink outline-none transition-colors placeholder:text-brand-muted hover:border-brand-primary focus:border-brand-primaryDark focus:ring-2 focus:ring-brand-primary/25';
+  'min-h-12 w-full rounded-md border border-brand-line bg-white px-4 py-3 text-base text-brand-ink outline-none transition-colors placeholder:text-brand-muted hover:border-brand-gold focus:border-brand-goldDark focus:ring-2 focus:ring-brand-gold/25';
 
 export default function LandingForm({ source, serviceTitleMatch, id }: LandingFormProps) {
   const [name, setName] = useState('');
@@ -182,7 +182,7 @@ export default function LandingForm({ source, serviceTitleMatch, id }: LandingFo
         <button
           type="submit"
           disabled={submitting}
-          className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-brand-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primaryDark disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-md bg-brand-goldDark px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-ink disabled:cursor-not-allowed disabled:opacity-60"
         >
           {submitting ? (
             <>

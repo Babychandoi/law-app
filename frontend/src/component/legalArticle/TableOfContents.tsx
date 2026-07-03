@@ -20,7 +20,7 @@ const TableOfContents: React.FC<TableOfContentsProps> = ({ sections, onItemClick
       <div>
         <div className="flex items-center gap-3 mb-6">
           <div className="flex h-11 w-11 items-center justify-center rounded-md bg-brand-surface">
-            <BookOpen className="h-5 w-5 text-brand-primaryDark" aria-hidden="true" />
+            <BookOpen className="h-5 w-5 text-brand-goldDark" aria-hidden="true" />
           </div>
           <h2 className="text-2xl font-semibold text-brand-ink">Mục lục</h2>
         </div>

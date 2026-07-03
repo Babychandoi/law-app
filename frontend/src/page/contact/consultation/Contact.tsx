@@ -25,7 +25,7 @@ const Contact = () => {
 
   return (
     <div className="p-6 sm:p-8">
-      <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand-primaryDark">
+      <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand-goldDark">
         Kênh liên hệ trực tiếp
       </p>
       <h2 className="mt-3 text-3xl font-semibold leading-tight text-brand-ink">
@@ -47,7 +47,7 @@ const Contact = () => {
       <div className="mt-8 space-y-6">
         <section aria-labelledby="company-contact-title">
           <div className="flex items-start gap-4">
-            <div className="flex h-11 w-11 flex-none items-center justify-center rounded-md bg-brand-surface text-brand-primaryDark">
+            <div className="flex h-11 w-11 flex-none items-center justify-center rounded-md bg-brand-surface text-brand-goldDark">
               <Building2 className="h-5 w-5" aria-hidden="true" />
             </div>
             <div>
@@ -72,7 +72,7 @@ const Contact = () => {
           <ul className="mt-4 space-y-4">
             {contact?.locations.map((location, index) => (
               <li key={location.id || index} className="flex gap-3">
-                <MapPin className="mt-1 h-5 w-5 flex-none text-brand-primaryDark" aria-hidden="true" />
+                <MapPin className="mt-1 h-5 w-5 flex-none text-brand-goldDark" aria-hidden="true" />
                 <span>
                   <strong className="block text-sm text-brand-ink">{location.type}</strong>
                   <span className="mt-1 block text-sm leading-6 text-brand-muted">
@@ -130,9 +130,9 @@ const ContactLink = ({ href, label, value, icon: Icon }: ContactLinkProps) => (
   <li>
     <a
       href={href}
-      className="flex min-h-11 items-center gap-3 rounded-md border border-brand-line px-4 py-3 text-sm transition-colors duration-200 hover:border-brand-primary focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-primary/30"
+      className="flex min-h-11 items-center gap-3 rounded-md border border-brand-line px-4 py-3 text-sm transition-colors duration-200 hover:border-brand-gold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/30"
     >
-      <Icon className="h-5 w-5 flex-none text-brand-primaryDark" aria-hidden="true" />
+      <Icon className="h-5 w-5 flex-none text-brand-goldDark" aria-hidden="true" />
       <span>
         <span className="block text-xs text-brand-muted">{label}</span>
         <strong className="block text-brand-ink">{value}</strong>

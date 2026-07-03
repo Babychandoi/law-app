@@ -29,12 +29,12 @@ const RegistrationProcess = ({
 }) => {
   const getColorClasses = (color: keyof typeof colors) => {
     const colors = {
-      blue: { bg: 'bg-brand-surface', text: 'text-brand-primaryDark' },
+      blue: { bg: 'bg-brand-surface', text: 'text-brand-goldDark' },
       green: { bg: 'bg-green-100', text: 'text-green-600' },
-      purple: { bg: 'bg-brand-surface', text: 'text-brand-primaryDark' },
+      purple: { bg: 'bg-brand-surface', text: 'text-brand-goldDark' },
       red: { bg: 'bg-red-100', text: 'text-red-600' },
-      yellow: { bg: 'bg-brand-surface', text: 'text-brand-primaryDark' },
-      indigo: { bg: 'bg-brand-surface', text: 'text-brand-primaryDark' },
+      yellow: { bg: 'bg-brand-surface', text: 'text-brand-goldDark' },
+      indigo: { bg: 'bg-brand-surface', text: 'text-brand-goldDark' },
     };
     return colors[color] || colors.blue;
   };
@@ -44,7 +44,7 @@ const RegistrationProcess = ({
       {/* Header Section */}
       <div className="container mx-auto px-4 mb-12">
         <div className="text-center">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-brand-primary text-white rounded-full mb-6">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-brand-goldDark text-white rounded-full mb-6">
             <ArrowRight className="w-8 h-8" />
           </div>
           <h2 className="text-3xl font-bold text-gray-800 uppercase tracking-wide">{title}</h2>

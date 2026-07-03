@@ -11,7 +11,7 @@ const TrademarkOpposition: React.FC = () => {
       title: 'TÀI LIỆU CẦN CUNG CẤP',
       content:
         ' 01 Giấy ủy quyền phản đối đơn nhãn hiệu (theo mẫu).\n Tài liệu chứng minh căn cứ phản đối.',
-      iconBgClass: 'bg-brand-primary',
+      iconBgClass: 'bg-brand-goldDark',
     },
   ];
   const [process] = useState<Process[]>([
@@ -55,14 +55,14 @@ const TrademarkOpposition: React.FC = () => {
         <section className="py-16">
           <div className="max-w-7xl mx-auto px-4">
             <div className="text-center">
-              <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-primary rounded-full mb-6 shadow-sm">
+              <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-goldDark rounded-full mb-6 shadow-sm">
                 <FastForward className="w-10 h-10 text-white" />
               </div>
               <h1 className="text-3xl md:text-5xl font-bold text-gray-800 uppercase tracking-wide leading-tight">
                 THỦ TỤC PHẢN ĐỐI ĐƠN ĐĂNG KÝ
                 <>
                   <br />
-                  <span className="text-brand-primaryDark">BẢO HỘ NHÃN HIỆU</span>
+                  <span className="text-brand-goldDark">BẢO HỘ NHÃN HIỆU</span>
                 </>
               </h1>
             </div>
@@ -102,7 +102,7 @@ const TrademarkOpposition: React.FC = () => {
                         {/* Icon */}
                         <div className="flex-shrink-0">
                           <div
-                            className={`inline-flex items-center justify-center w-16 h-16 ${section.iconBgClass || 'bg-brand-primary'} rounded-full shadow-md`}
+                            className={`inline-flex items-center justify-center w-16 h-16 ${section.iconBgClass || 'bg-brand-goldDark'} rounded-full shadow-md`}
                           >
                             <SectionIcon className="w-8 h-8 text-white" />
                           </div>
@@ -113,7 +113,7 @@ const TrademarkOpposition: React.FC = () => {
                           <h3 className="text-lg md:text-xl font-semibold text-gray-800 mb-4 uppercase tracking-wide">
                             {section.title}
                           </h3>
-                          <div className="w-20 h-1 bg-brand-primary mx-auto md:mx-0 rounded-full mb-6"></div>
+                          <div className="w-20 h-1 bg-brand-goldDark mx-auto md:mx-0 rounded-full mb-6"></div>
                           <div className="text-gray-700 leading-relaxed">
                             {section.content.split('\n').map((line, lineIndex) => (
                               <p key={lineIndex} className={lineIndex > 0 ? 'mt-2' : ''}>

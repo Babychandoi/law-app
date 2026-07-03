@@ -38,13 +38,13 @@ const TrademarkBrandComparison = () => {
     >
       <div className="flex items-center mb-4">
         <Icon
-          className={`w-8 h-8 mr-3 ${isProtected ? 'text-green-600' : 'text-brand-primaryDark'}`}
+          className={`w-8 h-8 mr-3 ${isProtected ? 'text-green-600' : 'text-brand-goldDark'}`}
         />
         <h3 className="text-xl font-bold text-gray-800">{title}</h3>
         {isProtected ? (
           <Shield className="w-6 h-6 ml-auto text-green-600" />
         ) : (
-          <Users className="w-6 h-6 ml-auto text-brand-primaryDark" />
+          <Users className="w-6 h-6 ml-auto text-brand-goldDark" />
         )}
       </div>
       <div className="space-y-3">
@@ -73,12 +73,12 @@ const TrademarkBrandComparison = () => {
     <div className="bg-brand-surface   rounded-lg p-4 border border-brand-line">
       <button
         type="button"
-        className="flex min-h-11 w-full items-center justify-between rounded-md text-left focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-primary/30"
+        className="flex min-h-11 w-full items-center justify-between rounded-md text-left focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/30"
         onClick={onToggle}
         aria-expanded={isExpanded}
       >
         <div className="flex items-center">
-          <div className="bg-brand-primary text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">
+          <div className="bg-brand-goldDark text-white rounded-full w-8 h-8 flex items-center justify-center font-bold mr-3">
             {number}
           </div>
           <h4 className="font-semibold text-gray-800">{title}</h4>
@@ -143,7 +143,7 @@ const TrademarkBrandComparison = () => {
     <div className="max-w-6xl mx-auto p-6 bg-brand-surface   min-h-screen">
       {/* Header */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-primary rounded-full mb-4 shadow-sm">
+        <div className="inline-flex items-center justify-center w-20 h-20 bg-brand-goldDark rounded-full mb-4 shadow-sm">
           <Lightbulb className="w-10 h-10 text-white" />
         </div>
         <h1 className="text-4xl font-bold text-gray-900 mb-2">NHÃN HIỆU & THƯƠNG HIỆU LÀ GÌ?</h1>
@@ -160,8 +160,8 @@ const TrademarkBrandComparison = () => {
             onClick={() => setActiveTab('comparison')}
             className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
               activeTab === 'comparison'
-                ? 'bg-brand-primary text-white shadow-md'
-                : 'text-gray-600 hover:text-brand-primaryDark'
+                ? 'bg-brand-goldDark text-white shadow-md'
+                : 'text-gray-600 hover:text-brand-goldDark'
             }`}
           >
             So Sánh
@@ -171,8 +171,8 @@ const TrademarkBrandComparison = () => {
             onClick={() => setActiveTab('conditions')}
             className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
               activeTab === 'conditions'
-                ? 'bg-brand-primary text-white shadow-md'
-                : 'text-gray-600 hover:text-brand-primaryDark'
+                ? 'bg-brand-goldDark text-white shadow-md'
+                : 'text-gray-600 hover:text-brand-goldDark'
             }`}
           >
             Điều Kiện
@@ -182,8 +182,8 @@ const TrademarkBrandComparison = () => {
             onClick={() => setActiveTab('summary')}
             className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
               activeTab === 'summary'
-                ? 'bg-brand-primary text-white shadow-md'
-                : 'text-gray-600 hover:text-brand-primaryDark'
+                ? 'bg-brand-goldDark text-white shadow-md'
+                : 'text-gray-600 hover:text-brand-goldDark'
             }`}
           >
             Tổng Kết
@@ -240,7 +240,7 @@ const TrademarkBrandComparison = () => {
 
           {/* Comparison Table */}
           <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="bg-brand-primary p-6">
+            <div className="bg-brand-goldDark p-6">
               <h2 className="text-2xl font-bold text-white text-center">So Sánh Tổng Quan</h2>
             </div>
             <div className="overflow-x-auto">
@@ -314,13 +314,13 @@ const TrademarkBrandComparison = () => {
                 Xây dựng <strong>thương hiệu</strong> để tạo uy tín và nhận diện thị trường
               </li>
               <li className="flex items-start">
-                <span className="bg-brand-surface text-brand-primaryDark rounded-full px-2 py-1 text-xs font-medium mr-3 mt-0.5">
+                <span className="bg-brand-surface text-brand-goldDark rounded-full px-2 py-1 text-xs font-medium mr-3 mt-0.5">
                   2
                 </span>
                 Đăng ký <strong>nhãn hiệu</strong> để có được bảo vệ pháp lý độc quyền
               </li>
               <li className="flex items-start">
-                <span className="bg-brand-surface text-brand-primaryDark rounded-full px-2 py-1 text-xs font-medium mr-3 mt-0.5">
+                <span className="bg-brand-surface text-brand-goldDark rounded-full px-2 py-1 text-xs font-medium mr-3 mt-0.5">
                   3
                 </span>
                 Kết hợp cả hai để có chiến lược bảo vệ thương hiệu toàn diện

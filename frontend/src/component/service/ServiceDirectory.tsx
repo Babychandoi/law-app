@@ -31,7 +31,7 @@ const ServiceDirectory = ({ serviceTitle, heading, description }: ServiceDirecto
     <section className="bg-brand-surface py-14 sm:py-16" aria-labelledby="service-directory-title">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mx-auto mb-10 max-w-3xl text-center">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-primaryDark">
+          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-goldDark">
             Hướng dẫn dịch vụ
           </p>
           <h1
@@ -49,11 +49,11 @@ const ServiceDirectory = ({ serviceTitle, heading, description }: ServiceDirecto
           {(services ?? []).map((service) => (
             <article
               key={service.id}
-              className="overflow-hidden rounded-lg border border-brand-line bg-white shadow-sm transition-[border-color,box-shadow] duration-200 hover:border-brand-primary hover:shadow-soft"
+              className="overflow-hidden rounded-lg border border-brand-line bg-white shadow-sm transition-[border-color,box-shadow] duration-200 hover:border-brand-gold hover:shadow-soft"
             >
               <Link
                 to={service.href}
-                className="group flex h-full flex-col focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-primary/30"
+                className="group flex h-full flex-col focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/30"
               >
                 <img
                   src={service.image}
@@ -63,16 +63,16 @@ const ServiceDirectory = ({ serviceTitle, heading, description }: ServiceDirecto
                   decoding="async"
                 />
                 <div className="flex flex-1 flex-col p-6">
-                  <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-md bg-brand-surface text-brand-primaryDark">
+                  <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-md bg-brand-surface text-brand-goldDark">
                     <FileText className="h-5 w-5" aria-hidden="true" />
                   </div>
-                  <h2 className="text-lg font-semibold leading-7 text-brand-ink group-hover:text-brand-primaryDark">
+                  <h2 className="text-lg font-semibold leading-7 text-brand-ink group-hover:text-brand-goldDark">
                     {service.title}
                   </h2>
                   <p className="mt-2 line-clamp-3 text-sm leading-6 text-brand-muted">
                     {service.description}
                   </p>
-                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-brand-primaryDark">
+                  <span className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-brand-goldDark">
                     Tìm hiểu dịch vụ
                     <ArrowRight className="h-4 w-4" aria-hidden="true" />
                   </span>
@@ -84,7 +84,7 @@ const ServiceDirectory = ({ serviceTitle, heading, description }: ServiceDirecto
 
         {services && services.length === 0 && (
           <div className="rounded-lg border border-brand-line bg-white px-6 py-12 text-center">
-            <FileText className="mx-auto h-8 w-8 text-brand-primaryDark" aria-hidden="true" />
+            <FileText className="mx-auto h-8 w-8 text-brand-goldDark" aria-hidden="true" />
             <h2 className="mt-4 text-lg font-semibold text-brand-ink">Chưa có dịch vụ nào</h2>
             <p className="mt-2 text-brand-muted">Vui lòng quay lại sau.</p>
           </div>

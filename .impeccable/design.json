@@ -7,7 +7,7 @@
       "counsel-ink": {
         "role": "neutral",
         "displayName": "Counsel Ink",
-        "canonical": "#161a2e",
+        "canonical": "#171717",
         "tonalRamp": [
           "#171717",
           "#292929",
@@ -22,7 +22,7 @@
       "counsel-muted": {
         "role": "neutral",
         "displayName": "Counsel Muted",
-        "canonical": "#4a5169",
+        "canonical": "#5f6368",
         "tonalRamp": [
           "#202225",
           "#373a3e",
@@ -34,55 +34,25 @@
           "#f0f1f1"
         ]
       },
-      "poip-indigo": {
-        "role": "primary",
-        "displayName": "Poip Indigo",
-        "canonical": "#2f4bd6",
-        "tonalRamp": [
-          "#0a1030",
-          "#131f5a",
-          "#1e2f8f",
-          "#2f4bd6",
-          "#4a63e0",
-          "#7d8fec",
-          "#b3bef5",
-          "#e2e6fb"
-        ]
-      },
-      "poip-indigo-deep": {
-        "role": "primary",
-        "displayName": "Poip Indigo Deep",
-        "canonical": "#1e2f8f",
-        "tonalRamp": [
-          "#080c26",
-          "#111845",
-          "#182463",
-          "#1e2f8f",
-          "#3247b8",
-          "#5e70d6",
-          "#9aa8ec",
-          "#dfe4fa"
-        ]
-      },
       "poip-gold": {
-        "role": "accent",
+        "role": "primary",
         "displayName": "Poip Gold",
-        "canonical": "#f0b429",
+        "canonical": "#c7942c",
         "tonalRamp": [
-          "#332203",
-          "#5c3e08",
-          "#875c0f",
-          "#b57d18",
-          "#f0b429",
-          "#f4c454",
-          "#f8d98d",
-          "#fdf0cf"
+          "#2f2107",
+          "#523a0b",
+          "#765311",
+          "#9a6f1a",
+          "#c7942c",
+          "#d9ad52",
+          "#e8cb8a",
+          "#f8edcf"
         ]
       },
       "poip-gold-deep": {
-        "role": "accent",
+        "role": "primary",
         "displayName": "Poip Gold Deep",
-        "canonical": "#9a6a10",
+        "canonical": "#875f12",
         "tonalRamp": [
           "#241900",
           "#3d2a03",
@@ -97,7 +67,7 @@
       "quiet-line": {
         "role": "neutral",
         "displayName": "Quiet Line",
-        "canonical": "#dfe3f5",
+        "canonical": "#e8e1d3",
         "tonalRamp": [
           "#28251f",
           "#454139",
@@ -112,7 +82,7 @@
       "service-surface": {
         "role": "neutral",
         "displayName": "Service Surface",
-        "canonical": "#f5f7ff",
+        "canonical": "#f8f6f1",
         "tonalRamp": [
           "#292722",
           "#46443e",
@@ -233,7 +203,7 @@
     "northStar": "Clear Counsel",
     "overview": "Luật Poip Legal should feel like a focused consultation with a trusted legal expert: composed, direct, and easy to follow. Hierarchy and plain-language content do the persuasive work; color marks important actions and navigation states.",
     "keyCharacteristics": [
-      "Light indigo-led palette: indigo brand, rare gold accent, cool off-white surfaces, one navy footer anchor.",
+      "Restrained black, gold, white, and quiet off-white palette.",
       "Clear information hierarchy with practical Vietnamese copy.",
       "Compact, reachable consultation actions for forms, calls, and Zalo.",
       "Gently curved components with visible borders and restrained elevation.",
@@ -241,8 +211,8 @@
     ],
     "rules": [
       {
-        "name": "Indigo leads, gold accents",
-        "body": "Poip Indigo carries brand and actions across a light interface; Poip Gold is a rare accent for high-value moments and the footer. Do not introduce unrelated purple, teal, or red accents for ordinary content.",
+        "name": "The One Gold Rule",
+        "body": "Poip Gold is the only decorative accent on the public brand surface; do not introduce unrelated blue, purple, orange, or red accents for ordinary content.",
         "section": "colors"
       },
       {

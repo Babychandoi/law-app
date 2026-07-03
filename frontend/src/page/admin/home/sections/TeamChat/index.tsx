@@ -234,7 +234,7 @@ export default function TeamChat() {
                 ensureNotificationPermission();
                 setNewMode(newMode === 'direct' ? null : 'direct');
               }}
-              className="p-2 rounded-lg hover:bg-brand-surface text-brand-primary"
+              className="p-2 rounded-lg hover:bg-brand-surface text-brand-gold"
               title="Nhắn riêng"
             >
               <Plus size={18} />
@@ -245,7 +245,7 @@ export default function TeamChat() {
                   ensureNotificationPermission();
                   setNewMode(newMode === 'group' ? null : 'group');
                 }}
-                className="p-2 rounded-lg hover:bg-brand-surface text-brand-primaryDark"
+                className="p-2 rounded-lg hover:bg-brand-surface text-brand-goldDark"
                 title="Tạo nhóm (admin)"
               >
                 <UsersRound size={18} />
@@ -274,7 +274,7 @@ export default function TeamChat() {
                   className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-white text-left"
                 >
                   <span className="relative">
-                    <span className="w-8 h-8 rounded-full bg-brand-primary/20 text-brand-primaryDark grid place-items-center text-xs font-semibold">
+                    <span className="w-8 h-8 rounded-full bg-brand-gold/20 text-brand-goldDark grid place-items-center text-xs font-semibold">
                       {s.fullName?.charAt(0) ?? '?'}
                     </span>
                     {online.has(s.id) && (
@@ -304,7 +304,7 @@ export default function TeamChat() {
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
               placeholder="Tên nhóm..."
-              className="w-full rounded-lg border border-brand-line px-3 py-2 text-sm outline-none focus:border-brand-primary"
+              className="w-full rounded-lg border border-brand-line px-3 py-2 text-sm outline-none focus:border-brand-gold"
             />
             <div className="flex items-center gap-2 bg-white rounded-lg px-2 border border-brand-line">
               <Search size={14} className="text-brand-muted" />
@@ -324,12 +324,12 @@ export default function TeamChat() {
                     key={s.id}
                     onClick={() => toggleGroupMember(s.id)}
                     className={`w-full flex items-center gap-2 p-2 rounded-lg text-left ${
-                      checked ? 'bg-brand-primary/15' : 'hover:bg-white'
+                      checked ? 'bg-brand-gold/15' : 'hover:bg-white'
                     }`}
                   >
                     <span
                       className={`w-4 h-4 rounded border grid place-items-center ${
-                        checked ? 'bg-brand-primary border-brand-primary text-white' : 'border-brand-line'
+                        checked ? 'bg-brand-gold border-brand-gold text-white' : 'border-brand-line'
                       }`}
                     >
                       {checked && '✓'}
@@ -342,7 +342,7 @@ export default function TeamChat() {
             </div>
             <button
               onClick={createGroup}
-              className="w-full flex items-center justify-center gap-2 rounded-lg bg-brand-primary text-white py-2 text-sm hover:bg-brand-primaryDark"
+              className="w-full flex items-center justify-center gap-2 rounded-lg bg-brand-gold text-white py-2 text-sm hover:bg-brand-goldDark"
             >
               <UserPlus size={16} /> Tạo nhóm
             </button>
@@ -358,7 +358,7 @@ export default function TeamChat() {
                 c.id === activeId ? 'bg-brand-surface' : ''
               }`}
             >
-              <span className="w-10 h-10 rounded-full bg-brand-primary/20 text-brand-primaryDark grid place-items-center font-semibold">
+              <span className="w-10 h-10 rounded-full bg-brand-gold/20 text-brand-goldDark grid place-items-center font-semibold">
                 {c.type === 'DIRECT' ? convTitle(c).charAt(0) : <UsersRound size={18} />}
               </span>
               <span className="flex-1 min-w-0">
@@ -367,7 +367,7 @@ export default function TeamChat() {
                     {convTitle(c)}
                   </span>
                   {c.unreadCount > 0 && (
-                    <span className="ml-2 text-xs bg-brand-primary text-white rounded-full px-2 py-0.5">
+                    <span className="ml-2 text-xs bg-brand-gold text-white rounded-full px-2 py-0.5">
                       {c.unreadCount}
                     </span>
                   )}
@@ -386,7 +386,7 @@ export default function TeamChat() {
         {active ? (
           <>
             <header className="p-4 border-b border-brand-line flex items-center gap-3">
-              <span className="w-9 h-9 rounded-full bg-brand-primary/20 text-brand-primaryDark grid place-items-center font-semibold">
+              <span className="w-9 h-9 rounded-full bg-brand-gold/20 text-brand-goldDark grid place-items-center font-semibold">
                 {active.type === 'DIRECT' ? convTitle(active).charAt(0) : <UsersRound size={18} />}
               </span>
               <div>
@@ -406,11 +406,11 @@ export default function TeamChat() {
                   <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
                     <div
                       className={`max-w-[70%] rounded-2xl px-4 py-2 ${
-                        mine ? 'bg-brand-primary text-white' : 'bg-white text-brand-ink shadow-sm'
+                        mine ? 'bg-brand-gold text-white' : 'bg-white text-brand-ink shadow-sm'
                       }`}
                     >
                       {!mine && (
-                        <div className="text-xs font-semibold text-brand-primaryDark mb-0.5">
+                        <div className="text-xs font-semibold text-brand-goldDark mb-0.5">
                           {staffName(m.senderId)}
                         </div>
                       )}
@@ -460,11 +460,11 @@ export default function TeamChat() {
                   e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())
                 }
                 placeholder="Nhập tin nhắn..."
-                className="flex-1 rounded-full border border-brand-line px-4 py-2 outline-none focus:border-brand-primary"
+                className="flex-1 rounded-full border border-brand-line px-4 py-2 outline-none focus:border-brand-gold"
               />
               <button
                 onClick={handleSend}
-                className="p-2.5 rounded-full bg-brand-primary text-white hover:bg-brand-primaryDark"
+                className="p-2.5 rounded-full bg-brand-gold text-white hover:bg-brand-goldDark"
               >
                 <Send size={18} />
               </button>

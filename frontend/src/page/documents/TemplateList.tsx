@@ -48,7 +48,7 @@ export default function TemplateList() {
         {isAdmin && (
           <Link
             to="/2025/luatpoip/tai-lieu/templates/new"
-            className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-white hover:bg-brand-primaryDark"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-gold px-4 py-2 text-white hover:bg-brand-goldDark"
           >
             <Plus size={18} /> Tải mẫu mới
           </Link>
@@ -62,7 +62,7 @@ export default function TemplateList() {
             className="rounded-2xl border border-brand-line bg-white p-5 shadow-soft"
           >
             <div className="flex items-start justify-between gap-3">
-              <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-primary/15 text-brand-primaryDark">
+              <span className="grid h-11 w-11 place-items-center rounded-xl bg-brand-gold/15 text-brand-goldDark">
                 <FileText size={22} />
               </span>
               <StatusBadge status={template.status} />
@@ -78,7 +78,7 @@ export default function TemplateList() {
               {template.status === 'ACTIVE' && (
                 <Link
                   to={`/2025/luatpoip/tai-lieu/generate/${template.id}`}
-                  className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm text-white hover:bg-brand-primaryDark"
+                  className="inline-flex items-center gap-2 rounded-lg bg-brand-gold px-3 py-2 text-sm text-white hover:bg-brand-goldDark"
                 >
                   <Wand2 size={16} /> Tạo hồ sơ
                 </Link>

@@ -13,7 +13,7 @@ const AboutSection = ({ title, content, image }: AboutSectionProps) => (
       />
 
       <div>
-        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-primaryDark">
+        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-goldDark">
           Năng lực đại diện
         </p>
         <h2
@@ -26,7 +26,7 @@ const AboutSection = ({ title, content, image }: AboutSectionProps) => (
           {content.map((paragraph, index) => (
             <div key={paragraph} className="flex gap-3">
               <CheckCircle
-                className="mt-1 h-5 w-5 flex-none text-brand-primaryDark"
+                className="mt-1 h-5 w-5 flex-none text-brand-goldDark"
                 aria-hidden="true"
               />
               <p

@@ -57,10 +57,10 @@ const getColorClasses = (color: 'blue' | 'emerald' | 'purple' | 'orange') => {
     blue: {
       bg: 'bg-brand-surface',
       border: 'border-brand-line',
-      icon: 'text-brand-primaryDark',
-      accent: 'bg-brand-primary',
+      icon: 'text-brand-goldDark',
+      accent: 'bg-brand-goldDark',
       gradient: ' ',
-      shadow: 'shadow-brand-primary/20',
+      shadow: 'shadow-brand-gold/20',
     },
     emerald: {
       bg: 'bg-emerald-50',
@@ -73,18 +73,18 @@ const getColorClasses = (color: 'blue' | 'emerald' | 'purple' | 'orange') => {
     purple: {
       bg: 'bg-brand-surface',
       border: 'border-brand-line',
-      icon: 'text-brand-primaryDark',
-      accent: 'bg-brand-primary',
+      icon: 'text-brand-goldDark',
+      accent: 'bg-brand-goldDark',
       gradient: ' ',
-      shadow: 'shadow-brand-primary/20',
+      shadow: 'shadow-brand-gold/20',
     },
     orange: {
       bg: 'bg-brand-surface',
       border: 'border-brand-line',
-      icon: 'text-brand-primaryDark',
-      accent: 'bg-brand-primary',
+      icon: 'text-brand-goldDark',
+      accent: 'bg-brand-goldDark',
       gradient: ' ',
-      shadow: 'shadow-brand-primary/20',
+      shadow: 'shadow-brand-gold/20',
     },
   };
   return colors[color];
@@ -139,13 +139,13 @@ const PatentBenefits: React.FC = () => {
           <div className="max-w-7xl mx-auto px-4">
             <div className="text-center">
               <div className="relative inline-block mb-8">
-                <div className="absolute inset-0 bg-brand-primary rounded-full blur-lg opacity-30 "></div>
-                <div className="relative w-24 h-24 bg-brand-primary rounded-full flex items-center justify-center shadow-soft">
+                <div className="absolute inset-0 bg-brand-goldDark rounded-full blur-lg opacity-30 "></div>
+                <div className="relative w-24 h-24 bg-brand-goldDark rounded-full flex items-center justify-center shadow-soft">
                   <ArrowDown className="w-12 h-12 text-white " />
                 </div>
               </div>
               <h1 className="text-4xl md:text-5xl font-bold text-brand-ink mb-4">{data.title}</h1>
-              <div className="w-24 h-1 bg-brand-primary mx-auto rounded-full"></div>
+              <div className="w-24 h-1 bg-brand-goldDark mx-auto rounded-full"></div>
             </div>
           </div>
         </section>

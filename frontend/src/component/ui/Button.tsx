@@ -20,8 +20,8 @@ export const Button = ({
 }: ButtonProps) => {
   const variants = {
     default:
-      'border border-brand-primaryDark bg-brand-primary text-white hover:border-brand-primaryDark hover:bg-brand-primaryDark',
-    outline: 'border border-brand-line bg-white text-brand-ink hover:border-brand-primary',
+      'border border-brand-goldDark bg-brand-goldDark text-white hover:border-brand-ink hover:bg-brand-ink',
+    outline: 'border border-brand-line bg-white text-brand-ink hover:border-brand-gold',
     ghost: 'text-brand-ink hover:bg-brand-surface',
   };
 
@@ -35,7 +35,7 @@ export const Button = ({
     <button
       type="button"
       className={cn(
-        'inline-flex items-center justify-center rounded-md font-semibold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-primary/30 disabled:pointer-events-none disabled:opacity-50',
+        'inline-flex items-center justify-center rounded-md font-semibold transition-colors focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/30 disabled:pointer-events-none disabled:opacity-50',
         variants[variant],
         sizes[size],
         className

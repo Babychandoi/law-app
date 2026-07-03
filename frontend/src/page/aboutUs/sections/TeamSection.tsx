@@ -20,7 +20,7 @@ const TeamSection = ({ title, content, image }: TeamSectionProps) => {
         />
 
         <div>
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-primaryDark">
+          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-goldDark">
             Chuyên môn thực tiễn
           </p>
           <h2 id="about-team-title" className="text-3xl font-semibold leading-tight text-brand-ink">
@@ -30,7 +30,7 @@ const TeamSection = ({ title, content, image }: TeamSectionProps) => {
             {content.map((paragraph) => (
               <div key={paragraph} className="flex gap-3">
                 <CheckCircle
-                  className="mt-1 h-5 w-5 flex-none text-brand-primaryDark"
+                  className="mt-1 h-5 w-5 flex-none text-brand-goldDark"
                   aria-hidden="true"
                 />
                 <p className="leading-7 text-brand-muted">{paragraph}</p>
@@ -41,7 +41,7 @@ const TeamSection = ({ title, content, image }: TeamSectionProps) => {
           <ul className="mt-8 grid gap-3 sm:grid-cols-3">
             {strengths.map(({ label, icon: Icon }) => (
               <li key={label} className="rounded-lg border border-brand-line bg-brand-surface p-4">
-                <Icon className="h-5 w-5 text-brand-primaryDark" aria-hidden="true" />
+                <Icon className="h-5 w-5 text-brand-goldDark" aria-hidden="true" />
                 <span className="mt-3 block text-sm font-semibold leading-5 text-brand-ink">
                   {label}
                 </span>

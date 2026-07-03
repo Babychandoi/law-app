@@ -19,7 +19,7 @@ export const Breadcrumb = ({ items }: BreadcrumbProps) => (
             <Link
               to={item.href}
               aria-current={index === items.length - 1 ? 'page' : undefined}
-              className="flex items-center gap-1 rounded-sm text-brand-muted transition-colors hover:text-brand-primaryDark focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-primary/30 aria-[current=page]:font-semibold aria-[current=page]:text-brand-ink"
+              className="flex items-center gap-1 rounded-sm text-brand-muted transition-colors hover:text-brand-goldDark focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/30 aria-[current=page]:font-semibold aria-[current=page]:text-brand-ink"
             >
               {index === 0 && <Home className="h-4 w-4" aria-hidden="true" />}
               {item.name}

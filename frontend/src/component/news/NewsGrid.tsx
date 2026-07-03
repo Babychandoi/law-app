@@ -12,7 +12,7 @@ export const NewsGrid = ({ items, loading, onItemClick }: NewsGridProps) => {
   if (loading) {
     return (
       <div className="flex flex-col items-center justify-center py-20" role="status">
-        <Loader2 className="mb-4 h-10 w-10 animate-spin text-brand-primaryDark" aria-hidden="true" />
+        <Loader2 className="mb-4 h-10 w-10 animate-spin text-brand-goldDark" aria-hidden="true" />
         <span className="text-gray-600 font-medium">Đang tải bản tin...</span>
       </div>
     );

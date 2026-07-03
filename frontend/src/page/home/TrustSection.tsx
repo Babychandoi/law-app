@@ -35,7 +35,7 @@ export default function TrustSection() {
             <div className="flex items-start gap-3">
               <ShieldCheck
                 size={22}
-                className="mt-0.5 shrink-0 text-brand-primaryDark"
+                className="mt-0.5 shrink-0 text-brand-goldDark"
                 aria-hidden="true"
               />
               <p className="text-sm leading-6 text-gray-700">
@@ -47,7 +47,7 @@ export default function TrustSection() {
         </div>
 
         <div>
-          <p className="text-sm font-semibold text-brand-primaryDark">Vì sao chọn Luật Poip Legal</p>
+          <p className="text-sm font-semibold text-brand-goldDark">Vì sao chọn Luật Poip Legal</p>
           <h2
             id="trust-heading"
             className="mt-3 max-w-2xl text-3xl font-semibold leading-tight tracking-[-0.02em] text-gray-950 md:text-4xl"
@@ -62,7 +62,7 @@ export default function TrustSection() {
           <div className="mt-8 divide-y divide-brand-line border-y border-brand-line">
             {benefits.map((benefit) => (
               <div key={benefit.title} className="grid grid-cols-[24px_1fr] gap-3 py-5">
-                <CheckCircle2 size={20} className="mt-0.5 text-brand-primaryDark" aria-hidden="true" />
+                <CheckCircle2 size={20} className="mt-0.5 text-brand-goldDark" aria-hidden="true" />
                 <div>
                   <h3 className="font-semibold text-gray-950">{benefit.title}</h3>
                   <p className="mt-1 text-sm leading-6 text-gray-600">{benefit.description}</p>
@@ -74,14 +74,14 @@ export default function TrustSection() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             <Link
               to="/ve-chung-toi"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-primaryDark"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-ink px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-black"
             >
               Tìm hiểu về Luật Poip Legal
               <ArrowRight size={17} aria-hidden="true" />
             </Link>
             <a
               href={contactInfo.phoneHref}
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-brand-line bg-white px-5 py-3 text-sm font-semibold text-gray-900 transition-colors hover:border-brand-primary hover:text-brand-primaryDark"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-brand-line bg-white px-5 py-3 text-sm font-semibold text-gray-900 transition-colors hover:border-brand-gold hover:text-brand-goldDark"
             >
               <Phone size={17} aria-hidden="true" />
               Gọi tư vấn
@@ -90,7 +90,7 @@ export default function TrustSection() {
               href={contactInfo.zaloHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-brand-line bg-white px-5 py-3 text-sm font-semibold text-gray-900 transition-colors hover:border-brand-primary hover:text-brand-primaryDark"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-brand-line bg-white px-5 py-3 text-sm font-semibold text-gray-900 transition-colors hover:border-brand-gold hover:text-brand-goldDark"
             >
               <MessageCircle size={17} aria-hidden="true" />
               Nhắn Zalo
