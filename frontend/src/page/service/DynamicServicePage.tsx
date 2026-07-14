@@ -62,8 +62,6 @@ export default function DynamicServicePage() {
           heading={groupTitle}
           description="Chọn dịch vụ phù hợp để xem quy trình, hồ sơ cần chuẩn bị và bước tư vấn tiếp theo."
         />
-        <ConsultationForm />
-        <PartnersCarousel />
       </div>
     );
   }

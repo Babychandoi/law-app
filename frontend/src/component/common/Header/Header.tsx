@@ -1,5 +1,5 @@
 import { ChevronDown, Mail, Menu, MoreHorizontal, Phone, X } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type MouseEvent } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { contactInfo, menuIconMap } from '../../../shared/config/site';
 import { useMenuItems } from '../../../shared/hooks/useMenuItems';
@@ -17,6 +17,12 @@ const navLinkClass = ({ isActive }: { isActive: boolean }) =>
       ? 'bg-brand-surface text-brand-goldDark'
       : 'text-gray-700 hover:bg-gray-50 hover:text-brand-goldDark',
   ].join(' ');
+
+// Sau khi chọn 1 mục trong dropdown, link vẫn giữ focus khiến group-focus-within
+// giữ menu mở tới khi click chỗ khác. Blur để nhả focus -> dropdown đóng ngay.
+const closeDropdownOnSelect = (event: MouseEvent<HTMLElement>) => {
+  event.currentTarget.blur();
+};
 
 function MenuIcon({ id, icon, size = 17 }: { id: string; icon?: string; size?: number }) {
   // Ưu tiên icon động (nhóm tạo qua admin), fallback map tĩnh theo id
@@ -39,7 +45,12 @@ function DesktopMenuItem({ item }: { item: ServiceResponse }) {
 
   return (
     <li className="group relative">
-      <NavLink to={item.href} className={navLinkClass} aria-haspopup="true">
+      <NavLink
+        to={item.href}
+        className={navLinkClass}
+        aria-haspopup="true"
+        onClick={closeDropdownOnSelect}
+      >
         <MenuIcon id={item.id} icon={item.icon} />
         <span>{item.title}</span>
         <ChevronDown
@@ -54,6 +65,7 @@ function DesktopMenuItem({ item }: { item: ServiceResponse }) {
             <NavLink
               key={child.id}
               to={child.href}
+              onClick={closeDropdownOnSelect}
               className={({ isActive }) =>
                 [
                   `flex min-h-11 items-center gap-3 rounded-md px-3 py-3 text-sm transition-colors ${focusClass}`,
@@ -101,7 +113,7 @@ function MoreMenuItem({ items }: { items: ServiceResponse[] }) {
         <div className="mt-2 max-h-[70vh] overflow-y-auto rounded-lg border border-brand-line bg-white p-2 shadow-soft">
           {items.map((item) => (
             <div key={item.id}>
-              <NavLink to={item.href} className={childLinkClass}>
+              <NavLink to={item.href} onClick={closeDropdownOnSelect} className={childLinkClass}>
                 <span className="text-brand-goldDark">
                   <MenuIcon id={item.id} icon={item.icon} size={16} />
                 </span>
@@ -110,7 +122,12 @@ function MoreMenuItem({ items }: { items: ServiceResponse[] }) {
               {!!item.children?.length && (
                 <div className="ml-4 border-l border-brand-line pl-2">
                   {item.children.map((child) => (
-                    <NavLink key={child.id} to={child.href} className={childLinkClass}>
+                    <NavLink
+                      key={child.id}
+                      to={child.href}
+                      onClick={closeDropdownOnSelect}
+                      className={childLinkClass}
+                    >
                       <span className="text-brand-goldDark">
                         <MenuIcon id={child.id} size={15} />
                       </span>
