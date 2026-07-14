@@ -16,3 +16,4 @@ certbot/conf/keys/
 
 # Build output (Maven / Java) — build ra, khong commit
 **/target/
+backups/**

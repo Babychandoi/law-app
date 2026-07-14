@@ -15,7 +15,6 @@ services:
       - ./certbot/conf:/etc/letsencrypt
     depends_on:
       - frontend
-      - frontend-stage
       - backend
       - gateway
       - minio
@@ -31,17 +30,6 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: law-app-frontend
-    networks:
-      - law-app-network
-    restart: unless-stopped
-
-  # Frontend STAGE — build tu git worktree cua nhanh feat/redesign-light-theme
-  # (xem huong dan tao worktree ben duoi). Goi API prod san co.
-  frontend-stage:
-    build:
-      context: ../law-app-stage/frontend
-      dockerfile: Dockerfile
-    container_name: law-app-frontend-stage
     networks:
       - law-app-network
     restart: unless-stopped
@@ -314,7 +302,6 @@ services:
       - ./cloudflared/credentials.json:/etc/cloudflared/credentials.json:ro
     depends_on:
       - frontend
-      - frontend-stage
       - backend
       - gateway
       - minio

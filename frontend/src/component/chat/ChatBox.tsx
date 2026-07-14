@@ -227,15 +227,18 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
               setMessages((prev) => {
                 const existingIndex = prev.findIndex(
                   (existingMsg) =>
+                    // Same server id -> same message.
                     (existingMsg.id && existingMsg.id === msg.id) ||
+                    // Server echo of our optimistic message: match the pending "sending"
+                    // bubble by content instead of by timestamp. Client and server clocks
+                    // (plus AI latency) can differ by more than a couple of seconds, so a
+                    // time window here caused the same GUEST message to render twice.
                     (existingMsg.tempId &&
+                      !existingMsg.id &&
+                      existingMsg.status === 'sending' &&
                       existingMsg.guestId === msg.guestId &&
                       existingMsg.content === msg.content &&
-                      existingMsg.senderType === msg.senderType &&
-                      Math.abs(
-                        new Date(existingMsg.createdAt || '').getTime() -
-                          new Date(msg.createdAt || '').getTime()
-                      ) < 2000)
+                      existingMsg.senderType === msg.senderType)
                 );
 
                 if (existingIndex !== -1) {
