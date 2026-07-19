@@ -13,6 +13,8 @@ cloudflared.exe
 certbot/conf/live/
 certbot/conf/archive/
 certbot/conf/keys/
+# ACME account key + metadata (private key cua tai khoan Let's Encrypt)
+certbot/conf/accounts/
 
 # Build output (Maven / Java) — build ra, khong commit
 **/target/
