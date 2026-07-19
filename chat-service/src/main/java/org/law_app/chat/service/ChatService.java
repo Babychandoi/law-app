@@ -42,6 +42,7 @@ public class ChatService {
   private final MembershipRepository membershipRepo;
   private final MessageRepository messageRepo;
   private final SimpMessagingTemplate messagingTemplate;
+  private final FileStorageService fileStorageService;
 
   // ---------------- Conversations ----------------
 
@@ -285,7 +286,13 @@ public class ChatService {
         m.getAttachments() == null
             ? List.of()
             : m.getAttachments().stream()
-                .map(a -> new AttachmentDto(a.getUrl(), a.getName(), a.getMime(), a.getSize()))
+                .map(
+                    a ->
+                        new AttachmentDto(
+                            fileStorageService.presignUrl(a.getUrl()),
+                            a.getName(),
+                            a.getMime(),
+                            a.getSize()))
                 .toList();
     return new MessageDto(
         m.getId(),

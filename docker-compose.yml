@@ -284,7 +284,7 @@ services:
       mc mb myminio/$${MINIO_BUCKET_IMAGES} --ignore-existing;
       mc anonymous set public myminio/$${MINIO_BUCKET_IMAGES};
       mc mb myminio/$${MINIO_BUCKET_STAFF_FILES} --ignore-existing;
-      mc anonymous set public myminio/$${MINIO_BUCKET_STAFF_FILES};
+      mc anonymous set none myminio/$${MINIO_BUCKET_STAFF_FILES};
       mc mb myminio/$${MINIO_BUCKET_DOCUMENT_TEMPLATES} --ignore-existing;
       mc mb myminio/$${MINIO_BUCKET_GENERATED_DOCUMENTS} --ignore-existing;
       exit 0;

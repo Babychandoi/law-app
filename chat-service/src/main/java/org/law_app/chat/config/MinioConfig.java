@@ -29,4 +29,11 @@ public class MinioConfig {
   public MinioClient minioClient() {
     return MinioClient.builder().endpoint(url).credentials(accessKey, secretKey).build();
   }
+
+  // Presigned URLs embed the request host in the signature, so they must be
+  // generated against the public endpoint the browser will actually call.
+  @Bean
+  public MinioClient presignMinioClient() {
+    return MinioClient.builder().endpoint(publicUrl).credentials(accessKey, secretKey).build();
+  }
 }
