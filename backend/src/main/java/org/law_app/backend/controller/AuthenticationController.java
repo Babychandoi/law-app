@@ -154,8 +154,9 @@ public class AuthenticationController {
   }
 
   @PutMapping("/users/{id}/password")
-  ApiResponse<Boolean> changePassword(@PathVariable String id, @RequestParam String newPassword) {
-    var result = authenticationService.changePassword(id, newPassword);
+  ApiResponse<Boolean> changePassword(
+      @PathVariable String id, @RequestBody ChangePasswordRequest request) {
+    var result = authenticationService.changePassword(id, request.getNewPassword());
     return ApiResponse.<Boolean>builder()
         .data(result)
         .message(result ? "Password changed successfully" : "Password change failed")

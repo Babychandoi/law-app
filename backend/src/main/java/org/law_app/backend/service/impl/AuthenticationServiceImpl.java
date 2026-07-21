@@ -34,6 +34,11 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   UserMapper userMapper;
   TokenService tokenService;
 
+  // Refresh token TTL (giây) — khớp với thời hạn JWT refresh để không lệch nhau.
+  @lombok.experimental.NonFinal
+  @org.springframework.beans.factory.annotation.Value("${jwt.refreshable-duration}")
+  long refreshableDuration;
+
   public AuthenticationResponse authenticate(AuthenticationRequest request) {
     var user =
         userRepository
@@ -43,10 +48,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     if (!new BCryptPasswordEncoder().matches(request.getPassword(), user.getPassword())) {
       throw new AppException(ErrorCode.UNAUTHENTICATED);
     }
+    // Tài khoản bị khóa (INACTIVE) không được đăng nhập.
+    if (user.getActive() != Active.ACTIVE) {
+      throw new AppException(ErrorCode.UNAUTHENTICATED);
+    }
     String accessToken = tokenService.generateAccessToken(user);
     String refreshToken = tokenService.generateRefreshToken(user);
 
-    tokenService.saveRefreshToken(user.getId(), refreshToken, 30 * 24 * 60 * 60); // 30 ngày
+    tokenService.saveRefreshToken(user.getId(), refreshToken, refreshableDuration);
 
     return AuthenticationResponse.builder()
         .token(accessToken)
@@ -117,7 +126,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   public AuthenticationResponse refreshToken(RefreshRequest request)
       throws ParseException, JOSEException {
     String refreshToken = request.getRefreshToken();
-    SignedJWT signedJWT = tokenService.verifyToken(refreshToken, true);
+    // Enforce thời hạn của refresh JWT (không allowExpired) để phiên không sống mãi qua Redis.
+    SignedJWT signedJWT = tokenService.verifyToken(refreshToken, false);
 
     // Kiểm tra type
     String type = (String) signedJWT.getJWTClaimsSet().getClaim("type");
@@ -140,10 +150,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         userRepository
             .findById(userId)
             .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+    // Tài khoản bị khóa sau khi cấp token -> chặn refresh, thu hồi phiên.
+    if (user.getActive() != Active.ACTIVE) {
+      tokenService.deleteRefreshToken(userId);
+      throw new AppException(ErrorCode.UNAUTHENTICATED);
+    }
     String newAccessToken = tokenService.generateAccessToken(user);
     String newRefreshToken = tokenService.generateRefreshToken(user);
 
-    tokenService.saveRefreshToken(userId, newRefreshToken, 30 * 24 * 60 * 60);
+    tokenService.saveRefreshToken(userId, newRefreshToken, refreshableDuration);
 
     return AuthenticationResponse.builder()
         .token(newAccessToken)
