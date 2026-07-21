@@ -1,9 +1,15 @@
 <!doctype html>
 <html lang="vi">
   <head>
-    <!-- Google tag (gtag.js) — 1 loader duy nhất, config nhiều ID (GA4 + Google Ads) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W3K9FB9FC3"></script>
-    <script>
+    <!-- Google tag (gtag.js) — 1 loader duy nhất, config nhiều ID (GA4 + Google Ads).
+         data-cfasync="false" để Cloudflare Rocket Loader KHÔNG viết lại type của script
+         (nếu bị viết lại, Google dò không ra thẻ dù thẻ vẫn chạy trên trình duyệt). -->
+    <script
+      data-cfasync="false"
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-W3K9FB9FC3"
+    ></script>
+    <script data-cfasync="false">
       window.dataLayer = window.dataLayer || [];
       window.gtag =
         window.gtag ||
