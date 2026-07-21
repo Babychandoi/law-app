@@ -39,22 +39,16 @@ public class WebSocketEventListener {
     this.chatMessageRepository = chatMessageRepository;
   }
 
+  // Read the principal name via the Principal interface — never cast to a concrete type.
+  // The principal may be our ChatPrincipal (anonymous guest) OR Spring Security's
+  // JwtAuthenticationToken (a logged-in user with a valid cookie); casting to one crashes on
+  // the other and kills the STOMP session (reconnect loop).
   private String extractUserId(SessionConnectEvent event) {
-    String userId =
-        event.getMessage().getHeaders().get("simpUser") != null
-            ? ((ChatPrincipal) event.getMessage().getHeaders().get("simpUser")).getName()
-            : null;
-    System.out.println("Extracted userId from connect event: " + userId); // Debug log
-    return userId;
+    return event.getUser() != null ? event.getUser().getName() : null;
   }
 
   private String extractUserId(SessionDisconnectEvent event) {
-    String userId =
-        event.getMessage().getHeaders().get("simpUser") != null
-            ? ((ChatPrincipal) event.getMessage().getHeaders().get("simpUser")).getName()
-            : null;
-    System.out.println("Extracted userId from disconnect event: " + userId); // Debug log
-    return userId;
+    return event.getUser() != null ? event.getUser().getName() : null;
   }
 
   private String extractAdminId(SessionConnectEvent event) {
