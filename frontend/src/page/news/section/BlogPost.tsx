@@ -1,4 +1,5 @@
 import { News } from '../../../types/service';
+import { sanitizeHtml } from '../../../shared/utils/sanitizeHtml';
 
 interface BlogPostProps {
   news: News;
@@ -15,7 +16,7 @@ const BlogPost = ({ news }: BlogPostProps) => (
         prose-li:text-brand-muted
         prose-img:rounded-lg
         prose-blockquote:rounded-md prose-blockquote:border prose-blockquote:border-brand-line prose-blockquote:bg-brand-surface prose-blockquote:p-5 prose-blockquote:text-brand-muted"
-      dangerouslySetInnerHTML={{ __html: news.fullContent || '' }}
+      dangerouslySetInnerHTML={{ __html: sanitizeHtml(news.fullContent) }}
     />
   </article>
 );

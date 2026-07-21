@@ -23,8 +23,10 @@ RUN npm ci --legacy-peer-deps
 # so the prod build can never accidentally fall back to localhost.
 COPY . .
 
-# Build React (NODE_ENV=production -> CRA reads .env.production)
-RUN npm run build
+# Build React (NODE_ENV=production -> CRA reads .env.production).
+# Cap V8 heap so the CRA/webpack build GCs instead of OOM-killing the builder on
+# low-RAM hosts (Docker Desktop ~4GB) — earlier builds hit "rpc EOF" from OOM.
+RUN NODE_OPTIONS="--dns-result-order=ipv4first --max-old-space-size=2048" npm run build
 
 # ==================== PRODUCTION STAGE ====================
 FROM nginx:alpine

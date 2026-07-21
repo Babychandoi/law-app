@@ -9,6 +9,7 @@ import {
   sendMail,
 } from '../../../../service/admin';
 import { News } from '../../../../types/service';
+import { sanitizeHtml } from '../../../../shared/utils/sanitizeHtml';
 import AddNews from './News/AddNews';
 import EditNews from './News/EditNews';
 import { Eye, Pencil, Trash2, Send } from 'lucide-react';
@@ -564,7 +565,7 @@ const NewsManagement: React.FC = () => {
                           prose-blockquote:border prose-blockquote:border-orange-400 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600
                           prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm prose-code:text-gray-800
                         "
-                        dangerouslySetInnerHTML={{ __html: selectedNews.fullContent }}
+                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedNews.fullContent) }}
                       />
                     </div>
                   </div>
