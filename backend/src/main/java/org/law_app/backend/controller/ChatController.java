@@ -35,11 +35,21 @@ public class ChatController {
   private final SimpMessagingTemplate messagingTemplate;
   private final NotificationService notificationService;
   private final ChatbotAIService chatbotAIService;
+  private final org.springframework.data.redis.core.RedisTemplate<String, String> redisTemplate;
+
+  // Chống spam guest chat + chi phí AI: tối đa 20 tin/phút mỗi guest.
+  private static final int CHAT_MAX_PER_WINDOW = 20;
+  private static final int CHAT_WINDOW_SECONDS = 60;
 
   /** WebSocket endpoint for sending messages Frontend publishes to: /app/chat.sendMessage */
   @MessageMapping("/chat.sendMessage")
   public void sendMessage(@Payload ChatRequest chatRequest) {
     log.info("Received message from guest: {}", chatRequest.getGuestId());
+
+    if (isChatRateLimited(chatRequest.getGuestId())) {
+      log.warn("Guest {} vượt giới hạn chat, bỏ qua tin nhắn", chatRequest.getGuestId());
+      return;
+    }
 
     // Security: the public socket is anonymous, so messages here are ALWAYS from a guest.
     // Never trust a client-supplied senderType/adminId — an admin reply goes through the
@@ -269,6 +279,24 @@ public class ChatController {
         .message("Success")
         .data(conversation)
         .build();
+  }
+
+  /** Per-guest fixed-window throttle. Fail-open on Redis error. */
+  private boolean isChatRateLimited(String guestId) {
+    if (guestId == null || guestId.isBlank()) {
+      return false;
+    }
+    try {
+      String key = "rl:chat:" + guestId;
+      Long count = redisTemplate.opsForValue().increment(key);
+      if (count != null && count == 1L) {
+        redisTemplate.expire(key, java.time.Duration.ofSeconds(CHAT_WINDOW_SECONDS));
+      }
+      return count != null && count > CHAT_MAX_PER_WINDOW;
+    } catch (Exception e) {
+      log.warn("Chat rate limit check skipped (Redis error): {}", e.getMessage());
+      return false;
+    }
   }
 
   // Inner class for online status updates
