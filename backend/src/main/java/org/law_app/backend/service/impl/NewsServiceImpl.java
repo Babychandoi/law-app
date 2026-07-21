@@ -20,6 +20,7 @@ import org.law_app.backend.service.MinioService;
 import org.law_app.backend.service.NewsService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,6 +38,7 @@ public class NewsServiceImpl implements NewsService {
 
   @Override
   @Transactional
+  @PreAuthorize("hasRole('ADMIN')")
   public NewsResponse createNews(NewsRequest newsRequest) {
     try {
       // Generate slug from title FIRST
@@ -164,6 +166,7 @@ public class NewsServiceImpl implements NewsService {
 
   @Transactional
   @Override
+  @PreAuthorize("hasRole('ADMIN')")
   public NewsResponse updateNews(String id, NewsRequest newsRequest) {
     try {
       News existingNews =
@@ -192,6 +195,7 @@ public class NewsServiceImpl implements NewsService {
 
   @Transactional
   @Override
+  @PreAuthorize("hasRole('ADMIN')")
   public Boolean deleteNews(String id) {
     try {
       News news =
@@ -441,6 +445,7 @@ public class NewsServiceImpl implements NewsService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN')")
   public List<SubscriberResponse> getAllSubscribers() {
     return customerSubscribeRepository.findAll().stream()
         .map(
@@ -454,6 +459,7 @@ public class NewsServiceImpl implements NewsService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN')")
   public Boolean deleteSubscriber(String id) {
     customerSubscribeRepository.deleteById(id);
     log.info("Subscriber deleted: {}", id);

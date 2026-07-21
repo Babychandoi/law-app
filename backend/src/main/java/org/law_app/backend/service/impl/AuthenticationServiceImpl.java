@@ -165,6 +165,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   }
 
   @Override
+  @PreAuthorize("hasRole('ADMIN')")
   public UserResponse updateUser(String id, UserRequest request) {
     try {
       User user =

@@ -117,21 +117,26 @@ public class ChatService {
 
   public void addMember(String me, String conversationId, String userId) {
     Conversation conv = requireConversation(conversationId);
-    requireMember(conversationId, me);
+    requireOwner(conversationId, me);
     ensureMembership(conv.getId(), userId, MemberRole.MEMBER, Instant.now());
     notifyInbox(conversationId, "MEMBER_ADDED");
   }
 
   public void removeMember(String me, String conversationId, String userId) {
     requireConversation(conversationId);
-    requireMember(conversationId, me);
+    // Leaving yourself only needs membership; removing someone else requires OWNER.
+    if (me.equals(userId)) {
+      requireMember(conversationId, me);
+    } else {
+      requireOwner(conversationId, me);
+    }
     membershipRepo.deleteByConversationIdAndUserId(conversationId, userId);
   }
 
   public ConversationSummary link(
       String me, String conversationId, String customerId, String customerServiceId) {
     Conversation conv = requireConversation(conversationId);
-    requireMember(conversationId, me);
+    requireOwner(conversationId, me);
     conv.setLinkedCustomerId(customerId);
     conv.setLinkedCustomerServiceId(customerServiceId);
     conv.setUpdatedAt(Instant.now());
@@ -251,6 +256,16 @@ public class ChatService {
         .orElseThrow(
             () ->
                 new ResponseStatusException(HttpStatus.FORBIDDEN, "Not a member of conversation"));
+  }
+
+  /** Managing members / linking a CRM case requires the caller to be the group OWNER. */
+  private Membership requireOwner(String conversationId, String userId) {
+    Membership m = requireMember(conversationId, userId);
+    if (m.getRole() != MemberRole.OWNER) {
+      throw new ResponseStatusException(
+          HttpStatus.FORBIDDEN, "Only the group owner can perform this action");
+    }
+    return m;
   }
 
   private ConversationSummary toSummary(Conversation c, String me) {
