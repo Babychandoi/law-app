@@ -42,7 +42,7 @@ public class WebSocketEventListener {
   private String extractUserId(SessionConnectEvent event) {
     String userId =
         event.getMessage().getHeaders().get("simpUser") != null
-            ? ((UserPrincipal) event.getMessage().getHeaders().get("simpUser")).getName()
+            ? ((ChatPrincipal) event.getMessage().getHeaders().get("simpUser")).getName()
             : null;
     System.out.println("Extracted userId from connect event: " + userId); // Debug log
     return userId;
@@ -51,7 +51,7 @@ public class WebSocketEventListener {
   private String extractUserId(SessionDisconnectEvent event) {
     String userId =
         event.getMessage().getHeaders().get("simpUser") != null
-            ? ((UserPrincipal) event.getMessage().getHeaders().get("simpUser")).getName()
+            ? ((ChatPrincipal) event.getMessage().getHeaders().get("simpUser")).getName()
             : null;
     System.out.println("Extracted userId from disconnect event: " + userId); // Debug log
     return userId;

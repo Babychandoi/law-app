@@ -290,26 +290,20 @@ const AdminChatDashboard: React.FC = () => {
 
   const sendMessage = useCallback(() => {
     const trimmedMessage = newMessage.trim();
-    if (!trimmedMessage || !selectedConversation || !clientRef.current) return;
+    if (!trimmedMessage || !selectedConversation) return;
 
-    const messagePayload = {
-      guestId: selectedConversation,
-      content: trimmedMessage,
-      senderType: 'ADMIN',
-      adminId: currentAdmin.id,
-    };
-
-    try {
-      clientRef.current.publish({
-        destination: '/app/chat.sendMessage',
-        body: JSON.stringify(messagePayload),
+    // Admin replies go through the authenticated REST endpoint (not the public socket).
+    // The server persists it, disables AI for the conversation, and broadcasts to the guest.
+    chatService
+      .adminSendMessage(selectedConversation, trimmedMessage, currentAdmin.id)
+      .then(() => {
+        setNewMessage('');
+        setTimeout(() => messageInputRef.current?.focus(), 100);
+      })
+      .catch((error) => {
+        console.error('Error sending message:', error);
+        toast.error('Không thể gửi tin nhắn');
       });
-
-      setNewMessage('');
-      setTimeout(() => messageInputRef.current?.focus(), 100);
-    } catch (error) {
-      console.error('Error sending message:', error);
-    }
   }, [newMessage, selectedConversation, currentAdmin.id]);
 
   const handleConversationSelect = useCallback(

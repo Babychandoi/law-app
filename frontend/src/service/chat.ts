@@ -50,6 +50,16 @@ const chatService = {
     }
   },
 
+
+  adminSendMessage: async (guestId: string, content: string, adminId: string): Promise<void> => {
+    await axiosClient.post(`/chat/admin/send`, {
+      guestId,
+      content,
+      senderType: 'ADMIN',
+      adminId,
+    });
+  },
+
   // Fetch messages for a specific conversation
   fetchMessages: async (guestId: string): Promise<ChatMessage[]> => {
     try {

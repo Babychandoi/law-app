@@ -41,16 +41,15 @@ public class ChatController {
   public void sendMessage(@Payload ChatRequest chatRequest) {
     log.info("Received message from guest: {}", chatRequest.getGuestId());
 
+    // Security: the public socket is anonymous, so messages here are ALWAYS from a guest.
+    // Never trust a client-supplied senderType/adminId — an admin reply goes through the
+    // authenticated REST endpoint /chat/admin/send instead. This prevents an unauthenticated
+    // visitor from posing as an admin or disabling the AI.
+    chatRequest.setSenderType(SenderType.GUEST);
+    chatRequest.setAdminId(null);
+
     // Save message to database
     ChatMessage savedMessage = chatService.saveMessage(chatRequest);
-
-    // ===== ADMIN TAKEOVER LOGIC =====
-    // If message is from ADMIN, disable AI for this conversation
-    if ("ADMIN".equals(chatRequest.getSenderType().toString())) {
-      chatbotAIService.disableAIForGuest(chatRequest.getGuestId());
-      log.info("Admin took over conversation for guest: {}", chatRequest.getGuestId());
-    }
-    // ===== END ADMIN TAKEOVER LOGIC =====
 
     // Create response
     ChatMessageResponse response =
