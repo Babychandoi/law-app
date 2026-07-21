@@ -56,7 +56,10 @@ export default function DynamicServicePage() {
   if (status === 'group') {
     return (
       <div>
-        <Seo title={`${groupTitle} - Luật Poip Legal`} description={`Các dịch vụ ${groupTitle} tại Luật Poip Legal`} />
+        <Seo
+          title={`${groupTitle} - Luật Poip Legal`}
+          description={`Các dịch vụ ${groupTitle} tại Luật Poip Legal`}
+        />
         <ServiceDirectory
           serviceTitle={groupTitle}
           heading={groupTitle}

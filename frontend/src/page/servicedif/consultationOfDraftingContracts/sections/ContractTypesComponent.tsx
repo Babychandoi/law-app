@@ -160,8 +160,8 @@ const ContractTypesComponent: React.FC = () => {
                   Cần hỗ trợ tư vấn pháp lý?
                 </h3>
                 <p className="text-xl text-slate-600 mb-8 leading-relaxed">
-                  Đội ngũ luật sư chuyên nghiệp của Poip Legal sẵn sàng hỗ trợ bạn soạn thảo và tư vấn chi
-                  tiết cho từng loại hợp đồng
+                  Đội ngũ luật sư chuyên nghiệp của Poip Legal sẵn sàng hỗ trợ bạn soạn thảo và tư
+                  vấn chi tiết cho từng loại hợp đồng
                 </p>
                 <button
                   type="button"

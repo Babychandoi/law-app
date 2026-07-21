@@ -10,4 +10,4 @@ export const CASE_STATUS_VI: Record<string, { label: string; cls: string }> = {
 export const CASE_STATUS_OPTIONS = Object.keys(CASE_STATUS_VI);
 
 export const caseStatusLabel = (s: string | null): string =>
-  s ? CASE_STATUS_VI[s]?.label ?? s : '—';
+  s ? (CASE_STATUS_VI[s]?.label ?? s) : '—';

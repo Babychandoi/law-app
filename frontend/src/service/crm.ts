@@ -31,11 +31,14 @@ export interface CaseFilter {
 const crmService = {
   // ----- config -----
   careStatuses: async (): Promise<CareStatus[]> =>
-    (await gatewayClient.get<ApiResponse<CareStatus[]>>('/crm/config/care-statuses')).data.data ?? [],
+    (await gatewayClient.get<ApiResponse<CareStatus[]>>('/crm/config/care-statuses')).data.data ??
+    [],
   careActions: async (): Promise<CareAction[]> =>
-    (await gatewayClient.get<ApiResponse<CareAction[]>>('/crm/config/care-actions')).data.data ?? [],
+    (await gatewayClient.get<ApiResponse<CareAction[]>>('/crm/config/care-actions')).data.data ??
+    [],
   careResults: async (): Promise<CareResult[]> =>
-    (await gatewayClient.get<ApiResponse<CareResult[]>>('/crm/config/care-results')).data.data ?? [],
+    (await gatewayClient.get<ApiResponse<CareResult[]>>('/crm/config/care-results')).data.data ??
+    [],
   tags: async (): Promise<Tag[]> =>
     (await gatewayClient.get<ApiResponse<Tag[]>>('/crm/config/tags')).data.data ?? [],
 

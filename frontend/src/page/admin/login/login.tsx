@@ -187,7 +187,9 @@ const LoginForm: React.FC = () => {
           </div>
           {/* Footer */}
           <div className="text-center">
-            <p className="text-xs text-gray-400">© 2025 Poip Legal Law. Tất cả quyền được bảo lưu.</p>
+            <p className="text-xs text-gray-400">
+              © 2025 Poip Legal Law. Tất cả quyền được bảo lưu.
+            </p>
           </div>
         </div>
       </div>

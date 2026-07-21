@@ -196,8 +196,8 @@ const ToToLawServices: React.FC<ToToServicesProps> = ({
                   Cam kết chất lượng dịch vụ
                 </h2>
                 <p className="text-gray-600 leading-relaxed mb-6">
-                  Poip Legal Law cam kết cung cấp dịch vụ pháp lý chuyên nghiệp, uy tín và hiệu quả nhất
-                  cho khách hàng trong lĩnh vực sở hữu trí tuệ.
+                  Poip Legal Law cam kết cung cấp dịch vụ pháp lý chuyên nghiệp, uy tín và hiệu quả
+                  nhất cho khách hàng trong lĩnh vực sở hữu trí tuệ.
                 </p>
                 <button
                   type="button"

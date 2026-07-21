@@ -3,7 +3,11 @@ import { Navigate, useNavigate, useOutletContext } from 'react-router-dom';
 import { Plus, Trash2, Upload, Wand2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import documentTemplateService from '../../service/documentTemplates';
-import { ApplyMappingItem, DocumentFieldInputType, TemplatePreview } from '../../types/documentTemplate';
+import {
+  ApplyMappingItem,
+  DocumentFieldInputType,
+  TemplatePreview,
+} from '../../types/documentTemplate';
 
 const INPUT_TYPES: DocumentFieldInputType[] = ['TEXT', 'TEXTAREA', 'DATE', 'NUMBER'];
 

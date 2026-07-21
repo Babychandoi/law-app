@@ -11,7 +11,8 @@ export default function Index() {
   const [hero] = useState<Hero>({
     title: 'Giấy phép Doanh nghiệp Khoa học Công nghệ',
     subtitle: 'Poip Legal Law',
-    description: 'Dich vụ cấp Giấy chứng nhận Doanh nghiệp Khoa học và Công nghệ tại Poip Legal Law',
+    description:
+      'Dich vụ cấp Giấy chứng nhận Doanh nghiệp Khoa học và Công nghệ tại Poip Legal Law',
   });
   const [process] = useState<Process[]>([
     {

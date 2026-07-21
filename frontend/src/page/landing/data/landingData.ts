@@ -86,10 +86,19 @@ export const landingConfigs: LandingConfig[] = [
     ],
     stepsTitle: 'Quy trình làm việc',
     steps: [
-      { title: 'Tra cứu', description: 'Kiểm tra khả năng bảo hộ và rủi ro trùng lặp trước khi nộp.' },
+      {
+        title: 'Tra cứu',
+        description: 'Kiểm tra khả năng bảo hộ và rủi ro trùng lặp trước khi nộp.',
+      },
       { title: 'Soạn & nộp hồ sơ', description: 'Chuẩn bị hồ sơ và nộp tại Cục Sở hữu trí tuệ.' },
-      { title: 'Theo dõi thẩm định', description: 'Xử lý mọi thông báo, thiếu sót phát sinh trong quá trình thẩm định.' },
-      { title: 'Nhận văn bằng', description: 'Bàn giao Giấy chứng nhận đăng ký nhãn hiệu cho bạn.' },
+      {
+        title: 'Theo dõi thẩm định',
+        description: 'Xử lý mọi thông báo, thiếu sót phát sinh trong quá trình thẩm định.',
+      },
+      {
+        title: 'Nhận văn bằng',
+        description: 'Bàn giao Giấy chứng nhận đăng ký nhãn hiệu cho bạn.',
+      },
     ],
     faqTitle: 'Câu hỏi thường gặp',
     faqs: [
@@ -124,23 +133,58 @@ export const landingConfigs: LandingConfig[] = [
     heroPoints: commonHeroPoints,
     benefitsTitle: 'Vì sao nên đăng ký bản quyền',
     benefits: [
-      { title: 'Chứng minh quyền sở hữu', description: 'Giấy chứng nhận là bằng chứng pháp lý bạn là tác giả/chủ sở hữu khi có tranh chấp.' },
-      { title: 'Chống sao chép', description: 'Căn cứ để yêu cầu gỡ bỏ nội dung sao chép, vi phạm trên các nền tảng.' },
-      { title: 'Khai thác thương mại', description: 'Thuận lợi khi cấp phép, chuyển nhượng hoặc hợp tác khai thác tác phẩm.' },
-      { title: 'Thủ tục nhanh gọn', description: 'Hồ sơ đơn giản hơn sở hữu công nghiệp, thời gian cấp ngắn.' },
+      {
+        title: 'Chứng minh quyền sở hữu',
+        description:
+          'Giấy chứng nhận là bằng chứng pháp lý bạn là tác giả/chủ sở hữu khi có tranh chấp.',
+      },
+      {
+        title: 'Chống sao chép',
+        description: 'Căn cứ để yêu cầu gỡ bỏ nội dung sao chép, vi phạm trên các nền tảng.',
+      },
+      {
+        title: 'Khai thác thương mại',
+        description: 'Thuận lợi khi cấp phép, chuyển nhượng hoặc hợp tác khai thác tác phẩm.',
+      },
+      {
+        title: 'Thủ tục nhanh gọn',
+        description: 'Hồ sơ đơn giản hơn sở hữu công nghiệp, thời gian cấp ngắn.',
+      },
     ],
     stepsTitle: 'Quy trình làm việc',
     steps: [
-      { title: 'Tư vấn loại hình', description: 'Xác định tác phẩm thuộc loại hình nào và hồ sơ cần thiết.' },
-      { title: 'Soạn hồ sơ', description: 'Chuẩn bị tờ khai, bản sao tác phẩm và giấy tờ liên quan.' },
-      { title: 'Nộp & theo dõi', description: 'Nộp tại Cục Bản quyền tác giả và theo dõi kết quả.' },
-      { title: 'Nhận giấy chứng nhận', description: 'Bàn giao Giấy chứng nhận đăng ký quyền tác giả.' },
+      {
+        title: 'Tư vấn loại hình',
+        description: 'Xác định tác phẩm thuộc loại hình nào và hồ sơ cần thiết.',
+      },
+      {
+        title: 'Soạn hồ sơ',
+        description: 'Chuẩn bị tờ khai, bản sao tác phẩm và giấy tờ liên quan.',
+      },
+      {
+        title: 'Nộp & theo dõi',
+        description: 'Nộp tại Cục Bản quyền tác giả và theo dõi kết quả.',
+      },
+      {
+        title: 'Nhận giấy chứng nhận',
+        description: 'Bàn giao Giấy chứng nhận đăng ký quyền tác giả.',
+      },
     ],
     faqTitle: 'Câu hỏi thường gặp',
     faqs: [
-      { question: 'Đăng ký bản quyền mất bao lâu?', answer: 'Thường khoảng 15–30 ngày làm việc kể từ khi hồ sơ hợp lệ.' },
-      { question: 'Phần mềm có đăng ký bản quyền được không?', answer: 'Có. Phần mềm máy tính được bảo hộ dưới dạng quyền tác giả.' },
-      { question: 'Cần chuẩn bị gì?', answer: 'Bản sao tác phẩm, thông tin tác giả/chủ sở hữu. Luật Poip Legal hướng dẫn chi tiết theo từng loại.' },
+      {
+        question: 'Đăng ký bản quyền mất bao lâu?',
+        answer: 'Thường khoảng 15–30 ngày làm việc kể từ khi hồ sơ hợp lệ.',
+      },
+      {
+        question: 'Phần mềm có đăng ký bản quyền được không?',
+        answer: 'Có. Phần mềm máy tính được bảo hộ dưới dạng quyền tác giả.',
+      },
+      {
+        question: 'Cần chuẩn bị gì?',
+        answer:
+          'Bản sao tác phẩm, thông tin tác giả/chủ sở hữu. Luật Poip Legal hướng dẫn chi tiết theo từng loại.',
+      },
     ],
     finalCtaTitle: 'Nhận tư vấn đăng ký bản quyền miễn phí',
     finalCtaSubtitle: 'Để lại thông tin, luật sư sẽ tư vấn loại hình phù hợp và báo phí trọn gói.',
@@ -157,23 +201,54 @@ export const landingConfigs: LandingConfig[] = [
     heroPoints: commonHeroPoints,
     benefitsTitle: 'Vì sao nên bảo hộ kiểu dáng',
     benefits: [
-      { title: 'Độc quyền mẫu mã', description: 'Không ai được sản xuất, kinh doanh sản phẩm có kiểu dáng trùng hoặc tương tự.' },
-      { title: 'Chống sao chép thiết kế', description: 'Căn cứ pháp lý để xử lý đối thủ nhái kiểu dáng sản phẩm của bạn.' },
-      { title: 'Lợi thế cạnh tranh', description: 'Kiểu dáng riêng được bảo hộ giúp sản phẩm nổi bật và khó bị thay thế.' },
-      { title: 'Tài sản chuyển nhượng được', description: 'Có thể chuyển nhượng, cấp phép kiểu dáng cho đối tác.' },
+      {
+        title: 'Độc quyền mẫu mã',
+        description:
+          'Không ai được sản xuất, kinh doanh sản phẩm có kiểu dáng trùng hoặc tương tự.',
+      },
+      {
+        title: 'Chống sao chép thiết kế',
+        description: 'Căn cứ pháp lý để xử lý đối thủ nhái kiểu dáng sản phẩm của bạn.',
+      },
+      {
+        title: 'Lợi thế cạnh tranh',
+        description: 'Kiểu dáng riêng được bảo hộ giúp sản phẩm nổi bật và khó bị thay thế.',
+      },
+      {
+        title: 'Tài sản chuyển nhượng được',
+        description: 'Có thể chuyển nhượng, cấp phép kiểu dáng cho đối tác.',
+      },
     ],
     stepsTitle: 'Quy trình làm việc',
     steps: [
-      { title: 'Đánh giá khả năng bảo hộ', description: 'Xem xét tính mới của kiểu dáng trước khi nộp.' },
-      { title: 'Soạn & nộp hồ sơ', description: 'Chuẩn bị bộ ảnh/bản vẽ và nộp tại Cục Sở hữu trí tuệ.' },
-      { title: 'Theo dõi thẩm định', description: 'Xử lý thông báo phát sinh trong quá trình thẩm định.' },
+      {
+        title: 'Đánh giá khả năng bảo hộ',
+        description: 'Xem xét tính mới của kiểu dáng trước khi nộp.',
+      },
+      {
+        title: 'Soạn & nộp hồ sơ',
+        description: 'Chuẩn bị bộ ảnh/bản vẽ và nộp tại Cục Sở hữu trí tuệ.',
+      },
+      {
+        title: 'Theo dõi thẩm định',
+        description: 'Xử lý thông báo phát sinh trong quá trình thẩm định.',
+      },
       { title: 'Nhận văn bằng', description: 'Bàn giao Bằng độc quyền kiểu dáng công nghiệp.' },
     ],
     faqTitle: 'Câu hỏi thường gặp',
     faqs: [
-      { question: 'Kiểu dáng công nghiệp là gì?', answer: 'Là hình dáng bên ngoài của sản phẩm thể hiện bằng đường nét, hình khối, màu sắc.' },
-      { question: 'Mất bao lâu để được cấp?', answer: 'Thông thường 12–18 tháng tùy tiến độ thẩm định.' },
-      { question: 'Đã công bố sản phẩm có đăng ký được không?', answer: 'Nên đăng ký trước khi công bố. Hãy liên hệ để được tư vấn theo tình huống cụ thể.' },
+      {
+        question: 'Kiểu dáng công nghiệp là gì?',
+        answer: 'Là hình dáng bên ngoài của sản phẩm thể hiện bằng đường nét, hình khối, màu sắc.',
+      },
+      {
+        question: 'Mất bao lâu để được cấp?',
+        answer: 'Thông thường 12–18 tháng tùy tiến độ thẩm định.',
+      },
+      {
+        question: 'Đã công bố sản phẩm có đăng ký được không?',
+        answer: 'Nên đăng ký trước khi công bố. Hãy liên hệ để được tư vấn theo tình huống cụ thể.',
+      },
     ],
     finalCtaTitle: 'Nhận tư vấn bảo hộ kiểu dáng miễn phí',
     finalCtaSubtitle: 'Để lại thông tin, luật sư sẽ đánh giá khả năng bảo hộ và báo phí trọn gói.',
@@ -190,23 +265,57 @@ export const landingConfigs: LandingConfig[] = [
     heroPoints: commonHeroPoints,
     benefitsTitle: 'Vì sao nên bảo hộ sáng chế',
     benefits: [
-      { title: 'Độc quyền giải pháp', description: 'Không ai được sản xuất, sử dụng giải pháp kỹ thuật của bạn nếu chưa được phép.' },
-      { title: 'Rào cản đối thủ', description: 'Bảo hộ sáng chế tạo lợi thế kỹ thuật khó vượt qua trên thị trường.' },
-      { title: 'Tăng giá trị gọi vốn', description: 'Sáng chế được bảo hộ là tài sản trí tuệ hấp dẫn nhà đầu tư.' },
-      { title: 'Khai thác bản quyền sáng chế', description: 'Có thể cấp phép, chuyển nhượng để tạo nguồn thu.' },
+      {
+        title: 'Độc quyền giải pháp',
+        description:
+          'Không ai được sản xuất, sử dụng giải pháp kỹ thuật của bạn nếu chưa được phép.',
+      },
+      {
+        title: 'Rào cản đối thủ',
+        description: 'Bảo hộ sáng chế tạo lợi thế kỹ thuật khó vượt qua trên thị trường.',
+      },
+      {
+        title: 'Tăng giá trị gọi vốn',
+        description: 'Sáng chế được bảo hộ là tài sản trí tuệ hấp dẫn nhà đầu tư.',
+      },
+      {
+        title: 'Khai thác bản quyền sáng chế',
+        description: 'Có thể cấp phép, chuyển nhượng để tạo nguồn thu.',
+      },
     ],
     stepsTitle: 'Quy trình làm việc',
     steps: [
-      { title: 'Tra cứu sáng chế', description: 'Đánh giá tính mới và trình độ sáng tạo của giải pháp.' },
-      { title: 'Soạn bản mô tả', description: 'Viết bản mô tả sáng chế và yêu cầu bảo hộ chuẩn xác.' },
+      {
+        title: 'Tra cứu sáng chế',
+        description: 'Đánh giá tính mới và trình độ sáng tạo của giải pháp.',
+      },
+      {
+        title: 'Soạn bản mô tả',
+        description: 'Viết bản mô tả sáng chế và yêu cầu bảo hộ chuẩn xác.',
+      },
       { title: 'Nộp & theo dõi', description: 'Nộp hồ sơ và xử lý mọi giai đoạn thẩm định.' },
-      { title: 'Nhận văn bằng', description: 'Bàn giao Bằng độc quyền sáng chế / giải pháp hữu ích.' },
+      {
+        title: 'Nhận văn bằng',
+        description: 'Bàn giao Bằng độc quyền sáng chế / giải pháp hữu ích.',
+      },
     ],
     faqTitle: 'Câu hỏi thường gặp',
     faqs: [
-      { question: 'Sáng chế và giải pháp hữu ích khác gì?', answer: 'Giải pháp hữu ích có yêu cầu thấp hơn về trình độ sáng tạo và thời hạn bảo hộ ngắn hơn sáng chế.' },
-      { question: 'Quy trình mất bao lâu?', answer: 'Sáng chế thường kéo dài vài năm do phải thẩm định nội dung kỹ thuật. Luật Poip Legal theo dõi toàn bộ.' },
-      { question: 'Cần chuẩn bị gì?', answer: 'Mô tả giải pháp kỹ thuật, bản vẽ (nếu có). Luật Poip Legal hỗ trợ hoàn thiện bản mô tả.' },
+      {
+        question: 'Sáng chế và giải pháp hữu ích khác gì?',
+        answer:
+          'Giải pháp hữu ích có yêu cầu thấp hơn về trình độ sáng tạo và thời hạn bảo hộ ngắn hơn sáng chế.',
+      },
+      {
+        question: 'Quy trình mất bao lâu?',
+        answer:
+          'Sáng chế thường kéo dài vài năm do phải thẩm định nội dung kỹ thuật. Luật Poip Legal theo dõi toàn bộ.',
+      },
+      {
+        question: 'Cần chuẩn bị gì?',
+        answer:
+          'Mô tả giải pháp kỹ thuật, bản vẽ (nếu có). Luật Poip Legal hỗ trợ hoàn thiện bản mô tả.',
+      },
     ],
     finalCtaTitle: 'Nhận tư vấn bảo hộ sáng chế miễn phí',
     finalCtaSubtitle: 'Để lại thông tin, luật sư sẽ tra cứu sơ bộ và tư vấn hướng bảo hộ.',
@@ -223,23 +332,48 @@ export const landingConfigs: LandingConfig[] = [
     heroPoints: commonHeroPoints,
     benefitsTitle: 'Luật Poip Legal giúp bạn',
     benefits: [
-      { title: 'Đánh giá hành vi vi phạm', description: 'Xác định rõ hành vi có cấu thành xâm phạm quyền hay không.' },
-      { title: 'Thu thập chứng cứ', description: 'Lập vi bằng, giám định và hoàn thiện hồ sơ chứng cứ vững chắc.' },
-      { title: 'Gửi cảnh báo vi phạm', description: 'Soạn và gửi văn bản yêu cầu chấm dứt hành vi xâm phạm.' },
-      { title: 'Phối hợp xử lý', description: 'Làm việc với cơ quan chức năng để xử lý hành chính hoặc khởi kiện.' },
+      {
+        title: 'Đánh giá hành vi vi phạm',
+        description: 'Xác định rõ hành vi có cấu thành xâm phạm quyền hay không.',
+      },
+      {
+        title: 'Thu thập chứng cứ',
+        description: 'Lập vi bằng, giám định và hoàn thiện hồ sơ chứng cứ vững chắc.',
+      },
+      {
+        title: 'Gửi cảnh báo vi phạm',
+        description: 'Soạn và gửi văn bản yêu cầu chấm dứt hành vi xâm phạm.',
+      },
+      {
+        title: 'Phối hợp xử lý',
+        description: 'Làm việc với cơ quan chức năng để xử lý hành chính hoặc khởi kiện.',
+      },
     ],
     stepsTitle: 'Quy trình xử lý',
     steps: [
       { title: 'Tiếp nhận & đánh giá', description: 'Xem xét tình huống và xác định hướng xử lý.' },
       { title: 'Thu thập chứng cứ', description: 'Lập vi bằng, giám định sở hữu trí tuệ nếu cần.' },
       { title: 'Yêu cầu chấm dứt', description: 'Gửi văn bản cảnh báo, đàm phán với bên vi phạm.' },
-      { title: 'Xử lý chính thức', description: 'Đề nghị xử phạt hành chính hoặc khởi kiện khi cần.' },
+      {
+        title: 'Xử lý chính thức',
+        description: 'Đề nghị xử phạt hành chính hoặc khởi kiện khi cần.',
+      },
     ],
     faqTitle: 'Câu hỏi thường gặp',
     faqs: [
-      { question: 'Tôi chưa có văn bằng có xử lý được không?', answer: 'Tùy trường hợp. Hãy liên hệ để luật sư đánh giá cơ sở pháp lý cụ thể của bạn.' },
-      { question: 'Chi phí xử lý vi phạm tính thế nào?', answer: 'Phụ thuộc tính chất vụ việc. Luật Poip Legal báo phí sau khi đánh giá hồ sơ.' },
-      { question: 'Mất bao lâu để xử lý?', answer: 'Tùy mức độ hợp tác của bên vi phạm và phương án lựa chọn. Luật sư sẽ tư vấn lộ trình.' },
+      {
+        question: 'Tôi chưa có văn bằng có xử lý được không?',
+        answer: 'Tùy trường hợp. Hãy liên hệ để luật sư đánh giá cơ sở pháp lý cụ thể của bạn.',
+      },
+      {
+        question: 'Chi phí xử lý vi phạm tính thế nào?',
+        answer: 'Phụ thuộc tính chất vụ việc. Luật Poip Legal báo phí sau khi đánh giá hồ sơ.',
+      },
+      {
+        question: 'Mất bao lâu để xử lý?',
+        answer:
+          'Tùy mức độ hợp tác của bên vi phạm và phương án lựa chọn. Luật sư sẽ tư vấn lộ trình.',
+      },
     ],
     finalCtaTitle: 'Nhận tư vấn xử lý vi phạm miễn phí',
     finalCtaSubtitle: 'Mô tả ngắn tình huống, luật sư sẽ đánh giá và đề xuất hướng xử lý.',
@@ -256,26 +390,51 @@ export const landingConfigs: LandingConfig[] = [
     heroPoints: commonHeroPoints,
     benefitsTitle: 'Vì sao cần mã số mã vạch',
     benefits: [
-      { title: 'Lên kệ siêu thị, sàn TMĐT', description: 'Nhiều siêu thị và sàn yêu cầu sản phẩm phải có mã vạch hợp lệ.' },
-      { title: 'Quản lý hàng hóa', description: 'Mã vạch giúp kiểm kho, bán hàng và truy xuất nhanh chóng.' },
-      { title: 'Tăng uy tín sản phẩm', description: 'Mã vạch chuẩn tạo sự chuyên nghiệp và tin tưởng với khách hàng.' },
-      { title: 'Thủ tục nhanh', description: 'Luật Poip Legal xử lý hồ sơ và bàn giao mã trong thời gian ngắn.' },
+      {
+        title: 'Lên kệ siêu thị, sàn TMĐT',
+        description: 'Nhiều siêu thị và sàn yêu cầu sản phẩm phải có mã vạch hợp lệ.',
+      },
+      {
+        title: 'Quản lý hàng hóa',
+        description: 'Mã vạch giúp kiểm kho, bán hàng và truy xuất nhanh chóng.',
+      },
+      {
+        title: 'Tăng uy tín sản phẩm',
+        description: 'Mã vạch chuẩn tạo sự chuyên nghiệp và tin tưởng với khách hàng.',
+      },
+      {
+        title: 'Thủ tục nhanh',
+        description: 'Luật Poip Legal xử lý hồ sơ và bàn giao mã trong thời gian ngắn.',
+      },
     ],
     stepsTitle: 'Quy trình làm việc',
     steps: [
       { title: 'Tư vấn loại mã', description: 'Xác định số lượng mã và loại đăng ký phù hợp.' },
       { title: 'Soạn hồ sơ', description: 'Chuẩn bị hồ sơ đăng ký theo quy định.' },
-      { title: 'Nộp & theo dõi', description: 'Nộp tại cơ quan có thẩm quyền và theo dõi kết quả.' },
+      {
+        title: 'Nộp & theo dõi',
+        description: 'Nộp tại cơ quan có thẩm quyền và theo dõi kết quả.',
+      },
       { title: 'Bàn giao mã', description: 'Bàn giao mã số mã vạch và hướng dẫn sử dụng.' },
     ],
     faqTitle: 'Câu hỏi thường gặp',
     faqs: [
-      { question: 'Đăng ký mã vạch mất bao lâu?', answer: 'Thường nhanh, trong vài ngày đến vài tuần tùy hồ sơ.' },
-      { question: 'Một mã dùng cho bao nhiêu sản phẩm?', answer: 'Tùy loại đăng ký. Luật Poip Legal tư vấn gói phù hợp số lượng sản phẩm của bạn.' },
-      { question: 'Cần giấy tờ gì?', answer: 'Giấy phép kinh doanh và thông tin sản phẩm. Luật Poip Legal hướng dẫn chi tiết.' },
+      {
+        question: 'Đăng ký mã vạch mất bao lâu?',
+        answer: 'Thường nhanh, trong vài ngày đến vài tuần tùy hồ sơ.',
+      },
+      {
+        question: 'Một mã dùng cho bao nhiêu sản phẩm?',
+        answer: 'Tùy loại đăng ký. Luật Poip Legal tư vấn gói phù hợp số lượng sản phẩm của bạn.',
+      },
+      {
+        question: 'Cần giấy tờ gì?',
+        answer: 'Giấy phép kinh doanh và thông tin sản phẩm. Luật Poip Legal hướng dẫn chi tiết.',
+      },
     ],
     finalCtaTitle: 'Nhận tư vấn đăng ký mã vạch miễn phí',
-    finalCtaSubtitle: 'Để lại thông tin, Luật Poip Legal sẽ tư vấn gói phù hợp và báo phí trọn gói.',
+    finalCtaSubtitle:
+      'Để lại thông tin, Luật Poip Legal sẽ tư vấn gói phù hợp và báo phí trọn gói.',
   },
 
   {
@@ -289,10 +448,22 @@ export const landingConfigs: LandingConfig[] = [
     heroPoints: commonHeroPoints,
     benefitsTitle: 'Luật Poip Legal giúp bạn',
     benefits: [
-      { title: 'Hoạt động hợp pháp', description: 'Có giấy phép giúp nền tảng vận hành đúng quy định, tránh bị xử phạt.' },
-      { title: 'Tư vấn điều kiện', description: 'Đánh giá điều kiện về tên miền, nhân sự, kỹ thuật trước khi nộp.' },
-      { title: 'Soạn hồ sơ chuẩn', description: 'Chuẩn bị đề án và hồ sơ kỹ thuật theo yêu cầu cơ quan quản lý.' },
-      { title: 'Theo dõi đến khi có phép', description: 'Xử lý mọi yêu cầu bổ sung trong quá trình thẩm định.' },
+      {
+        title: 'Hoạt động hợp pháp',
+        description: 'Có giấy phép giúp nền tảng vận hành đúng quy định, tránh bị xử phạt.',
+      },
+      {
+        title: 'Tư vấn điều kiện',
+        description: 'Đánh giá điều kiện về tên miền, nhân sự, kỹ thuật trước khi nộp.',
+      },
+      {
+        title: 'Soạn hồ sơ chuẩn',
+        description: 'Chuẩn bị đề án và hồ sơ kỹ thuật theo yêu cầu cơ quan quản lý.',
+      },
+      {
+        title: 'Theo dõi đến khi có phép',
+        description: 'Xử lý mọi yêu cầu bổ sung trong quá trình thẩm định.',
+      },
     ],
     stepsTitle: 'Quy trình làm việc',
     steps: [
@@ -303,9 +474,20 @@ export const landingConfigs: LandingConfig[] = [
     ],
     faqTitle: 'Câu hỏi thường gặp',
     faqs: [
-      { question: 'Loại nền tảng nào cần giấy phép?', answer: 'Các nền tảng cho phép người dùng tạo, chia sẻ nội dung và tương tác. Hãy liên hệ để được tư vấn cụ thể.' },
-      { question: 'Điều kiện chính là gì?', answer: 'Liên quan tên miền, nhân sự, biện pháp kỹ thuật quản lý nội dung. Luật Poip Legal đánh giá chi tiết theo dự án.' },
-      { question: 'Mất bao lâu?', answer: 'Tùy mức độ hoàn thiện hồ sơ. Luật sư sẽ tư vấn lộ trình rõ ràng.' },
+      {
+        question: 'Loại nền tảng nào cần giấy phép?',
+        answer:
+          'Các nền tảng cho phép người dùng tạo, chia sẻ nội dung và tương tác. Hãy liên hệ để được tư vấn cụ thể.',
+      },
+      {
+        question: 'Điều kiện chính là gì?',
+        answer:
+          'Liên quan tên miền, nhân sự, biện pháp kỹ thuật quản lý nội dung. Luật Poip Legal đánh giá chi tiết theo dự án.',
+      },
+      {
+        question: 'Mất bao lâu?',
+        answer: 'Tùy mức độ hoàn thiện hồ sơ. Luật sư sẽ tư vấn lộ trình rõ ràng.',
+      },
     ],
     finalCtaTitle: 'Nhận tư vấn xin giấy phép mạng xã hội',
     finalCtaSubtitle: 'Để lại thông tin, luật sư sẽ đánh giá điều kiện và báo phí trọn gói.',
@@ -322,22 +504,45 @@ export const landingConfigs: LandingConfig[] = [
     heroPoints: commonHeroPoints,
     benefitsTitle: 'Lợi ích khi được chứng nhận',
     benefits: [
-      { title: 'Ưu đãi thuế', description: 'Doanh nghiệp KH&CN được hưởng ưu đãi thuế thu nhập doanh nghiệp theo quy định.' },
-      { title: 'Chính sách hỗ trợ', description: 'Tiếp cận các chính sách ưu đãi về đất đai, tín dụng, hỗ trợ nghiên cứu.' },
-      { title: 'Nâng tầm thương hiệu', description: 'Chứng nhận khẳng định năng lực công nghệ của doanh nghiệp.' },
-      { title: 'Hồ sơ bài bản', description: 'Luật Poip Legal giúp chứng minh kết quả KH&CN một cách thuyết phục.' },
+      {
+        title: 'Ưu đãi thuế',
+        description:
+          'Doanh nghiệp KH&CN được hưởng ưu đãi thuế thu nhập doanh nghiệp theo quy định.',
+      },
+      {
+        title: 'Chính sách hỗ trợ',
+        description: 'Tiếp cận các chính sách ưu đãi về đất đai, tín dụng, hỗ trợ nghiên cứu.',
+      },
+      {
+        title: 'Nâng tầm thương hiệu',
+        description: 'Chứng nhận khẳng định năng lực công nghệ của doanh nghiệp.',
+      },
+      {
+        title: 'Hồ sơ bài bản',
+        description: 'Luật Poip Legal giúp chứng minh kết quả KH&CN một cách thuyết phục.',
+      },
     ],
     stepsTitle: 'Quy trình làm việc',
     steps: [
-      { title: 'Đánh giá điều kiện', description: 'Rà soát kết quả KH&CN và khả năng đáp ứng tiêu chí.' },
+      {
+        title: 'Đánh giá điều kiện',
+        description: 'Rà soát kết quả KH&CN và khả năng đáp ứng tiêu chí.',
+      },
       { title: 'Soạn hồ sơ', description: 'Hoàn thiện hồ sơ chứng minh kết quả KH&CN.' },
       { title: 'Nộp & theo dõi', description: 'Nộp tại cơ quan có thẩm quyền và xử lý phản hồi.' },
       { title: 'Nhận chứng nhận', description: 'Bàn giao Giấy chứng nhận doanh nghiệp KH&CN.' },
     ],
     faqTitle: 'Câu hỏi thường gặp',
     faqs: [
-      { question: 'Điều kiện cơ bản là gì?', answer: 'Doanh nghiệp cần có kết quả KH&CN và đáp ứng tỷ lệ doanh thu theo quy định. Luật Poip Legal đánh giá cụ thể.' },
-      { question: 'Ưu đãi thuế thế nào?', answer: 'Được miễn, giảm thuế thu nhập doanh nghiệp theo lộ trình quy định.' },
+      {
+        question: 'Điều kiện cơ bản là gì?',
+        answer:
+          'Doanh nghiệp cần có kết quả KH&CN và đáp ứng tỷ lệ doanh thu theo quy định. Luật Poip Legal đánh giá cụ thể.',
+      },
+      {
+        question: 'Ưu đãi thuế thế nào?',
+        answer: 'Được miễn, giảm thuế thu nhập doanh nghiệp theo lộ trình quy định.',
+      },
       { question: 'Mất bao lâu?', answer: 'Tùy độ hoàn thiện hồ sơ. Luật sư sẽ tư vấn lộ trình.' },
     ],
     finalCtaTitle: 'Nhận tư vấn chứng nhận DN KH&CN',
@@ -355,10 +560,22 @@ export const landingConfigs: LandingConfig[] = [
     heroPoints: commonHeroPoints,
     benefitsTitle: 'Vì sao cần luật sư soạn hợp đồng',
     benefits: [
-      { title: 'Bảo vệ quyền lợi', description: 'Điều khoản chặt chẽ giúp bạn không chịu thiệt khi có tranh chấp.' },
-      { title: 'Phát hiện rủi ro', description: 'Rà soát phát hiện điều khoản bất lợi, mơ hồ trước khi ký.' },
-      { title: 'Phù hợp pháp luật', description: 'Đảm bảo hợp đồng đúng quy định, có hiệu lực thi hành.' },
-      { title: 'Tiết kiệm về sau', description: 'Một hợp đồng tốt giúp tránh chi phí kiện tụng lớn sau này.' },
+      {
+        title: 'Bảo vệ quyền lợi',
+        description: 'Điều khoản chặt chẽ giúp bạn không chịu thiệt khi có tranh chấp.',
+      },
+      {
+        title: 'Phát hiện rủi ro',
+        description: 'Rà soát phát hiện điều khoản bất lợi, mơ hồ trước khi ký.',
+      },
+      {
+        title: 'Phù hợp pháp luật',
+        description: 'Đảm bảo hợp đồng đúng quy định, có hiệu lực thi hành.',
+      },
+      {
+        title: 'Tiết kiệm về sau',
+        description: 'Một hợp đồng tốt giúp tránh chi phí kiện tụng lớn sau này.',
+      },
     ],
     stepsTitle: 'Quy trình làm việc',
     steps: [
@@ -369,9 +586,19 @@ export const landingConfigs: LandingConfig[] = [
     ],
     faqTitle: 'Câu hỏi thường gặp',
     faqs: [
-      { question: 'Soạn loại hợp đồng nào?', answer: 'Hợp đồng mua bán, dịch vụ, hợp tác, lao động, chuyển nhượng... Hãy liên hệ để tư vấn theo nhu cầu.' },
-      { question: 'Có rà soát hợp đồng có sẵn không?', answer: 'Có. Luật Poip Legal rà soát và chỉ ra rủi ro, đề xuất chỉnh sửa.' },
-      { question: 'Phí tính thế nào?', answer: 'Tùy độ phức tạp của hợp đồng. Luật Poip Legal báo phí trước khi làm.' },
+      {
+        question: 'Soạn loại hợp đồng nào?',
+        answer:
+          'Hợp đồng mua bán, dịch vụ, hợp tác, lao động, chuyển nhượng... Hãy liên hệ để tư vấn theo nhu cầu.',
+      },
+      {
+        question: 'Có rà soát hợp đồng có sẵn không?',
+        answer: 'Có. Luật Poip Legal rà soát và chỉ ra rủi ro, đề xuất chỉnh sửa.',
+      },
+      {
+        question: 'Phí tính thế nào?',
+        answer: 'Tùy độ phức tạp của hợp đồng. Luật Poip Legal báo phí trước khi làm.',
+      },
     ],
     finalCtaTitle: 'Nhận tư vấn soạn thảo hợp đồng',
     finalCtaSubtitle: 'Mô tả ngắn nhu cầu, luật sư sẽ tư vấn và báo phí trọn gói.',

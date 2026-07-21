@@ -165,11 +165,13 @@ const ToToBenefits: React.FC = () => {
           <div className="max-w-4xl mx-auto px-4">
             <div className="bg-white/80  rounded-xl p-8 shadow-soft border border-gray-200">
               <div className="text-center">
-                <h2 className="text-2xl font-bold text-gray-800 mb-4">Tại sao chọn Poip Legal Law ?</h2>
+                <h2 className="text-2xl font-bold text-gray-800 mb-4">
+                  Tại sao chọn Poip Legal Law ?
+                </h2>
                 <p className="text-gray-600 leading-relaxed mb-6">
-                  Với đội ngũ chuyên gia giàu kinh nghiệm và quy trình làm việc chuyên nghiệp, Poip Legal
-                  Law cam kết mang đến dịch vụ đăng ký bảo hộ sáng chế tốt nhất với chi phí hợp lý
-                  nhất.
+                  Với đội ngũ chuyên gia giàu kinh nghiệm và quy trình làm việc chuyên nghiệp, Poip
+                  Legal Law cam kết mang đến dịch vụ đăng ký bảo hộ sáng chế tốt nhất với chi phí
+                  hợp lý nhất.
                 </p>
                 <button
                   type="button"

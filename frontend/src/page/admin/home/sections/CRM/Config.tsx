@@ -20,42 +20,84 @@ export default function CrmConfig() {
   const [tags, setTags] = useState<Tag[]>([]);
 
   const reload = () => {
-    crmService.careStatuses().then(setStatuses).catch(() => undefined);
-    crmService.careActions().then(setActions).catch(() => undefined);
-    crmService.careResults().then(setResults).catch(() => undefined);
-    crmService.tags().then(setTags).catch(() => undefined);
+    crmService
+      .careStatuses()
+      .then(setStatuses)
+      .catch(() => undefined);
+    crmService
+      .careActions()
+      .then(setActions)
+      .catch(() => undefined);
+    crmService
+      .careResults()
+      .then(setResults)
+      .catch(() => undefined);
+    crmService
+      .tags()
+      .then(setTags)
+      .catch(() => undefined);
   };
   useEffect(reload, []);
 
   const addStatus = async () => {
     const name = window.prompt('Tên trạng thái chăm sóc?');
     if (!name) return;
-    await crmService.saveCareStatus({ name, code: name.toUpperCase().replace(/\s+/g, '_'), color: '#3B82F6', active: true });
-    toast.success('Đã thêm'); reload();
+    await crmService.saveCareStatus({
+      name,
+      code: name.toUpperCase().replace(/\s+/g, '_'),
+      color: '#3B82F6',
+      active: true,
+    });
+    toast.success('Đã thêm');
+    reload();
   };
   const addAction = async () => {
     const name = window.prompt('Tên hành động?');
     if (!name) return;
-    await crmService.saveCareAction({ name, code: name.toUpperCase().replace(/\s+/g, '_'), active: true });
-    toast.success('Đã thêm'); reload();
+    await crmService.saveCareAction({
+      name,
+      code: name.toUpperCase().replace(/\s+/g, '_'),
+      active: true,
+    });
+    toast.success('Đã thêm');
+    reload();
   };
   const addResult = async () => {
     const name = window.prompt('Tên kết quả?');
     if (!name) return;
-    await crmService.saveCareResult({ name, code: name.toUpperCase().replace(/\s+/g, '_'), active: true, requireFollowUpDate: false });
-    toast.success('Đã thêm'); reload();
+    await crmService.saveCareResult({
+      name,
+      code: name.toUpperCase().replace(/\s+/g, '_'),
+      active: true,
+      requireFollowUpDate: false,
+    });
+    toast.success('Đã thêm');
+    reload();
   };
   const addTag = async () => {
     const name = window.prompt('Tên tag?');
     if (!name) return;
     await crmService.saveTag({ name, color: '#F59E0B', active: true });
-    toast.success('Đã thêm'); reload();
+    toast.success('Đã thêm');
+    reload();
   };
 
-  const toggleStatus = async (s: CareStatus) => { await crmService.saveCareStatus({ ...s, active: !s.active }); reload(); };
-  const toggleAction = async (a: CareAction) => { await crmService.saveCareAction({ ...a, active: !a.active }); reload(); };
-  const toggleResult = async (r: CareResult) => { await crmService.saveCareResult({ ...r, active: !r.active }); reload(); };
-  const toggleTag = async (t: Tag) => { await crmService.saveTag({ ...t, active: !t.active }); reload(); };
+  const toggleStatus = async (s: CareStatus) => {
+    await crmService.saveCareStatus({ ...s, active: !s.active });
+    reload();
+  };
+  const toggleAction = async (a: CareAction) => {
+    await crmService.saveCareAction({ ...a, active: !a.active });
+    reload();
+  };
+  const toggleResult = async (r: CareResult) => {
+    await crmService.saveCareResult({ ...r, active: !r.active });
+    reload();
+  };
+  const toggleTag = async (t: Tag) => {
+    await crmService.saveTag({ ...t, active: !t.active });
+    reload();
+  };
 
   return (
     <div className="bg-white rounded-xl shadow-soft p-4">
@@ -75,30 +117,61 @@ export default function CrmConfig() {
       {tab === 'status' && (
         <Section onAdd={addStatus}>
           {statuses.map((s) => (
-            <Row key={s.id} color={s.color} name={s.name} sub={s.code} active={s.active} onToggle={() => toggleStatus(s)}
-              badges={[s.default && 'mặc định', s.closed && 'kết thúc', s.requireFollowUpDate && 'bắt buộc hẹn'].filter(Boolean) as string[]} />
+            <Row
+              key={s.id}
+              color={s.color}
+              name={s.name}
+              sub={s.code}
+              active={s.active}
+              onToggle={() => toggleStatus(s)}
+              badges={
+                [
+                  s.default && 'mặc định',
+                  s.closed && 'kết thúc',
+                  s.requireFollowUpDate && 'bắt buộc hẹn',
+                ].filter(Boolean) as string[]
+              }
+            />
           ))}
         </Section>
       )}
       {tab === 'action' && (
         <Section onAdd={addAction}>
           {actions.map((a) => (
-            <Row key={a.id} name={a.name} sub={a.code} active={a.active} onToggle={() => toggleAction(a)} />
+            <Row
+              key={a.id}
+              name={a.name}
+              sub={a.code}
+              active={a.active}
+              onToggle={() => toggleAction(a)}
+            />
           ))}
         </Section>
       )}
       {tab === 'result' && (
         <Section onAdd={addResult}>
           {results.map((r) => (
-            <Row key={r.id} name={r.name} sub={r.code} active={r.active} onToggle={() => toggleResult(r)}
-              badges={r.requireFollowUpDate ? ['bắt buộc hẹn'] : []} />
+            <Row
+              key={r.id}
+              name={r.name}
+              sub={r.code}
+              active={r.active}
+              onToggle={() => toggleResult(r)}
+              badges={r.requireFollowUpDate ? ['bắt buộc hẹn'] : []}
+            />
           ))}
         </Section>
       )}
       {tab === 'tag' && (
         <Section onAdd={addTag}>
           {tags.map((t) => (
-            <Row key={t.id} color={t.color} name={t.name} active={t.active} onToggle={() => toggleTag(t)} />
+            <Row
+              key={t.id}
+              color={t.color}
+              name={t.name}
+              active={t.active}
+              onToggle={() => toggleTag(t)}
+            />
           ))}
         </Section>
       )}
@@ -109,7 +182,10 @@ export default function CrmConfig() {
 function Section({ onAdd, children }: { onAdd: () => void; children: React.ReactNode }) {
   return (
     <div>
-      <button onClick={onAdd} className="mb-3 flex items-center gap-1 text-sm text-amber-600 hover:underline">
+      <button
+        onClick={onAdd}
+        className="mb-3 flex items-center gap-1 text-sm text-amber-600 hover:underline"
+      >
         <Plus size={16} /> Thêm
       </button>
       <div className="space-y-1">{children}</div>
@@ -117,8 +193,20 @@ function Section({ onAdd, children }: { onAdd: () => void; children: React.React
   );
 }
 
-function Row({ color, name, sub, active, badges = [], onToggle }: {
-  color?: string; name: string; sub?: string; active: boolean; badges?: string[]; onToggle: () => void;
+function Row({
+  color,
+  name,
+  sub,
+  active,
+  badges = [],
+  onToggle,
+}: {
+  color?: string;
+  name: string;
+  sub?: string;
+  active: boolean;
+  badges?: string[];
+  onToggle: () => void;
 }) {
   return (
     <div className="flex items-center justify-between border rounded px-3 py-2">
@@ -127,10 +215,15 @@ function Row({ color, name, sub, active, badges = [], onToggle }: {
         <span className={active ? '' : 'line-through text-gray-400'}>{name}</span>
         {sub && <span className="text-xs text-gray-400">{sub}</span>}
         {badges.map((b) => (
-          <span key={b} className="text-[10px] bg-gray-100 rounded px-1.5">{b}</span>
+          <span key={b} className="text-[10px] bg-gray-100 rounded px-1.5">
+            {b}
+          </span>
         ))}
       </div>
-      <button onClick={onToggle} className={`text-xs px-2 py-0.5 rounded ${active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+      <button
+        onClick={onToggle}
+        className={`text-xs px-2 py-0.5 rounded ${active ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}
+      >
         {active ? 'Bật' : 'Tắt'}
       </button>
     </div>

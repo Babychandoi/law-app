@@ -23,6 +23,7 @@ export default function TemplateList() {
 
   useEffect(() => {
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isAdmin]);
 
   const archive = async (id: string) => {

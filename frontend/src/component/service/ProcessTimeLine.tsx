@@ -77,7 +77,8 @@ const ProcessTimeline = ({
       <div className="mx-auto mt-8 max-w-3xl rounded-lg border border-brand-line bg-white p-6 text-center">
         <h3 className="text-lg font-semibold text-brand-ink">Quy trình minh bạch</h3>
         <p className="mt-2 text-sm leading-6 text-brand-muted">
-          Luật Poip Legal cập nhật tiến độ, giải thích từng bước và trao đổi trước khi phát sinh thay đổi.
+          Luật Poip Legal cập nhật tiến độ, giải thích từng bước và trao đổi trước khi phát sinh
+          thay đổi.
         </p>
       </div>
     </div>

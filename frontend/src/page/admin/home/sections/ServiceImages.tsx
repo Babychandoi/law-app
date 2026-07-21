@@ -112,7 +112,9 @@ const ServiceImages: React.FC = () => {
                   <h3 className="line-clamp-2 font-semibold text-gray-900">{service.title}</h3>
                   <label
                     className={`mt-3 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white transition-colors ${
-                      uploading ? 'cursor-not-allowed bg-gray-400' : 'bg-amber-700 hover:bg-amber-800'
+                      uploading
+                        ? 'cursor-not-allowed bg-gray-400'
+                        : 'bg-amber-700 hover:bg-amber-800'
                     }`}
                   >
                     <Upload className="h-4 w-4" />

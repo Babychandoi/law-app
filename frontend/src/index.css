@@ -35,10 +35,18 @@ body {
   margin-top: 1.6em;
   margin-bottom: 0.6em;
 }
-.prose h1 { font-size: 1.75em; }
-.prose h2 { font-size: 1.4em; }
-.prose h3 { font-size: 1.2em; }
-.prose h4 { font-size: 1.05em; }
+.prose h1 {
+  font-size: 1.75em;
+}
+.prose h2 {
+  font-size: 1.4em;
+}
+.prose h3 {
+  font-size: 1.2em;
+}
+.prose h4 {
+  font-size: 1.05em;
+}
 .prose p {
   margin: 0.75em 0;
   line-height: 1.75;
@@ -48,8 +56,12 @@ body {
   margin: 0.75em 0;
   padding-left: 1.6em;
 }
-.prose ul { list-style: disc; }
-.prose ol { list-style: decimal; }
+.prose ul {
+  list-style: disc;
+}
+.prose ol {
+  list-style: decimal;
+}
 .prose li {
   margin: 0.35em 0;
   padding-left: 0.25em;
@@ -58,16 +70,29 @@ body {
   color: #c7942c;
 }
 /* Quill dùng class ql-indent-N cho các cấp thụt lề */
-.prose .ql-indent-1 { margin-left: 2em; }
-.prose .ql-indent-2 { margin-left: 4em; }
-.prose .ql-indent-3 { margin-left: 6em; }
+.prose .ql-indent-1 {
+  margin-left: 2em;
+}
+.prose .ql-indent-2 {
+  margin-left: 4em;
+}
+.prose .ql-indent-3 {
+  margin-left: 6em;
+}
 .prose a {
   color: #875f12;
   text-decoration: underline;
   text-underline-offset: 4px;
 }
-.prose strong { color: #171717; font-weight: 600; }
-.prose img { border-radius: 0.5rem; max-width: 100%; height: auto; }
+.prose strong {
+  color: #171717;
+  font-weight: 600;
+}
+.prose img {
+  border-radius: 0.5rem;
+  max-width: 100%;
+  height: auto;
+}
 .prose blockquote {
   margin: 1em 0;
   border: 1px solid #e8e1d3;
@@ -107,7 +132,6 @@ code {
 .line-clamp-4 {
   -webkit-line-clamp: 4;
 }
-
 
 @media (min-width: 1024px) and (max-width: 1280px) {
   html {

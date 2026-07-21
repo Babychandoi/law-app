@@ -72,8 +72,8 @@ const BarcodeBenefits: React.FC = () => {
       <div className="mt-10 mb-8 text-center">
         <h2 className="text-3xl font-bold text-gray-800">ĐĂNG KÝ MÃ SỐ MÃ VẠCH TẠI LUẬT POIP</h2>
         <h5 className="text-lg text-gray-600 mt-2">
-          Luật sư tại Luật Poip Legal có thể mang lại nhiều lợi ích cho việc đăng ký mã số mã vạch, bao
-          gồm:
+          Luật sư tại Luật Poip Legal có thể mang lại nhiều lợi ích cho việc đăng ký mã số mã vạch,
+          bao gồm:
         </h5>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

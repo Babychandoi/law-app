@@ -39,8 +39,8 @@ export default function Hero() {
             Bảo vệ tài sản trí tuệ để doanh nghiệp phát triển vững chắc
           </h1>
           <p className="mt-6 max-w-2xl text-base leading-8 text-white/80 sm:text-lg">
-            Luật Poip Legal giúp doanh nghiệp, nhà sáng lập và người sáng tạo xác định đúng phương án,
-            chuẩn bị hồ sơ và theo dõi thủ tục pháp lý từ đầu đến kết quả.
+            Luật Poip Legal giúp doanh nghiệp, nhà sáng lập và người sáng tạo xác định đúng phương
+            án, chuẩn bị hồ sơ và theo dõi thủ tục pháp lý từ đầu đến kết quả.
           </p>
 
           <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -93,8 +93,8 @@ export default function Hero() {
             Chưa chắc dịch vụ nào phù hợp?
           </h2>
           <p className="mt-3 text-sm leading-7 text-white/75">
-            Chia sẻ nhu cầu hiện tại. Đội ngũ Luật Poip Legal sẽ giúp bạn xác định vấn đề, lựa chọn hướng
-            xử lý và chuẩn bị bước tiếp theo.
+            Chia sẻ nhu cầu hiện tại. Đội ngũ Luật Poip Legal sẽ giúp bạn xác định vấn đề, lựa chọn
+            hướng xử lý và chuẩn bị bước tiếp theo.
           </p>
 
           <dl className="mt-7 grid grid-cols-3 border-y border-white/15 py-5 text-center">

@@ -33,7 +33,8 @@ export default function Index() {
       id: '239fdb9d-c859-4b05-a49d-ecb78b27261e',
       step: 'BƯỚC 3',
       title: 'BƯỚC 3',
-      description: 'Luật Poip Legal tiến hành đăng ký mã số mã vạch và bàn giao kết quả cho khách hàng',
+      description:
+        'Luật Poip Legal tiến hành đăng ký mã số mã vạch và bàn giao kết quả cho khách hàng',
       details: [],
     },
   ]);
@@ -70,7 +71,10 @@ export default function Index() {
       />
       <BarcodeSection />
       <BarcodeBenefits />
-      <UniversalProcess title="Quy trình đăng ký mã số mã vạch tại Luật Poip Legal" steps={process} />
+      <UniversalProcess
+        title="Quy trình đăng ký mã số mã vạch tại Luật Poip Legal"
+        steps={process}
+      />
       <PricingComponent
         title="CHI PHÍ ĐĂNG KÝ MÃ SỐ MÃ VẠCH TẠI POIP LAW"
         plans={pricingPlans}

@@ -15,8 +15,9 @@ interface ApiResponse<T> {
 
 const teamChatService = {
   listConversations: async (): Promise<ConversationSummary[]> => {
-    const res =
-      await gatewayClient.get<ApiResponse<ConversationSummary[]>>('/staff-chat/conversations');
+    const res = await gatewayClient.get<ApiResponse<ConversationSummary[]>>(
+      '/staff-chat/conversations'
+    );
     return res.data.data ?? [];
   },
 

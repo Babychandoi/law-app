@@ -36,6 +36,7 @@ export default function TemplateFieldEditor() {
 
   useEffect(() => {
     load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const updateField = (index: number, patch: Partial<DocumentTemplateField>) => {

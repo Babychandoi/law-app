@@ -58,7 +58,21 @@ export const initTiktokPixel = (): void => {
   (function (w: any, d, t) {
     w.TiktokAnalyticsObject = t;
     var ttq = (w[t] = w[t] || []);
-    ttq.methods = ['page', 'track', 'identify', 'instances', 'debug', 'on', 'off', 'once', 'ready', 'alias', 'group', 'enableCookie', 'disableCookie'];
+    ttq.methods = [
+      'page',
+      'track',
+      'identify',
+      'instances',
+      'debug',
+      'on',
+      'off',
+      'once',
+      'ready',
+      'alias',
+      'group',
+      'enableCookie',
+      'disableCookie',
+    ];
     ttq.setAndDefer = function (e: any, n: any) {
       e[n] = function () {
         e.push([n].concat(Array.prototype.slice.call(arguments, 0)));

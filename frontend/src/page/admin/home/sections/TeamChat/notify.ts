@@ -6,7 +6,8 @@ let audioCtx: AudioContext | null = null;
 export function playPing(): void {
   try {
     const Ctx =
-      window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
     if (!Ctx) return;
     audioCtx = audioCtx ?? new Ctx();
     const ctx = audioCtx;
@@ -40,7 +41,11 @@ export function showBrowserNotification(title: string, body: string): void {
   if (typeof Notification === 'undefined' || Notification.permission !== 'granted') return;
   if (document.visibilityState === 'visible') return; // tab is active -> toast/badge already covers it
   try {
-    const n = new Notification(title, { body, tag: 'team-chat', renotify: true } as NotificationOptions);
+    const n = new Notification(title, {
+      body,
+      tag: 'team-chat',
+      renotify: true,
+    } as NotificationOptions);
     n.onclick = () => {
       window.focus();
       n.close();

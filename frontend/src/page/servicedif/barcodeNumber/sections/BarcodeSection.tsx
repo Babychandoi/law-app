@@ -45,8 +45,8 @@ const BarcodeInfoSection: React.FC<BarcodeInfoSectionProps> = ({ className = '' 
               <br />
               <br />
               Hiện nay, có hai loại chính là mã số 1 chiều và mã số hai chiều. Các hệ thống mã vạch
-              phổ biến bao gồm EAN-13, CODE 39, và QR CODE. Luật Poip Legal cung cấp dịch vụ đăng ký mã
-              EAN-13 cho khách hàng.
+              phổ biến bao gồm EAN-13, CODE 39, và QR CODE. Luật Poip Legal cung cấp dịch vụ đăng ký
+              mã EAN-13 cho khách hàng.
             </p>
             <div className="mt-6 flex justify-end">
               <a

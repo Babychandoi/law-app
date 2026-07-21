@@ -217,7 +217,7 @@ const AdminChatDashboard: React.FC = () => {
       console.error('Error connecting WebSocket:', error);
       setIsConnected(false);
     }
-  }, [selectedConversation, fetchConversations, fetchStats, debouncedRefresh, currentAdmin.id]);
+  }, [selectedConversation, debouncedRefresh, currentAdmin.id]);
 
   const fetchMessages = useCallback(async (guestId: string) => {
     try {

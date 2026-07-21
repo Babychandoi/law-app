@@ -6,8 +6,7 @@ interface RecentPostsProps {
   currentId?: string;
 }
 
-const formatDate = (date?: Date) =>
-  date ? new Date(date).toLocaleDateString('vi-VN') : '';
+const formatDate = (date?: Date) => (date ? new Date(date).toLocaleDateString('vi-VN') : '');
 
 /**
  * Sidebar "Bài viết gần đây" — hiển thị các bài khác (loại bài đang xem),

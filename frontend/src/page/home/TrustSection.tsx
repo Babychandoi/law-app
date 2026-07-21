@@ -55,8 +55,8 @@ export default function TrustSection() {
             Chuyên môn pháp lý đi cùng hướng dẫn thực tế
           </h2>
           <p className="mt-5 max-w-2xl text-base leading-8 text-gray-700">
-            Luật Poip Legal không chỉ xử lý thủ tục. Đội ngũ tập trung giúp khách hàng hiểu rủi ro, chuẩn
-            bị đúng tài liệu và theo dõi công việc một cách chủ động.
+            Luật Poip Legal không chỉ xử lý thủ tục. Đội ngũ tập trung giúp khách hàng hiểu rủi ro,
+            chuẩn bị đúng tài liệu và theo dõi công việc một cách chủ động.
           </p>
 
           <div className="mt-8 divide-y divide-brand-line border-y border-brand-line">

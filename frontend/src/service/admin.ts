@@ -204,10 +204,9 @@ export const changePassword = async (
   userId: string,
   newPassword: string
 ): Promise<ApiResponse<boolean>> => {
-  const response = await axiosClient.put<ApiResponse<boolean>>(
-    `/auth/users/${userId}/password`,
-    { newPassword }
-  );
+  const response = await axiosClient.put<ApiResponse<boolean>>(`/auth/users/${userId}/password`, {
+    newPassword,
+  });
   return response.data;
 };
 export const changeRole = async (

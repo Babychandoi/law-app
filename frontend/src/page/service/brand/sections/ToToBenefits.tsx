@@ -44,7 +44,8 @@ const ToToBenefits = () => {
           </h2>
           <div className="w-32 h-1 bg-brand-goldDark mx-auto mb-6"></div>
           <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            Luật sư tại Luật Poip Legal mang lại nhiều lợi ích cho việc đăng ký bảo hộ nhãn hiệu, bao gồm:
+            Luật sư tại Luật Poip Legal mang lại nhiều lợi ích cho việc đăng ký bảo hộ nhãn hiệu,
+            bao gồm:
           </p>
         </div>
 

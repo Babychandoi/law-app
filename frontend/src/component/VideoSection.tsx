@@ -23,7 +23,9 @@ export default function VideoSection() {
           </div>
           <div className="flex items-center gap-3 border-t border-white/15 px-5 py-4 text-white">
             <PlayCircle className="shrink-0 text-brand-gold" size={22} aria-hidden="true" />
-            <p className="text-sm font-medium">Tìm hiểu cách Luật Poip Legal đồng hành cùng khách hàng</p>
+            <p className="text-sm font-medium">
+              Tìm hiểu cách Luật Poip Legal đồng hành cùng khách hàng
+            </p>
           </div>
         </div>
 

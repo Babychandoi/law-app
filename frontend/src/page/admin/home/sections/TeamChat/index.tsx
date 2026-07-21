@@ -5,11 +5,7 @@ import teamChatService from '../../../../../service/teamChat';
 import { getMe } from '../../../../../service/auth';
 import { ConversationSummary, StaffUser, TeamMessage } from '../../../../../types/teamChat';
 import { useTeamChatSocket } from './useTeamChatSocket';
-import {
-  ensureNotificationPermission,
-  playPing,
-  showBrowserNotification,
-} from './notify';
+import { ensureNotificationPermission, playPing, showBrowserNotification } from './notify';
 
 type NewMode = null | 'direct' | 'group';
 
@@ -108,8 +104,14 @@ export default function TeamChat() {
   // Initial load
   useEffect(() => {
     refreshConversations();
-    teamChatService.listStaff().then(setStaff).catch(() => undefined);
-    teamChatService.presence().then((ids) => setOnline(new Set(ids))).catch(() => undefined);
+    teamChatService
+      .listStaff()
+      .then(setStaff)
+      .catch(() => undefined);
+    teamChatService
+      .presence()
+      .then((ids) => setOnline(new Set(ids)))
+      .catch(() => undefined);
   }, [refreshConversations]);
 
   const openConversation = useCallback(
@@ -133,7 +135,10 @@ export default function TeamChat() {
     socket.sendMessage(activeId, text);
     setDraft('');
     // Sending = I'm clearly viewing this conversation -> clear any unread on it.
-    teamChatService.markRead(activeId).then(refreshConversations).catch(() => undefined);
+    teamChatService
+      .markRead(activeId)
+      .then(refreshConversations)
+      .catch(() => undefined);
   };
 
   const handleDraftChange = (v: string) => {
@@ -204,9 +209,7 @@ export default function TeamChat() {
   };
 
   const convTitle = (c: ConversationSummary) =>
-    c.type === 'DIRECT'
-      ? staffName(c.memberIds.find((id) => id !== me) ?? '')
-      : c.name ?? 'Nhóm';
+    c.type === 'DIRECT' ? staffName(c.memberIds.find((id) => id !== me) ?? '') : (c.name ?? 'Nhóm');
 
   const filteredStaff = staff.filter(
     (s) => s.id !== me && (s.fullName ?? '').toLowerCase().includes(search.toLowerCase())

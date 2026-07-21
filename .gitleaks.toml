@@ -1,0 +1,9 @@
+# Cấu hình gitleaks cho CI. Dùng bộ rule mặc định + allowlist.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Chứng chỉ/khoá Let's Encrypt & ACME trong lịch sử dưới certbot/ (đã gitignore từ nay; rủi ro thấp do sau Cloudflare Tunnel; kế hoạch purge history riêng)."
+paths = [
+  '''certbot/.*''',
+]

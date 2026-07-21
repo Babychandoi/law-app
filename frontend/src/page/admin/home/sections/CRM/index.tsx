@@ -4,7 +4,14 @@ import { Search, HeartHandshake, UserCog } from 'lucide-react';
 import crmService, { CaseFilter } from '../../../../../service/crm';
 import { getMe } from '../../../../../service/auth';
 import { CASE_STATUS_VI, CASE_STATUS_OPTIONS, caseStatusLabel } from './caseStatus';
-import { CareAction, CareResult, CareStatus, CaseRow, StaffUser, Tag } from '../../../../../types/crm';
+import {
+  CareAction,
+  CareResult,
+  CareStatus,
+  CaseRow,
+  StaffUser,
+  Tag,
+} from '../../../../../types/crm';
 import CarePopup from './CarePopup';
 
 const STATUS_OPTIONS = CASE_STATUS_OPTIONS;
@@ -29,7 +36,10 @@ export default function CRM() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [me, setMe] = useState<string>('');
 
-  const staffLabel = useCallback((s: StaffUser) => s.fullName || s.username || s.id.slice(0, 8), []);
+  const staffLabel = useCallback(
+    (s: StaffUser) => s.fullName || s.username || s.id.slice(0, 8),
+    []
+  );
   const staffName = useCallback(
     (id: string | null) => {
       if (!id) return 'Chưa giao';
@@ -58,12 +68,27 @@ export default function CRM() {
       // Admin nhìn tất cả mặc định; nhân viên chỉ thấy việc của mình.
       setFilter((f) => ({ ...f, assignedTo: admin ? '' : 'me' }));
     });
-    crmService.careStatuses().then(setStatuses).catch(() => undefined);
-    crmService.careActions().then(setActions).catch(() => undefined);
-    crmService.careResults().then(setResults).catch(() => undefined);
-    crmService.tags().then(setTags).catch(() => undefined);
+    crmService
+      .careStatuses()
+      .then(setStatuses)
+      .catch(() => undefined);
+    crmService
+      .careActions()
+      .then(setActions)
+      .catch(() => undefined);
+    crmService
+      .careResults()
+      .then(setResults)
+      .catch(() => undefined);
+    crmService
+      .tags()
+      .then(setTags)
+      .catch(() => undefined);
     // Chỉ admin cần danh bạ để giao việc.
-    crmService.staff().then(setStaff).catch(() => undefined);
+    crmService
+      .staff()
+      .then(setStaff)
+      .catch(() => undefined);
   }, []);
 
   useEffect(() => {
@@ -143,7 +168,9 @@ export default function CRM() {
             onChange={(e) => sel.set(e.target.value)}
           >
             {sel.opts.map((o) => (
-              <option key={o.v} value={o.v}>{o.label}</option>
+              <option key={o.v} value={o.v}>
+                {o.label}
+              </option>
             ))}
           </select>
         ))}
@@ -160,7 +187,9 @@ export default function CRM() {
         >
           <option value="">Trạng thái chăm sóc: tất cả</option>
           {statuses.map((s) => (
-            <option key={s.id} value={s.id}>{s.name}</option>
+            <option key={s.id} value={s.id}>
+              {s.name}
+            </option>
           ))}
         </select>
         <select
@@ -170,7 +199,9 @@ export default function CRM() {
         >
           <option value="">Vụ việc: tất cả</option>
           {STATUS_OPTIONS.map((s) => (
-            <option key={s} value={s}>{CASE_STATUS_VI[s]?.label ?? s}</option>
+            <option key={s} value={s}>
+              {CASE_STATUS_VI[s]?.label ?? s}
+            </option>
           ))}
         </select>
       </div>
@@ -194,15 +225,22 @@ export default function CRM() {
             {rows.map((r) => {
               const cs = statuses.find((s) => s.id === r.careStatusId);
               return (
-                <tr key={r.id} className="border-t border-brand-line hover:bg-brand-surface/40 transition-colors">
+                <tr
+                  key={r.id}
+                  className="border-t border-brand-line hover:bg-brand-surface/40 transition-colors"
+                >
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-3">
                       <span className="w-9 h-9 rounded-full bg-brand-gold/15 text-brand-goldDark grid place-items-center font-semibold shrink-0">
                         {(r.serviceName ?? r.name ?? '?').charAt(0)}
                       </span>
                       <div>
-                        <div className="font-medium text-brand-ink">{r.serviceName ?? r.name ?? '—'}</div>
-                        <div className="text-xs text-brand-muted">{r.customerEmail ?? r.customerPhone}</div>
+                        <div className="font-medium text-brand-ink">
+                          {r.serviceName ?? r.name ?? '—'}
+                        </div>
+                        <div className="text-xs text-brand-muted">
+                          {r.customerEmail ?? r.customerPhone}
+                        </div>
                       </div>
                     </div>
                   </td>
@@ -215,7 +253,9 @@ export default function CRM() {
                       >
                         <option value="">Chưa giao</option>
                         {staff.map((s) => (
-                          <option key={s.id} value={s.id}>{staffLabel(s)}</option>
+                          <option key={s.id} value={s.id}>
+                            {staffLabel(s)}
+                          </option>
                         ))}
                       </select>
                     ) : (
@@ -236,7 +276,13 @@ export default function CRM() {
                   </td>
                   <td className="px-3">
                     {r.nextFollowUpAt ? (
-                      <span className={isOverdue(r.nextFollowUpAt) ? 'text-red-500 font-medium' : 'text-brand-ink'}>
+                      <span
+                        className={
+                          isOverdue(r.nextFollowUpAt)
+                            ? 'text-red-500 font-medium'
+                            : 'text-brand-ink'
+                        }
+                      >
                         {new Date(r.nextFollowUpAt).toLocaleDateString('vi-VN')}
                       </span>
                     ) : (
@@ -255,7 +301,9 @@ export default function CRM() {
                         }`}
                       >
                         {STATUS_OPTIONS.map((s) => (
-                          <option key={s} value={s}>{CASE_STATUS_VI[s]?.label ?? s}</option>
+                          <option key={s} value={s}>
+                            {CASE_STATUS_VI[s]?.label ?? s}
+                          </option>
                         ))}
                       </select>
                     ) : r.status ? (
@@ -275,7 +323,11 @@ export default function CRM() {
                       {r.tagIds.map((id) => {
                         const t = tagMap.get(id);
                         return t ? (
-                          <span key={id} className="px-2 py-0.5 rounded-full text-[10px] text-white" style={{ background: t.color }}>
+                          <span
+                            key={id}
+                            className="px-2 py-0.5 rounded-full text-[10px] text-white"
+                            style={{ background: t.color }}
+                          >
                             {t.name}
                           </span>
                         ) : null;

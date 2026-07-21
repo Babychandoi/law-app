@@ -32,7 +32,8 @@ const Contact = () => {
         Thông tin liên hệ
       </h2>
       <p className="mt-4 leading-7 text-brand-muted">
-        Liên hệ qua kênh thuận tiện nhất. Đội ngũ Luật Poip Legal sẽ phản hồi và hướng dẫn bước tiếp theo.
+        Liên hệ qua kênh thuận tiện nhất. Đội ngũ Luật Poip Legal sẽ phản hồi và hướng dẫn bước tiếp
+        theo.
       </p>
 
       {hasError && (
