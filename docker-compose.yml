@@ -41,7 +41,7 @@ services:
       dockerfile: Dockerfile
     container_name: law-app-backend
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:9100/actuator/health"]
       interval: 30s
       timeout: 5s
       retries: 5
@@ -75,7 +75,7 @@ services:
       dockerfile: Dockerfile
     container_name: law-app-gateway
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8081/actuator/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:9100/actuator/health"]
       interval: 30s
       timeout: 5s
       retries: 5
@@ -101,7 +101,7 @@ services:
       dockerfile: Dockerfile
     container_name: law-app-chat
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8082/actuator/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:9100/actuator/health"]
       interval: 30s
       timeout: 5s
       retries: 5
@@ -134,7 +134,7 @@ services:
       dockerfile: Dockerfile
     container_name: law-app-crm
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8083/actuator/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:9100/actuator/health"]
       interval: 30s
       timeout: 5s
       retries: 5
@@ -167,7 +167,7 @@ services:
       dockerfile: Dockerfile
     container_name: law-app-documents
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:8084/actuator/health"]
+      test: ["CMD", "wget", "-qO-", "http://localhost:9100/actuator/health"]
       interval: 30s
       timeout: 5s
       retries: 5

@@ -70,6 +70,8 @@ spring:
                 allowCredentials: true
 
 management:
+  server:
+    port: 9100
   endpoints:
     web:
       exposure:

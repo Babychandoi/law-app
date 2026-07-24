@@ -54,6 +54,8 @@ logging:
 
 # ===== Observability: health/readiness probes + Prometheus =====
 management:
+  server:
+    port: 9100
   endpoints:
     web:
       exposure:

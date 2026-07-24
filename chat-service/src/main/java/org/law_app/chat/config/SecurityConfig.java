@@ -55,7 +55,9 @@ public class SecurityConfig {
                     // WebSocket handshake is authenticated by the STOMP CONNECT interceptor.
                     .requestMatchers("/ws-staff/**")
                     .permitAll()
-                    .requestMatchers("/actuator/health")
+                    // Actuator chỉ lắng nghe trên management port nội bộ (9100, không route ra
+                    // internet) nên cho phép health + prometheus để Docker/Prometheus scrape.
+                    .requestMatchers("/actuator/health", "/actuator/health/**", "/actuator/prometheus")
                     .permitAll()
                     .anyRequest()
                     .authenticated())

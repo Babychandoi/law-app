@@ -68,7 +68,10 @@ logging:
     org.springframework.web.socket: INFO
 
 # ===== Observability: health/readiness probes + Prometheus =====
+# management chạy trên PORT RIÊNG (nội bộ), không route qua cloudflared -> metrics không lộ ra internet.
 management:
+  server:
+    port: 9100
   endpoints:
     web:
       exposure:

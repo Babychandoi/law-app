@@ -79,8 +79,9 @@ public class SecurityConfig {
                     .permitAll() // Allow guest to create conversation
                     .requestMatchers("/ws/**")
                     .permitAll()
-                    // Health probe cho Docker healthcheck (chỉ UP/DOWN; prometheus/info vẫn cần auth)
-                    .requestMatchers("/actuator/health", "/actuator/health/**")
+                    // Actuator chỉ lắng nghe trên management port nội bộ (9100, không route ra
+                    // internet) nên cho phép health + prometheus để Docker/Prometheus scrape.
+                    .requestMatchers("/actuator/health", "/actuator/health/**", "/actuator/prometheus")
                     .permitAll()
                     .anyRequest()
                     .authenticated());
