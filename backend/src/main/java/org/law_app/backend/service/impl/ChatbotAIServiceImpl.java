@@ -63,7 +63,16 @@ public class ChatbotAIServiceImpl implements ChatbotAIService {
   @Value("${chatbot.enabled:true}")
   private boolean chatbotEnabled;
 
-  private final RestTemplate restTemplate = new RestTemplate();
+  // Timeout để lời gọi AI không treo vô hạn (giữ thread + không có backpressure).
+  private final RestTemplate restTemplate = buildRestTemplate();
+
+  private static RestTemplate buildRestTemplate() {
+    org.springframework.http.client.SimpleClientHttpRequestFactory factory =
+        new org.springframework.http.client.SimpleClientHttpRequestFactory();
+    factory.setConnectTimeout(5000); // 5s kết nối
+    factory.setReadTimeout(30000); // 30s chờ AI trả lời
+    return new RestTemplate(factory);
+  }
   private final ChatMessageRepository chatMessageRepository;
   private final NewsRepository newsRepository;
   private final ServiceRepository serviceRepository;

@@ -2,6 +2,7 @@ package org.law_app.backend.controller;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.RejectedExecutionException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.law_app.backend.common.SenderType;
@@ -36,6 +37,8 @@ public class ChatController {
   private final NotificationService notificationService;
   private final ChatbotAIService chatbotAIService;
   private final org.springframework.data.redis.core.RedisTemplate<String, String> redisTemplate;
+  // Bean tên "aiExecutor" (AiExecutorConfig) — Spring khớp theo tên tham số khi có nhiều Executor.
+  private final java.util.concurrent.Executor aiExecutor;
 
   // Chống spam guest chat + chi phí AI: tối đa 20 tin/phút mỗi guest.
   private static final int CHAT_MAX_PER_WINDOW = 20;
@@ -84,48 +87,49 @@ public class ChatController {
     if ("GUEST".equals(chatRequest.getSenderType().toString())
         && chatbotAIService.shouldAIRespond(chatRequest.getGuestId())) {
 
-      // Generate AI response asynchronously to not block
-      CompletableFuture.runAsync(
-          () -> {
-            try {
-              String aiResponse =
-                  chatbotAIService.generateResponse(
-                      chatRequest.getGuestId(), chatRequest.getContent());
+      // Sinh phản hồi AI trên executor RIÊNG có giới hạn (không dùng common pool).
+      // Khi quá tải, executor từ chối -> bắt RejectedExecutionException và bỏ qua (backpressure),
+      // thay vì làm nghẽn/tràn thread.
+      try {
+        CompletableFuture.runAsync(
+            () -> {
+              try {
+                String aiResponse =
+                    chatbotAIService.generateResponse(
+                        chatRequest.getGuestId(), chatRequest.getContent());
 
-              if (aiResponse != null && !aiResponse.isEmpty()) {
-                // Create AI message
-                ChatRequest aiRequest = new ChatRequest();
-                aiRequest.setGuestId(chatRequest.getGuestId());
-                aiRequest.setContent(aiResponse);
-                aiRequest.setSenderType(SenderType.ADMIN); // AI messages are ADMIN type
+                if (aiResponse != null && !aiResponse.isEmpty()) {
+                  ChatRequest aiRequest = new ChatRequest();
+                  aiRequest.setGuestId(chatRequest.getGuestId());
+                  aiRequest.setContent(aiResponse);
+                  aiRequest.setSenderType(SenderType.ADMIN); // AI messages are ADMIN type
 
-                // Save AI message with special admin ID
-                ChatMessage aiMessage = chatService.saveMessage(aiRequest);
+                  ChatMessage aiMessage = chatService.saveMessage(aiRequest);
 
-                // Send AI response to guest
-                ChatMessageResponse aiMessageResponse =
-                    ChatMessageResponse.builder()
-                        .id(aiMessage.getId())
-                        .guestId(aiMessage.getGuestId())
-                        .content(aiMessage.getContent())
-                        .senderType(aiMessage.getSenderType())
-                        .createdAt(aiMessage.getCreatedAt())
-                        .adminId("AI-BOT")
-                        .isRead(false)
-                        .build();
+                  ChatMessageResponse aiMessageResponse =
+                      ChatMessageResponse.builder()
+                          .id(aiMessage.getId())
+                          .guestId(aiMessage.getGuestId())
+                          .content(aiMessage.getContent())
+                          .senderType(aiMessage.getSenderType())
+                          .createdAt(aiMessage.getCreatedAt())
+                          .adminId("AI-BOT")
+                          .isRead(false)
+                          .build();
 
-                // Small delay to make it feel more natural
-                Thread.sleep(1500);
+                  messagingTemplate.convertAndSend(
+                      "/topic/chat/" + chatRequest.getGuestId(), aiMessageResponse);
 
-                messagingTemplate.convertAndSend(
-                    "/topic/chat/" + chatRequest.getGuestId(), aiMessageResponse);
-
-                log.info("AI response sent to guest: {}", chatRequest.getGuestId());
+                  log.info("AI response sent to guest: {}", chatRequest.getGuestId());
+                }
+              } catch (Exception e) {
+                log.error("Error generating AI response: {}", e.getMessage(), e);
               }
-            } catch (Exception e) {
-              log.error("Error generating AI response: {}", e.getMessage(), e);
-            }
-          });
+            },
+            aiExecutor);
+      } catch (RejectedExecutionException e) {
+        log.warn("AI quá tải, bỏ qua phản hồi cho guest {}", chatRequest.getGuestId());
+      }
     }
     // ===== END AI CHATBOT LOGIC =====
 
