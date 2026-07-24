@@ -4,7 +4,9 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.law_app.chat.domain.Conversation;
@@ -26,6 +28,10 @@ import org.law_app.chat.repository.MessageRepository;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -43,6 +49,7 @@ public class ChatService {
   private final MessageRepository messageRepo;
   private final SimpMessagingTemplate messagingTemplate;
   private final FileStorageService fileStorageService;
+  private final MongoTemplate mongoTemplate;
 
   // ---------------- Conversations ----------------
 
@@ -108,10 +115,34 @@ public class ChatService {
   }
 
   public List<ConversationSummary> myInbox(String me) {
-    return membershipRepo.findByUserIdOrderByUpdatedAtDesc(me).stream()
-        .map(m -> conversationRepo.findById(m.getConversationId()).map(c -> toSummary(c, me)))
-        .filter(Optional::isPresent)
-        .map(Optional::get)
+    // Trước đây 2N+1 query (mỗi hội thoại tải riêng conversation + members). Giờ 3 query:
+    // (1) memberships của tôi, (2) batch conversations, (3) batch members của các hội thoại đó.
+    List<Membership> mine = membershipRepo.findByUserIdOrderByUpdatedAtDesc(me);
+    if (mine.isEmpty()) {
+      return List.of();
+    }
+    List<String> convIds = mine.stream().map(Membership::getConversationId).toList();
+
+    Map<String, Conversation> convById =
+        conversationRepo.findAllById(convIds).stream()
+            .collect(Collectors.toMap(Conversation::getId, c -> c));
+    Map<String, List<Membership>> membersByConv =
+        membershipRepo.findByConversationIdIn(convIds).stream()
+            .collect(Collectors.groupingBy(Membership::getConversationId));
+
+    // Giữ nguyên thứ tự updatedAt-desc từ `mine`; unread lấy từ chính membership của tôi.
+    return mine.stream()
+        .map(
+            m -> {
+              Conversation c = convById.get(m.getConversationId());
+              if (c == null) {
+                return null;
+              }
+              List<Membership> members =
+                  membersByConv.getOrDefault(m.getConversationId(), List.of());
+              return toSummary(c, members, m.getUnreadCount());
+            })
+        .filter(java.util.Objects::nonNull)
         .toList();
   }
 
@@ -190,18 +221,31 @@ public class ChatService {
     conv.setUpdatedAt(now);
     conversationRepo.save(conv);
 
-    for (Membership m : membershipRepo.findByConversationId(conv.getId())) {
-      m.setUpdatedAt(now);
-      if (!m.getUserId().equals(senderId)) {
-        m.setUnreadCount(m.getUnreadCount() + 1);
-      }
-      membershipRepo.save(m);
+    List<Membership> members = membershipRepo.findByConversationId(conv.getId());
+
+    // Cập nhật per-member bằng 2 lệnh bulk ATOMIC (thay vì N lần save):
+    //  - mọi member: set updatedAt
+    //  - member khác sender: $inc unreadCount (atomic -> không mất increment khi tin đến đồng thời)
+    mongoTemplate.updateMulti(
+        new Query(Criteria.where("conversationId").is(conv.getId())),
+        new Update().set("updatedAt", now),
+        Membership.class);
+    mongoTemplate.updateMulti(
+        new Query(
+            Criteria.where("conversationId").is(conv.getId()).and("userId").ne(senderId)),
+        new Update().inc("unreadCount", 1),
+        Membership.class);
+
+    // Fan-out inbox cho từng member khác sender (STOMP, không phải DB). Count = old+1 (best-effort
+    // để hiển thị; giá trị chuẩn nằm ở DB qua $inc atomic).
+    String preview = previewOf(saved);
+    for (Membership m : members) {
       if (!m.getUserId().equals(senderId)) {
         messagingTemplate.convertAndSendToUser(
             m.getUserId(),
             "/queue/staff.inbox",
             new InboxEvent(
-                "NEW_MESSAGE", conv.getId(), m.getUnreadCount(), senderId, previewOf(saved)));
+                "NEW_MESSAGE", conv.getId(), m.getUnreadCount() + 1, senderId, preview));
       }
     }
 
@@ -268,6 +312,7 @@ public class ChatService {
     return m;
   }
 
+  /** Dùng cho 1 hội thoại đơn lẻ (tự tải members — 1 query). */
   private ConversationSummary toSummary(Conversation c, String me) {
     List<Membership> members = membershipRepo.findByConversationId(c.getId());
     int unread =
@@ -276,6 +321,11 @@ public class ChatService {
             .findFirst()
             .map(Membership::getUnreadCount)
             .orElse(0);
+    return toSummary(c, members, unread);
+  }
+
+  /** Dùng khi đã có sẵn members + unread (tránh query lại — cho inbox batch). */
+  private ConversationSummary toSummary(Conversation c, List<Membership> members, int unread) {
     LastMessageDto last =
         c.getLastMessage() == null
             ? null
