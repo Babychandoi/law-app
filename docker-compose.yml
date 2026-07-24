@@ -40,6 +40,12 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: law-app-backend
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     mem_limit: 900m
     env_file:
       - .env
@@ -68,6 +74,12 @@ services:
       context: ./gateway
       dockerfile: Dockerfile
     container_name: law-app-gateway
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8081/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     mem_limit: 500m
     env_file:
       - .env
@@ -88,6 +100,12 @@ services:
       context: ./chat-service
       dockerfile: Dockerfile
     container_name: law-app-chat
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8082/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     mem_limit: 700m
     env_file:
       - .env
@@ -115,6 +133,12 @@ services:
       context: ./crm-service
       dockerfile: Dockerfile
     container_name: law-app-crm
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8083/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     mem_limit: 700m
     env_file:
       - .env
@@ -142,6 +166,12 @@ services:
       context: ./document-service
       dockerfile: Dockerfile
     container_name: law-app-documents
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8084/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
     mem_limit: 700m
     env_file:
       - .env

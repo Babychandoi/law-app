@@ -79,6 +79,9 @@ public class SecurityConfig {
                     .permitAll() // Allow guest to create conversation
                     .requestMatchers("/ws/**")
                     .permitAll()
+                    // Health probe cho Docker healthcheck (chỉ UP/DOWN; prometheus/info vẫn cần auth)
+                    .requestMatchers("/actuator/health", "/actuator/health/**")
+                    .permitAll()
                     .anyRequest()
                     .authenticated());
     http.oauth2ResourceServer(

@@ -38,3 +38,20 @@ minio:
 logging:
   level:
     org.law_app.document: INFO
+
+# ===== Observability: health/readiness probes + Prometheus =====
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true

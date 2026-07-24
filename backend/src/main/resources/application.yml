@@ -113,3 +113,20 @@ ai:
 
 chatbot:
   enabled: ${CHATBOT_ENABLED:true}
+
+# ===== Observability: health/readiness probes + Prometheus =====
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
