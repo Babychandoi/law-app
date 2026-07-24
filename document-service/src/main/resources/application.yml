@@ -36,6 +36,9 @@ minio:
     generated: ${MINIO_BUCKET_GENERATED_DOCUMENTS:generated-documents}
 
 logging:
+  pattern:
+    # Chèn correlation id [reqId] vào mỗi dòng log
+    level: "%5p [%X{reqId:-}]"
   level:
     org.law_app.document: INFO
 
