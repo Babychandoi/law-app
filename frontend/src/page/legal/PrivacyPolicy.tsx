@@ -117,14 +117,12 @@ export default function PrivacyPolicy() {
             <li>Từ chối nhận thông tin tiếp thị bất kỳ lúc nào;</li>
             <li>Khiếu nại nếu cho rằng quyền riêng tư của bạn bị ảnh hưởng.</li>
           </ul>
-          <p>
-            Để thực hiện các quyền trên, vui lòng liên hệ chúng tôi theo thông tin ở mục 9.
-          </p>
+          <p>Để thực hiện các quyền trên, vui lòng liên hệ chúng tôi theo thông tin ở mục 9.</p>
 
           <h2>8. Thay đổi chính sách</h2>
           <p>
-            Chính sách có thể được cập nhật theo thời gian. Phiên bản mới sẽ được đăng tại trang
-            này kèm ngày cập nhật. Việc bạn tiếp tục sử dụng website sau khi thay đổi đồng nghĩa với
+            Chính sách có thể được cập nhật theo thời gian. Phiên bản mới sẽ được đăng tại trang này
+            kèm ngày cập nhật. Việc bạn tiếp tục sử dụng website sau khi thay đổi đồng nghĩa với
             việc chấp nhận chính sách đã cập nhật.
           </p>
 
@@ -135,8 +133,7 @@ export default function PrivacyPolicy() {
               <strong>Luật Poip Legal</strong>
             </li>
             <li>
-              Hotline:{' '}
-              <a href={contactInfo.phoneHref}>{contactInfo.hotline}</a>
+              Hotline: <a href={contactInfo.phoneHref}>{contactInfo.hotline}</a>
             </li>
             <li>
               Email: <a href={contactInfo.emailHref}>{contactInfo.email}</a>
