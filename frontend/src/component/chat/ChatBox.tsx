@@ -458,7 +458,12 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
             ></div>
           </div>
           <div>
-            <h3 className="font-bold text-base">Hỗ trợ trực tuyến</h3>
+            <h3 className="font-bold text-base">
+              Hỗ trợ trực tuyến
+              <span className="ml-2 rounded-full bg-white/20 px-2 py-0.5 align-middle text-[10px] font-semibold">
+                Trợ lý AI
+              </span>
+            </h3>
             <p className="text-xs opacity-90 font-medium">{connectionStatus.text}</p>
           </div>
         </div>
@@ -559,6 +564,10 @@ const ChatBox: React.FC<ChatBoxProps> = ({ onError, maxMessages = 100, onClose }
               </div>
               <p className="text-base font-semibold text-gray-700">Chào bạn!</p>
               <p className="text-sm text-gray-500 mt-1">Tôi có thể giúp gì cho bạn?</p>
+              <p className="mx-auto mt-3 max-w-[260px] text-[11px] leading-relaxed text-gray-400">
+                Bạn đang trò chuyện với trợ lý AI của Luật Poip Legal; tư vấn viên sẽ tiếp nhận khi
+                cần. Nội dung có thể được xử lý bởi dịch vụ AI để hỗ trợ trả lời.
+              </p>
             </div>
           )}
 
