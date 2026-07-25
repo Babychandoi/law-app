@@ -16,7 +16,7 @@ interface SeoProps {
 }
 
 const SITE_NAME = 'Luật Poip Legal';
-const DEFAULT_IMAGE = 'https://luatpoip.com/assets/images/logo.png';
+const DEFAULT_IMAGE = 'https://luatpoip.com/assets/images/og-logo.png';
 
 function currentUrl(): string {
   if (typeof window !== 'undefined' && window.location) {
