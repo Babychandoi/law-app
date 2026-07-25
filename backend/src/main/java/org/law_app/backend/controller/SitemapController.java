@@ -30,7 +30,15 @@ public class SitemapController {
   private String baseUrl;
 
   private static final List<String> STATIC_PATHS =
-      List.of("/", "/ve-chung-toi", "/lien-he", "/tuyen-dung", "/tin-tuc", "/dich-vu", "/dich-vu-khac");
+      List.of(
+          "/",
+          "/ve-chung-toi",
+          "/lien-he",
+          "/tuyen-dung",
+          "/tin-tuc",
+          "/dich-vu",
+          "/dich-vu-khac",
+          "/chinh-sach-bao-mat");
 
   @GetMapping(value = "/sitemap.xml", produces = MediaType.APPLICATION_XML_VALUE)
   public String sitemap() {

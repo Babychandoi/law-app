@@ -139,6 +139,9 @@ export default function Footer() {
                 {item.title}
               </Link>
             ))}
+            <Link to="/chinh-sach-bao-mat" className="hover:text-brand-gold">
+              Chính sách bảo mật
+            </Link>
           </div>
         </section>
 

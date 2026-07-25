@@ -4,6 +4,7 @@ import { RouteObject } from 'react-router-dom';
 
 const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
 const About = lazy(() => import('../page/aboutUs'));
+const PrivacyPolicy = lazy(() => import('../page/legal/PrivacyPolicy'));
 const Contact = lazy(() => import('../page/contact'));
 const Home = lazy(() => import('../page/home/Home'));
 const Job = lazy(() => import('../page/recruitment/Job'));
@@ -59,6 +60,7 @@ export const publicRoutes: RouteObject = {
     { path: 'dich-vu-khac', element: withSuspense(<ServiceDif />) },
     { path: 'tin-tuc', element: withSuspense(<News />) },
     { path: 'tin-tuc/:id', element: withSuspense(<NewsDetail />) },
+    { path: 'chinh-sach-bao-mat', element: withSuspense(<PrivacyPolicy />) },
     { path: ':slug', element: withSuspense(<DynamicServicePage />) },
   ],
 };
