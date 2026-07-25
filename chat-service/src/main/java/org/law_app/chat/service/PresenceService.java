@@ -1,9 +1,12 @@
 package org.law_app.chat.service;
 
 import java.time.Duration;
+import java.util.HashSet;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.law_app.chat.dto.Dtos.PresenceEvent;
+import org.springframework.data.redis.core.Cursor;
+import org.springframework.data.redis.core.ScanOptions;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
@@ -46,11 +49,15 @@ public class PresenceService {
   }
 
   public Set<String> onlineUsers() {
-    Set<String> keys = redis.keys(PRESENCE_PREFIX + "*");
-    return keys == null
-        ? Set.of()
-        : keys.stream()
-            .map(k -> k.substring(PRESENCE_PREFIX.length()))
-            .collect(java.util.stream.Collectors.toSet());
+    // Dùng SCAN (cursor, non-blocking) thay cho KEYS — KEYS quét toàn keyspace và BLOCK Redis
+    // (nguy hiểm khi keyspace lớn). SCAN duyệt tăng dần, an toàn cho production.
+    Set<String> users = new HashSet<>();
+    ScanOptions options = ScanOptions.scanOptions().match(PRESENCE_PREFIX + "*").count(200).build();
+    try (Cursor<String> cursor = redis.scan(options)) {
+      while (cursor.hasNext()) {
+        users.add(cursor.next().substring(PRESENCE_PREFIX.length()));
+      }
+    }
+    return users;
   }
 }
