@@ -14,6 +14,7 @@ import { sanitizeHtml } from '../../../../shared/utils/sanitizeHtml';
 import AddNews from './News/AddNews';
 import EditNews from './News/EditNews';
 import { Eye, Pencil, Trash2, Send } from 'lucide-react';
+import { Spinner } from '../../../../component/common/ui';
 
 const NewsManagement: React.FC = () => {
   const [newsList, setNewsList] = useState<News[]>([]);
@@ -365,15 +366,7 @@ const NewsManagement: React.FC = () => {
         )}
 
         {/* Loading State */}
-        {loading && (
-          <div className="flex justify-center items-center py-12">
-            <div className="relative">
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-gray-200"></div>
-              <div className="animate-spin rounded-full h-12 w-12 border-4 border-t-yellow-400 border-r-orange-400 absolute top-0 left-0"></div>
-            </div>
-            <span className="ml-3 text-gray-700 font-medium">Đang tải...</span>
-          </div>
-        )}
+        {loading && <Spinner center />}
 
         {/* News Cards Grid */}
         <div className="grid grid-cols-1 gap-6">

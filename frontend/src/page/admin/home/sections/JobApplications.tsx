@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Briefcase, Download, Eye, Calendar, Mail, Phone } from 'lucide-react';
+import { Spinner } from '../../../../component/common/ui';
 import { toast } from 'react-toastify';
 import {
   getAllJobApplications,
@@ -106,11 +107,7 @@ const JobApplications: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b border-brand-line"></div>
-      </div>
-    );
+    return <Spinner center />;
   }
 
   return (
