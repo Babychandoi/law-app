@@ -17,6 +17,7 @@ import SockJS from 'sockjs-client';
 import { Client, IMessage } from '@stomp/stompjs';
 import chatService from '../../../../service/chat';
 import { toast } from 'react-toastify';
+import { EmojiPicker } from '../../../../component/common/ui';
 
 interface ChatMessage {
   id: string;
@@ -81,6 +82,7 @@ const AdminChatDashboard: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [newGuestName, setNewGuestName] = useState('');
+  const [showEmoji, setShowEmoji] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageInputRef = useRef<HTMLTextAreaElement>(null);
@@ -724,11 +726,20 @@ const AdminChatDashboard: React.FC = () => {
                     style={{ minHeight: '44px', maxHeight: '120px' }}
                   />
                   <button
+                    type="button"
+                    onClick={() => setShowEmoji((v) => !v)}
                     aria-label="Chèn biểu tượng cảm xúc"
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-500 hover:text-gray-600 rounded"
                   >
                     <Smile className="w-5 h-5" />
                   </button>
+                  {showEmoji && (
+                    <EmojiPicker
+                      className="bottom-12 right-0"
+                      onPick={(e) => setNewMessage((m) => m + e)}
+                      onClose={() => setShowEmoji(false)}
+                    />
+                  )}
                 </div>
 
                 <button

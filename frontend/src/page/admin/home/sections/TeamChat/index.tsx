@@ -12,9 +12,11 @@ import {
   X,
   ArrowLeft,
   ThumbsUp,
+  Smile,
 } from 'lucide-react';
 import teamChatService from '../../../../../service/teamChat';
 import { getMe } from '../../../../../service/auth';
+import { EmojiPicker } from '../../../../../component/common/ui';
 import { ConversationSummary, StaffUser, TeamMessage } from '../../../../../types/teamChat';
 import { useTeamChatSocket } from './useTeamChatSocket';
 import { ensureNotificationPermission, playPing, showBrowserNotification } from './notify';
@@ -35,6 +37,7 @@ export default function TeamChat() {
   const [typingUser, setTypingUser] = useState<string | null>(null);
   const [newMode, setNewMode] = useState<NewMode>(null);
   const [search, setSearch] = useState('');
+  const [showEmoji, setShowEmoji] = useState(false);
   // Group-create state
   const [groupName, setGroupName] = useState('');
   const [groupMembers, setGroupMembers] = useState<Set<string>>(new Set());
@@ -638,7 +641,7 @@ export default function TeamChat() {
                   onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])}
                 />
               </label>
-              <div className="flex-1 flex items-center bg-gray-100 rounded-full px-4">
+              <div className="relative flex-1 flex items-center bg-gray-100 rounded-full px-4">
                 <input
                   value={draft}
                   onChange={(e) => handleDraftChange(e.target.value)}
@@ -648,6 +651,21 @@ export default function TeamChat() {
                   placeholder="Aa"
                   className="flex-1 bg-transparent py-2.5 text-[15px] outline-none placeholder:text-gray-500"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowEmoji((v) => !v)}
+                  aria-label="Chèn biểu tượng cảm xúc"
+                  className="shrink-0 text-[#0084ff] hover:text-blue-600"
+                >
+                  <Smile size={20} />
+                </button>
+                {showEmoji && (
+                  <EmojiPicker
+                    className="bottom-12 right-0"
+                    onPick={(e) => setDraft((d) => d + e)}
+                    onClose={() => setShowEmoji(false)}
+                  />
+                )}
               </div>
               {draft.trim() ? (
                 <button

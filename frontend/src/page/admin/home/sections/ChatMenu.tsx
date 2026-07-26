@@ -18,6 +18,7 @@ const ChatMenu: React.FC = () => {
   const [me, setMe] = useState('');
   const [staff, setStaff] = useState<StaffUser[]>([]);
   const [convs, setConvs] = useState<ConversationSummary[]>([]);
+  const [online, setOnline] = useState<Set<string>>(new Set());
   const [shown, setShown] = useState(PAGE_SIZE);
   const ref = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -31,6 +32,10 @@ const ChatMenu: React.FC = () => {
     teamChatService
       .listConversations()
       .then(setConvs)
+      .catch(() => undefined);
+    teamChatService
+      .presence()
+      .then((ids) => setOnline(new Set(ids)))
       .catch(() => undefined);
   }, []);
 
@@ -123,7 +128,7 @@ const ChatMenu: React.FC = () => {
             ) : (
               visible.map((c) => {
                 const unread = c.unreadCount > 0;
-                const pOnline = false; // presence realtime nằm ở trang chat; dropdown chỉ hiển thị danh sách
+                const pOnline = c.type === 'DIRECT' && online.has(peerId(c));
                 return (
                   <button
                     key={c.id}

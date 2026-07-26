@@ -19,3 +19,4 @@ export { default as DataTable } from './DataTable';
 export type { DataTableProps, Column } from './DataTable';
 export { default as PageHeader } from './PageHeader';
 export type { PageHeaderProps } from './PageHeader';
+export { default as EmojiPicker } from './EmojiPicker';
