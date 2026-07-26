@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { User } from '../../../../../types/admin';
+import Modal from '../../../../../component/common/Modal';
 
 interface PasswordChangeProps {
   user: User | null;
@@ -52,75 +53,61 @@ const PasswordChangeForm: React.FC<PasswordChangeProps> = ({ user, isOpen, onClo
   if (!isOpen || !user) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-bold text-gray-800">Thay đổi mật khẩu</h3>
-          <button onClick={handleClose} className="text-gray-500 hover:text-gray-700">
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+    <Modal title="Thay đổi mật khẩu" onClose={handleClose} size="sm">
+      <div className="mb-4 rounded-md bg-gray-50 p-3">
+        <p className="text-sm text-gray-600">
+          <strong>Người dùng:</strong> {user.fullName} ({user.username})
+        </p>
+      </div>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="cp-new" className="mb-1 block text-sm font-medium text-gray-700">
+            Mật khẩu mới <span className="text-red-500">*</span>
+          </label>
+          <input
+            id="cp-new"
+            type="password"
+            value={passwords.newPassword}
+            onChange={(e) => handleInputChange('newPassword', e.target.value)}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
+            placeholder="Nhập mật khẩu mới (ít nhất 6 ký tự)"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="cp-confirm" className="mb-1 block text-sm font-medium text-gray-700">
+            Xác nhận mật khẩu <span className="text-red-500">*</span>
+          </label>
+          <input
+            id="cp-confirm"
+            type="password"
+            value={passwords.confirmPassword}
+            onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+            className="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
+            placeholder="Nhập lại mật khẩu mới"
+            required
+          />
+        </div>
+
+        <div className="flex justify-end space-x-3 pt-2">
+          <button
+            type="button"
+            onClick={handleClose}
+            className="rounded-md border border-gray-300 px-4 py-2 text-gray-600 transition-colors hover:bg-gray-50"
+          >
+            Hủy
+          </button>
+          <button
+            type="submit"
+            className="rounded-md bg-brand-goldDark px-4 py-2 text-white transition-colors hover:opacity-90"
+          >
+            Đổi mật khẩu
           </button>
         </div>
-
-        <div className="mb-4 p-3 bg-gray-50 rounded-md">
-          <p className="text-sm text-gray-600">
-            <strong>Người dùng:</strong> {user.fullName} ({user.username})
-          </p>
-        </div>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Mật khẩu mới <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="password"
-              value={passwords.newPassword}
-              onChange={(e) => handleInputChange('newPassword', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
-              placeholder="Nhập mật khẩu mới (ít nhất 6 ký tự)"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Xác nhận mật khẩu <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="password"
-              value={passwords.confirmPassword}
-              onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
-              placeholder="Nhập lại mật khẩu mới"
-              required
-            />
-          </div>
-
-          <div className="flex justify-end space-x-3 pt-4">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
-            >
-              Hủy
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-orange-600 text-white rounded-md hover:bg-orange-700 transition-colors"
-            >
-              Đổi mật khẩu
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+      </form>
+    </Modal>
   );
 };
 export default PasswordChangeForm;

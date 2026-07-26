@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { X } from 'lucide-react';
+import Modal from '../../../../../component/common/Modal';
 import crmService from '../../../../../service/crm';
 import { caseStatusLabel } from './caseStatus';
 import {
@@ -88,17 +88,8 @@ export default function CarePopup({
   const resultName = (id: number | null) => results.find((r) => r.id === id)?.name ?? '—';
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-4 border-b">
-          <h3 className="font-semibold text-lg">
-            Chăm sóc — {caseRow.serviceName ?? caseRow.name}
-          </h3>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
-            <X size={20} />
-          </button>
-        </div>
-
+    <Modal title={`Chăm sóc — ${caseRow.serviceName ?? caseRow.name}`} onClose={onClose} size="lg">
+      <div className="-mx-5 -my-4">
         {/* Context */}
         <div className="p-4 bg-gray-50 text-sm grid grid-cols-2 gap-2">
           <div>Email: {caseRow.customerEmail ?? '—'}</div>
@@ -245,6 +236,6 @@ export default function CarePopup({
           </button>
         </div>
       </div>
-    </div>
+    </Modal>
   );
 }
