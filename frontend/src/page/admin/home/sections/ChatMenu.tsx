@@ -5,22 +5,9 @@ import teamChatService from '../../../../service/teamChat';
 import { getMe } from '../../../../service/auth';
 import { ConversationSummary, StaffUser } from '../../../../types/teamChat';
 import { ADMIN_BASE } from '../navConfig';
+import { initial, fmtListTime } from './TeamChat/helpers';
 
 const PAGE_SIZE = 6;
-
-const initial = (name: string) => (name?.trim()?.charAt(0) || '?').toUpperCase();
-
-// Nhãn thời gian ngắn kiểu Messenger.
-const fmtTime = (iso?: string | null) => {
-  if (!iso) return '';
-  const d = new Date(iso);
-  const diff = (Date.now() - d.getTime()) / 1000;
-  if (diff < 60) return 'Vừa xong';
-  if (diff < 3600) return `${Math.floor(diff / 60)} phút`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)} giờ`;
-  if (diff < 172800) return 'Hôm qua';
-  return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
-};
 
 /**
  * Icon chat trên header: bấm xổ danh sách đoạn chat nội bộ sắp theo tin mới nhất,
@@ -163,7 +150,7 @@ const ChatMenu: React.FC = () => {
                           {convTitle(c)}
                         </span>
                         <span className="shrink-0 text-xs text-gray-500">
-                          {fmtTime(c.lastMessage?.at)}
+                          {fmtListTime(c.lastMessage?.at)}
                         </span>
                       </span>
                       <span className="flex justify-between items-center gap-2">

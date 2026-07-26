@@ -18,40 +18,9 @@ import { getMe } from '../../../../../service/auth';
 import { ConversationSummary, StaffUser, TeamMessage } from '../../../../../types/teamChat';
 import { useTeamChatSocket } from './useTeamChatSocket';
 import { ensureNotificationPermission, playPing, showBrowserNotification } from './notify';
+import { initial, fmtTime, fmtListTime, fmtDivider, groupMessages } from './helpers';
 
 type NewMode = null | 'direct' | 'group';
-
-const GROUP_GAP = 5 * 60 * 1000; // gộp tin liên tiếp cùng người trong 5 phút
-const TIME_GAP = 10 * 60 * 1000; // hiện mốc thời gian khi cách nhau > 10 phút
-
-const initial = (name: string) => (name?.trim()?.charAt(0) || '?').toUpperCase();
-
-const fmtTime = (iso: string) =>
-  new Date(iso).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-
-// Nhãn thời gian ngắn cho danh sách hội thoại (kiểu Messenger).
-const fmtListTime = (iso?: string | null) => {
-  if (!iso) return '';
-  const d = new Date(iso);
-  const diff = (Date.now() - d.getTime()) / 1000;
-  if (diff < 60) return 'Vừa xong';
-  if (diff < 3600) return `${Math.floor(diff / 60)} phút`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)} giờ`;
-  if (diff < 172800) return 'Hôm qua';
-  return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
-};
-
-// Mốc thời gian giữa các cụm tin nhắn.
-const fmtDivider = (iso: string) => {
-  const d = new Date(iso);
-  const now = new Date();
-  const sameDay = d.toDateString() === now.toDateString();
-  return sameDay
-    ? fmtTime(iso)
-    : d.toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit' }) +
-        ' ' +
-        fmtTime(iso);
-};
 
 export default function TeamChat() {
   // userId/role come from /auth/me (token is httpOnly now, not decodable in JS).
@@ -295,17 +264,7 @@ export default function TeamChat() {
   const activePeerOnline = activePeer ? online.has(activePeer) : false;
 
   // Gộp tin liên tiếp + xác định vị trí trong cụm để bo góc kiểu Messenger.
-  const rows = messages.map((m, i) => {
-    const prev = messages[i - 1];
-    const next = messages[i + 1];
-    const t = new Date(m.createdAt).getTime();
-    const firstOfGroup =
-      !prev || prev.senderId !== m.senderId || t - new Date(prev.createdAt).getTime() > GROUP_GAP;
-    const lastOfGroup =
-      !next || next.senderId !== m.senderId || new Date(next.createdAt).getTime() - t > GROUP_GAP;
-    const showTime = !prev || t - new Date(prev.createdAt).getTime() > TIME_GAP;
-    return { m, mine: m.senderId === me, firstOfGroup, lastOfGroup, showTime };
-  });
+  const rows = groupMessages(messages, me);
 
   // "Đã xem": ai đã đọc tin cuối cùng của tôi.
   const lastMessage = messages[messages.length - 1];
