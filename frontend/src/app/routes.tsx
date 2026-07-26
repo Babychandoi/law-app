@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 import type { ReactElement } from 'react';
-import { RouteObject } from 'react-router-dom';
+import { RouteObject, Navigate } from 'react-router-dom';
 
 const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
 const About = lazy(() => import('../page/aboutUs'));
@@ -16,6 +16,7 @@ const News = lazy(() => import('../page/news'));
 const NewsDetail = lazy(() => import('../page/news/section/New'));
 const Login = lazy(() => import('../page/admin/login/login'));
 const AdminHome = lazy(() => import('../page/admin/home'));
+const SystemHome = lazy(() => import('../page/admin/home/SystemHome'));
 const ChatManagement = lazy(() => import('../page/admin/home/sections/Chat'));
 const CustomerManagement = lazy(() => import('../page/admin/home/sections/Customer'));
 const EmployeeManagement = lazy(() => import('../page/admin/home/sections/Employee'));
@@ -68,22 +69,31 @@ export const publicRoutes: RouteObject = {
 
 export const adminRoutes: RouteObject[] = [
   { path: '/2025/luatpoip/admin/login', element: withSuspense(<Login />) },
+  // Khu VẬN HÀNH (nhân viên + admin)
   {
     path: '/2025/luatpoip/admin',
     element: withSuspense(<AdminHome />),
     children: [
       { index: true, element: withSuspense(<AdminDashboard />) },
-      { path: 'employees', element: withSuspense(<EmployeeManagement />) },
-      { path: 'posts', element: withSuspense(<PostManagement />) },
       { path: 'customers', element: withSuspense(<CustomerManagement />) },
+      { path: 'crm', element: withSuspense(<CRM />) },
+      { path: 'chats', element: withSuspense(<ChatManagement />) },
+      { path: 'team-chat', element: withSuspense(<TeamChat />) },
+    ],
+  },
+  // Khu QUẢN TRỊ HỆ THỐNG (chỉ admin) — SystemHome tự chặn role
+  {
+    path: '/2025/luatpoip/he-thong',
+    element: withSuspense(<SystemHome />),
+    children: [
+      { index: true, element: <Navigate to="services" replace /> },
+      { path: 'services', element: withSuspense(<ServiceManager />) },
+      { path: 'posts', element: withSuspense(<PostManagement />) },
+      { path: 'service-images', element: withSuspense(<ServiceImages />) },
+      { path: 'employees', element: withSuspense(<EmployeeManagement />) },
       { path: 'applications', element: withSuspense(<JobApplications />) },
       { path: 'subscribers', element: withSuspense(<Subscribers />) },
-      { path: 'chats', element: withSuspense(<ChatManagement />) },
-      { path: 'service-images', element: withSuspense(<ServiceImages />) },
-      { path: 'services', element: withSuspense(<ServiceManager />) },
-      { path: 'team-chat', element: withSuspense(<TeamChat />) },
-      { path: 'crm', element: withSuspense(<CRM />) },
-      { path: 'crm/config', element: withSuspense(<CrmConfig />) },
+      { path: 'crm-config', element: withSuspense(<CrmConfig />) },
     ],
   },
 ];

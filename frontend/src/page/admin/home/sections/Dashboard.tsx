@@ -114,11 +114,12 @@ export default function Dashboard() {
 
   const quickActions = [
     { label: 'Khách hàng', to: `${BASE}/customers`, icon: Users },
-    { label: 'CRM', to: `${BASE}/crm`, icon: Briefcase },
-    { label: 'Bài viết', to: `${BASE}/posts`, icon: Newspaper },
-    { label: 'Dịch vụ', to: `${BASE}/services`, icon: Cog },
+    { label: 'CRM chăm sóc', to: `${BASE}/crm`, icon: Briefcase },
     { label: 'Chat khách', to: `${BASE}/chats`, icon: MessageSquare },
-    { label: 'Nhân viên', to: `${BASE}/employees`, icon: UserPlus },
+    { label: 'Chat nội bộ', to: `${BASE}/team-chat`, icon: Newspaper },
+    ...(me?.role === 'ADMIN'
+      ? [{ label: 'Quản trị hệ thống', to: '/2025/luatpoip/he-thong', icon: Cog }]
+      : []),
   ];
 
   if (loading) {

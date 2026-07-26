@@ -1,79 +1,13 @@
-import {
-  X,
-  LayoutDashboard,
-  Users,
-  UserCog,
-  Newspaper,
-  Briefcase,
-  Mail,
-  MessageSquare,
-  MessagesSquare,
-  HeartHandshake,
-  SlidersHorizontal,
-  Puzzle,
-  type LucideIcon,
-} from 'lucide-react';
+import { X, type LucideIcon } from 'lucide-react';
 import React, { useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
-import { getMe } from '../../../../service/auth';
+import type { NavGroup } from '../navConfig';
 
-const BASE = '/2025/luatpoip/admin';
-
-interface NavItem {
+interface FooterLink {
   label: string;
-  path: string;
-  icon: LucideIcon;
-  end?: boolean;
-  onlyAdmin?: boolean;
+  to: string;
+  icon?: LucideIcon;
 }
-
-interface NavGroup {
-  title: string;
-  items: NavItem[];
-}
-
-const GROUPS: NavGroup[] = [
-  {
-    title: 'Tổng quan',
-    items: [{ label: 'Trang chủ', path: BASE, icon: LayoutDashboard, end: true }],
-  },
-  {
-    title: 'Khách hàng & CRM',
-    items: [
-      { label: 'Khách hàng', path: `${BASE}/customers`, icon: Users },
-      { label: 'CRM chăm sóc', path: `${BASE}/crm`, icon: HeartHandshake },
-      {
-        label: 'Cấu hình CRM',
-        path: `${BASE}/crm/config`,
-        icon: SlidersHorizontal,
-        onlyAdmin: true,
-      },
-    ],
-  },
-  {
-    title: 'Dịch vụ & nội dung',
-    items: [
-      { label: 'Dịch vụ', path: `${BASE}/services`, icon: Puzzle, onlyAdmin: true },
-      { label: 'Bài viết', path: `${BASE}/posts`, icon: Newspaper },
-    ],
-  },
-  {
-    title: 'Giao tiếp',
-    items: [
-      { label: 'Chat khách', path: `${BASE}/chats`, icon: MessageSquare, onlyAdmin: true },
-      { label: 'Chat nội bộ', path: `${BASE}/team-chat`, icon: MessagesSquare },
-      { label: 'Người đăng ký', path: `${BASE}/subscribers`, icon: Mail, onlyAdmin: true },
-    ],
-  },
-  {
-    title: 'Tuyển dụng',
-    items: [{ label: 'Ứng viên', path: `${BASE}/applications`, icon: Briefcase, onlyAdmin: true }],
-  },
-  {
-    title: 'Quản trị hệ thống',
-    items: [{ label: 'Nhân viên', path: `${BASE}/employees`, icon: UserCog, onlyAdmin: true }],
-  },
-];
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   [
@@ -84,20 +18,28 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
       : 'text-white/70 hover:bg-white/10 hover:text-white',
   ].join(' ');
 
-/** Nội dung điều hướng dùng chung cho cả sidebar desktop và drawer mobile. */
-function NavContent({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate?: () => void }) {
+function NavContent({
+  groups,
+  footer,
+  onNavigate,
+}: {
+  groups: NavGroup[];
+  footer?: FooterLink;
+  onNavigate?: () => void;
+}) {
   return (
-    <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-4" aria-label="Điều hướng quản trị">
-      {GROUPS.map((group) => {
-        const items = group.items.filter((i) => !i.onlyAdmin || isAdmin);
-        if (items.length === 0) return null;
-        return (
+    <nav
+      className="flex flex-1 flex-col overflow-y-auto px-3 py-4"
+      aria-label="Điều hướng quản trị"
+    >
+      <div className="flex-1 space-y-6">
+        {groups.map((group) => (
           <div key={group.title}>
             <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wide text-white/40">
               {group.title}
             </p>
             <div className="space-y-1">
-              {items.map((item) => (
+              {group.items.map((item) => (
                 <NavLink
                   key={item.path}
                   to={item.path}
@@ -111,23 +53,30 @@ function NavContent({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate?: ()
               ))}
             </div>
           </div>
-        );
-      })}
+        ))}
+      </div>
+
+      {footer && (
+        <NavLink
+          to={footer.to}
+          onClick={onNavigate}
+          className="mt-6 flex items-center gap-3 rounded-lg border border-white/15 px-3 py-2 text-sm font-medium text-white/80 hover:bg-white/10 hover:text-white"
+        >
+          {footer.icon && <footer.icon size={18} aria-hidden="true" />}
+          <span>{footer.label}</span>
+        </NavLink>
+      )}
     </nav>
   );
 }
 
 const Sidebar: React.FC<{
+  groups: NavGroup[];
+  footer?: FooterLink;
+  workspaceTitle?: string;
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
-}> = ({ sidebarOpen, setSidebarOpen }) => {
-  const [isAdmin, setIsAdmin] = React.useState(false);
-
-  useEffect(() => {
-    getMe().then((me) => setIsAdmin(me?.role === 'ADMIN'));
-  }, []);
-
-  // Đóng drawer mobile bằng Escape.
+}> = ({ groups, footer, workspaceTitle = 'Admin', sidebarOpen, setSidebarOpen }) => {
   useEffect(() => {
     if (!sidebarOpen) return;
     const onKey = (e: KeyboardEvent) => {
@@ -137,21 +86,33 @@ const Sidebar: React.FC<{
     return () => window.removeEventListener('keydown', onKey);
   }, [sidebarOpen, setSidebarOpen]);
 
-  const brand = (
-    <div className="flex h-16 shrink-0 items-center gap-2 border-b border-white/10 px-5">
-      <span className="text-lg font-bold text-white">Luật Poip</span>
-      <span className="rounded bg-brand-gold/20 px-1.5 py-0.5 text-[10px] font-semibold text-brand-gold">
-        Admin
-      </span>
+  const brand = (onClose?: () => void) => (
+    <div className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 px-5">
+      <div className="flex items-center gap-2">
+        <span className="text-lg font-bold text-white">Luật Poip</span>
+        <span className="rounded bg-brand-gold/20 px-1.5 py-0.5 text-[10px] font-semibold text-brand-gold">
+          {workspaceTitle}
+        </span>
+      </div>
+      {onClose && (
+        <button
+          type="button"
+          onClick={onClose}
+          className="rounded-md p-1 text-white/70 hover:bg-white/10 hover:text-white lg:hidden"
+          aria-label="Đóng menu"
+        >
+          <X size={20} aria-hidden="true" />
+        </button>
+      )}
     </div>
   );
 
   return (
     <>
-      {/* Desktop: sidebar cố định, là flex child (không overlay) */}
+      {/* Desktop: sidebar cố định */}
       <aside className="hidden w-60 shrink-0 flex-col bg-brand-ink lg:flex">
-        {brand}
-        <NavContent isAdmin={isAdmin} />
+        {brand()}
+        <NavContent groups={groups} footer={footer} />
       </aside>
 
       {/* Mobile: drawer */}
@@ -169,23 +130,8 @@ const Sidebar: React.FC<{
         aria-label="Menu quản trị"
         aria-hidden={!sidebarOpen}
       >
-        <div className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 px-5">
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-white">Luật Poip</span>
-            <span className="rounded bg-brand-gold/20 px-1.5 py-0.5 text-[10px] font-semibold text-brand-gold">
-              Admin
-            </span>
-          </div>
-          <button
-            type="button"
-            onClick={() => setSidebarOpen(false)}
-            className="rounded-md p-1 text-white/70 hover:bg-white/10 hover:text-white"
-            aria-label="Đóng menu"
-          >
-            <X size={20} aria-hidden="true" />
-          </button>
-        </div>
-        <NavContent isAdmin={isAdmin} onNavigate={() => setSidebarOpen(false)} />
+        {brand(() => setSidebarOpen(false))}
+        <NavContent groups={groups} footer={footer} onNavigate={() => setSidebarOpen(false)} />
       </aside>
     </>
   );
