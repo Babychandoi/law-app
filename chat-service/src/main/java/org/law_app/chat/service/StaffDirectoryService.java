@@ -12,8 +12,10 @@ import org.springframework.web.client.RestClient;
 import org.springframework.web.server.ResponseStatusException;
 
 /**
- * The staff directory lives in the monolith. We proxy {@code GET /auth/users}, forwarding the
- * caller's JWT, instead of duplicating the user table — accepted light coupling for the MVP.
+ * The staff directory lives in the monolith. We proxy {@code GET /auth/staff-directory}, forwarding
+ * the caller's JWT, instead of duplicating the user table — accepted light coupling for the MVP.
+ * (Dùng endpoint danh bạ tối giản cho MỌI user đã đăng nhập; KHÔNG dùng /auth/users vì đó là
+ * endpoint quản lý người dùng chỉ ADMIN — nhân viên gọi sẽ bị 403 -> chat 502.)
  */
 @Slf4j
 @Service
@@ -30,7 +32,7 @@ public class StaffDirectoryService {
       ApiEnvelope<List<StaffUser>> resp =
           restClient
               .get()
-              .uri("/auth/users")
+              .uri("/auth/staff-directory")
               .header(HttpHeaders.AUTHORIZATION, "Bearer " + bearerToken)
               .retrieve()
               .body(new ParameterizedTypeReference<ApiEnvelope<List<StaffUser>>>() {});

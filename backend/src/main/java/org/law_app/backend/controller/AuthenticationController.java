@@ -15,6 +15,7 @@ import org.law_app.backend.dto.request.*;
 import org.law_app.backend.dto.response.ApiResponse;
 import org.law_app.backend.dto.response.AuthenticationResponse;
 import org.law_app.backend.dto.response.IntrospectResponse;
+import org.law_app.backend.dto.response.StaffDirectoryResponse;
 import org.law_app.backend.common.ErrorCode;
 import org.law_app.backend.dto.response.UserResponse;
 import org.law_app.backend.security.CookieUtil;
@@ -141,6 +142,15 @@ public class AuthenticationController {
     return ApiResponse.<List<UserResponse>>builder()
         .data(authenticationService.getUsers())
         .message("Users retrieved successfully")
+        .build();
+  }
+
+  // Danh bạ nhân sự cho chat nội bộ — mọi user đã đăng nhập (không giới hạn ADMIN).
+  @GetMapping("/staff-directory")
+  ApiResponse<List<StaffDirectoryResponse>> getStaffDirectory() {
+    return ApiResponse.<List<StaffDirectoryResponse>>builder()
+        .data(authenticationService.getStaffDirectory())
+        .message("Staff directory retrieved successfully")
         .build();
   }
 

@@ -8,6 +8,7 @@ import org.law_app.backend.common.Role;
 import org.law_app.backend.dto.request.*;
 import org.law_app.backend.dto.response.AuthenticationResponse;
 import org.law_app.backend.dto.response.IntrospectResponse;
+import org.law_app.backend.dto.response.StaffDirectoryResponse;
 import org.law_app.backend.dto.response.UserResponse;
 
 public interface AuthenticationService {
@@ -22,6 +23,9 @@ public interface AuthenticationService {
   AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException;
 
   List<UserResponse> getUsers();
+
+  /** Danh bạ nhân sự tối giản cho chat nội bộ — mọi user đã đăng nhập đều gọi được. */
+  List<StaffDirectoryResponse> getStaffDirectory();
 
   UserResponse updateUser(String id, UserRequest request);
 

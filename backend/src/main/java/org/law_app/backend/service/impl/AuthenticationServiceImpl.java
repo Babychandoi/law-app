@@ -13,6 +13,7 @@ import org.law_app.backend.common.Role;
 import org.law_app.backend.dto.request.*;
 import org.law_app.backend.dto.response.AuthenticationResponse;
 import org.law_app.backend.dto.response.IntrospectResponse;
+import org.law_app.backend.dto.response.StaffDirectoryResponse;
 import org.law_app.backend.dto.response.UserResponse;
 import org.law_app.backend.entity.User;
 import org.law_app.backend.mapper.UserMapper;
@@ -175,6 +176,28 @@ public class AuthenticationServiceImpl implements AuthenticationService {
       return user.stream().map(userMapper::toResponse).toList();
     } catch (Exception e) {
       log.error("Error when get users", e);
+      throw new AppException(ErrorCode.USER_NOT_EXISTED);
+    }
+  }
+
+  // Danh bạ nhân sự cho chat nội bộ: mọi user đã đăng nhập đều gọi được (không giới hạn ADMIN).
+  // Trả field tối giản (không email/điện thoại/trạng thái) để hạn chế lộ thông tin.
+  @Override
+  public List<StaffDirectoryResponse> getStaffDirectory() {
+    try {
+      return userRepository.findAll().stream()
+          .map(
+              u ->
+                  StaffDirectoryResponse.builder()
+                      .id(u.getId())
+                      .username(u.getUsername())
+                      .fullName(u.getFullName())
+                      .role(u.getRole())
+                      .position(u.getPosition())
+                      .build())
+          .toList();
+    } catch (Exception e) {
+      log.error("Error when get staff directory", e);
       throw new AppException(ErrorCode.USER_NOT_EXISTED);
     }
   }
