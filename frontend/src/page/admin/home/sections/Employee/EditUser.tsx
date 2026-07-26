@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { User, Save, X, Mail, Phone, Briefcase, UserCircle } from 'lucide-react';
+import Modal from '../../../../../component/common/Modal';
 import { UserCreate, User as UserType } from '../../../../../types/admin';
 
 interface UserEditProps {
@@ -146,156 +147,136 @@ const UserEdit: React.FC<UserEditProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-brand-surface rounded-lg">
-              <User className="h-6 w-6 text-brand-goldDark" />
-            </div>
-            <h2 className="text-2xl font-bold text-gray-800">Chỉnh sửa thông tin người dùng</h2>
-          </div>
-          <button
-            onClick={handleClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+    <Modal title="Chỉnh sửa thông tin người dùng" onClose={handleClose} size="lg">
+      <div className="space-y-6">
+        {/* Username Field */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <UserCircle className="h-4 w-4" />
+            Tên đăng nhập <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={formData.username}
+            onChange={(e) => handleInputChange('username', e.target.value)}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
+              errors.username ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
+            placeholder="Nhập tên đăng nhập"
             disabled={isLoading}
+          />
+          {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username}</p>}
+        </div>
+
+        {/* Email Field */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <Mail className="h-4 w-4" />
+            Email <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="email"
+            value={formData.email}
+            onChange={(e) => handleInputChange('email', e.target.value)}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
+              errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
+            placeholder="Nhập email"
+            disabled={isLoading}
+          />
+          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
+        </div>
+
+        {/* Full Name Field */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <User className="h-4 w-4" />
+            Họ tên <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={formData.fullName}
+            onChange={(e) => handleInputChange('fullName', e.target.value)}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
+              errors.fullName ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
+            placeholder="Nhập họ tên"
+            disabled={isLoading}
+          />
+          {errors.fullName && <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>}
+        </div>
+
+        {/* phoneNumber Number Field */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <Phone className="h-4 w-4" />
+            Số điện thoại
+          </label>
+          <input
+            type="tel"
+            value={formData.phoneNumber}
+            onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
+              errors.phoneNumber ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
+            placeholder="Nhập số điện thoại"
+            disabled={isLoading}
+          />
+          {errors.phoneNumber && <p className="mt-1 text-sm text-red-600">{errors.phoneNumber}</p>}
+        </div>
+
+        {/* Position Field */}
+        <div>
+          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <Briefcase className="h-4 w-4" />
+            Chức vụ
+          </label>
+          <input
+            type="text"
+            value={formData.position}
+            onChange={(e) => handleInputChange('position', e.target.value)}
+            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
+              errors.position ? 'border-red-500 bg-red-50' : 'border-gray-300'
+            }`}
+            placeholder="Nhập chức vụ"
+            disabled={isLoading}
+          />
+          {errors.position && <p className="mt-1 text-sm text-red-600">{errors.position}</p>}
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex gap-4 pt-6 border-t">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            disabled={isLoading}
+            className="flex-1 flex items-center justify-center gap-2 bg-brand-goldDark text-white py-3 px-6 rounded-lg hover:bg-brand-goldDark focus:ring-2 focus:ring-brand-goldDark focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <X className="w-6 h-6" />
+            <Save className="h-4 w-4" />
+            {isLoading ? 'Đang lưu...' : 'Lưu thay đổi'}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleReset}
+            disabled={isLoading}
+            className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Khôi phục
+          </button>
+
+          <button
+            type="button"
+            onClick={handleClose}
+            disabled={isLoading}
+            className="flex items-center justify-center gap-2 px-6 py-3 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <X className="h-4 w-4" />
+            Hủy
           </button>
         </div>
-
-        <div className="space-y-6">
-          {/* Username Field */}
-          <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <UserCircle className="h-4 w-4" />
-              Tên đăng nhập <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={formData.username}
-              onChange={(e) => handleInputChange('username', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
-                errors.username ? 'border-red-500 bg-red-50' : 'border-gray-300'
-              }`}
-              placeholder="Nhập tên đăng nhập"
-              disabled={isLoading}
-            />
-            {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username}</p>}
-          </div>
-
-          {/* Email Field */}
-          <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <Mail className="h-4 w-4" />
-              Email <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
-                errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
-              }`}
-              placeholder="Nhập email"
-              disabled={isLoading}
-            />
-            {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
-          </div>
-
-          {/* Full Name Field */}
-          <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <User className="h-4 w-4" />
-              Họ tên <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={formData.fullName}
-              onChange={(e) => handleInputChange('fullName', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
-                errors.fullName ? 'border-red-500 bg-red-50' : 'border-gray-300'
-              }`}
-              placeholder="Nhập họ tên"
-              disabled={isLoading}
-            />
-            {errors.fullName && <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>}
-          </div>
-
-          {/* phoneNumber Number Field */}
-          <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <Phone className="h-4 w-4" />
-              Số điện thoại
-            </label>
-            <input
-              type="tel"
-              value={formData.phoneNumber}
-              onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
-                errors.phoneNumber ? 'border-red-500 bg-red-50' : 'border-gray-300'
-              }`}
-              placeholder="Nhập số điện thoại"
-              disabled={isLoading}
-            />
-            {errors.phoneNumber && (
-              <p className="mt-1 text-sm text-red-600">{errors.phoneNumber}</p>
-            )}
-          </div>
-
-          {/* Position Field */}
-          <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-              <Briefcase className="h-4 w-4" />
-              Chức vụ
-            </label>
-            <input
-              type="text"
-              value={formData.position}
-              onChange={(e) => handleInputChange('position', e.target.value)}
-              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
-                errors.position ? 'border-red-500 bg-red-50' : 'border-gray-300'
-              }`}
-              placeholder="Nhập chức vụ"
-              disabled={isLoading}
-            />
-            {errors.position && <p className="mt-1 text-sm text-red-600">{errors.position}</p>}
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-4 pt-6 border-t">
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={isLoading}
-              className="flex-1 flex items-center justify-center gap-2 bg-brand-goldDark text-white py-3 px-6 rounded-lg hover:bg-brand-goldDark focus:ring-2 focus:ring-brand-goldDark focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Save className="h-4 w-4" />
-              {isLoading ? 'Đang lưu...' : 'Lưu thay đổi'}
-            </button>
-
-            <button
-              type="button"
-              onClick={handleReset}
-              disabled={isLoading}
-              className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Khôi phục
-            </button>
-
-            <button
-              type="button"
-              onClick={handleClose}
-              disabled={isLoading}
-              className="flex items-center justify-center gap-2 px-6 py-3 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <X className="h-4 w-4" />
-              Hủy
-            </button>
-          </div>
-        </div>
       </div>
-    </div>
+    </Modal>
   );
 };
 

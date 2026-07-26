@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { UserCreate } from '../../../../../types/admin';
 import { toast } from 'react-toastify';
+import Modal from '../../../../../component/common/Modal';
 
 // User Form Component
 interface UserFormProps {
@@ -128,207 +129,185 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSave }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4 max-h-[90vh] overflow-y-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-lg font-bold text-gray-800">Thêm người dùng mới</h3>
-          <button
-            onClick={handleClose}
-            className="text-gray-500 hover:text-gray-700 transition-colors"
+    <Modal title="Thêm người dùng mới" onClose={handleClose} size="md">
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Username Field */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Tên đăng nhập <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={formData.username}
+            onChange={(e) => handleInputChange('username', e.target.value)}
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
+              errors.username
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:ring-brand-goldDark'
+            }`}
+            placeholder="Nhập tên đăng nhập"
             disabled={isLoading}
-          >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          </button>
+          />
+          {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
+        </div>
+        {/*Password Field */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Mật khẩu <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="password"
+            value={formData.password}
+            onChange={(e) => handleInputChange('password', e.target.value)}
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
+              errors.password
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:ring-brand-goldDark'
+            }`}
+            placeholder="Nhập mật khẩu (ít nhất 6 ký tự)"
+            disabled={isLoading}
+            required
+          />
+          {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
+        </div>
+        {/* Full Name Field */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Họ tên <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            value={formData.fullName}
+            onChange={(e) => handleInputChange('fullName', e.target.value)}
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
+              errors.fullName
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:ring-brand-goldDark'
+            }`}
+            placeholder="Nhập họ tên"
+            disabled={isLoading}
+          />
+          {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Username Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tên đăng nhập <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={formData.username}
-              onChange={(e) => handleInputChange('username', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
-                errors.username
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-brand-goldDark'
-              }`}
-              placeholder="Nhập tên đăng nhập"
-              disabled={isLoading}
-            />
-            {errors.username && <p className="text-red-500 text-sm mt-1">{errors.username}</p>}
-          </div>
-          {/*Password Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Mật khẩu <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="password"
-              value={formData.password}
-              onChange={(e) => handleInputChange('password', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
-                errors.password
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-brand-goldDark'
-              }`}
-              placeholder="Nhập mật khẩu (ít nhất 6 ký tự)"
-              disabled={isLoading}
-              required
-            />
-            {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password}</p>}
-          </div>
-          {/* Full Name Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Họ tên <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={formData.fullName}
-              onChange={(e) => handleInputChange('fullName', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
-                errors.fullName
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-brand-goldDark'
-              }`}
-              placeholder="Nhập họ tên"
-              disabled={isLoading}
-            />
-            {errors.fullName && <p className="text-red-500 text-sm mt-1">{errors.fullName}</p>}
-          </div>
+        {/* Email Field */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Email <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="email"
+            value={formData.email}
+            onChange={(e) => handleInputChange('email', e.target.value)}
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
+              errors.email
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:ring-brand-goldDark'
+            }`}
+            placeholder="Nhập email"
+            disabled={isLoading}
+          />
+          {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
+        </div>
 
-          {/* Email Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Email <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="email"
-              value={formData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
-                errors.email
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-brand-goldDark'
-              }`}
-              placeholder="Nhập email"
-              disabled={isLoading}
-            />
-            {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email}</p>}
-          </div>
+        {/* phoneNumber Field */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Điện thoại</label>
+          <input
+            type="tel"
+            value={formData.phoneNumber}
+            onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
+              errors.phoneNumber
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:ring-brand-goldDark'
+            }`}
+            placeholder="Nhập số điện thoại"
+            disabled={isLoading}
+          />
+          {errors.phoneNumber && <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>}
+        </div>
 
-          {/* phoneNumber Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Điện thoại</label>
-            <input
-              type="tel"
-              value={formData.phoneNumber}
-              onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
-                errors.phoneNumber
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-brand-goldDark'
-              }`}
-              placeholder="Nhập số điện thoại"
-              disabled={isLoading}
-            />
-            {errors.phoneNumber && (
-              <p className="text-red-500 text-sm mt-1">{errors.phoneNumber}</p>
+        {/* Position Field */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">Chức vụ</label>
+          <input
+            type="text"
+            value={formData.position}
+            onChange={(e) => handleInputChange('position', e.target.value)}
+            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
+              errors.position
+                ? 'border-red-500 focus:ring-red-500'
+                : 'border-gray-300 focus:ring-brand-goldDark'
+            }`}
+            placeholder="Nhập chức vụ"
+            disabled={isLoading}
+          />
+          {errors.position && <p className="text-red-500 text-sm mt-1">{errors.position}</p>}
+        </div>
+
+        {/* Role Field */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Vai trò <span className="text-red-500">*</span>
+          </label>
+          <select
+            value={formData.role}
+            onChange={(e) => handleInputChange('role', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark transition-colors"
+            disabled={isLoading}
+          >
+            <option value="USER">Nhân viên</option>
+            <option value="ADMIN">Quản trị viên</option>
+          </select>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex justify-end space-x-3 pt-6 border-t">
+          <button
+            type="button"
+            onClick={handleClose}
+            className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
+            disabled={isLoading}
+          >
+            Hủy
+          </button>
+          <button
+            type="submit"
+            className="px-4 py-2 bg-brand-goldDark text-white rounded-md hover:bg-brand-goldDark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Đang xử lý...
+              </>
+            ) : (
+              'Thêm mới'
             )}
-          </div>
-
-          {/* Position Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Chức vụ</label>
-            <input
-              type="text"
-              value={formData.position}
-              onChange={(e) => handleInputChange('position', e.target.value)}
-              className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 transition-colors ${
-                errors.position
-                  ? 'border-red-500 focus:ring-red-500'
-                  : 'border-gray-300 focus:ring-brand-goldDark'
-              }`}
-              placeholder="Nhập chức vụ"
-              disabled={isLoading}
-            />
-            {errors.position && <p className="text-red-500 text-sm mt-1">{errors.position}</p>}
-          </div>
-
-          {/* Role Field */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Vai trò <span className="text-red-500">*</span>
-            </label>
-            <select
-              value={formData.role}
-              onChange={(e) => handleInputChange('role', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark transition-colors"
-              disabled={isLoading}
-            >
-              <option value="USER">Nhân viên</option>
-              <option value="ADMIN">Quản trị viên</option>
-            </select>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex justify-end space-x-3 pt-6 border-t">
-            <button
-              type="button"
-              onClick={handleClose}
-              className="px-4 py-2 text-gray-600 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors disabled:opacity-50"
-              disabled={isLoading}
-            >
-              Hủy
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-brand-goldDark text-white rounded-md hover:bg-brand-goldDark transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <>
-                  <svg
-                    className="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Đang xử lý...
-                </>
-              ) : (
-                'Thêm mới'
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+          </button>
+        </div>
+      </form>
+    </Modal>
   );
 };
 
