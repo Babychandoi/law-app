@@ -433,6 +433,7 @@ const CustomerManagement: React.FC = () => {
             <button
               onClick={() => goToPage(currentPage - 1)}
               disabled={currentPage === 1}
+              aria-label="Trang trước"
               className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
               <ChevronLeft className="w-4 h-4" />
@@ -455,6 +456,7 @@ const CustomerManagement: React.FC = () => {
             })}
             <button
               onClick={() => goToPage(currentPage + 1)}
+              aria-label="Trang sau"
               disabled={currentPage === totalPages}
               className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
             >
