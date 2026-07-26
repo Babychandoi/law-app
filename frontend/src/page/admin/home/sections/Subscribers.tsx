@@ -68,6 +68,26 @@ const Subscribers: React.FC = () => {
     }
   };
 
+  const handleBulkDelete = async (rows: Subscriber[], clear: () => void) => {
+    const ok = await confirm({
+      title: 'Xóa nhiều người đăng ký',
+      message: `Xóa ${rows.length} người đăng ký đã chọn khỏi danh sách?`,
+      confirmText: 'Xóa tất cả',
+      variant: 'danger',
+    });
+    if (!ok) return;
+    try {
+      await Promise.all(rows.map((r) => axiosClient.delete(`/news/subscribers/${r.id}`)));
+      const ids = new Set(rows.map((r) => r.id));
+      setSubscribers((prev) => prev.filter((s) => !ids.has(s.id)));
+      toast.success(`Đã xóa ${rows.length} người đăng ký`);
+      clear();
+    } catch (error) {
+      toast.error('Không thể xóa một số mục. Vui lòng tải lại và thử lại.');
+      fetchSubscribers();
+    }
+  };
+
   const fmtDate = (iso: string) =>
     new Date(iso).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' });
 
@@ -132,6 +152,17 @@ const Subscribers: React.FC = () => {
           rowKey={(s) => s.id}
           loading={loading}
           urlKey="sub"
+          selectable
+          bulkActions={(rows, clear) => (
+            <Button
+              size="sm"
+              variant="danger"
+              leftIcon={<Trash2 className="w-4 h-4" />}
+              onClick={() => handleBulkDelete(rows, clear)}
+            >
+              Xóa đã chọn ({rows.length})
+            </Button>
+          )}
           searchable
           searchPlaceholder="Tìm kiếm theo email..."
           searchText={(s) => s.email}

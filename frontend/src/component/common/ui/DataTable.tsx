@@ -40,6 +40,10 @@ export interface DataTableProps<T> {
   toolbar?: React.ReactNode;
   /** Nếu đặt, lưu trạng thái tìm kiếm/sắp xếp/trang lên URL (dùng làm namespace param). */
   urlKey?: string;
+  /** Cho phép chọn nhiều dòng (hiện cột checkbox + thanh hành động hàng loạt). */
+  selectable?: boolean;
+  /** Render các nút hành động hàng loạt; nhận danh sách dòng đang chọn + hàm xoá chọn. */
+  bulkActions?: (selected: T[], clearSelection: () => void) => React.ReactNode;
 }
 
 const ALIGN: Record<'left' | 'right' | 'center', string> = {
@@ -77,6 +81,8 @@ function DataTable<T>({
   mobileCard,
   toolbar,
   urlKey,
+  selectable = false,
+  bulkActions,
 }: DataTableProps<T>) {
   const [searchParams, setSearchParams] = useSearchParams();
   const pk = (k: string) => (urlKey ? `${urlKey}_${k}` : k);
@@ -146,6 +152,26 @@ function DataTable<T>({
     setPage(1);
   };
 
+  // ----- Chọn nhiều dòng -----
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const clearSelection = () => setSelected(new Set());
+  const toggleOne = (id: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  const pageKeys = pageRows.map(rowKey);
+  const allOnPage = pageKeys.length > 0 && pageKeys.every((k) => selected.has(k));
+  const toggleAllOnPage = () =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (allOnPage) pageKeys.forEach((k) => next.delete(k));
+      else pageKeys.forEach((k) => next.add(k));
+      return next;
+    });
+  const selectedRows = sorted.filter((r) => selected.has(rowKey(r)));
+
   if (loading) return <Spinner center />;
 
   return (
@@ -175,6 +201,22 @@ function DataTable<T>({
         </div>
       )}
 
+      {selectable && selectedRows.length > 0 && (
+        <div className="flex flex-wrap items-center gap-3 mb-3 rounded-lg bg-brand-surface px-4 py-2.5 text-sm">
+          <span className="font-medium text-brand-goldDark">Đã chọn {selectedRows.length}</span>
+          <button
+            type="button"
+            onClick={clearSelection}
+            className="text-gray-500 hover:text-gray-700 underline"
+          >
+            Bỏ chọn
+          </button>
+          <div className="ml-auto flex flex-wrap items-center gap-2">
+            {bulkActions?.(selectedRows, clearSelection)}
+          </div>
+        </div>
+      )}
+
       {sorted.length === 0 ? (
         <EmptyState icon={emptyIcon} title={emptyTitle} description={emptyDescription} />
       ) : (
@@ -184,6 +226,17 @@ function DataTable<T>({
             <table className="w-full">
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
+                  {selectable && (
+                    <th className="px-4 py-3 w-10">
+                      <input
+                        type="checkbox"
+                        aria-label="Chọn tất cả dòng trên trang"
+                        checked={allOnPage}
+                        onChange={toggleAllOnPage}
+                        className="h-4 w-4 accent-brand-goldDark cursor-pointer"
+                      />
+                    </th>
+                  )}
                   {columns.map((col) => {
                     const active = sortKey === col.key;
                     return (
@@ -225,8 +278,19 @@ function DataTable<T>({
                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                     className={`border-b border-gray-100 ${
                       onRowClick ? 'cursor-pointer hover:bg-gray-50' : 'hover:bg-gray-50'
-                    }`}
+                    } ${selected.has(rowKey(row)) ? 'bg-brand-surface/50' : ''}`}
                   >
+                    {selectable && (
+                      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                        <input
+                          type="checkbox"
+                          aria-label="Chọn dòng"
+                          checked={selected.has(rowKey(row))}
+                          onChange={() => toggleOne(rowKey(row))}
+                          className="h-4 w-4 accent-brand-goldDark cursor-pointer"
+                        />
+                      </td>
+                    )}
                     {columns.map((col) => (
                       <td
                         key={col.key}
@@ -249,10 +313,27 @@ function DataTable<T>({
               <div
                 key={rowKey(row)}
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
-                className={`rounded-xl border border-gray-200 p-4 bg-white ${
-                  onRowClick ? 'cursor-pointer active:bg-gray-50' : ''
-                }`}
+                className={`rounded-xl border p-4 bg-white ${
+                  selected.has(rowKey(row))
+                    ? 'border-brand-gold bg-brand-surface/40'
+                    : 'border-gray-200'
+                } ${onRowClick ? 'cursor-pointer active:bg-gray-50' : ''}`}
               >
+                {selectable && (
+                  <label
+                    className="mb-2 flex items-center gap-2 text-sm text-gray-600"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <input
+                      type="checkbox"
+                      aria-label="Chọn dòng"
+                      checked={selected.has(rowKey(row))}
+                      onChange={() => toggleOne(rowKey(row))}
+                      className="h-4 w-4 accent-brand-goldDark cursor-pointer"
+                    />
+                    Chọn
+                  </label>
+                )}
                 {mobileCard
                   ? mobileCard(row)
                   : columns
