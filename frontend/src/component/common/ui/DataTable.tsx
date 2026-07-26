@@ -1,0 +1,278 @@
+import React, { useMemo, useState } from 'react';
+import { ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
+import Spinner from './Spinner';
+import EmptyState from './EmptyState';
+
+export interface Column<T> {
+  key: string;
+  header: string;
+  /** Nội dung ô (mặc định lấy theo key). */
+  render?: (row: T) => React.ReactNode;
+  /** Cho phép sắp xếp theo cột này. */
+  sortable?: boolean;
+  /** Giá trị dùng để so sánh khi sắp xếp (mặc định (row as any)[key]). */
+  sortValue?: (row: T) => string | number;
+  align?: 'left' | 'right' | 'center';
+  className?: string;
+  headerClassName?: string;
+  /** Ẩn cột này trong thẻ mobile mặc định. */
+  hideOnCard?: boolean;
+}
+
+export interface DataTableProps<T> {
+  columns: Column<T>[];
+  data: T[];
+  rowKey: (row: T) => string;
+  loading?: boolean;
+  searchable?: boolean;
+  searchPlaceholder?: string;
+  /** Chuỗi để đối chiếu khi tìm kiếm (mặc định ghép tất cả giá trị cột). */
+  searchText?: (row: T) => string;
+  pageSize?: number;
+  onRowClick?: (row: T) => void;
+  emptyIcon?: LucideIcon;
+  emptyTitle?: string;
+  emptyDescription?: string;
+  /** Thẻ hiển thị trên mobile (mặc định tự dựng từ columns). */
+  mobileCard?: (row: T) => React.ReactNode;
+  toolbar?: React.ReactNode;
+}
+
+const ALIGN: Record<'left' | 'right' | 'center', string> = {
+  left: 'text-left',
+  right: 'text-right',
+  center: 'text-center',
+};
+
+const cellValue = <T,>(row: T, col: Column<T>): React.ReactNode =>
+  col.render ? col.render(row) : ((row as Record<string, unknown>)[col.key] as React.ReactNode);
+
+const sortVal = <T,>(row: T, col: Column<T>): string | number => {
+  if (col.sortValue) return col.sortValue(row);
+  const v = (row as Record<string, unknown>)[col.key];
+  return typeof v === 'number' ? v : String(v ?? '');
+};
+
+/**
+ * Bảng dữ liệu dùng chung: sắp xếp theo cột, tìm kiếm, phân trang phía client,
+ * và tự chuyển sang danh sách thẻ trên mobile. Dành cho các bảng admin cỡ vừa.
+ */
+function DataTable<T>({
+  columns,
+  data,
+  rowKey,
+  loading = false,
+  searchable = false,
+  searchPlaceholder = 'Tìm kiếm...',
+  searchText,
+  pageSize = 10,
+  onRowClick,
+  emptyIcon,
+  emptyTitle = 'Không có dữ liệu',
+  emptyDescription,
+  mobileCard,
+  toolbar,
+}: DataTableProps<T>) {
+  const [query, setQuery] = useState('');
+  const [sortKey, setSortKey] = useState<string | null>(null);
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+  const [page, setPage] = useState(1);
+
+  const filtered = useMemo(() => {
+    if (!searchable || !query.trim()) return data;
+    const q = query.toLowerCase();
+    const toText =
+      searchText ?? ((row: T) => columns.map((c) => String(cellValue(row, c) ?? '')).join(' '));
+    return data.filter((row) => toText(row).toLowerCase().includes(q));
+  }, [data, query, searchable, searchText, columns]);
+
+  const sorted = useMemo(() => {
+    if (!sortKey) return filtered;
+    const col = columns.find((c) => c.key === sortKey);
+    if (!col) return filtered;
+    const dir = sortDir === 'asc' ? 1 : -1;
+    return [...filtered].sort((a, b) => {
+      const va = sortVal(a, col);
+      const vb = sortVal(b, col);
+      if (typeof va === 'number' && typeof vb === 'number') return (va - vb) * dir;
+      return String(va).localeCompare(String(vb), 'vi') * dir;
+    });
+  }, [filtered, sortKey, sortDir, columns]);
+
+  const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
+  const safePage = Math.min(page, totalPages);
+  const pageRows = sorted.slice((safePage - 1) * pageSize, safePage * pageSize);
+
+  const toggleSort = (key: string) => {
+    if (sortKey === key) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortKey(key);
+      setSortDir('asc');
+    }
+    setPage(1);
+  };
+
+  if (loading) return <Spinner center />;
+
+  return (
+    <div>
+      {(searchable || toolbar) && (
+        <div className="flex flex-wrap items-center gap-3 mb-4">
+          {searchable && (
+            <div className="relative flex-1 min-w-[200px]">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
+                aria-hidden="true"
+              />
+              <input
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setPage(1);
+                }}
+                placeholder={searchPlaceholder}
+                aria-label={searchPlaceholder}
+                className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-goldDark"
+              />
+            </div>
+          )}
+          {toolbar}
+        </div>
+      )}
+
+      {sorted.length === 0 ? (
+        <EmptyState icon={emptyIcon} title={emptyTitle} description={emptyDescription} />
+      ) : (
+        <>
+          {/* Bảng — desktop/tablet */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50 border-b border-gray-200">
+                  {columns.map((col) => {
+                    const active = sortKey === col.key;
+                    return (
+                      <th
+                        key={col.key}
+                        className={`px-4 py-3 text-sm font-semibold text-gray-700 ${
+                          ALIGN[col.align ?? 'left']
+                        } ${col.headerClassName ?? ''}`}
+                      >
+                        {col.sortable ? (
+                          <button
+                            type="button"
+                            onClick={() => toggleSort(col.key)}
+                            className="inline-flex items-center gap-1 hover:text-brand-goldDark"
+                          >
+                            {col.header}
+                            {active ? (
+                              sortDir === 'asc' ? (
+                                <ArrowUp size={14} />
+                              ) : (
+                                <ArrowDown size={14} />
+                              )
+                            ) : (
+                              <ArrowUpDown size={14} className="text-gray-400" />
+                            )}
+                          </button>
+                        ) : (
+                          col.header
+                        )}
+                      </th>
+                    );
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+                {pageRows.map((row) => (
+                  <tr
+                    key={rowKey(row)}
+                    onClick={onRowClick ? () => onRowClick(row) : undefined}
+                    className={`border-b border-gray-100 ${
+                      onRowClick ? 'cursor-pointer hover:bg-gray-50' : 'hover:bg-gray-50'
+                    }`}
+                  >
+                    {columns.map((col) => (
+                      <td
+                        key={col.key}
+                        className={`px-4 py-3 text-sm text-gray-800 ${ALIGN[col.align ?? 'left']} ${
+                          col.className ?? ''
+                        }`}
+                      >
+                        {cellValue(row, col)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Thẻ — mobile */}
+          <div className="md:hidden space-y-3">
+            {pageRows.map((row) => (
+              <div
+                key={rowKey(row)}
+                onClick={onRowClick ? () => onRowClick(row) : undefined}
+                className={`rounded-xl border border-gray-200 p-4 bg-white ${
+                  onRowClick ? 'cursor-pointer active:bg-gray-50' : ''
+                }`}
+              >
+                {mobileCard
+                  ? mobileCard(row)
+                  : columns
+                      .filter((c) => !c.hideOnCard)
+                      .map((col) => (
+                        <div key={col.key} className="flex justify-between gap-3 py-1 text-sm">
+                          <span className="text-gray-500 shrink-0">{col.header}</span>
+                          <span className="text-gray-900 text-right min-w-0 break-words">
+                            {cellValue(row, col)}
+                          </span>
+                        </div>
+                      ))}
+              </div>
+            ))}
+          </div>
+
+          {/* Phân trang */}
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
+              <span>
+                {(safePage - 1) * pageSize + 1}–{Math.min(safePage * pageSize, sorted.length)} /{' '}
+                {sorted.length}
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={safePage <= 1}
+                  aria-label="Trang trước"
+                  className="p-2 rounded-lg border border-gray-300 disabled:opacity-40 hover:bg-gray-50"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <span className="px-2">
+                  {safePage}/{totalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={safePage >= totalPages}
+                  aria-label="Trang sau"
+                  className="p-2 rounded-lg border border-gray-300 disabled:opacity-40 hover:bg-gray-50"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}
+
+export default DataTable;

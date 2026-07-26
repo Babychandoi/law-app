@@ -1,0 +1,19 @@
+// Bộ component UI dùng chung cho khu admin. Import gọn:
+//   import { Button, Input, Card, Badge, Spinner, EmptyState } from '@/component/common/ui';
+export { default as Button } from './Button';
+export type { ButtonProps, ButtonVariant, ButtonSize } from './Button';
+export { default as Input } from './Input';
+export type { InputProps } from './Input';
+export { default as Card } from './Card';
+export type { CardProps } from './Card';
+export { default as Badge } from './Badge';
+export type { BadgeProps, BadgeColor } from './Badge';
+export { default as Spinner } from './Spinner';
+export type { SpinnerProps } from './Spinner';
+export { default as EmptyState } from './EmptyState';
+export type { EmptyStateProps } from './EmptyState';
+export { default as ConfirmDialog } from './ConfirmDialog';
+export type { ConfirmDialogProps } from './ConfirmDialog';
+export { useConfirm } from './useConfirm';
+export { default as DataTable } from './DataTable';
+export type { DataTableProps, Column } from './DataTable';

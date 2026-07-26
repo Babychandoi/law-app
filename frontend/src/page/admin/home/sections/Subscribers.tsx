@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Mail, Trash2, Calendar, Users } from 'lucide-react';
 import { toast } from 'react-toastify';
 import axiosClient from '../../../../service/axiosClient';
+import { Button, Card, DataTable, useConfirm, type Column } from '../../../../component/common/ui';
 
 interface Subscriber {
   id: string;
@@ -18,7 +19,8 @@ interface ApiResponse<T> {
 const Subscribers: React.FC = () => {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const { confirm, confirmDialog } = useConfirm();
 
   useEffect(() => {
     fetchSubscribers();
@@ -28,7 +30,6 @@ const Subscribers: React.FC = () => {
     try {
       setLoading(true);
       const response = await axiosClient.get<ApiResponse<Subscriber[]>>('/news/subscribers');
-
       if (response.data.code === 200) {
         setSubscribers(response.data.data);
       }
@@ -40,36 +41,75 @@ const Subscribers: React.FC = () => {
     }
   };
 
-  const handleDelete = async (id: string, email: string) => {
-    if (!window.confirm(`Bạn có chắc muốn xóa ${email} khỏi danh sách?`)) {
-      return;
-    }
-
+  const handleDelete = async (sub: Subscriber) => {
+    const ok = await confirm({
+      title: 'Xóa người đăng ký',
+      message: `Bạn có chắc muốn xóa ${sub.email} khỏi danh sách?`,
+      confirmText: 'Xóa',
+      variant: 'danger',
+    });
+    if (!ok) return;
     try {
-      await axiosClient.delete(`/news/subscribers/${id}`);
+      setDeletingId(sub.id);
+      await axiosClient.delete(`/news/subscribers/${sub.id}`);
       toast.success('Đã xóa người đăng ký');
-      fetchSubscribers();
+      setSubscribers((prev) => prev.filter((s) => s.id !== sub.id));
     } catch (error) {
       toast.error('Không thể xóa người đăng ký');
+    } finally {
+      setDeletingId(null);
     }
   };
 
-  const filteredSubscribers = subscribers.filter((sub) =>
-    sub.email.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const fmtDate = (iso: string) =>
+    new Date(iso).toLocaleDateString('vi-VN', { year: 'numeric', month: 'long', day: 'numeric' });
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b border-brand-line"></div>
-      </div>
-    );
-  }
+  const columns: Column<Subscriber>[] = [
+    {
+      key: 'email',
+      header: 'Email',
+      sortable: true,
+      render: (s) => (
+        <span className="inline-flex items-center gap-3 font-medium text-gray-900">
+          <Mail className="w-5 h-5 text-gray-500" aria-hidden="true" />
+          {s.email}
+        </span>
+      ),
+    },
+    {
+      key: 'createdAt',
+      header: 'Ngày đăng ký',
+      sortable: true,
+      sortValue: (s) => new Date(s.createdAt).getTime(),
+      render: (s) => (
+        <span className="inline-flex items-center gap-2 text-gray-500">
+          <Calendar className="w-4 h-4" aria-hidden="true" />
+          {fmtDate(s.createdAt)}
+        </span>
+      ),
+    },
+    {
+      key: 'actions',
+      header: 'Thao tác',
+      align: 'right',
+      render: (s) => (
+        <Button
+          size="sm"
+          variant="danger"
+          leftIcon={<Trash2 className="w-4 h-4" />}
+          loading={deletingId === s.id}
+          onClick={() => handleDelete(s)}
+        >
+          Xóa
+        </Button>
+      ),
+    },
+  ];
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="bg-white rounded-lg shadow p-6">
+      {confirmDialog}
+      <Card>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Quản lý người đăng ký</h1>
@@ -77,83 +117,25 @@ const Subscribers: React.FC = () => {
               Tổng số: {subscribers.length} người đăng ký nhận tin tức
             </p>
           </div>
-          <Users className="w-12 h-12 text-brand-goldDark" />
+          <Users className="w-12 h-12 text-brand-goldDark" aria-hidden="true" />
         </div>
-      </div>
+      </Card>
 
-      {/* Search */}
-      <div className="bg-white rounded-lg shadow p-4">
-        <input
-          type="text"
-          placeholder="Tìm kiếm theo email..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent"
+      <Card bodyClassName="p-4">
+        <DataTable
+          columns={columns}
+          data={subscribers}
+          rowKey={(s) => s.id}
+          loading={loading}
+          searchable
+          searchPlaceholder="Tìm kiếm theo email..."
+          searchText={(s) => s.email}
+          pageSize={10}
+          emptyIcon={Mail}
+          emptyTitle="Chưa có người đăng ký nào"
+          emptyDescription="Danh sách người đăng ký nhận tin sẽ hiển thị ở đây."
         />
-      </div>
-
-      {/* Subscribers List */}
-      <div className="bg-white rounded-lg shadow overflow-hidden">
-        {filteredSubscribers.length === 0 ? (
-          <div className="p-12 text-center">
-            <Mail className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-            <p className="text-gray-600">
-              {searchTerm ? 'Không tìm thấy kết quả' : 'Chưa có người đăng ký nào'}
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50 border-b">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Ngày đăng ký
-                  </th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Thao tác
-                  </th>
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {filteredSubscribers.map((subscriber) => (
-                  <tr key={subscriber.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <Mail className="w-5 h-5 text-gray-500 mr-3" />
-                        <span className="text-sm font-medium text-gray-900">
-                          {subscriber.email}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center text-sm text-gray-500">
-                        <Calendar className="w-4 h-4 mr-2" />
-                        {new Date(subscriber.createdAt).toLocaleDateString('vi-VN', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <button
-                        onClick={() => handleDelete(subscriber.id, subscriber.email)}
-                        className="inline-flex items-center gap-2 px-3 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                        Xóa
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+      </Card>
     </div>
   );
 };
