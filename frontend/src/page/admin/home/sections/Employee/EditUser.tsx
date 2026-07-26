@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { User, Save, X, Mail, Phone, Briefcase, UserCircle } from 'lucide-react';
+import { Save, X } from 'lucide-react';
 import Modal from '../../../../../component/common/Modal';
 import { UserCreate, User as UserType } from '../../../../../types/admin';
+import { Button, Input } from '../../../../../component/common/ui';
 
 interface UserEditProps {
   initialData: UserType | null;
@@ -43,7 +44,6 @@ const UserEdit: React.FC<UserEditProps> = ({
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    // Validate username
     if (!formData.username?.trim()) {
       newErrors.username = 'Tên đăng nhập không được để trống';
     } else if (formData.username.length < 3) {
@@ -52,28 +52,24 @@ const UserEdit: React.FC<UserEditProps> = ({
       newErrors.username = 'Tên đăng nhập chỉ được chứa chữ cái, số và dấu gạch dưới';
     }
 
-    // Validate email
     if (!formData.email?.trim()) {
       newErrors.email = 'Email không được để trống';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Email không hợp lệ';
     }
 
-    // Validate fullName
     if (!formData.fullName?.trim()) {
       newErrors.fullName = 'Họ tên không được để trống';
     } else if (formData.fullName.length < 2) {
       newErrors.fullName = 'Họ tên phải có ít nhất 2 ký tự';
     }
 
-    // Validate phoneNumber (optional)
     if (formData.phoneNumber && formData.phoneNumber.trim()) {
       if (!/^[\d\s+()-]+$/.test(formData.phoneNumber)) {
         newErrors.phoneNumber = 'Số điện thoại không hợp lệ';
       }
     }
 
-    // Validate position (optional)
     if (formData.position && formData.position.trim() && formData.position.length < 2) {
       newErrors.position = 'Chức vụ phải có ít nhất 2 ký tự';
     }
@@ -83,27 +79,15 @@ const UserEdit: React.FC<UserEditProps> = ({
   };
 
   const handleInputChange = (field: keyof UserCreate, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value,
-    }));
-
-    // Clear error when user starts typing
+    setFormData((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
-      setErrors((prev) => ({
-        ...prev,
-        [field]: '',
-      }));
+      setErrors((prev) => ({ ...prev, [field]: '' }));
     }
   };
 
   const handleSubmit = () => {
-    if (!validateForm()) {
-      return;
-    }
-
+    if (!validateForm()) return;
     if (initialData) {
-      // Clean data before sending
       const cleanedData: UserCreate = {
         username: formData.username.trim(),
         email: formData.email.trim().toLowerCase(),
@@ -112,7 +96,6 @@ const UserEdit: React.FC<UserEditProps> = ({
         position: formData.position?.trim() || '',
         role: formData.role,
       };
-
       onSave(cleanedData, initialData.id);
     }
   };
@@ -147,134 +130,82 @@ const UserEdit: React.FC<UserEditProps> = ({
   if (!isOpen) return null;
 
   return (
-    <Modal title="Chỉnh sửa thông tin người dùng" onClose={handleClose} size="lg">
-      <div className="space-y-6">
-        {/* Username Field */}
-        <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-            <UserCircle className="h-4 w-4" />
-            Tên đăng nhập <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={formData.username}
-            onChange={(e) => handleInputChange('username', e.target.value)}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
-              errors.username ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
-            placeholder="Nhập tên đăng nhập"
-            disabled={isLoading}
-          />
-          {errors.username && <p className="mt-1 text-sm text-red-600">{errors.username}</p>}
-        </div>
-
-        {/* Email Field */}
-        <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-            <Mail className="h-4 w-4" />
-            Email <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="email"
-            value={formData.email}
-            onChange={(e) => handleInputChange('email', e.target.value)}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
-              errors.email ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
-            placeholder="Nhập email"
-            disabled={isLoading}
-          />
-          {errors.email && <p className="mt-1 text-sm text-red-600">{errors.email}</p>}
-        </div>
-
-        {/* Full Name Field */}
-        <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-            <User className="h-4 w-4" />
-            Họ tên <span className="text-red-500">*</span>
-          </label>
-          <input
-            type="text"
-            value={formData.fullName}
-            onChange={(e) => handleInputChange('fullName', e.target.value)}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
-              errors.fullName ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
-            placeholder="Nhập họ tên"
-            disabled={isLoading}
-          />
-          {errors.fullName && <p className="mt-1 text-sm text-red-600">{errors.fullName}</p>}
-        </div>
-
-        {/* phoneNumber Number Field */}
-        <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-            <Phone className="h-4 w-4" />
-            Số điện thoại
-          </label>
-          <input
-            type="tel"
-            value={formData.phoneNumber}
-            onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
-              errors.phoneNumber ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
-            placeholder="Nhập số điện thoại"
-            disabled={isLoading}
-          />
-          {errors.phoneNumber && <p className="mt-1 text-sm text-red-600">{errors.phoneNumber}</p>}
-        </div>
-
-        {/* Position Field */}
-        <div>
-          <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
-            <Briefcase className="h-4 w-4" />
-            Chức vụ
-          </label>
-          <input
-            type="text"
-            value={formData.position}
-            onChange={(e) => handleInputChange('position', e.target.value)}
-            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-colors ${
-              errors.position ? 'border-red-500 bg-red-50' : 'border-gray-300'
-            }`}
-            placeholder="Nhập chức vụ"
-            disabled={isLoading}
-          />
-          {errors.position && <p className="mt-1 text-sm text-red-600">{errors.position}</p>}
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex gap-4 pt-6 border-t">
-          <button
-            type="button"
-            onClick={handleSubmit}
-            disabled={isLoading}
-            className="flex-1 flex items-center justify-center gap-2 bg-brand-goldDark text-white py-3 px-6 rounded-lg hover:bg-brand-goldDark focus:ring-2 focus:ring-brand-goldDark focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Save className="h-4 w-4" />
-            {isLoading ? 'Đang lưu...' : 'Lưu thay đổi'}
-          </button>
-
-          <button
-            type="button"
+    <Modal
+      title="Chỉnh sửa thông tin người dùng"
+      onClose={handleClose}
+      size="lg"
+      footer={
+        <div className="flex flex-wrap justify-end gap-3">
+          <Button
+            variant="ghost"
             onClick={handleReset}
             disabled={isLoading}
-            className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="!text-gray-700"
           >
             Khôi phục
-          </button>
-
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="secondary"
+            leftIcon={<X className="h-4 w-4" />}
             onClick={handleClose}
             disabled={isLoading}
-            className="flex items-center justify-center gap-2 px-6 py-3 border border-red-300 text-red-700 rounded-lg hover:bg-red-50 focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="!border-red-300 !text-red-700 hover:!bg-red-50"
           >
-            <X className="h-4 w-4" />
             Hủy
-          </button>
+          </Button>
+          <Button
+            leftIcon={<Save className="h-4 w-4" />}
+            onClick={handleSubmit}
+            loading={isLoading}
+          >
+            Lưu thay đổi
+          </Button>
         </div>
+      }
+    >
+      <div className="space-y-5">
+        <Input
+          label="Tên đăng nhập *"
+          value={formData.username}
+          onChange={(e) => handleInputChange('username', e.target.value)}
+          placeholder="Nhập tên đăng nhập"
+          disabled={isLoading}
+          error={errors.username}
+        />
+        <Input
+          label="Email *"
+          type="email"
+          value={formData.email}
+          onChange={(e) => handleInputChange('email', e.target.value)}
+          placeholder="Nhập email"
+          disabled={isLoading}
+          error={errors.email}
+        />
+        <Input
+          label="Họ tên *"
+          value={formData.fullName}
+          onChange={(e) => handleInputChange('fullName', e.target.value)}
+          placeholder="Nhập họ tên"
+          disabled={isLoading}
+          error={errors.fullName}
+        />
+        <Input
+          label="Số điện thoại"
+          type="tel"
+          value={formData.phoneNumber}
+          onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
+          placeholder="Nhập số điện thoại"
+          disabled={isLoading}
+          error={errors.phoneNumber}
+        />
+        <Input
+          label="Chức vụ"
+          value={formData.position}
+          onChange={(e) => handleInputChange('position', e.target.value)}
+          placeholder="Nhập chức vụ"
+          disabled={isLoading}
+          error={errors.position}
+        />
       </div>
     </Modal>
   );
