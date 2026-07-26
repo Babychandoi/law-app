@@ -121,6 +121,7 @@ const Subscribers: React.FC = () => {
           icon={Users}
           title="Quản lý người đăng ký"
           subtitle={`Tổng số: ${subscribers.length} người đăng ký nhận tin tức`}
+          breadcrumb={[{ label: 'Quản trị hệ thống' }, { label: 'Người đăng ký' }]}
         />
       </Card>
 

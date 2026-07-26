@@ -195,6 +195,7 @@ const ServiceManager: React.FC = () => {
         icon={Layers}
         title="Quản lý dịch vụ"
         subtitle="Thêm dịch vụ mới hoặc sửa nội dung trang — trang web cập nhật ngay, không cần sửa code."
+        breadcrumb={[{ label: 'Quản trị hệ thống' }, { label: 'Dịch vụ' }]}
         actions={
           <>
             <Button

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Bell, User2, LogOut, Mail, Phone, ChevronDown, Eye, Menu } from 'lucide-react';
+import { Bell, LogOut, Mail, Phone, ChevronDown, Eye, Menu } from 'lucide-react';
 import { myProfile, logout, getNotificationById } from '../../../../service/admin';
 import { Notification, User } from '../../../../types/admin';
 import { toast } from 'react-toastify';
 import { markAsRead, markAllRead } from '../../../../service/admin';
 import ChatMenu from './ChatMenu';
+
+const initialOf = (name?: string) => (name?.trim()?.charAt(0) || '?').toUpperCase();
 
 const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -315,20 +317,27 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
             <button
               onClick={handleProfile}
               aria-label="Tài khoản"
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="w-9 h-9 grid place-items-center rounded-full bg-gradient-to-br from-brand-gold to-brand-goldDark text-white font-semibold hover:opacity-90 transition-opacity"
             >
-              <User2 size={20} className="text-gray-600" />
+              {initialOf(profile?.fullName || profile?.username)}
             </button>
 
             {showProfile && (
               <div className="absolute right-0 top-12 w-72 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                 <div className="p-4 border-b border-gray-200">
                   <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 bg-brand-surface rounded-full flex items-center justify-center">
-                      <User2 size={24} className="text-brand-goldDark" />
+                    <div className="w-12 h-12 grid place-items-center rounded-full bg-gradient-to-br from-brand-gold to-brand-goldDark text-white text-lg font-semibold">
+                      {initialOf(profile?.fullName || profile?.username)}
                     </div>
-                    <div>
-                      <p className="font-semibold text-gray-800">{profile?.fullName}</p>
+                    <div className="min-w-0">
+                      <p className="font-semibold text-gray-800 truncate">
+                        {profile?.fullName || profile?.username}
+                      </p>
+                      {profile?.role && (
+                        <p className="text-xs text-gray-500">
+                          {profile.role === 'ADMIN' ? 'Quản trị viên' : 'Nhân viên'}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>

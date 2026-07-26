@@ -312,7 +312,12 @@ const CustomerManagement: React.FC = () => {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <PageHeader className="mb-6" icon={Users} title="Quản lý khách hàng" />
+      <PageHeader
+        className="mb-6"
+        icon={Users}
+        title="Quản lý khách hàng"
+        breadcrumb={[{ label: 'Vận hành' }, { label: 'Khách hàng' }]}
+      />
       <div className="mb-6 space-y-4">
         <div className="flex gap-3">
           <div className="relative flex-1">

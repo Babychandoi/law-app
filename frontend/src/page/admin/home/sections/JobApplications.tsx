@@ -118,6 +118,7 @@ const JobApplications: React.FC = () => {
           icon={Briefcase}
           title="Quản lý ứng viên"
           subtitle={`Tổng số: ${applications.length} ứng viên từ ${groupedApplications.length} vị trí`}
+          breadcrumb={[{ label: 'Quản trị hệ thống' }, { label: 'Ứng viên' }]}
         />
       </Card>
 
