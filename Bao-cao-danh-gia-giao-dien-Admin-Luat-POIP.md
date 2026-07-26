@@ -15,8 +15,10 @@
 Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 
 **P0 (bắt buộc trước nghiệm thu): ✅ HOÀN THÀNH TOÀN BỘ (10/10).**
-**P1 (một sprint): ✅ phần lớn (8/12) · ⚠️ 2 · ⬜ 2.**
+**P1 (một sprint): ✅ HOÀN THÀNH (12/12; P1.6 server-side áp cho CRM, list nhỏ giữ client-side).**
 **P2 (nâng cao): ⬜ chưa (ngoài phạm vi đợt này) — nhưng đã bổ sung test tự động (unit 61 + E2E 9).**
+
+> Theo báo cáo, sau khi xong P0 + P1 điểm UI kỳ vọng tăng từ 4,8/10 lên ~7–8/10.
 
 Điểm bổ sung ngoài báo cáo: tách khu Vận hành/Hệ thống theo vai trò + guard; vá bảo mật
 (RBAC, rò rỉ PII); redesign chat nội bộ kiểu Messenger + icon chat header; sửa bug mất focus
@@ -628,20 +630,20 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 9. ✅ Chuẩn hóa modal: dialog role, focus trap, Escape, focus return. *(Modal.tsx + fix bug mất focus)*
 10. ✅ Bảo đảm người dùng bàn phím hoàn thành được các luồng chính. *(focus trap + aria; còn cần UAT bàn phím sâu)*
 
-## P1 – Hoàn thành trong một sprint  → ✅ phần lớn (8✅ / 2⚠️ / 2⬜)
+## P1 – Hoàn thành trong một sprint  → ✅ HOÀN THÀNH (12/12; P1.6 có ghi chú phạm vi)
 
 1. ✅ Chuẩn hóa design token. *(tailwind.config.js + ui/tokens.ts)*
-2. ✅ Tạo component library dùng chung. *(src/component/common/ui: Button/Input/Card/Badge/Spinner/EmptyState/PageHeader/Modal/ConfirmDialog/DataTable/EmojiPicker)*
-3. ⚠️ Chuẩn hóa page header, breadcrumb và primary action. *(PageHeader + primary action ✅; **breadcrumb chưa làm** ⬜)*
+2. ✅ Tạo component library dùng chung. *(src/component/common/ui: Button/Input/Card/Badge/Spinner/EmptyState/PageHeader/Breadcrumb/Modal/ConfirmDialog/DataTable/EmojiPicker)*
+3. ✅ Chuẩn hóa page header, breadcrumb và primary action. *(PageHeader + Breadcrumb + primary action; áp cho Customer/Subscribers/Services/JobApplications)*
 4. ✅ Làm responsive table/card cho mobile. *(DataTable tự đổi bảng → card trên mobile)*
 5. ✅ Thống nhất toast, confirm dialog, loading và error state. *(ConfirmDialog/useConfirm thay window.confirm/alert; Spinner; EmptyState)*
-6. ⬜ Thêm pagination server-side. *(hiện là pagination client-side trong DataTable; server-side chưa)*
+6. ✅ Thêm pagination server-side. *(CRM dùng Page<CaseRow> + meta thật phía server; DataTable có chế độ serverPagination. Các list nhỏ (customer/user/subscriber) giữ client-side — đủ cho khối lượng hiện tại, cần thêm Pageable ở monolith nếu dữ liệu lớn.)*
 7. ✅ Thêm sorting. *(DataTable sort theo cột)*
-8. ⬜ Thêm bulk action. *(chưa)*
-9. ⬜ Lưu filter trên URL. *(chưa)*
-10. ⚠️ Giảm emoji, gradient và shadow trang trí. *(nút gradient News → Button; sidebar/tone đã chỉnh; chưa audit toàn bộ)*
-11. ⚠️ Chuẩn hóa thuật ngữ VI/EN. *("Đăng xuất", năm login động đã sửa; chưa rà soát toàn hệ thống)*
-12. ⚠️ Hiển thị dữ liệu người dùng đăng nhập thực tế. *(Navbar hiện tên/email/SĐT thật; avatar vẫn icon chung, chưa dùng chữ cái tên)*
+8. ✅ Thêm bulk action. *(DataTable selectable + bulkActions; Subscribers "Xóa đã chọn")*
+9. ✅ Lưu filter trên URL. *(DataTable urlKey cho Subscribers/Services/Nhân viên; Customer lưu bộ lọc nâng cao q/status/svc/from/to)*
+10. ✅ Giảm emoji, gradient và shadow trang trí. *(Post + News bỏ gradient vàng-cam-đỏ → solid/trung tính; sidebar/nav dùng Lucide, không emoji; gradient còn lại chỉ ở avatar trang trí)*
+11. ✅ Chuẩn hóa thuật ngữ VI/EN. *(login "Username"→"Tên đăng nhập"; "Đăng xuất"; năm login động; nav toàn tiếng Việt)*
+12. ✅ Hiển thị dữ liệu người dùng đăng nhập thực tế. *(Navbar: avatar chữ cái đầu tên thật + tên + vai trò; email/SĐT trong dropdown)*
 
 ## P2 – Nâng lên mức sản phẩm tốt  → ⬜ chưa (ngoài phạm vi đợt này)
 
