@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import {
   Send,
@@ -68,6 +69,9 @@ export default function TeamChat() {
   // Group-create state
   const [groupName, setGroupName] = useState('');
   const [groupMembers, setGroupMembers] = useState<Set<string>>(new Set());
+  const [searchParams] = useSearchParams();
+  const autoOpenId = searchParams.get('c');
+  const lastAutoOpenRef = useRef<string | null>(null);
   const bottomRef = useRef<HTMLDivElement | null>(null);
   const typingTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   // activeId in a ref so the socket callback (registered once) sees the current value.
@@ -171,6 +175,18 @@ export default function TeamChat() {
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, typingUser]);
+
+  // Tự mở hội thoại khi điều hướng kèm ?c=<id> (từ dropdown chat trên header).
+  useEffect(() => {
+    if (
+      autoOpenId &&
+      autoOpenId !== lastAutoOpenRef.current &&
+      conversations.some((c) => c.id === autoOpenId)
+    ) {
+      lastAutoOpenRef.current = autoOpenId;
+      openConversation(autoOpenId);
+    }
+  }, [autoOpenId, conversations, openConversation]);
 
   const sendText = (text: string, type: 'TEXT' = 'TEXT') => {
     if (!text || !activeId) return;

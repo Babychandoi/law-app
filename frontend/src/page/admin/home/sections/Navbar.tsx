@@ -4,6 +4,7 @@ import { myProfile, logout, getNotificationById } from '../../../../service/admi
 import { Notification, User } from '../../../../types/admin';
 import { toast } from 'react-toastify';
 import { markAsRead, markAllRead } from '../../../../service/admin';
+import ChatMenu from './ChatMenu';
 
 const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => {
   const [showNotifications, setShowNotifications] = useState(false);
@@ -185,6 +186,7 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
           <Menu size={22} />
         </button>
         <div className="ml-auto flex items-center space-x-4">
+          <ChatMenu />
           <div className="relative">
             <button
               onClick={handleNotifications}
