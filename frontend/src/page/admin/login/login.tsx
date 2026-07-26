@@ -12,6 +12,7 @@ const LoginForm: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    document.title = 'Đăng nhập quản trị - Luật Poip Legal';
     // Already logged in? The cookie is sent automatically; /auth/me confirms (with refresh retry
     // handled by the axios interceptor on 401).
     getMe(true).then((me) => {
@@ -188,7 +189,7 @@ const LoginForm: React.FC = () => {
           {/* Footer */}
           <div className="text-center">
             <p className="text-xs text-gray-400">
-              © 2025 Poip Legal Law. Tất cả quyền được bảo lưu.
+              © {new Date().getFullYear()} Luật Poip Legal. Tất cả quyền được bảo lưu.
             </p>
           </div>
         </div>

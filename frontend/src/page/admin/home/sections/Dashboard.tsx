@@ -35,7 +35,6 @@ export default function Dashboard() {
   const [unread, setUnread] = useState(0);
 
   useEffect(() => {
-    document.title = 'Tổng quan - Quản trị Luật Poip Legal';
     let cancelled = false;
     (async () => {
       setLoading(true);
