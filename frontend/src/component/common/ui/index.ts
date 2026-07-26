@@ -17,3 +17,5 @@ export type { ConfirmDialogProps } from './ConfirmDialog';
 export { useConfirm } from './useConfirm';
 export { default as DataTable } from './DataTable';
 export type { DataTableProps, Column } from './DataTable';
+export { default as PageHeader } from './PageHeader';
+export type { PageHeaderProps } from './PageHeader';

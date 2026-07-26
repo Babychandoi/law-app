@@ -10,7 +10,13 @@ import {
 } from '../../../../../service/admin';
 import { iconOptions } from '../../../../../shared/config/menuIcons';
 import ServiceEditor from './ServiceEditor';
-import { Button, DataTable, useConfirm, type Column } from '../../../../../component/common/ui';
+import {
+  Button,
+  DataTable,
+  PageHeader,
+  useConfirm,
+  type Column,
+} from '../../../../../component/common/ui';
 
 /**
  * Quản lý dịch vụ (CMS): thêm/sửa/xóa dịch vụ và toàn bộ nội dung trang
@@ -184,30 +190,27 @@ const ServiceManager: React.FC = () => {
   return (
     <div className="p-4 sm:p-6">
       {confirmDialog}
-      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="flex items-center gap-2 text-xl font-semibold text-gray-900">
-            <Layers className="h-5 w-5 text-amber-700" />
-            Quản lý dịch vụ
-          </h1>
-          <p className="mt-1 text-sm text-gray-500">
-            Thêm dịch vụ mới hoặc sửa nội dung trang — trang web cập nhật ngay, không cần sửa code.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="secondary"
-            leftIcon={<FolderPlus className="h-4 w-4" />}
-            onClick={handleAddParent}
-            className="!border-amber-700 !text-amber-700 hover:!bg-amber-50"
-          >
-            Thêm nhóm
-          </Button>
-          <Button leftIcon={<Plus className="h-4 w-4" />} onClick={() => setEditing('new')}>
-            Thêm dịch vụ
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        className="mb-6"
+        icon={Layers}
+        title="Quản lý dịch vụ"
+        subtitle="Thêm dịch vụ mới hoặc sửa nội dung trang — trang web cập nhật ngay, không cần sửa code."
+        actions={
+          <>
+            <Button
+              variant="secondary"
+              leftIcon={<FolderPlus className="h-4 w-4" />}
+              onClick={handleAddParent}
+              className="!border-amber-700 !text-amber-700 hover:!bg-amber-50"
+            >
+              Thêm nhóm
+            </Button>
+            <Button leftIcon={<Plus className="h-4 w-4" />} onClick={() => setEditing('new')}>
+              Thêm dịch vụ
+            </Button>
+          </>
+        }
+      />
 
       <div className="rounded-lg border border-gray-200 bg-white p-4">
         <DataTable

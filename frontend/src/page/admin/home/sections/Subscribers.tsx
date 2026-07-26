@@ -2,7 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Mail, Trash2, Calendar, Users } from 'lucide-react';
 import { toast } from 'react-toastify';
 import axiosClient from '../../../../service/axiosClient';
-import { Button, Card, DataTable, useConfirm, type Column } from '../../../../component/common/ui';
+import {
+  Card,
+  DataTable,
+  PageHeader,
+  Button,
+  useConfirm,
+  type Column,
+} from '../../../../component/common/ui';
 
 interface Subscriber {
   id: string;
@@ -110,15 +117,11 @@ const Subscribers: React.FC = () => {
     <div className="space-y-6">
       {confirmDialog}
       <Card>
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Quản lý người đăng ký</h1>
-            <p className="text-gray-600 mt-1">
-              Tổng số: {subscribers.length} người đăng ký nhận tin tức
-            </p>
-          </div>
-          <Users className="w-12 h-12 text-brand-goldDark" aria-hidden="true" />
-        </div>
+        <PageHeader
+          icon={Users}
+          title="Quản lý người đăng ký"
+          subtitle={`Tổng số: ${subscribers.length} người đăng ký nhận tin tức`}
+        />
       </Card>
 
       <Card bodyClassName="p-4">

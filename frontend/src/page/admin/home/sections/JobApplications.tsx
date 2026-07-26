@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Briefcase, Download, Eye, Calendar, Mail, Phone } from 'lucide-react';
-import { Spinner } from '../../../../component/common/ui';
+import { Card, PageHeader, Spinner } from '../../../../component/common/ui';
 import { toast } from 'react-toastify';
 import {
   getAllJobApplications,
@@ -113,17 +113,13 @@ const JobApplications: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Quản lý ứng viên</h1>
-            <p className="text-gray-600 mt-1">
-              Tổng số: {applications.length} ứng viên từ {groupedApplications.length} vị trí
-            </p>
-          </div>
-          <Briefcase className="w-12 h-12 text-brand-goldDark" />
-        </div>
-      </div>
+      <Card>
+        <PageHeader
+          icon={Briefcase}
+          title="Quản lý ứng viên"
+          subtitle={`Tổng số: ${applications.length} ứng viên từ ${groupedApplications.length} vị trí`}
+        />
+      </Card>
 
       {/* Filter by Job */}
       <div className="bg-white rounded-lg shadow p-4">

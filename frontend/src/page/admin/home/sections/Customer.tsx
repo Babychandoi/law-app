@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Filter, X } from 'lucide-react';
+import { Search, Filter, X, Users } from 'lucide-react';
 import Modal from '../../../../component/common/Modal';
 import { Customer, CustomerDetail } from '../../../../types/admin';
 import { ServiceItem } from '../../../../types/service';
@@ -11,7 +11,7 @@ import {
 } from '../../../../service/admin';
 import { getServiceHome } from '../../../../service/service';
 import { toast } from 'react-toastify';
-import { Button, DataTable, type Column } from '../../../../component/common/ui';
+import { Button, DataTable, PageHeader, type Column } from '../../../../component/common/ui';
 
 type CustomerStatus = 'NEW' | 'RECEIVED' | 'PROCESSING' | 'COMPLETED' | 'CANCELED';
 
@@ -312,9 +312,7 @@ const CustomerManagement: React.FC = () => {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Quản lý khách hàng</h2>
-      </div>
+      <PageHeader className="mb-6" icon={Users} title="Quản lý khách hàng" />
       <div className="mb-6 space-y-4">
         <div className="flex gap-3">
           <div className="relative flex-1">
