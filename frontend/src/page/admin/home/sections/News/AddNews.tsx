@@ -242,7 +242,7 @@ const AddNews: React.FC<AddNewsProps> = ({ onSave, onCancel }) => {
         <div className="mb-6">
           <h4 className="text-lg font-semibold text-gray-800 mb-4">Nội dung bài viết</h4>
 
-          <div className="bg-gradient-to-r from-yellow-50 via-orange-50 to-red-50 border-2 border-orange-200 rounded-2xl p-6">
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl p-6">
             <div>
               <div
                 className="bg-white rounded-xl overflow-hidden"
@@ -277,7 +277,7 @@ const AddNews: React.FC<AddNewsProps> = ({ onSave, onCancel }) => {
 
         {/* Error Message */}
         {error && (
-          <div className="mb-4 p-4 bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200 rounded-xl">
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl">
             <div className="flex items-center">
               <span className="text-2xl mr-3">⚠️</span>
               <span className="text-red-700 font-medium flex-1">{error}</span>

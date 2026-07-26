@@ -38,9 +38,9 @@ const LoginForm: React.FC = () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!formData.username) {
-      newErrors.username = 'Username là bắt buộc';
+      newErrors.username = 'Tên đăng nhập là bắt buộc';
     } else if (formData.username.length < 3) {
-      newErrors.username = 'Username phải có ít nhất 3 ký tự';
+      newErrors.username = 'Tên đăng nhập phải có ít nhất 3 ký tự';
     }
 
     if (!formData.password) {
@@ -125,9 +125,9 @@ const LoginForm: React.FC = () => {
 
           {/* Form */}
           <div className="space-y-4">
-            {/* Username */}
+            {/* Tên đăng nhập */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-200">Username</label>
+              <label className="text-sm font-medium text-gray-200">Tên đăng nhập</label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
                 <input
@@ -137,7 +137,7 @@ const LoginForm: React.FC = () => {
                   onChange={handleInputChange}
                   onKeyPress={handleKeyPress}
                   className="w-full bg-white/10 border border-white/20 rounded-lg px-10 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-all duration-200"
-                  placeholder="Nhập username"
+                  placeholder="Nhập tên đăng nhập"
                   autoComplete="username"
                 />
               </div>

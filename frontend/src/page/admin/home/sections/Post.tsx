@@ -319,39 +319,29 @@ const NewsManagement: React.FC = () => {
     }
   };
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 p-6">
-      {/* Decorative background elements */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-20 right-20 w-96 h-96 bg-gradient-to-br from-yellow-200/20 to-orange-200/20 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-br from-brand-surface to-brand-surface rounded-full blur-3xl"></div>
-      </div>
-
+    <div className="min-h-screen bg-gray-50 p-6">
       <div className="relative max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400  text-brand-ink mb-2">
-                Quản lý tin tức
-              </h2>
+              <h2 className="text-3xl font-bold text-brand-ink mb-2">Quản lý tin tức</h2>
               <p className="text-gray-600">Tạo, chỉnh sửa và quản lý các bài viết tin tức</p>
             </div>
             <button
               onClick={handleAddNew}
               disabled={loading}
-              className="group relative bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 hover:from-yellow-500 hover:via-orange-500 hover:to-red-500 disabled:from-gray-300 disabled:to-gray-400 text-white px-6 py-3 rounded-xl font-semibold shadow-lg hover:shadow-xl  active:scale-95 transition-all duration-200"
+              className="inline-flex items-center gap-2 bg-brand-goldDark hover:bg-brand-gold disabled:bg-gray-300 text-white px-6 py-3 rounded-xl font-semibold shadow-sm transition-colors"
             >
-              <span className="flex items-center gap-2">
-                <span className="text-xl">+</span>
-                {loading ? 'Đang tải...' : 'Thêm tin tức'}
-              </span>
+              <span className="text-xl leading-none">+</span>
+              {loading ? 'Đang tải...' : 'Thêm tin tức'}
             </button>
           </div>
         </div>
 
         {/* Error Message */}
         {error && (
-          <div className="mb-6 p-4 bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200 rounded-xl shadow-md">
+          <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
             <div className="flex items-center">
               <span className="text-2xl mr-3">⚠️</span>
               <span className="text-red-700 font-medium flex-1">{error}</span>
@@ -403,7 +393,7 @@ const NewsManagement: React.FC = () => {
                   <div className="flex-1 p-6">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-brand-goldDark group-hover:bg-gradient-to-r group-hover:from-yellow-400 group-hover:to-orange-400 group-hover: transition-all duration-300">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-brand-goldDark transition-colors duration-200">
                           {news.title}
                         </h3>
                         <p className="text-gray-600 line-clamp-2 mb-3">{news.subtitle}</p>
