@@ -1,6 +1,10 @@
 import { render, screen, within } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import DataTable, { type Column } from '../DataTable';
+
+// DataTable dùng useSearchParams -> cần Router context khi test.
+const renderR = (ui: React.ReactElement) => render(<MemoryRouter>{ui}</MemoryRouter>);
 
 interface Row {
   id: string;
@@ -20,7 +24,7 @@ const columns: Column<Row>[] = [
 ];
 
 const setup = (props: Partial<React.ComponentProps<typeof DataTable<Row>>> = {}) =>
-  render(<DataTable columns={columns} data={DATA} rowKey={(r) => r.id} {...props} />);
+  renderR(<DataTable columns={columns} data={DATA} rowKey={(r) => r.id} {...props} />);
 
 // DataTable render cả bảng desktop lẫn thẻ mobile trong DOM (chỉ ẩn bằng CSS),
 // nên các assertion về nội dung được giới hạn trong <table> để tránh trùng khớp.
@@ -78,7 +82,7 @@ describe('DataTable', () => {
       name: `User ${i}`,
       age: i,
     }));
-    render(<DataTable columns={columns} data={many} rowKey={(r) => r.id} pageSize={2} />);
+    renderR(<DataTable columns={columns} data={many} rowKey={(r) => r.id} pageSize={2} />);
 
     // Trang 1: 2 hàng
     expect(rowsOf()).toHaveLength(2);
