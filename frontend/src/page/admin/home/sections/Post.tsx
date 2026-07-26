@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
+import Modal from '../../../../component/common/Modal';
 import { getNews, getNew } from '../../../../service/service';
 import {
   createNews,
@@ -483,74 +484,59 @@ const NewsManagement: React.FC = () => {
 
         {/* News Detail Modal */}
         {selectedNews && (
-          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="bg-white rounded-xl shadow-soft max-w-4xl w-full max-h-[90vh] overflow-hidden border-2 border-gray-100">
-              {/* Modal Header */}
-              <div className="relative p-6 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-2xl font-bold text-white drop-shadow-lg">Chi tiết tin tức</h3>
-                  <button
-                    onClick={handleCloseDetails}
-                    className="w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white rounded-xl text-2xl font-bold  active:scale-95 transition-all duration-200"
-                  >
-                    ×
-                  </button>
+          <Modal title="Chi tiết tin tức" onClose={handleCloseDetails} size="xl">
+            <div>
+              <div className="mb-6">
+                {/* Hero Image */}
+                <div className="relative h-64 rounded-2xl overflow-hidden mb-6 shadow-lg">
+                  <img
+                    src={selectedNews.image}
+                    alt={selectedNews.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement;
+                      target.src = '/placeholder-image.jpg';
+                    }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                </div>
+
+                {/* Title & Subtitle */}
+                <h4 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400  text-brand-ink mb-3">
+                  {selectedNews.title}
+                </h4>
+                <p className="text-lg text-gray-600 mb-6 leading-relaxed">
+                  {selectedNews.subtitle}
+                </p>
+
+                {/* Meta Info */}
+                <div className="flex flex-wrap items-center gap-4 mb-8">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-surface to-brand-surface rounded-xl border-2 border-brand-line">
+                    <span className="text-xl">👤</span>
+                    <span className="text-gray-700 font-semibold">{selectedNews.author}</span>
+                  </div>
+                  <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-green-100 rounded-xl border-2 border-green-200">
+                    <span className="text-xl">📅</span>
+                    <span className="text-gray-700 font-semibold">
+                      {selectedNews.createdAt
+                        ? new Date(selectedNews.createdAt).toLocaleString('vi-VN')
+                        : 'Không xác định'}
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Modal Content */}
-              <div className="p-6 overflow-y-auto max-h-[calc(90vh-80px)]">
-                <div className="mb-6">
-                  {/* Hero Image */}
-                  <div className="relative h-64 rounded-2xl overflow-hidden mb-6 shadow-lg">
-                    <img
-                      src={selectedNews.image}
-                      alt={selectedNews.title}
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.src = '/placeholder-image.jpg';
-                      }}
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+              {/* Full Content */}
+              {selectedNews.fullContent && (
+                <div>
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="h-1 w-12 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full"></div>
+                    <h5 className="text-xl font-bold text-gray-800">Nội dung chi tiết</h5>
+                    <div className="h-1 flex-1 bg-gradient-to-r from-orange-400 to-red-400 rounded-full"></div>
                   </div>
-
-                  {/* Title & Subtitle */}
-                  <h4 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400  text-brand-ink mb-3">
-                    {selectedNews.title}
-                  </h4>
-                  <p className="text-lg text-gray-600 mb-6 leading-relaxed">
-                    {selectedNews.subtitle}
-                  </p>
-
-                  {/* Meta Info */}
-                  <div className="flex flex-wrap items-center gap-4 mb-8">
-                    <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-brand-surface to-brand-surface rounded-xl border-2 border-brand-line">
-                      <span className="text-xl">👤</span>
-                      <span className="text-gray-700 font-semibold">{selectedNews.author}</span>
-                    </div>
-                    <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-green-100 rounded-xl border-2 border-green-200">
-                      <span className="text-xl">📅</span>
-                      <span className="text-gray-700 font-semibold">
-                        {selectedNews.createdAt
-                          ? new Date(selectedNews.createdAt).toLocaleString('vi-VN')
-                          : 'Không xác định'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Full Content */}
-                {selectedNews.fullContent && (
-                  <div>
-                    <div className="flex items-center gap-3 mb-6">
-                      <div className="h-1 w-12 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full"></div>
-                      <h5 className="text-xl font-bold text-gray-800">Nội dung chi tiết</h5>
-                      <div className="h-1 flex-1 bg-gradient-to-r from-orange-400 to-red-400 rounded-full"></div>
-                    </div>
-                    <div className="bg-gradient-to-r from-gray-50 to-white border-2 border-gray-200 rounded-2xl p-8 shadow-md">
-                      <div
-                        className="prose prose-lg max-w-none
+                  <div className="bg-gradient-to-r from-gray-50 to-white border-2 border-gray-200 rounded-2xl p-8 shadow-md">
+                    <div
+                      className="prose prose-lg max-w-none
                           prose-headings:font-bold prose-headings:text-gray-900
                           prose-h1:text-2xl prose-h1:mb-4 prose-h1:mt-6
                           prose-h2:text-xl prose-h2:mb-3 prose-h2:mt-5
@@ -565,14 +551,13 @@ const NewsManagement: React.FC = () => {
                           prose-blockquote:border prose-blockquote:border-orange-400 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600
                           prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm prose-code:text-gray-800
                         "
-                        dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedNews.fullContent) }}
-                      />
-                    </div>
+                      dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedNews.fullContent) }}
+                    />
                   </div>
-                )}
-              </div>
+                </div>
+              )}
             </div>
-          </div>
+          </Modal>
         )}
 
         {/* Add News Modal */}

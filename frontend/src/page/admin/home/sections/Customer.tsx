@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Search, Filter, X } from 'lucide-react';
+import Modal from '../../../../component/common/Modal';
 import { Customer, CustomerDetail } from '../../../../types/admin';
 import { ServiceItem } from '../../../../types/service';
 import {
@@ -466,107 +467,80 @@ const CustomerManagement: React.FC = () => {
         </div>
       )}
       {showModal && selectedCustomer && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full m-4 max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-gray-800">Chi tiết khách hàng</h3>
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="text-gray-400 hover:text-gray-600"
-                >
-                  <X className="w-6 h-6" />
-                </button>
+        <Modal title="Chi tiết khách hàng" onClose={() => setShowModal(false)} size="lg">
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  ID khách hàng
+                </label>
+                <p className="text-sm text-gray-900 font-mono">{selectedCustomer.id}</p>
               </div>
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      ID khách hàng
-                    </label>
-                    <p className="text-sm text-gray-900 font-mono">{selectedCustomer.id}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Trạng thái
-                    </label>
-                    <span className={getStatusBadge(selectedCustomer.status)}>
-                      {getStatusText(selectedCustomer.status)}
-                    </span>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Tên khách hàng
-                  </label>
-                  <p className="text-sm text-gray-900">{selectedCustomer.name}</p>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <p className="text-sm text-gray-900">{selectedCustomer.email}</p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Điện thoại
-                    </label>
-                    <p className="text-sm text-gray-900">{selectedCustomer.phone}</p>
-                  </div>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Dịch vụ</label>
-                  <p className="text-sm text-gray-900">{selectedCustomer.serviceName}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
-                  <p className="text-sm text-gray-900">{selectedCustomer.description}</p>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Ngày tạo</label>
-                    <p className="text-sm text-gray-900">
-                      {formatDate(selectedCustomer.createdAt)}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Ngày cập nhật
-                    </label>
-                    <p className="text-sm text-gray-900">
-                      {formatDate(selectedCustomer.updatedAt)}
-                    </p>
-                  </div>
-                </div>
-                {selectedCustomer.completedAt && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Ngày hoàn thành
-                    </label>
-                    <p className="text-sm text-gray-900">
-                      {formatDate(selectedCustomer.completedAt)}
-                    </p>
-                  </div>
-                )}
-                {selectedCustomer.cancelledAt && (
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Ngày hủy</label>
-                    <p className="text-sm text-gray-900">
-                      {formatDate(selectedCustomer.cancelledAt)}
-                    </p>
-                  </div>
-                )}
-              </div>
-              <div className="mt-6 flex justify-end space-x-3">
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-                >
-                  Đóng
-                </button>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
+                <span className={getStatusBadge(selectedCustomer.status)}>
+                  {getStatusText(selectedCustomer.status)}
+                </span>
               </div>
             </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Tên khách hàng</label>
+              <p className="text-sm text-gray-900">{selectedCustomer.name}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                <p className="text-sm text-gray-900">{selectedCustomer.email}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Điện thoại</label>
+                <p className="text-sm text-gray-900">{selectedCustomer.phone}</p>
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Dịch vụ</label>
+              <p className="text-sm text-gray-900">{selectedCustomer.serviceName}</p>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
+              <p className="text-sm text-gray-900">{selectedCustomer.description}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ngày tạo</label>
+                <p className="text-sm text-gray-900">{formatDate(selectedCustomer.createdAt)}</p>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Ngày cập nhật
+                </label>
+                <p className="text-sm text-gray-900">{formatDate(selectedCustomer.updatedAt)}</p>
+              </div>
+            </div>
+            {selectedCustomer.completedAt && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Ngày hoàn thành
+                </label>
+                <p className="text-sm text-gray-900">{formatDate(selectedCustomer.completedAt)}</p>
+              </div>
+            )}
+            {selectedCustomer.cancelledAt && (
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Ngày hủy</label>
+                <p className="text-sm text-gray-900">{formatDate(selectedCustomer.cancelledAt)}</p>
+              </div>
+            )}
           </div>
-        </div>
+          <div className="mt-6 flex justify-end space-x-3">
+            <button
+              onClick={() => setShowModal(false)}
+              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+            >
+              Đóng
+            </button>
+          </div>
+        </Modal>
       )}
     </div>
   );
