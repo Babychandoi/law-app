@@ -10,6 +10,7 @@ import {
   UsersRound,
   X,
   ArrowLeft,
+  ThumbsUp,
 } from 'lucide-react';
 import teamChatService from '../../../../../service/teamChat';
 import { getMe } from '../../../../../service/auth';
@@ -18,6 +19,38 @@ import { useTeamChatSocket } from './useTeamChatSocket';
 import { ensureNotificationPermission, playPing, showBrowserNotification } from './notify';
 
 type NewMode = null | 'direct' | 'group';
+
+const GROUP_GAP = 5 * 60 * 1000; // gộp tin liên tiếp cùng người trong 5 phút
+const TIME_GAP = 10 * 60 * 1000; // hiện mốc thời gian khi cách nhau > 10 phút
+
+const initial = (name: string) => (name?.trim()?.charAt(0) || '?').toUpperCase();
+
+const fmtTime = (iso: string) =>
+  new Date(iso).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+
+// Nhãn thời gian ngắn cho danh sách hội thoại (kiểu Messenger).
+const fmtListTime = (iso?: string | null) => {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const diff = (Date.now() - d.getTime()) / 1000;
+  if (diff < 60) return 'Vừa xong';
+  if (diff < 3600) return `${Math.floor(diff / 60)} phút`;
+  if (diff < 86400) return `${Math.floor(diff / 3600)} giờ`;
+  if (diff < 172800) return 'Hôm qua';
+  return d.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+};
+
+// Mốc thời gian giữa các cụm tin nhắn.
+const fmtDivider = (iso: string) => {
+  const d = new Date(iso);
+  const now = new Date();
+  const sameDay = d.toDateString() === now.toDateString();
+  return sameDay
+    ? fmtTime(iso)
+    : d.toLocaleDateString('vi-VN', { weekday: 'short', day: '2-digit', month: '2-digit' }) +
+        ' ' +
+        fmtTime(iso);
+};
 
 export default function TeamChat() {
   // userId/role come from /auth/me (token is httpOnly now, not decodable in JS).
@@ -137,18 +170,23 @@ export default function TeamChat() {
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, typingUser]);
 
-  const handleSend = () => {
-    const text = draft.trim();
+  const sendText = (text: string, type: 'TEXT' = 'TEXT') => {
     if (!text || !activeId) return;
-    socket.sendMessage(activeId, text);
-    setDraft('');
+    socket.sendMessage(activeId, text, type);
     // Sending = I'm clearly viewing this conversation -> clear any unread on it.
     teamChatService
       .markRead(activeId)
       .then(refreshConversations)
       .catch(() => undefined);
+  };
+
+  const handleSend = () => {
+    const text = draft.trim();
+    if (!text) return;
+    sendText(text);
+    setDraft('');
   };
 
   const handleDraftChange = (v: string) => {
@@ -218,8 +256,11 @@ export default function TeamChat() {
     }
   };
 
+  const peerId = (c: ConversationSummary) =>
+    c.type === 'DIRECT' ? (c.memberIds.find((id) => id !== me) ?? '') : '';
+
   const convTitle = (c: ConversationSummary) =>
-    c.type === 'DIRECT' ? staffName(c.memberIds.find((id) => id !== me) ?? '') : (c.name ?? 'Nhóm');
+    c.type === 'DIRECT' ? staffName(peerId(c)) : (c.name ?? 'Nhóm');
 
   const filteredStaff = staff.filter(
     (s) => s.id !== me && (s.fullName ?? '').toLowerCase().includes(search.toLowerCase())
@@ -227,18 +268,49 @@ export default function TeamChat() {
 
   const active = conversations.find((c) => c.id === activeId) ?? null;
   const totalUnread = conversations.reduce((sum, c) => sum + (c.unreadCount || 0), 0);
+  // Lọc danh sách đoạn chat theo ô tìm kiếm (chỉ khi không mở panel tạo mới).
+  const shownConversations =
+    newMode || !search.trim()
+      ? conversations
+      : conversations.filter((c) => convTitle(c).toLowerCase().includes(search.toLowerCase()));
+
+  // Trạng thái online của người đối thoại (chat 1-1)
+  const activePeer = active ? peerId(active) : '';
+  const activePeerOnline = activePeer ? online.has(activePeer) : false;
+
+  // Gộp tin liên tiếp + xác định vị trí trong cụm để bo góc kiểu Messenger.
+  const rows = messages.map((m, i) => {
+    const prev = messages[i - 1];
+    const next = messages[i + 1];
+    const t = new Date(m.createdAt).getTime();
+    const firstOfGroup =
+      !prev || prev.senderId !== m.senderId || t - new Date(prev.createdAt).getTime() > GROUP_GAP;
+    const lastOfGroup =
+      !next || next.senderId !== m.senderId || new Date(next.createdAt).getTime() - t > GROUP_GAP;
+    const showTime = !prev || t - new Date(prev.createdAt).getTime() > TIME_GAP;
+    return { m, mine: m.senderId === me, firstOfGroup, lastOfGroup, showTime };
+  });
+
+  // "Đã xem": ai đã đọc tin cuối cùng của tôi.
+  const lastMessage = messages[messages.length - 1];
+  const seenReaders =
+    lastMessage && lastMessage.senderId === me
+      ? (lastMessage.readBy || []).filter((id) => id !== me)
+      : [];
+
+  const isGroup = active?.type !== 'DIRECT';
 
   return (
-    <div className="flex h-[calc(100vh-7rem)] bg-white rounded-xl shadow-soft overflow-hidden">
+    <div className="flex h-[calc(100vh-7rem)] bg-white rounded-xl shadow-soft overflow-hidden border border-gray-200">
       {/* Sidebar: conversation list — master-detail: ẩn trên mobile khi đã chọn hội thoại */}
       <aside
-        className={`w-full flex-col border-r border-brand-line lg:flex lg:w-80 ${
+        className={`w-full flex-col border-r border-gray-200 lg:flex lg:w-[360px] ${
           activeId ? 'hidden' : 'flex'
         }`}
       >
-        <div className="p-4 border-b border-brand-line flex items-center justify-between">
-          <h2 className="font-semibold text-brand-ink flex items-center gap-2">
-            Chat nội bộ
+        <div className="px-4 pt-4 pb-2 flex items-center justify-between">
+          <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            Đoạn chat
             {totalUnread > 0 && (
               <span className="text-xs bg-red-500 text-white rounded-full px-2 py-0.5">
                 {totalUnread}
@@ -251,8 +323,9 @@ export default function TeamChat() {
                 ensureNotificationPermission();
                 setNewMode(newMode === 'direct' ? null : 'direct');
               }}
-              className="p-2 rounded-lg hover:bg-brand-surface text-brand-gold"
-              title="Nhắn riêng"
+              className="w-9 h-9 grid place-items-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700"
+              title="Nhắn tin mới"
+              aria-label="Nhắn tin mới"
             >
               <Plus size={18} />
             </button>
@@ -262,8 +335,9 @@ export default function TeamChat() {
                   ensureNotificationPermission();
                   setNewMode(newMode === 'group' ? null : 'group');
                 }}
-                className="p-2 rounded-lg hover:bg-brand-surface text-brand-goldDark"
+                className="w-9 h-9 grid place-items-center rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700"
                 title="Tạo nhóm (admin)"
+                aria-label="Tạo nhóm"
               >
                 <UsersRound size={18} />
               </button>
@@ -271,19 +345,24 @@ export default function TeamChat() {
           </div>
         </div>
 
+        {/* Ô tìm kiếm luôn hiển thị kiểu Messenger */}
+        <div className="px-4 pb-2">
+          <div className="flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2">
+            <Search size={16} className="text-gray-500" />
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Tìm kiếm trên đoạn chat"
+              className="flex-1 bg-transparent text-sm outline-none placeholder:text-gray-500"
+            />
+          </div>
+        </div>
+
         {/* New direct */}
         {newMode === 'direct' && (
-          <div className="p-3 border-b border-brand-line bg-brand-surface">
-            <div className="flex items-center gap-2 mb-2 bg-white rounded-lg px-2 border border-brand-line">
-              <Search size={14} className="text-brand-muted" />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Tìm nhân viên..."
-                className="flex-1 py-2 text-sm outline-none"
-              />
-            </div>
-            <div className="max-h-48 overflow-y-auto">
+          <div className="mx-3 mb-2 p-2 rounded-xl border border-gray-200 bg-gray-50">
+            <div className="text-xs font-semibold text-gray-500 px-1 pb-1">Bắt đầu nhắn riêng</div>
+            <div className="max-h-56 overflow-y-auto">
               {filteredStaff.map((s) => (
                 <button
                   key={s.id}
@@ -291,16 +370,16 @@ export default function TeamChat() {
                   className="w-full flex items-center gap-2 p-2 rounded-lg hover:bg-white text-left"
                 >
                   <span className="relative">
-                    <span className="w-8 h-8 rounded-full bg-brand-gold/20 text-brand-goldDark grid place-items-center text-xs font-semibold">
-                      {s.fullName?.charAt(0) ?? '?'}
+                    <span className="w-9 h-9 rounded-full bg-gradient-to-br from-sky-400 to-blue-500 text-white grid place-items-center text-sm font-semibold">
+                      {initial(s.fullName)}
                     </span>
                     {online.has(s.id) && (
                       <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full ring-2 ring-white" />
                     )}
                   </span>
                   <span className="text-sm">
-                    <span className="block text-brand-ink">{s.fullName}</span>
-                    <span className="block text-xs text-brand-muted">{s.position}</span>
+                    <span className="block text-gray-900 font-medium">{s.fullName}</span>
+                    <span className="block text-xs text-gray-500">{s.position}</span>
                   </span>
                 </button>
               ))}
@@ -310,13 +389,13 @@ export default function TeamChat() {
 
         {/* New group (admin only) */}
         {newMode === 'group' && isAdmin && (
-          <div className="p-3 border-b border-brand-line bg-brand-surface space-y-2">
+          <div className="mx-3 mb-2 p-3 rounded-xl border border-gray-200 bg-gray-50 space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold text-brand-ink">Tạo nhóm mới</span>
+              <span className="text-sm font-semibold text-gray-900">Tạo nhóm mới</span>
               <button
                 onClick={closeNew}
                 aria-label="Đóng"
-                className="text-brand-muted hover:text-brand-ink"
+                className="text-gray-500 hover:text-gray-900"
               >
                 <X size={16} />
               </button>
@@ -325,18 +404,9 @@ export default function TeamChat() {
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
               placeholder="Tên nhóm..."
-              className="w-full rounded-lg border border-brand-line px-3 py-2 text-sm outline-none focus:border-brand-gold"
+              className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-blue-500"
             />
-            <div className="flex items-center gap-2 bg-white rounded-lg px-2 border border-brand-line">
-              <Search size={14} className="text-brand-muted" />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Tìm thành viên..."
-                className="flex-1 py-2 text-sm outline-none"
-              />
-            </div>
-            <div className="text-xs text-brand-muted">Đã chọn: {groupMembers.size}</div>
+            <div className="text-xs text-gray-500">Đã chọn: {groupMembers.size}</div>
             <div className="max-h-40 overflow-y-auto">
               {filteredStaff.map((s) => {
                 const checked = groupMembers.has(s.id);
@@ -345,137 +415,247 @@ export default function TeamChat() {
                     key={s.id}
                     onClick={() => toggleGroupMember(s.id)}
                     className={`w-full flex items-center gap-2 p-2 rounded-lg text-left ${
-                      checked ? 'bg-brand-gold/15' : 'hover:bg-white'
+                      checked ? 'bg-blue-50' : 'hover:bg-white'
                     }`}
                   >
                     <span
-                      className={`w-4 h-4 rounded border grid place-items-center ${
-                        checked ? 'bg-brand-gold border-brand-gold text-white' : 'border-brand-line'
+                      className={`w-4 h-4 rounded border grid place-items-center text-[10px] ${
+                        checked ? 'bg-blue-500 border-blue-500 text-white' : 'border-gray-300'
                       }`}
                     >
                       {checked && '✓'}
                     </span>
-                    <span className="text-sm text-brand-ink">{s.fullName}</span>
-                    <span className="text-xs text-brand-muted">{s.position}</span>
+                    <span className="text-sm text-gray-900">{s.fullName}</span>
+                    <span className="text-xs text-gray-500">{s.position}</span>
                   </button>
                 );
               })}
             </div>
             <button
               onClick={createGroup}
-              className="w-full flex items-center justify-center gap-2 rounded-lg bg-brand-gold text-white py-2 text-sm hover:bg-brand-goldDark"
+              className="w-full flex items-center justify-center gap-2 rounded-lg bg-blue-500 text-white py-2 text-sm font-medium hover:bg-blue-600"
             >
               <UserPlus size={16} /> Tạo nhóm
             </button>
           </div>
         )}
 
-        <div className="flex-1 overflow-y-auto">
-          {conversations.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => openConversation(c.id)}
-              className={`w-full flex items-center gap-3 p-3 text-left border-b border-brand-line/50 hover:bg-brand-surface ${
-                c.id === activeId ? 'bg-brand-surface' : ''
-              }`}
-            >
-              <span className="w-10 h-10 rounded-full bg-brand-gold/20 text-brand-goldDark grid place-items-center font-semibold">
-                {c.type === 'DIRECT' ? convTitle(c).charAt(0) : <UsersRound size={18} />}
-              </span>
-              <span className="flex-1 min-w-0">
-                <span className="flex justify-between items-center">
-                  <span className="text-sm font-medium text-brand-ink truncate">
-                    {convTitle(c)}
+        <div className="flex-1 overflow-y-auto px-2 pb-2">
+          {shownConversations.map((c) => {
+            const unread = c.unreadCount > 0;
+            const pOnline = c.type === 'DIRECT' && online.has(peerId(c));
+            return (
+              <button
+                key={c.id}
+                onClick={() => openConversation(c.id)}
+                className={`w-full flex items-center gap-3 p-2 rounded-xl text-left transition-colors ${
+                  c.id === activeId ? 'bg-blue-50' : 'hover:bg-gray-100'
+                }`}
+              >
+                <span className="relative shrink-0">
+                  <span className="w-12 h-12 rounded-full bg-gradient-to-br from-sky-400 to-blue-500 text-white grid place-items-center font-semibold">
+                    {c.type === 'DIRECT' ? initial(convTitle(c)) : <UsersRound size={22} />}
                   </span>
-                  {c.unreadCount > 0 && (
-                    <span className="ml-2 text-xs bg-brand-gold text-white rounded-full px-2 py-0.5">
-                      {c.unreadCount}
-                    </span>
+                  {pOnline && (
+                    <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-white" />
                   )}
                 </span>
-                <span className="block text-xs text-brand-muted truncate">
-                  {c.lastMessage?.content ?? 'Chưa có tin nhắn'}
+                <span className="flex-1 min-w-0">
+                  <span className="flex justify-between items-center gap-2">
+                    <span
+                      className={`truncate ${
+                        unread ? 'font-bold text-gray-900' : 'font-medium text-gray-800'
+                      }`}
+                    >
+                      {convTitle(c)}
+                    </span>
+                    <span className="shrink-0 text-xs text-gray-500">
+                      {fmtListTime(c.lastMessage?.at)}
+                    </span>
+                  </span>
+                  <span className="flex justify-between items-center gap-2">
+                    <span
+                      className={`truncate text-sm ${
+                        unread ? 'font-semibold text-gray-900' : 'text-gray-500'
+                      }`}
+                    >
+                      {c.lastMessage
+                        ? `${c.lastMessage.senderId === me ? 'Bạn: ' : ''}${c.lastMessage.content}`
+                        : 'Chưa có tin nhắn'}
+                    </span>
+                    {unread && <span className="shrink-0 w-2.5 h-2.5 bg-blue-500 rounded-full" />}
+                  </span>
                 </span>
-              </span>
-            </button>
-          ))}
+              </button>
+            );
+          })}
+          {shownConversations.length === 0 && (
+            <div className="text-center text-sm text-gray-500 py-10">
+              {search.trim() ? 'Không tìm thấy đoạn chat' : 'Chưa có đoạn chat nào'}
+            </div>
+          )}
         </div>
       </aside>
 
       {/* Main: messages — ẩn trên mobile khi chưa chọn hội thoại */}
-      <section className={`flex-1 flex-col ${activeId ? 'flex' : 'hidden lg:flex'}`}>
+      <section className={`flex-1 flex-col bg-white ${activeId ? 'flex' : 'hidden lg:flex'}`}>
         {active ? (
           <>
-            <header className="p-4 border-b border-brand-line flex items-center gap-3">
+            <header className="px-4 py-2.5 border-b border-gray-200 flex items-center gap-3">
               <button
                 type="button"
                 onClick={() => setActiveId(null)}
                 aria-label="Quay lại danh sách"
-                className="-ml-1 rounded-lg p-2 text-brand-muted hover:bg-brand-surface lg:hidden"
+                className="-ml-1 rounded-full p-2 text-gray-600 hover:bg-gray-100 lg:hidden"
               >
                 <ArrowLeft size={20} />
               </button>
-              <span className="w-9 h-9 rounded-full bg-brand-gold/20 text-brand-goldDark grid place-items-center font-semibold">
-                {active.type === 'DIRECT' ? convTitle(active).charAt(0) : <UsersRound size={18} />}
+              <span className="relative shrink-0">
+                <span className="w-10 h-10 rounded-full bg-gradient-to-br from-sky-400 to-blue-500 text-white grid place-items-center font-semibold">
+                  {isGroup ? <UsersRound size={20} /> : initial(convTitle(active))}
+                </span>
+                {!isGroup && activePeerOnline && (
+                  <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full ring-2 ring-white" />
+                )}
               </span>
-              <div>
-                <div className="font-semibold text-brand-ink">{convTitle(active)}</div>
-                {active.type !== 'DIRECT' && (
-                  <div className="text-xs text-brand-muted flex items-center gap-1">
+              <div className="min-w-0">
+                <div className="font-semibold text-gray-900 truncate">{convTitle(active)}</div>
+                {isGroup ? (
+                  <div className="text-xs text-gray-500 flex items-center gap-1">
                     <Users size={12} /> {active.memberIds.length} thành viên
+                  </div>
+                ) : (
+                  <div className="text-xs text-gray-500">
+                    {activePeerOnline ? (
+                      <span className="text-green-600">Đang hoạt động</span>
+                    ) : (
+                      'Không hoạt động'
+                    )}
                   </div>
                 )}
               </div>
             </header>
 
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-brand-surface/40">
-              {messages.map((m) => {
-                const mine = m.senderId === me;
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-0.5 bg-white">
+              {rows.map(({ m, mine, firstOfGroup, lastOfGroup, showTime }) => {
+                const isImage = m.type === 'IMAGE' && m.attachments?.[0];
+                const isFile = m.type === 'FILE' && m.attachments?.[0];
+                // Bo góc: cạnh giáp tin cùng cụm thu nhỏ lại.
+                const radius = mine
+                  ? `rounded-2xl ${firstOfGroup ? '' : 'rounded-tr-md'} ${
+                      lastOfGroup ? '' : 'rounded-br-md'
+                    }`
+                  : `rounded-2xl ${firstOfGroup ? '' : 'rounded-tl-md'} ${
+                      lastOfGroup ? '' : 'rounded-bl-md'
+                    }`;
                 return (
-                  <div key={m.id} className={`flex ${mine ? 'justify-end' : 'justify-start'}`}>
+                  <div key={m.id}>
+                    {showTime && (
+                      <div className="text-center text-[11px] text-gray-400 py-2">
+                        {fmtDivider(m.createdAt)}
+                      </div>
+                    )}
                     <div
-                      className={`max-w-[70%] rounded-2xl px-4 py-2 ${
-                        mine ? 'bg-brand-gold text-white' : 'bg-white text-brand-ink shadow-sm'
-                      }`}
+                      className={`flex items-end gap-2 ${mine ? 'justify-end' : 'justify-start'}`}
                     >
-                      {!mine && (
-                        <div className="text-xs font-semibold text-brand-goldDark mb-0.5">
-                          {staffName(m.senderId)}
-                        </div>
-                      )}
-                      {m.type === 'IMAGE' && m.attachments?.[0] ? (
-                        <img
-                          src={m.attachments[0].url}
-                          alt={m.attachments[0].name}
-                          className="rounded-lg max-h-60"
-                        />
-                      ) : m.type === 'FILE' && m.attachments?.[0] ? (
-                        <a
-                          href={m.attachments[0].url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="underline break-all"
-                        >
-                          📎 {m.attachments[0].name}
-                        </a>
-                      ) : (
-                        <span className="whitespace-pre-wrap break-words">{m.content}</span>
-                      )}
+                      {/* Avatar cạnh tin người khác (chỉ ở tin cuối cụm) */}
+                      {!mine &&
+                        (lastOfGroup ? (
+                          <span
+                            title={staffName(m.senderId)}
+                            className="w-7 h-7 shrink-0 rounded-full bg-gradient-to-br from-sky-400 to-blue-500 text-white grid place-items-center text-[11px] font-semibold"
+                          >
+                            {initial(staffName(m.senderId))}
+                          </span>
+                        ) : (
+                          <span className="w-7 shrink-0" />
+                        ))}
+
+                      <div
+                        className={`max-w-[68%] ${mine ? 'items-end' : 'items-start'} flex flex-col`}
+                      >
+                        {/* Tên người gửi (nhóm, đầu cụm) */}
+                        {!mine && isGroup && firstOfGroup && (
+                          <span className="text-[11px] text-gray-500 ml-3 mb-0.5">
+                            {staffName(m.senderId)}
+                          </span>
+                        )}
+
+                        {isImage ? (
+                          <a
+                            href={m.attachments[0].url}
+                            target="_blank"
+                            rel="noreferrer"
+                            title={fmtTime(m.createdAt)}
+                          >
+                            <img
+                              src={m.attachments[0].url}
+                              alt={m.attachments[0].name}
+                              className="rounded-2xl max-h-64 object-cover"
+                            />
+                          </a>
+                        ) : isFile ? (
+                          <a
+                            href={m.attachments[0].url}
+                            target="_blank"
+                            rel="noreferrer"
+                            title={fmtTime(m.createdAt)}
+                            className={`inline-flex items-center gap-2 px-4 py-2.5 text-sm ${radius} ${
+                              mine ? 'bg-[#0084ff] text-white' : 'bg-[#e9e9eb] text-gray-900'
+                            }`}
+                          >
+                            <Paperclip size={16} /> {m.attachments[0].name}
+                          </a>
+                        ) : (
+                          <div
+                            title={fmtTime(m.createdAt)}
+                            className={`px-3.5 py-2 text-[15px] leading-snug break-words whitespace-pre-wrap ${radius} ${
+                              mine ? 'bg-[#0084ff] text-white' : 'bg-[#e9e9eb] text-gray-900'
+                            }`}
+                          >
+                            {m.content}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                 );
               })}
+
+              {/* Đang gõ — bong bóng 3 chấm động */}
               {typingUser && (
-                <div className="text-xs text-brand-muted italic">
-                  {staffName(typingUser)} đang nhập...
+                <div className="flex items-end gap-2 justify-start pt-1">
+                  <span className="w-7 h-7 shrink-0 rounded-full bg-gradient-to-br from-sky-400 to-blue-500 text-white grid place-items-center text-[11px] font-semibold">
+                    {initial(staffName(typingUser))}
+                  </span>
+                  <div className="bg-[#e9e9eb] rounded-2xl px-3.5 py-3 flex items-center gap-1">
+                    <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:0ms]" />
+                    <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:150ms]" />
+                    <span className="w-1.5 h-1.5 bg-gray-500 rounded-full animate-bounce [animation-delay:300ms]" />
+                  </div>
+                </div>
+              )}
+
+              {/* Đã xem — avatar nhỏ dưới tin cuối của tôi */}
+              {seenReaders.length > 0 && !typingUser && (
+                <div className="flex justify-end gap-0.5 pr-1 pt-1">
+                  {seenReaders.slice(0, 6).map((id) => (
+                    <span
+                      key={id}
+                      title={`Đã xem: ${staffName(id)}`}
+                      className="w-4 h-4 rounded-full bg-gradient-to-br from-sky-400 to-blue-500 text-white grid place-items-center text-[8px] font-semibold ring-1 ring-white"
+                    >
+                      {initial(staffName(id))}
+                    </span>
+                  ))}
                 </div>
               )}
               <div ref={bottomRef} />
             </div>
 
-            <footer className="p-3 border-t border-brand-line flex items-center gap-2">
-              <label className="p-2 rounded-lg hover:bg-brand-surface text-brand-muted cursor-pointer">
-                <Paperclip size={18} />
+            <footer className="px-3 py-3 border-t border-gray-200 flex items-center gap-2">
+              <label className="w-9 h-9 grid place-items-center rounded-full hover:bg-gray-100 text-[#0084ff] cursor-pointer shrink-0">
+                <Paperclip size={20} />
                 <input
                   type="file"
                   aria-label="Đính kèm tệp"
@@ -483,27 +663,44 @@ export default function TeamChat() {
                   onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])}
                 />
               </label>
-              <input
-                value={draft}
-                onChange={(e) => handleDraftChange(e.target.value)}
-                onKeyDown={(e) =>
-                  e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())
-                }
-                placeholder="Nhập tin nhắn..."
-                className="flex-1 rounded-full border border-brand-line px-4 py-2 outline-none focus:border-brand-gold"
-              />
-              <button
-                onClick={handleSend}
-                aria-label="Gửi tin nhắn"
-                className="p-2.5 rounded-full bg-brand-gold text-white hover:bg-brand-goldDark"
-              >
-                <Send size={18} />
-              </button>
+              <div className="flex-1 flex items-center bg-gray-100 rounded-full px-4">
+                <input
+                  value={draft}
+                  onChange={(e) => handleDraftChange(e.target.value)}
+                  onKeyDown={(e) =>
+                    e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())
+                  }
+                  placeholder="Aa"
+                  className="flex-1 bg-transparent py-2.5 text-[15px] outline-none placeholder:text-gray-500"
+                />
+              </div>
+              {draft.trim() ? (
+                <button
+                  onClick={handleSend}
+                  aria-label="Gửi tin nhắn"
+                  className="w-9 h-9 grid place-items-center rounded-full text-[#0084ff] hover:bg-gray-100 shrink-0"
+                >
+                  <Send size={20} />
+                </button>
+              ) : (
+                <button
+                  onClick={() => sendText('👍')}
+                  aria-label="Gửi biểu tượng thích"
+                  className="w-9 h-9 grid place-items-center rounded-full text-[#0084ff] hover:bg-gray-100 shrink-0"
+                >
+                  <ThumbsUp size={20} />
+                </button>
+              )}
             </footer>
           </>
         ) : (
-          <div className="flex-1 grid place-items-center text-brand-muted">
-            Chọn một cuộc trò chuyện để bắt đầu
+          <div className="flex-1 grid place-items-center text-gray-500">
+            <div className="text-center">
+              <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-gray-100 grid place-items-center">
+                <Send size={26} className="text-gray-400" />
+              </div>
+              Chọn một cuộc trò chuyện để bắt đầu
+            </div>
           </div>
         )}
       </section>
