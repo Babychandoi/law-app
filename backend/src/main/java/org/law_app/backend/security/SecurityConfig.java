@@ -72,6 +72,25 @@ public class SecurityConfig {
                 request
                     .requestMatchers(HttpMethod.POST, AuthorizedUrls)
                     .permitAll()
+                    // ===== KHU HỆ THỐNG: chỉ ADMIN (đặt TRƯỚC các permitAll GET rộng) =====
+                    // Dữ liệu PII: hồ sơ ứng viên + người đăng ký. Trước đây lọt vào GET /jobs/**,
+                    // /news/** permitAll -> lộ công khai. Chặn về ADMIN trước khi mở public GET.
+                    .requestMatchers(HttpMethod.GET, "/jobs/applications", "/jobs/*/applications")
+                    .hasRole("ADMIN")
+                    .requestMatchers(HttpMethod.GET, "/news/subscribers", "/news/subscribers/**")
+                    .hasRole("ADMIN")
+                    // Ghi nội dung website (dịch vụ/bài viết) + tin tuyển dụng: chỉ ADMIN.
+                    // POST public (/jobs/apply, /news/subscribe, /customer) đã permitAll ở trên nên
+                    // được khớp trước, không bị chặn.
+                    .requestMatchers(
+                        HttpMethod.POST, "/services/**", "/service/**", "/jobs/**", "/news/**")
+                    .hasRole("ADMIN")
+                    .requestMatchers(
+                        HttpMethod.PUT, "/services/**", "/service/**", "/jobs/**", "/news/**")
+                    .hasRole("ADMIN")
+                    .requestMatchers(
+                        HttpMethod.DELETE, "/services/**", "/service/**", "/jobs/**", "/news/**")
+                    .hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, AuthorizedUrlsPublic)
                     .permitAll()
                     .requestMatchers(HttpMethod.GET, "/chat/*")
