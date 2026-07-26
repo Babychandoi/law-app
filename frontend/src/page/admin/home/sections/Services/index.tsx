@@ -1,4 +1,4 @@
-import { ExternalLink, FolderPlus, Layers, Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
+import { ExternalLink, FolderPlus, Layers, Pencil, Plus, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
@@ -10,6 +10,7 @@ import {
 } from '../../../../../service/admin';
 import { iconOptions } from '../../../../../shared/config/menuIcons';
 import ServiceEditor from './ServiceEditor';
+import { Button, DataTable, useConfirm, type Column } from '../../../../../component/common/ui';
 
 /**
  * Quản lý dịch vụ (CMS): thêm/sửa/xóa dịch vụ và toàn bộ nội dung trang
@@ -19,6 +20,8 @@ const ServiceManager: React.FC = () => {
   const [services, setServices] = useState<AdminChildrenService[]>([]);
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<AdminChildrenService | 'new' | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const { confirm, confirmDialog } = useConfirm();
 
   const fetchServices = async () => {
     try {
@@ -83,24 +86,88 @@ const ServiceManager: React.FC = () => {
   };
 
   const handleDelete = async (service: AdminChildrenService) => {
-    const confirm = await Swal.fire({
-      icon: 'warning',
+    const ok = await confirm({
       title: `Xóa dịch vụ "${service.title}"?`,
-      text: 'Toàn bộ nội dung trang (hero, quy trình, bảng giá, sections) sẽ bị xóa vĩnh viễn.',
-      showCancelButton: true,
-      confirmButtonText: 'Xóa',
-      cancelButtonText: 'Hủy',
-      confirmButtonColor: '#dc2626',
+      message: 'Toàn bộ nội dung trang (hero, quy trình, bảng giá, sections) sẽ bị xóa vĩnh viễn.',
+      confirmText: 'Xóa',
+      variant: 'danger',
     });
-    if (!confirm.isConfirmed) return;
+    if (!ok) return;
     try {
+      setDeletingId(service.id);
       await deleteService(service.id);
       toast.success('Đã xóa dịch vụ.');
-      fetchServices();
+      setServices((prev) => prev.filter((s) => s.id !== service.id));
     } catch {
       toast.error('Xóa thất bại. Vui lòng thử lại.');
+    } finally {
+      setDeletingId(null);
     }
   };
+
+  const columns: Column<AdminChildrenService>[] = [
+    {
+      key: 'title',
+      header: 'Dịch vụ',
+      sortable: true,
+      render: (service) => (
+        <div className="flex items-center gap-3">
+          {service.image ? (
+            <img
+              src={service.image}
+              alt=""
+              className="h-10 w-14 rounded border border-gray-200 object-cover"
+            />
+          ) : (
+            <div className="h-10 w-14 rounded border border-dashed border-gray-300 bg-gray-50" />
+          )}
+          <span className="font-semibold text-gray-900">{service.title}</span>
+        </div>
+      ),
+    },
+    {
+      key: 'href',
+      header: 'Đường dẫn trang',
+      sortable: true,
+      render: (service) => (
+        <a
+          href={service.href}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1 text-amber-700 hover:underline"
+        >
+          {service.href}
+          <ExternalLink className="h-3.5 w-3.5" />
+        </a>
+      ),
+    },
+    {
+      key: 'actions',
+      header: 'Thao tác',
+      align: 'right',
+      render: (service) => (
+        <div className="flex justify-end gap-2">
+          <Button
+            size="sm"
+            variant="secondary"
+            leftIcon={<Pencil className="h-4 w-4" />}
+            onClick={() => setEditing(service)}
+          >
+            Sửa
+          </Button>
+          <Button
+            size="sm"
+            variant="danger"
+            leftIcon={<Trash2 className="h-4 w-4" />}
+            loading={deletingId === service.id}
+            onClick={() => handleDelete(service)}
+          >
+            Xóa
+          </Button>
+        </div>
+      ),
+    },
+  ];
 
   if (editing) {
     return (
@@ -116,6 +183,7 @@ const ServiceManager: React.FC = () => {
 
   return (
     <div className="p-4 sm:p-6">
+      {confirmDialog}
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="flex items-center gap-2 text-xl font-semibold text-gray-900">
@@ -127,97 +195,35 @@ const ServiceManager: React.FC = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <button
-            type="button"
+          <Button
+            variant="secondary"
+            leftIcon={<FolderPlus className="h-4 w-4" />}
             onClick={handleAddParent}
-            className="inline-flex items-center gap-2 rounded-md border border-amber-700 px-4 py-2 text-sm font-semibold text-amber-700 hover:bg-amber-50"
+            className="!border-amber-700 !text-amber-700 hover:!bg-amber-50"
           >
-            <FolderPlus className="h-4 w-4" />
             Thêm nhóm
-          </button>
-          <button
-            type="button"
-            onClick={() => setEditing('new')}
-            className="inline-flex items-center gap-2 rounded-md bg-amber-700 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-800"
-          >
-            <Plus className="h-4 w-4" />
+          </Button>
+          <Button leftIcon={<Plus className="h-4 w-4" />} onClick={() => setEditing('new')}>
             Thêm dịch vụ
-          </button>
+          </Button>
         </div>
       </div>
 
-      {loading ? (
-        <div className="flex items-center justify-center py-20 text-gray-500">
-          <Loader2 className="h-6 w-6 animate-spin" />
-        </div>
-      ) : services.length === 0 ? (
-        <div className="rounded-lg border border-gray-200 bg-white px-6 py-12 text-center text-gray-500">
-          Chưa có dịch vụ nào. Bấm “Thêm dịch vụ” để tạo trang đầu tiên.
-        </div>
-      ) : (
-        <div className="overflow-x-auto rounded-lg border border-gray-200 bg-white">
-          <table className="w-full min-w-[640px] text-left text-sm">
-            <thead className="border-b border-gray-200 bg-gray-50 text-gray-600">
-              <tr>
-                <th className="px-4 py-3 font-semibold">Dịch vụ</th>
-                <th className="px-4 py-3 font-semibold">Đường dẫn trang</th>
-                <th className="px-4 py-3 text-right font-semibold">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {services.map((service) => (
-                <tr key={service.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-3">
-                    <div className="flex items-center gap-3">
-                      {service.image ? (
-                        <img
-                          src={service.image}
-                          alt=""
-                          className="h-10 w-14 rounded border border-gray-200 object-cover"
-                        />
-                      ) : (
-                        <div className="h-10 w-14 rounded border border-dashed border-gray-300 bg-gray-50" />
-                      )}
-                      <span className="font-semibold text-gray-900">{service.title}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3">
-                    <a
-                      href={service.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex items-center gap-1 text-amber-700 hover:underline"
-                    >
-                      {service.href}
-                      <ExternalLink className="h-3.5 w-3.5" />
-                    </a>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex justify-end gap-2">
-                      <button
-                        type="button"
-                        onClick={() => setEditing(service)}
-                        className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1.5 font-semibold text-gray-700 hover:border-amber-600 hover:text-amber-700"
-                      >
-                        <Pencil className="h-4 w-4" />
-                        Sửa
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDelete(service)}
-                        className="inline-flex items-center gap-1.5 rounded-md border border-gray-200 px-3 py-1.5 font-semibold text-red-600 hover:border-red-400"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                        Xóa
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <div className="rounded-lg border border-gray-200 bg-white p-4">
+        <DataTable
+          columns={columns}
+          data={services}
+          rowKey={(s) => s.id}
+          loading={loading}
+          searchable
+          searchPlaceholder="Tìm theo tên hoặc đường dẫn..."
+          searchText={(s) => `${s.title} ${s.href}`}
+          pageSize={10}
+          emptyIcon={Layers}
+          emptyTitle="Chưa có dịch vụ nào"
+          emptyDescription="Bấm “Thêm dịch vụ” để tạo trang đầu tiên."
+        />
+      </div>
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, Search, Filter, X } from 'lucide-react';
+import { Search, Filter, X } from 'lucide-react';
 import Modal from '../../../../component/common/Modal';
 import { Customer, CustomerDetail } from '../../../../types/admin';
 import { ServiceItem } from '../../../../types/service';
@@ -11,7 +11,9 @@ import {
 } from '../../../../service/admin';
 import { getServiceHome } from '../../../../service/service';
 import { toast } from 'react-toastify';
-import Swal from 'sweetalert2';
+import { Button, DataTable, type Column } from '../../../../component/common/ui';
+
+type CustomerStatus = 'NEW' | 'RECEIVED' | 'PROCESSING' | 'COMPLETED' | 'CANCELED';
 
 const CustomerManagement: React.FC = () => {
   const [allCustomers, setAllCustomers] = useState<Customer[]>([]);
@@ -25,8 +27,7 @@ const CustomerManagement: React.FC = () => {
   const [dateFromFilter, setDateFromFilter] = useState<string>('');
   const [dateToFilter, setDateToFilter] = useState<string>('');
   const [services, setServices] = useState<ServiceItem[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<{ id: string } | null>(null);
 
   useEffect(() => {
@@ -63,16 +64,9 @@ const CustomerManagement: React.FC = () => {
 
   const fetchCustomers = async () => {
     try {
-      Swal.fire({
-        title: 'Đang tải thông tin khách hàng...',
-        allowOutsideClick: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
+      setLoading(true);
       const response = await getCustomers();
       if (response.code === 200) {
-        Swal.close();
         const sortedCustomers = response.data.sort(
           (a: Customer, b: Customer) =>
             new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -84,6 +78,8 @@ const CustomerManagement: React.FC = () => {
       }
     } catch (error) {
       toast.error('Lỗi khi tải danh sách khách hàng: ' + (error as Error).message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -153,7 +149,6 @@ const CustomerManagement: React.FC = () => {
       (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
     setFilteredCustomers(filtered);
-    setCurrentPage(1);
   }, [allCustomers, searchTerm, statusFilter, serviceFilter, dateFromFilter, dateToFilter]);
 
   useEffect(() => {
@@ -179,10 +174,7 @@ const CustomerManagement: React.FC = () => {
     setDateToFilter('');
   };
 
-  const updateStatus = async (
-    customerId: string,
-    newStatus: 'NEW' | 'RECEIVED' | 'PROCESSING' | 'COMPLETED' | 'CANCELED'
-  ) => {
+  const updateStatus = async (customerId: string, newStatus: CustomerStatus) => {
     try {
       const response = await updateCustomerStatus(customerId, newStatus);
       if (response.code === 200) {
@@ -194,22 +186,12 @@ const CustomerManagement: React.FC = () => {
             (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
         });
-        applyFiltersAndSearch();
       } else {
         toast.error('Cập nhật trạng thái khách hàng thất bại: ' + response.message);
       }
     } catch (error) {
       toast.error('Lỗi khi cập nhật trạng thái khách hàng: ' + (error as Error).message);
     }
-  };
-
-  const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentCustomers = filteredCustomers.slice(startIndex, endIndex);
-
-  const goToPage = (page: number) => {
-    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
   };
 
   const handleView = async (id: string) => {
@@ -226,7 +208,6 @@ const CustomerManagement: React.FC = () => {
     const baseClasses = 'px-2 py-1 text-xs font-medium rounded-full';
     switch (status) {
       case 'NEW':
-        return `${baseClasses} bg-brand-surface text-brand-goldDark`;
       case 'RECEIVED':
         return `${baseClasses} bg-brand-surface text-brand-goldDark`;
       case 'PROCESSING':
@@ -257,9 +238,77 @@ const CustomerManagement: React.FC = () => {
     }
   };
 
-  const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('vi-VN');
-  };
+  const formatDate = (dateString: string) => new Date(dateString).toLocaleDateString('vi-VN');
+
+  const statusSelect = (customer: Customer) => (
+    <select
+      aria-label="Cập nhật trạng thái khách hàng"
+      value={customer.status}
+      onChange={(e) => updateStatus(customer.id, e.target.value as CustomerStatus)}
+      className={`${getStatusBadge(customer.status)} border-none bg-transparent cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-goldDark focus:rounded-md`}
+    >
+      <option value="NEW">Mới</option>
+      <option value="RECEIVED">Đã tiếp nhận</option>
+      <option value="PROCESSING">Đang xử lý</option>
+      <option value="COMPLETED">Hoàn thành</option>
+      <option value="CANCELED">Đã hủy</option>
+    </select>
+  );
+
+  const columns: Column<Customer>[] = [
+    {
+      key: 'name',
+      header: 'Tên khách hàng',
+      sortable: true,
+      render: (c) => <span className="font-medium text-gray-900">{c.name}</span>,
+    },
+    {
+      key: 'phone',
+      header: 'Điện thoại',
+      render: (c) => <span className="font-mono">{c.phone}</span>,
+    },
+    { key: 'email', header: 'Email' },
+    {
+      key: 'serviceName',
+      header: 'Dịch vụ',
+      sortable: true,
+      render: (c) => (
+        <button
+          type="button"
+          onClick={() => quickFilterByService(c.serviceName)}
+          className="font-medium text-left hover:text-brand-goldDark"
+        >
+          {c.serviceName}
+        </button>
+      ),
+    },
+    { key: 'status', header: 'Trạng thái', render: (c) => statusSelect(c) },
+    {
+      key: 'createdAt',
+      header: 'Ngày tạo',
+      sortable: true,
+      sortValue: (c) => new Date(c.createdAt).getTime(),
+      render: (c) => (
+        <button
+          type="button"
+          onClick={() => quickFilterByDate(c.createdAt)}
+          className="hover:text-brand-goldDark"
+        >
+          {formatDate(c.createdAt)}
+        </button>
+      ),
+    },
+    {
+      key: 'actions',
+      header: 'Thao tác',
+      align: 'right',
+      render: (c) => (
+        <Button size="sm" variant="secondary" onClick={() => handleView(c.id)}>
+          Xem
+        </Button>
+      ),
+    },
+  ];
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
@@ -329,6 +378,7 @@ const CustomerManagement: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Từ ngày</label>
                 <input
                   type="date"
+                  aria-label="Lọc từ ngày"
                   value={dateFromFilter}
                   onChange={(e) => setDateFromFilter(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
@@ -338,6 +388,7 @@ const CustomerManagement: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">Đến ngày</label>
                 <input
                   type="date"
+                  aria-label="Lọc đến ngày"
                   value={dateToFilter}
                   onChange={(e) => setDateToFilter(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
@@ -359,120 +410,54 @@ const CustomerManagement: React.FC = () => {
           </div>
         )}
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full table-auto">
-          <thead>
-            <tr className="bg-gray-50">
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">
-                Tên khách hàng
-              </th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Điện thoại</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Email</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Dịch vụ</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Trạng thái</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Ngày tạo</th>
-              <th className="px-4 py-3 text-left text-sm font-medium text-gray-700">Thao tác</th>
-            </tr>
-          </thead>
-          <tbody>
-            {currentCustomers.map((customer) => (
-              <tr key={customer.id} className="border-b border-gray-200 hover:bg-gray-50">
-                <td className="px-4 py-3 text-sm text-gray-900 font-medium">{customer.name}</td>
-                <td className="px-4 py-3 text-sm text-gray-900 font-mono">{customer.phone}</td>
-                <td className="px-4 py-3 text-sm text-gray-900">{customer.email}</td>
-                <td className="px-4 py-3 text-sm text-gray-700">
-                  <div
-                    className="font-medium cursor-pointer hover:text-brand-goldDark"
-                    onClick={() => quickFilterByService(customer.serviceName)}
-                  >
-                    {customer.serviceName}
-                  </div>
-                </td>
-                <td className="px-4 py-3">
-                  <select
-                    aria-label="Cập nhật trạng thái khách hàng"
-                    value={customer.status}
-                    onChange={(e) => updateStatus(customer.id, e.target.value as any)}
-                    className={`${getStatusBadge(customer.status)} border-none bg-transparent cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-goldDark focus:rounded-md`}
-                  >
-                    <option value="NEW">Mới</option>
-                    <option value="RECEIVED">Đã tiếp nhận</option>
-                    <option value="PROCESSING">Đang xử lý</option>
-                    <option value="COMPLETED">Hoàn thành</option>
-                    <option value="CANCELED">Đã hủy</option>
-                  </select>
-                </td>
-                <td className="px-4 py-3 text-sm text-gray-700">
-                  <span
-                    className="cursor-pointer hover:text-brand-goldDark"
-                    onClick={() => quickFilterByDate(customer.createdAt)}
-                  >
-                    {formatDate(customer.createdAt)}
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  <button
-                    onClick={() => handleView(customer.id)}
-                    className="text-green-600 hover:text-green-800 text-sm font-medium mr-3"
-                  >
-                    Xem
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {totalPages > 1 && (
-        <div className="flex items-center justify-between mt-6">
-          <div className="text-sm text-gray-600">
-            Hiển thị {startIndex + 1} - {Math.min(endIndex, filteredCustomers.length)} trong{' '}
-            {filteredCustomers.length} khách hàng
-          </div>
-          <div className="flex items-center space-x-2">
+
+      <DataTable
+        columns={columns}
+        data={filteredCustomers}
+        rowKey={(c) => c.id}
+        loading={loading}
+        pageSize={8}
+        emptyIcon={Search}
+        emptyTitle="Không tìm thấy khách hàng"
+        emptyDescription="Không có khách hàng phù hợp với tìm kiếm và bộ lọc hiện tại."
+        mobileCard={(c) => (
+          <div className="space-y-1">
+            <div className="flex items-center justify-between gap-2">
+              <span className="font-semibold text-gray-900">{c.name}</span>
+              {statusSelect(c)}
+            </div>
+            <div className="text-sm text-gray-600 font-mono">{c.phone}</div>
+            <div className="text-sm text-gray-600 break-words">{c.email}</div>
             <button
-              onClick={() => goToPage(currentPage - 1)}
-              disabled={currentPage === 1}
-              aria-label="Trang trước"
-              className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
+              type="button"
+              onClick={() => quickFilterByService(c.serviceName)}
+              className="text-sm font-medium text-left hover:text-brand-goldDark"
             >
-              <ChevronLeft className="w-4 h-4" />
+              {c.serviceName}
             </button>
-            {[...Array(totalPages)].map((_, index) => {
-              const page = index + 1;
-              return (
-                <button
-                  key={page}
-                  onClick={() => goToPage(page)}
-                  className={`px-3 py-1 rounded-lg ${
-                    currentPage === page
-                      ? 'bg-brand-goldDark text-white'
-                      : 'border border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  {page}
-                </button>
-              );
-            })}
-            <button
-              onClick={() => goToPage(currentPage + 1)}
-              aria-label="Trang sau"
-              disabled={currentPage === totalPages}
-              className="p-2 rounded-lg border border-gray-300 disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
+            <div className="flex items-center justify-between pt-1 text-sm text-gray-500">
+              <span>{formatDate(c.createdAt)}</span>
+              <Button size="sm" variant="secondary" onClick={() => handleView(c.id)}>
+                Xem
+              </Button>
+            </div>
           </div>
-        </div>
-      )}
-      {filteredCustomers.length === 0 && (
-        <div className="text-center py-8 text-gray-500">
-          <Search className="w-12 h-12 mx-auto mb-4 text-gray-300" />
-          <p>Không tìm thấy khách hàng phù hợp với tìm kiếm và bộ lọc hiện tại</p>
-        </div>
-      )}
+        )}
+      />
+
       {showModal && selectedCustomer && (
-        <Modal title="Chi tiết khách hàng" onClose={() => setShowModal(false)} size="lg">
+        <Modal
+          title="Chi tiết khách hàng"
+          onClose={() => setShowModal(false)}
+          size="lg"
+          footer={
+            <div className="flex justify-end">
+              <Button variant="secondary" onClick={() => setShowModal(false)}>
+                Đóng
+              </Button>
+            </div>
+          }
+        >
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div>
@@ -536,14 +521,6 @@ const CustomerManagement: React.FC = () => {
                 <p className="text-sm text-gray-900">{formatDate(selectedCustomer.cancelledAt)}</p>
               </div>
             )}
-          </div>
-          <div className="mt-6 flex justify-end space-x-3">
-            <button
-              onClick={() => setShowModal(false)}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-            >
-              Đóng
-            </button>
           </div>
         </Modal>
       )}
