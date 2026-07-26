@@ -313,7 +313,11 @@ export default function TeamChat() {
           <div className="p-3 border-b border-brand-line bg-brand-surface space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-sm font-semibold text-brand-ink">Tạo nhóm mới</span>
-              <button onClick={closeNew} className="text-brand-muted hover:text-brand-ink">
+              <button
+                onClick={closeNew}
+                aria-label="Đóng"
+                className="text-brand-muted hover:text-brand-ink"
+              >
                 <X size={16} />
               </button>
             </div>
@@ -474,6 +478,7 @@ export default function TeamChat() {
                 <Paperclip size={18} />
                 <input
                   type="file"
+                  aria-label="Đính kèm tệp"
                   className="hidden"
                   onChange={(e) => e.target.files?.[0] && handleUpload(e.target.files[0])}
                 />
@@ -489,6 +494,7 @@ export default function TeamChat() {
               />
               <button
                 onClick={handleSend}
+                aria-label="Gửi tin nhắn"
                 className="p-2.5 rounded-full bg-brand-gold text-white hover:bg-brand-goldDark"
               >
                 <Send size={18} />

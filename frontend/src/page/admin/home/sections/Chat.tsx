@@ -584,12 +584,14 @@ const AdminChatDashboard: React.FC = () => {
                         />
                         <button
                           onClick={handleSaveGuestName}
+                          aria-label="Lưu tên"
                           className="p-1 text-green-600 hover:bg-green-50 rounded"
                         >
                           <Check className="w-4 h-4" />
                         </button>
                         <button
                           onClick={handleCancelEditName}
+                          aria-label="Hủy đổi tên"
                           className="p-1 text-red-600 hover:bg-red-50 rounded"
                         >
                           <X className="w-4 h-4" />
@@ -640,7 +642,10 @@ const AdminChatDashboard: React.FC = () => {
                     <option value="normal">Bình thường</option>
                     <option value="high">Cao</option>
                   </select>
-                  <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
+                  <button
+                    aria-label="Tùy chọn hội thoại"
+                    className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                  >
                     <MoreVertical className="w-5 h-5" />
                   </button>
                 </div>
@@ -700,7 +705,10 @@ const AdminChatDashboard: React.FC = () => {
 
             <div className="bg-white border-t border-gray-200 p-4">
               <div className="flex items-end space-x-3">
-                <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
+                <button
+                  aria-label="Đính kèm tệp"
+                  className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                >
                   <Paperclip className="w-5 h-5" />
                 </button>
 
@@ -715,7 +723,10 @@ const AdminChatDashboard: React.FC = () => {
                     className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-goldDark focus:border-transparent resize-none text-sm"
                     style={{ minHeight: '44px', maxHeight: '120px' }}
                   />
-                  <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 rounded">
+                  <button
+                    aria-label="Chèn biểu tượng cảm xúc"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 rounded"
+                  >
                     <Smile className="w-5 h-5" />
                   </button>
                 </div>
@@ -723,6 +734,7 @@ const AdminChatDashboard: React.FC = () => {
                 <button
                   onClick={sendMessage}
                   disabled={!newMessage.trim() || !isConnected}
+                  aria-label="Gửi tin nhắn"
                   className="p-3 bg-brand-goldDark hover:bg-brand-goldDark disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-2xl transition-colors"
                 >
                   <Send className="w-5 h-5" />

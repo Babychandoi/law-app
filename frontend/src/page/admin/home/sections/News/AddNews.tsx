@@ -229,6 +229,7 @@ const AddNews: React.FC<AddNewsProps> = ({ onSave, onCancel }) => {
                   <button
                     type="button"
                     onClick={removeImage}
+                    aria-label="Xóa ảnh"
                     className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center hover:bg-red-600"
                   >
                     <X size={12} />

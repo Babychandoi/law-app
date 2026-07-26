@@ -454,6 +454,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                       <button
                         type="button"
                         onClick={() => setProcess(process.filter((_, x) => x !== i))}
+                        aria-label="Xóa bước quy trình"
                         className="text-red-500 hover:text-red-700"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -575,6 +576,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                                   )
                                 )
                               }
+                              aria-label="Xóa chi tiết"
                               className="mt-1 text-red-400 hover:text-red-600"
                             >
                               <Trash2 className="h-4 w-4" />
@@ -650,6 +652,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                       <button
                         type="button"
                         onClick={() => setPricing(pricing.filter((_, x) => x !== i))}
+                        aria-label="Xóa gói giá"
                         className="text-red-500 hover:text-red-700"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -918,15 +921,26 @@ function SectionsEditor({
                   ))}
                 </select>
                 <div className="flex gap-1.5">
-                  <button type="button" onClick={() => move(i, -1)} className={btnGhost}>
+                  <button
+                    type="button"
+                    onClick={() => move(i, -1)}
+                    aria-label="Di chuyển mục lên"
+                    className={btnGhost}
+                  >
                     <ArrowUp className="h-3.5 w-3.5" />
                   </button>
-                  <button type="button" onClick={() => move(i, 1)} className={btnGhost}>
+                  <button
+                    type="button"
+                    onClick={() => move(i, 1)}
+                    aria-label="Di chuyển mục xuống"
+                    className={btnGhost}
+                  >
                     <ArrowDown className="h-3.5 w-3.5" />
                   </button>
                   <button
                     type="button"
                     onClick={() => setSections(sections.filter((_, x) => x !== i))}
+                    aria-label="Xóa mục nội dung"
                     className="inline-flex items-center rounded-md border border-gray-300 px-2.5 py-1.5 text-red-500 hover:border-red-400"
                   >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -1046,6 +1060,7 @@ function SectionsEditor({
                         onClick={() =>
                           update(i, { items: (section.items ?? []).filter((_, y) => y !== ii) })
                         }
+                        aria-label="Xóa mục con"
                         className="mt-1 text-red-400 hover:text-red-600"
                       >
                         <Trash2 className="h-4 w-4" />
