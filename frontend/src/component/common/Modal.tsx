@@ -29,6 +29,13 @@ export default function Modal({ title, onClose, children, footer, size = 'md' }:
   const titleId = useId();
   const previouslyFocused = useRef<HTMLElement | null>(null);
 
+  // Giữ onClose trong ref để effect thiết lập modal CHỈ chạy khi mount.
+  // Nếu phụ thuộc trực tiếp vào onClose (thường là hàm mới mỗi lần render của
+  // component cha), effect sẽ chạy lại theo từng lần re-render (mỗi ký tự gõ),
+  // khiến focus bị đưa về ô đầu tiên -> mất focus khi đang nhập.
+  const onCloseRef = useRef(onClose);
+  onCloseRef.current = onClose;
+
   useEffect(() => {
     previouslyFocused.current = document.activeElement as HTMLElement | null;
 
@@ -48,7 +55,7 @@ export default function Modal({ title, onClose, children, footer, size = 'md' }:
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.stopPropagation();
-        onClose();
+        onCloseRef.current();
         return;
       }
       if (e.key !== 'Tab') return;
@@ -71,7 +78,9 @@ export default function Modal({ title, onClose, children, footer, size = 'md' }:
       document.body.style.overflow = prevOverflow;
       previouslyFocused.current?.focus?.();
     };
-  }, [onClose]);
+    // Chỉ chạy một lần khi mở/đóng modal (dùng onCloseRef bên trong).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div
