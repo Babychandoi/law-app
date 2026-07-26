@@ -131,6 +131,7 @@ const Subscribers: React.FC = () => {
           data={subscribers}
           rowKey={(s) => s.id}
           loading={loading}
+          urlKey="sub"
           searchable
           searchPlaceholder="Tìm kiếm theo email..."
           searchText={(s) => s.email}

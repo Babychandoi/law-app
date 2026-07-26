@@ -1,4 +1,5 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, Search } from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import Spinner from './Spinner';
@@ -37,6 +38,8 @@ export interface DataTableProps<T> {
   /** Thẻ hiển thị trên mobile (mặc định tự dựng từ columns). */
   mobileCard?: (row: T) => React.ReactNode;
   toolbar?: React.ReactNode;
+  /** Nếu đặt, lưu trạng thái tìm kiếm/sắp xếp/trang lên URL (dùng làm namespace param). */
+  urlKey?: string;
 }
 
 const ALIGN: Record<'left' | 'right' | 'center', string> = {
@@ -73,11 +76,40 @@ function DataTable<T>({
   emptyDescription,
   mobileCard,
   toolbar,
+  urlKey,
 }: DataTableProps<T>) {
-  const [query, setQuery] = useState('');
-  const [sortKey, setSortKey] = useState<string | null>(null);
-  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
-  const [page, setPage] = useState(1);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const pk = (k: string) => (urlKey ? `${urlKey}_${k}` : k);
+
+  const [query, setQuery] = useState(() => (urlKey ? (searchParams.get(pk('q')) ?? '') : ''));
+  const [sortKey, setSortKey] = useState<string | null>(() =>
+    urlKey ? searchParams.get(pk('sort')) : null
+  );
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>(() =>
+    urlKey && searchParams.get(pk('dir')) === 'desc' ? 'desc' : 'asc'
+  );
+  const [page, setPage] = useState(() => {
+    const p = urlKey ? Number(searchParams.get(pk('page'))) : 0;
+    return p && p > 0 ? p : 1;
+  });
+
+  // Đồng bộ trạng thái -> URL (chỉ khi bật urlKey). Dùng functional update để không phụ thuộc
+  // searchParams (tránh vòng lặp), ghi replace để không tạo history rác.
+  useEffect(() => {
+    if (!urlKey) return;
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        query ? next.set(pk('q'), query) : next.delete(pk('q'));
+        sortKey ? next.set(pk('sort'), sortKey) : next.delete(pk('sort'));
+        sortKey && sortDir === 'desc' ? next.set(pk('dir'), 'desc') : next.delete(pk('dir'));
+        page > 1 ? next.set(pk('page'), String(page)) : next.delete(pk('page'));
+        return next;
+      },
+      { replace: true }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, sortKey, sortDir, page, urlKey]);
 
   const filtered = useMemo(() => {
     if (!searchable || !query.trim()) return data;

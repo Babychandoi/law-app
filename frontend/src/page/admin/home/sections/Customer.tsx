@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Search, Filter, X, Users } from 'lucide-react';
 import Modal from '../../../../component/common/Modal';
 import { Customer, CustomerDetail } from '../../../../types/admin';
@@ -20,12 +21,43 @@ const CustomerManagement: React.FC = () => {
   const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerDetail | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [showFilters, setShowFilters] = useState(false);
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [statusFilter, setStatusFilter] = useState<string>('ALL');
-  const [serviceFilter, setServiceFilter] = useState<string>('ALL');
-  const [dateFromFilter, setDateFromFilter] = useState<string>('');
-  const [dateToFilter, setDateToFilter] = useState<string>('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchTerm, setSearchTerm] = useState<string>(() => searchParams.get('q') ?? '');
+  const [statusFilter, setStatusFilter] = useState<string>(
+    () => searchParams.get('status') ?? 'ALL'
+  );
+  const [serviceFilter, setServiceFilter] = useState<string>(
+    () => searchParams.get('svc') ?? 'ALL'
+  );
+  const [dateFromFilter, setDateFromFilter] = useState<string>(
+    () => searchParams.get('from') ?? ''
+  );
+  const [dateToFilter, setDateToFilter] = useState<string>(() => searchParams.get('to') ?? '');
+  // Mở sẵn panel lọc nếu URL đã có bộ lọc.
+  const [showFilters, setShowFilters] = useState(
+    () =>
+      (searchParams.get('status') ?? 'ALL') !== 'ALL' ||
+      (searchParams.get('svc') ?? 'ALL') !== 'ALL' ||
+      !!searchParams.get('from') ||
+      !!searchParams.get('to')
+  );
+
+  // Đồng bộ bộ lọc -> URL (deep-link / reload giữ nguyên bộ lọc).
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        searchTerm ? next.set('q', searchTerm) : next.delete('q');
+        statusFilter !== 'ALL' ? next.set('status', statusFilter) : next.delete('status');
+        serviceFilter !== 'ALL' ? next.set('svc', serviceFilter) : next.delete('svc');
+        dateFromFilter ? next.set('from', dateFromFilter) : next.delete('from');
+        dateToFilter ? next.set('to', dateToFilter) : next.delete('to');
+        return next;
+      },
+      { replace: true }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm, statusFilter, serviceFilter, dateFromFilter, dateToFilter]);
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<{ id: string } | null>(null);

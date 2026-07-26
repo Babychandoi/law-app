@@ -94,6 +94,7 @@ const UserTable: React.FC<UserTableProps> = ({
       columns={columns}
       data={users}
       rowKey={(u) => u.id}
+      urlKey="usr"
       searchable
       searchPlaceholder="Tìm theo tên đăng nhập, họ tên, email..."
       searchText={(u) => `${u.username} ${u.fullName} ${u.email} ${u.position ?? ''}`}

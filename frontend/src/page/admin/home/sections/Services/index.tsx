@@ -219,6 +219,7 @@ const ServiceManager: React.FC = () => {
           data={services}
           rowKey={(s) => s.id}
           loading={loading}
+          urlKey="svc"
           searchable
           searchPlaceholder="Tìm theo tên hoặc đường dẫn..."
           searchText={(s) => `${s.title} ${s.href}`}
