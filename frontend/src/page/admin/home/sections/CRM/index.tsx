@@ -163,6 +163,7 @@ export default function CRM() {
         ].map((sel, i) => (
           <select
             key={i}
+            aria-label="Bộ lọc CRM"
             className="border border-brand-line rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-gold outline-none"
             value={sel.val}
             onChange={(e) => sel.set(e.target.value)}
@@ -176,6 +177,7 @@ export default function CRM() {
         ))}
         <select
           className="border border-brand-line rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-gold outline-none"
+          aria-label="Lọc theo trạng thái chăm sóc"
           value={filter.careStatusId ?? ''}
           onChange={(e) =>
             setFilter((f) => ({
@@ -194,6 +196,7 @@ export default function CRM() {
         </select>
         <select
           className="border border-brand-line rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-gold outline-none"
+          aria-label="Lọc theo trạng thái vụ việc"
           value={filter.status ?? ''}
           onChange={(e) => setFilter((f) => ({ ...f, status: e.target.value, page: 0 }))}
         >
@@ -248,6 +251,7 @@ export default function CRM() {
                     {isAdmin ? (
                       <select
                         className="border border-brand-line rounded-lg px-2 py-1.5 text-xs bg-white max-w-[140px] focus:border-brand-gold outline-none"
+                        aria-label="Gán nhân viên phụ trách"
                         value={r.assignedUserId ?? ''}
                         onChange={(e) => assign(r, e.target.value)}
                       >
@@ -293,6 +297,7 @@ export default function CRM() {
                     {canChangeStatus(r) ? (
                       // Click để đổi trạng thái vụ việc ngay (badge màu, là 1 select ẩn viền).
                       <select
+                        aria-label="Đổi trạng thái vụ việc"
                         value={r.status ?? ''}
                         onChange={(e) => changeStatus(r, e.target.value)}
                         title="Đổi trạng thái vụ việc"

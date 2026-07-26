@@ -334,6 +334,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
               <div>
                 <label className={labelCls}>Nhóm dịch vụ</label>
                 <select
+                  aria-label="Nhóm dịch vụ"
                   className={inputCls}
                   value={general.parentServiceId}
                   onChange={(e) => setGeneral({ ...general, parentServiceId: e.target.value })}
@@ -905,6 +906,7 @@ function SectionsEditor({
             <div key={i} className="rounded-lg border border-gray-200 bg-white p-4">
               <div className="mb-3 flex items-center justify-between gap-2">
                 <select
+                  aria-label="Loại mục nội dung"
                   className={`${inputCls} !w-auto`}
                   value={section.type}
                   onChange={(e) => update(i, { type: e.target.value })}

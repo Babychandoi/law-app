@@ -631,6 +631,7 @@ const AdminChatDashboard: React.FC = () => {
                     Giao cho tôi
                   </button> */}
                   <select
+                    aria-label="Độ ưu tiên hội thoại"
                     value={currentConversation?.priority || 'normal'}
                     onChange={(e) => updatePriority(selectedConversation, e.target.value)}
                     className="text-sm border border-gray-300 rounded px-2 py-1"

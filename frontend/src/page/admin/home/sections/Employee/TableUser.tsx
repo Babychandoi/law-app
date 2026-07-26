@@ -43,6 +43,7 @@ const UserTable: React.FC<UserTableProps> = ({
               <td className="px-4 py-3 text-sm text-gray-700">{user.position}</td>
               <td className="px-4 py-3">
                 <select
+                  aria-label="Vai trò người dùng"
                   value={user.role}
                   onChange={(e) => onRoleChange(user.id, e.target.value as 'ADMIN' | 'USER')}
                   className={`px-2 py-1 text-xs font-medium rounded-full border-0 cursor-pointer ${
@@ -57,6 +58,7 @@ const UserTable: React.FC<UserTableProps> = ({
               </td>
               <td className="px-4 py-3">
                 <select
+                  aria-label="Trạng thái hoạt động"
                   value={user.active}
                   onChange={(e) => onActiveChange(user.id, e.target.value as 'ACTIVE' | 'INACTIVE')}
                   className={`px-2 py-1 text-xs font-medium rounded-full border-0 cursor-pointer ${

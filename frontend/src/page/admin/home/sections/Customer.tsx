@@ -296,6 +296,7 @@ const CustomerManagement: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Trạng thái</label>
                 <select
+                  aria-label="Lọc theo trạng thái"
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
@@ -311,6 +312,7 @@ const CustomerManagement: React.FC = () => {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Dịch vụ</label>
                 <select
+                  aria-label="Lọc theo dịch vụ"
                   value={serviceFilter}
                   onChange={(e) => setServiceFilter(e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
@@ -388,6 +390,7 @@ const CustomerManagement: React.FC = () => {
                 </td>
                 <td className="px-4 py-3">
                   <select
+                    aria-label="Cập nhật trạng thái khách hàng"
                     value={customer.status}
                     onChange={(e) => updateStatus(customer.id, e.target.value as any)}
                     className={`${getStatusBadge(customer.status)} border-none bg-transparent cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-goldDark focus:rounded-md`}
