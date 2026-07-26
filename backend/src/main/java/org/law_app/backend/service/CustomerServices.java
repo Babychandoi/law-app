@@ -21,6 +21,15 @@ public interface CustomerServices {
 
   Page<CustomerResponse> getAllCustomerServices(Pageable pageable);
 
+  /** Tìm kiếm + lọc khách hàng phía server (từ khóa, trạng thái, dịch vụ, khoảng ngày tạo). */
+  Page<CustomerResponse> searchCustomerServices(
+      String q,
+      Status status,
+      String serviceId,
+      java.time.LocalDate from,
+      java.time.LocalDate to,
+      Pageable pageable);
+
   CustomerDetailResponse getCustomerServiceById(String id);
 
   /** Republish every existing case to RabbitMQ so the CRM read-replica can backfill. */

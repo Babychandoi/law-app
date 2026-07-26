@@ -24,6 +24,10 @@ public interface AuthenticationService {
 
   List<UserResponse> getUsers();
 
+  /** Danh sách người dùng có phân trang + tìm kiếm (server-side, chỉ ADMIN). */
+  org.springframework.data.domain.Page<UserResponse> getUsers(
+      String q, org.springframework.data.domain.Pageable pageable);
+
   /** Danh bạ nhân sự tối giản cho chat nội bộ — mọi user đã đăng nhập đều gọi được. */
   List<StaffDirectoryResponse> getStaffDirectory();
 

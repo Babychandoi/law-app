@@ -5,22 +5,33 @@ import { DataTable, type Column } from '../../../../../component/common/ui';
 // User Table Component
 interface UserTableProps {
   users: User[];
+  loading?: boolean;
   onEdit: (user: User) => void;
   onChangePassword: (user: User) => void;
   onRoleChange: (userId: string, newRole: 'ADMIN' | 'USER') => void;
   onActiveChange: (userId: string, newActive: 'ACTIVE' | 'INACTIVE') => void;
+  onSearch?: (q: string) => void;
+  serverPagination?: {
+    page: number;
+    totalPages: number;
+    totalElements?: number;
+    onPageChange: (page: number) => void;
+  };
 }
 
 const UserTable: React.FC<UserTableProps> = ({
   users,
+  loading,
   onEdit,
   onChangePassword,
   onRoleChange,
   onActiveChange,
+  onSearch,
+  serverPagination,
 }) => {
   const columns: Column<User>[] = [
-    { key: 'username', header: 'Tên đăng nhập', sortable: true },
-    { key: 'fullName', header: 'Họ tên', sortable: true },
+    { key: 'username', header: 'Tên đăng nhập' },
+    { key: 'fullName', header: 'Họ tên' },
     { key: 'email', header: 'Email' },
     { key: 'phoneNumber', header: 'Điện thoại' },
     { key: 'position', header: 'Chức vụ' },
@@ -59,8 +70,6 @@ const UserTable: React.FC<UserTableProps> = ({
     {
       key: 'createdAt',
       header: 'Ngày tạo',
-      sortable: true,
-      sortValue: (user) => new Date(user.createdAt).getTime(),
       render: (user) => new Date(user.createdAt).toLocaleString(),
     },
     {
@@ -94,11 +103,11 @@ const UserTable: React.FC<UserTableProps> = ({
       columns={columns}
       data={users}
       rowKey={(u) => u.id}
-      urlKey="usr"
+      loading={loading}
       searchable
       searchPlaceholder="Tìm theo tên đăng nhập, họ tên, email..."
-      searchText={(u) => `${u.username} ${u.fullName} ${u.email} ${u.position ?? ''}`}
-      pageSize={10}
+      onSearch={onSearch}
+      serverPagination={serverPagination}
       emptyTitle="Chưa có người dùng nào"
     />
   );

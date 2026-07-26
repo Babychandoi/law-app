@@ -460,6 +460,23 @@ public class NewsServiceImpl implements NewsService {
 
   @Override
   @PreAuthorize("hasRole('ADMIN')")
+  public org.springframework.data.domain.Page<SubscriberResponse> getSubscribers(
+      String q, org.springframework.data.domain.Pageable pageable) {
+    org.springframework.data.domain.Page<org.law_app.backend.entity.CustomerSubscribe> page =
+        (q == null || q.isBlank())
+            ? customerSubscribeRepository.findAll(pageable)
+            : customerSubscribeRepository.findByEmailContainingIgnoreCase(q.trim(), pageable);
+    return page.map(
+        subscriber ->
+            SubscriberResponse.builder()
+                .id(subscriber.getId())
+                .email(subscriber.getEmail())
+                .createdAt(subscriber.getCreatedAt())
+                .build());
+  }
+
+  @Override
+  @PreAuthorize("hasRole('ADMIN')")
   public Boolean deleteSubscriber(String id) {
     customerSubscribeRepository.deleteById(id);
     log.info("Subscriber deleted: {}", id);

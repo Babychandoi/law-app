@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { User, UserCreate } from '../../../../types/admin';
 import UserTable from './Employee/TableUser';
 import UserForm from './Employee/User';
@@ -22,22 +22,31 @@ const UserManagement: React.FC = () => {
   const [passwordChangeUser, setPasswordChangeUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [page, setPage] = useState(1); // 1-based
+  const [q, setQ] = useState('');
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
+
+  const PAGE_SIZE = 10;
+
+  const fetchUsers = useCallback(async () => {
+    try {
+      setIsLoading(true);
+      const response = await getUsers({ page: page - 1, size: PAGE_SIZE, q: q || undefined });
+      setUsers(response.data);
+      setTotalPages(response.meta?.totalPages ?? 1);
+      setTotalElements(response.meta?.totalElements ?? response.data.length);
+      setError(null);
+    } catch (error) {
+      setError('Không thể tải danh sách người dùng');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [page, q]);
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setIsLoading(true);
-        const response = await getUsers();
-        setUsers(response.data);
-        setError(null);
-      } catch (error) {
-        setError('Không thể tải danh sách người dùng');
-      } finally {
-        setIsLoading(false);
-      }
-    };
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   const handleAddNew = () => {
     setIsUserFormOpen(true);
@@ -65,7 +74,7 @@ const UserManagement: React.FC = () => {
       const response = await createUser(formData);
 
       if (response.data) {
-        setUsers((prev) => [...prev, response.data]);
+        fetchUsers();
         setIsUserFormOpen(false);
         setError(null);
 
@@ -284,10 +293,16 @@ const UserManagement: React.FC = () => {
 
       <UserTable
         users={users}
+        loading={isLoading}
         onEdit={handleEdit}
         onChangePassword={handleChangePassword}
         onRoleChange={handleRoleChange}
         onActiveChange={handleActiveChange}
+        onSearch={(v) => {
+          setQ(v);
+          setPage(1);
+        }}
+        serverPagination={{ page, totalPages, totalElements, onPageChange: setPage }}
       />
 
       {/* User Edit Modal */}

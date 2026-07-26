@@ -21,24 +21,31 @@ interface ApiResponse<T> {
   code: number;
   message: string;
   data: T;
+  meta?: { totalElements?: number; totalPages?: number };
 }
+
+const PAGE_SIZE = 10;
 
 const Subscribers: React.FC = () => {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [page, setPage] = useState(1); // 1-based
+  const [q, setQ] = useState('');
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
   const { confirm, confirmDialog } = useConfirm();
 
-  useEffect(() => {
-    fetchSubscribers();
-  }, []);
-
-  const fetchSubscribers = async () => {
+  const fetchSubscribers = React.useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axiosClient.get<ApiResponse<Subscriber[]>>('/news/subscribers');
+      const response = await axiosClient.get<ApiResponse<Subscriber[]>>('/news/subscribers', {
+        params: { page: page - 1, size: PAGE_SIZE, q: q || undefined },
+      });
       if (response.data.code === 200) {
         setSubscribers(response.data.data);
+        setTotalPages(response.data.meta?.totalPages ?? 1);
+        setTotalElements(response.data.meta?.totalElements ?? response.data.data.length);
       }
     } catch (error) {
       console.error('Error fetching subscribers:', error);
@@ -46,7 +53,11 @@ const Subscribers: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, q]);
+
+  useEffect(() => {
+    fetchSubscribers();
+  }, [fetchSubscribers]);
 
   const handleDelete = async (sub: Subscriber) => {
     const ok = await confirm({
@@ -60,7 +71,7 @@ const Subscribers: React.FC = () => {
       setDeletingId(sub.id);
       await axiosClient.delete(`/news/subscribers/${sub.id}`);
       toast.success('Đã xóa người đăng ký');
-      setSubscribers((prev) => prev.filter((s) => s.id !== sub.id));
+      fetchSubscribers();
     } catch (error) {
       toast.error('Không thể xóa người đăng ký');
     } finally {
@@ -78,10 +89,9 @@ const Subscribers: React.FC = () => {
     if (!ok) return;
     try {
       await Promise.all(rows.map((r) => axiosClient.delete(`/news/subscribers/${r.id}`)));
-      const ids = new Set(rows.map((r) => r.id));
-      setSubscribers((prev) => prev.filter((s) => !ids.has(s.id)));
       toast.success(`Đã xóa ${rows.length} người đăng ký`);
       clear();
+      fetchSubscribers();
     } catch (error) {
       toast.error('Không thể xóa một số mục. Vui lòng tải lại và thử lại.');
       fetchSubscribers();
@@ -95,7 +105,6 @@ const Subscribers: React.FC = () => {
     {
       key: 'email',
       header: 'Email',
-      sortable: true,
       render: (s) => (
         <span className="inline-flex items-center gap-3 font-medium text-gray-900">
           <Mail className="w-5 h-5 text-gray-500" aria-hidden="true" />
@@ -106,8 +115,6 @@ const Subscribers: React.FC = () => {
     {
       key: 'createdAt',
       header: 'Ngày đăng ký',
-      sortable: true,
-      sortValue: (s) => new Date(s.createdAt).getTime(),
       render: (s) => (
         <span className="inline-flex items-center gap-2 text-gray-500">
           <Calendar className="w-4 h-4" aria-hidden="true" />
@@ -140,7 +147,7 @@ const Subscribers: React.FC = () => {
         <PageHeader
           icon={Users}
           title="Quản lý người đăng ký"
-          subtitle={`Tổng số: ${subscribers.length} người đăng ký nhận tin tức`}
+          subtitle={`Tổng số: ${totalElements} người đăng ký nhận tin tức`}
           breadcrumb={[{ label: 'Quản trị hệ thống' }, { label: 'Người đăng ký' }]}
         />
       </Card>
@@ -151,7 +158,6 @@ const Subscribers: React.FC = () => {
           data={subscribers}
           rowKey={(s) => s.id}
           loading={loading}
-          urlKey="sub"
           selectable
           bulkActions={(rows, clear) => (
             <Button
@@ -165,8 +171,16 @@ const Subscribers: React.FC = () => {
           )}
           searchable
           searchPlaceholder="Tìm kiếm theo email..."
-          searchText={(s) => s.email}
-          pageSize={10}
+          onSearch={(v) => {
+            setQ(v);
+            setPage(1);
+          }}
+          serverPagination={{
+            page,
+            totalPages,
+            totalElements,
+            onPageChange: setPage,
+          }}
           emptyIcon={Mail}
           emptyTitle="Chưa có người đăng ký nào"
           emptyDescription="Danh sách người đăng ký nhận tin sẽ hiển thị ở đây."

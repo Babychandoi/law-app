@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, Filter, X, Users } from 'lucide-react';
 import Modal from '../../../../component/common/Modal';
@@ -17,10 +17,12 @@ import { Button, DataTable, PageHeader, type Column } from '../../../../componen
 type CustomerStatus = 'NEW' | 'RECEIVED' | 'PROCESSING' | 'COMPLETED' | 'CANCELED';
 
 const CustomerManagement: React.FC = () => {
-  const [allCustomers, setAllCustomers] = useState<Customer[]>([]);
-  const [filteredCustomers, setFilteredCustomers] = useState<Customer[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerDetail | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [page, setPage] = useState(1); // 1-based
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchTerm, setSearchTerm] = useState<string>(() => searchParams.get('q') ?? '');
   const [statusFilter, setStatusFilter] = useState<string>(
@@ -94,17 +96,23 @@ const CustomerManagement: React.FC = () => {
     fetchServices();
   }, []);
 
-  const fetchCustomers = async () => {
+  // Tải khách hàng phía server: phân trang + lọc (từ khóa/trạng thái/dịch vụ/ngày) đều ở backend.
+  const fetchCustomers = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await getCustomers();
+      const response = await getCustomers({
+        page: page - 1,
+        size: 8,
+        q: searchTerm || undefined,
+        status: statusFilter !== 'ALL' ? statusFilter : undefined,
+        serviceId: serviceFilter !== 'ALL' ? serviceFilter : undefined,
+        from: dateFromFilter || undefined,
+        to: dateToFilter || undefined,
+      });
       if (response.code === 200) {
-        const sortedCustomers = response.data.sort(
-          (a: Customer, b: Customer) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        );
-        setAllCustomers(sortedCustomers);
-        setFilteredCustomers(sortedCustomers);
+        setCustomers(response.data);
+        setTotalPages(response.meta?.totalPages ?? 1);
+        setTotalElements(response.meta?.totalElements ?? response.data.length);
       } else {
         toast.warning('Lỗi khi tải danh sách khách hàng: ' + response.message);
       }
@@ -113,11 +121,21 @@ const CustomerManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, searchTerm, statusFilter, serviceFilter, dateFromFilter, dateToFilter]);
 
+  const fetchRef = useRef(fetchCustomers);
+  fetchRef.current = fetchCustomers;
+
+  // Đổi bộ lọc/từ khóa -> về trang 1.
   useEffect(() => {
-    fetchCustomers();
-  }, []);
+    setPage(1);
+  }, [searchTerm, statusFilter, serviceFilter, dateFromFilter, dateToFilter]);
+
+  // Nạp dữ liệu (debounce để gõ tìm kiếm không gọi API mỗi ký tự).
+  useEffect(() => {
+    const t = setTimeout(() => fetchCustomers(), 300);
+    return () => clearTimeout(t);
+  }, [fetchCustomers]);
 
   useEffect(() => {
     if (profile?.id) {
@@ -129,13 +147,12 @@ const CustomerManagement: React.FC = () => {
 
       socket.onopen = () => {};
 
-      // Debounce: gom nhiều thông báo gần nhau thành 1 lần fetch (tránh gọi lại
-      // toàn bộ danh sách liên tục khi có nhiều sự kiện realtime dồn dập).
+      // Debounce: gom nhiều thông báo gần nhau thành 1 lần refetch trang hiện tại.
       let refetchTimer: ReturnType<typeof setTimeout> | null = null;
       socket.onmessage = () => {
         if (refetchTimer) clearTimeout(refetchTimer);
         refetchTimer = setTimeout(() => {
-          fetchCustomers();
+          fetchRef.current();
         }, 800);
       };
 
@@ -149,43 +166,6 @@ const CustomerManagement: React.FC = () => {
       };
     }
   }, [profile?.id]);
-
-  const applyFiltersAndSearch = React.useCallback(() => {
-    let filtered = allCustomers;
-    if (searchTerm) {
-      filtered = filtered.filter(
-        (customer) =>
-          customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          customer.phone.includes(searchTerm) ||
-          customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          customer.serviceName.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-    if (statusFilter !== 'ALL') {
-      filtered = filtered.filter((customer) => customer.status === statusFilter);
-    }
-    if (serviceFilter !== 'ALL') {
-      filtered = filtered.filter((customer) => customer.serviceName === serviceFilter);
-    }
-    if (dateFromFilter) {
-      filtered = filtered.filter(
-        (customer) => new Date(customer.createdAt) >= new Date(dateFromFilter)
-      );
-    }
-    if (dateToFilter) {
-      filtered = filtered.filter(
-        (customer) => new Date(customer.createdAt) <= new Date(dateToFilter)
-      );
-    }
-    filtered = filtered.sort(
-      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
-    setFilteredCustomers(filtered);
-  }, [allCustomers, searchTerm, statusFilter, serviceFilter, dateFromFilter, dateToFilter]);
-
-  useEffect(() => {
-    applyFiltersAndSearch();
-  }, [applyFiltersAndSearch]);
 
   const quickFilterByService = (service: string) => {
     setServiceFilter(service);
@@ -210,14 +190,12 @@ const CustomerManagement: React.FC = () => {
     try {
       const response = await updateCustomerStatus(customerId, newStatus);
       if (response.code === 200) {
-        setAllCustomers((prevCustomers) => {
-          const updatedCustomers = prevCustomers.map((customer) =>
+        // Cập nhật tại chỗ trên trang hiện tại.
+        setCustomers((prev) =>
+          prev.map((customer) =>
             customer.id === customerId ? { ...customer, status: newStatus } : customer
-          );
-          return updatedCustomers.sort(
-            (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          );
-        });
+          )
+        );
       } else {
         toast.error('Cập nhật trạng thái khách hàng thất bại: ' + response.message);
       }
@@ -291,7 +269,6 @@ const CustomerManagement: React.FC = () => {
     {
       key: 'name',
       header: 'Tên khách hàng',
-      sortable: true,
       render: (c) => <span className="font-medium text-gray-900">{c.name}</span>,
     },
     {
@@ -303,11 +280,10 @@ const CustomerManagement: React.FC = () => {
     {
       key: 'serviceName',
       header: 'Dịch vụ',
-      sortable: true,
       render: (c) => (
         <button
           type="button"
-          onClick={() => quickFilterByService(c.serviceName)}
+          onClick={() => quickFilterByService(c.serviceId)}
           className="font-medium text-left hover:text-brand-goldDark"
         >
           {c.serviceName}
@@ -318,8 +294,6 @@ const CustomerManagement: React.FC = () => {
     {
       key: 'createdAt',
       header: 'Ngày tạo',
-      sortable: true,
-      sortValue: (c) => new Date(c.createdAt).getTime(),
       render: (c) => (
         <button
           type="button"
@@ -403,7 +377,7 @@ const CustomerManagement: React.FC = () => {
                 >
                   <option value="ALL">Tất cả dịch vụ</option>
                   {services.map((service) => (
-                    <option key={service.id} value={service.title}>
+                    <option key={service.id} value={service.id}>
                       {service.title}
                     </option>
                   ))}
@@ -431,9 +405,7 @@ const CustomerManagement: React.FC = () => {
               </div>
             </div>
             <div className="flex justify-between items-center">
-              <div className="text-sm text-gray-600">
-                Hiển thị {filteredCustomers.length} / {allCustomers.length} khách hàng
-              </div>
+              <div className="text-sm text-gray-600">Tìm thấy {totalElements} khách hàng</div>
               <button
                 onClick={clearFilters}
                 className="text-red-600 hover:text-red-800 text-sm font-medium flex items-center gap-1"
@@ -448,10 +420,15 @@ const CustomerManagement: React.FC = () => {
 
       <DataTable
         columns={columns}
-        data={filteredCustomers}
+        data={customers}
         rowKey={(c) => c.id}
         loading={loading}
-        pageSize={8}
+        serverPagination={{
+          page,
+          totalPages,
+          totalElements,
+          onPageChange: setPage,
+        }}
         emptyIcon={Search}
         emptyTitle="Không tìm thấy khách hàng"
         emptyDescription="Không có khách hàng phù hợp với tìm kiếm và bộ lọc hiện tại."
@@ -465,7 +442,7 @@ const CustomerManagement: React.FC = () => {
             <div className="text-sm text-gray-600 break-words">{c.email}</div>
             <button
               type="button"
-              onClick={() => quickFilterByService(c.serviceName)}
+              onClick={() => quickFilterByService(c.serviceId)}
               className="text-sm font-medium text-left hover:text-brand-goldDark"
             >
               {c.serviceName}

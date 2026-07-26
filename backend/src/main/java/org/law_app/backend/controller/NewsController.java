@@ -76,12 +76,17 @@ public class NewsController {
         .build();
   }
 
-  /** Get all subscribers (Admin only) GET /news/subscribers */
+  /** Get subscribers (Admin only) — phân trang + tìm kiếm server-side. GET /news/subscribers */
   @GetMapping("/subscribers")
-  public ApiResponse<List<SubscriberResponse>> getAllSubscribers() {
+  public ApiResponse<List<SubscriberResponse>> getAllSubscribers(
+      @RequestParam(required = false) String q,
+      @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
+          Pageable pageable) {
+    Page<SubscriberResponse> subscribers = newsService.getSubscribers(q, pageable);
     return ApiResponse.<List<SubscriberResponse>>builder()
         .message("Subscribers retrieved successfully")
-        .data(newsService.getAllSubscribers())
+        .data(subscribers.getContent())
+        .meta(ApiMeta.from(subscribers))
         .build();
   }
 

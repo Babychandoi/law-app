@@ -180,6 +180,19 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
   }
 
+  @Override
+  @PreAuthorize("hasRole('ADMIN')")
+  public org.springframework.data.domain.Page<UserResponse> getUsers(
+      String q, org.springframework.data.domain.Pageable pageable) {
+    org.springframework.data.domain.Page<User> page =
+        (q == null || q.isBlank())
+            ? userRepository.findAll(pageable)
+            : userRepository
+                .findByUsernameContainingIgnoreCaseOrFullNameContainingIgnoreCaseOrEmailContainingIgnoreCase(
+                    q.trim(), q.trim(), q.trim(), pageable);
+    return page.map(userMapper::toResponse);
+  }
+
   // Danh bạ nhân sự cho chat nội bộ: mọi user đã đăng nhập đều gọi được (không giới hạn ADMIN).
   // Trả field tối giản (không email/điện thoại/trạng thái) để hạn chế lộ thông tin.
   @Override

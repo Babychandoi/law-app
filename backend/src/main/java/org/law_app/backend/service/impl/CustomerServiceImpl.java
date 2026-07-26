@@ -238,6 +238,61 @@ public class CustomerServiceImpl implements CustomerServices {
   }
 
   @Override
+  public Page<CustomerResponse> searchCustomerServices(
+      String q,
+      Status status,
+      String serviceId,
+      java.time.LocalDate from,
+      java.time.LocalDate to,
+      Pageable pageable) {
+    try {
+      org.springframework.data.jpa.domain.Specification<CustomerService> spec =
+          (root, query, cb) -> {
+            java.util.List<jakarta.persistence.criteria.Predicate> ps = new java.util.ArrayList<>();
+            if (status != null) ps.add(cb.equal(root.get("status"), status));
+            if (from != null) {
+              java.util.Date fromDate =
+                  java.util.Date.from(
+                      from.atStartOfDay(java.time.ZoneId.systemDefault()).toInstant());
+              ps.add(cb.greaterThanOrEqualTo(root.get("createdAt"), fromDate));
+            }
+            if (to != null) {
+              // Bao trọn ngày "đến": < 00:00 ngày kế tiếp.
+              java.util.Date toExclusive =
+                  java.util.Date.from(
+                      to.plusDays(1).atStartOfDay(java.time.ZoneId.systemDefault()).toInstant());
+              ps.add(cb.lessThan(root.get("createdAt"), toExclusive));
+            }
+            boolean hasQ = q != null && !q.isBlank();
+            boolean hasService = serviceId != null && !serviceId.isBlank();
+            jakarta.persistence.criteria.Join<Object, Object> service =
+                (hasQ || hasService)
+                    ? root.join("service", jakarta.persistence.criteria.JoinType.LEFT)
+                    : null;
+            if (hasService) ps.add(cb.equal(service.get("id"), serviceId));
+            if (hasQ) {
+              jakarta.persistence.criteria.Join<Object, Object> customer =
+                  root.join("customer", jakarta.persistence.criteria.JoinType.LEFT);
+              String like = "%" + q.trim().toLowerCase() + "%";
+              ps.add(
+                  cb.or(
+                      cb.like(cb.lower(root.get("name")), like),
+                      cb.like(cb.lower(customer.get("email")), like),
+                      cb.like(cb.lower(customer.get("phone")), like),
+                      cb.like(cb.lower(service.get("title")), like)));
+            }
+            return cb.and(ps.toArray(new jakarta.persistence.criteria.Predicate[0]));
+          };
+      return customerServiceRepository
+          .findAll(spec, pageable)
+          .map(customerMapper::toCustomerResponse);
+    } catch (Exception e) {
+      log.error("Error searching customer services: {}", e.getMessage());
+      throw e;
+    }
+  }
+
+  @Override
   public CustomerDetailResponse getCustomerServiceById(String id) {
     try {
       CustomerService customerService =

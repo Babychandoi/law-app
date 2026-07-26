@@ -24,5 +24,8 @@ public interface NewsService {
 
   List<SubscriberResponse> getAllSubscribers();
 
+  /** Danh sách người đăng ký có phân trang + tìm kiếm theo email (server-side). */
+  Page<SubscriberResponse> getSubscribers(String q, Pageable pageable);
+
   Boolean deleteSubscriber(String id);
 }

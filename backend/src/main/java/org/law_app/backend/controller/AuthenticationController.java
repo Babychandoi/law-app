@@ -12,6 +12,7 @@ import lombok.experimental.FieldDefaults;
 import org.law_app.backend.common.Active;
 import org.law_app.backend.common.Role;
 import org.law_app.backend.dto.request.*;
+import org.law_app.backend.dto.response.ApiMeta;
 import org.law_app.backend.dto.response.ApiResponse;
 import org.law_app.backend.dto.response.AuthenticationResponse;
 import org.law_app.backend.dto.response.IntrospectResponse;
@@ -20,6 +21,10 @@ import org.law_app.backend.common.ErrorCode;
 import org.law_app.backend.dto.response.UserResponse;
 import org.law_app.backend.security.CookieUtil;
 import org.law_app.backend.service.AuthenticationService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -138,9 +143,14 @@ public class AuthenticationController {
   }
 
   @GetMapping("/users")
-  ApiResponse<List<UserResponse>> getUsers() {
+  ApiResponse<List<UserResponse>> getUsers(
+      @RequestParam(required = false) String q,
+      @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)
+          Pageable pageable) {
+    Page<UserResponse> users = authenticationService.getUsers(q, pageable);
     return ApiResponse.<List<UserResponse>>builder()
-        .data(authenticationService.getUsers())
+        .data(users.getContent())
+        .meta(ApiMeta.from(users))
         .message("Users retrieved successfully")
         .build();
   }

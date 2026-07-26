@@ -31,8 +31,17 @@ export const checkToken = async (token: string): Promise<ApiResponse<IntrospectR
   );
   return response.data;
 };
-export const getCustomers = async (): Promise<ApiResponse<Customer[]>> => {
-  const response = await axiosClient.get<ApiResponse<Customer[]>>(`/customer`);
+export interface CustomerQuery {
+  page?: number;
+  size?: number;
+  q?: string;
+  status?: string;
+  serviceId?: string;
+  from?: string;
+  to?: string;
+}
+export const getCustomers = async (params?: CustomerQuery): Promise<ApiResponse<Customer[]>> => {
+  const response = await axiosClient.get<ApiResponse<Customer[]>>(`/customer`, { params });
   return response.data;
 };
 export const getCustomerById = async (id: string): Promise<ApiResponse<CustomerDetail>> => {
@@ -196,8 +205,13 @@ export const deleteNews = async (id: string): Promise<ApiResponse<boolean>> => {
   const response = await axiosClient.delete<ApiResponse<boolean>>(`/news/${id}`);
   return response.data;
 };
-export const getUsers = async (): Promise<ApiResponse<User[]>> => {
-  const response = await axiosClient.get<ApiResponse<User[]>>(`/auth/users`);
+export interface UserQuery {
+  page?: number;
+  size?: number;
+  q?: string;
+}
+export const getUsers = async (params?: UserQuery): Promise<ApiResponse<User[]>> => {
+  const response = await axiosClient.get<ApiResponse<User[]>>(`/auth/users`, { params });
   return response.data;
 };
 export const changePassword = async (

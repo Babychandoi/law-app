@@ -47,6 +47,7 @@ export interface DataTableProps<T> {
   /**
    * Phân trang phía SERVER: `data` là dữ liệu của trang hiện tại; DataTable không tự cắt trang.
    * page 1-based. Khi đặt, DataTable hiển thị điều khiển trang theo tổng số trang từ server.
+   * (Khi bật serverPagination, tìm kiếm cũng chạy phía server qua `onSearch` — không lọc client.)
    */
   serverPagination?: {
     page: number;
@@ -54,6 +55,8 @@ export interface DataTableProps<T> {
     totalElements?: number;
     onPageChange: (page: number) => void;
   };
+  /** Tìm kiếm phía server: gọi (debounce) khi người dùng gõ vào ô tìm kiếm. */
+  onSearch?: (q: string) => void;
 }
 
 const ALIGN: Record<'left' | 'right' | 'center', string> = {
@@ -94,6 +97,7 @@ function DataTable<T>({
   selectable = false,
   bulkActions,
   serverPagination,
+  onSearch,
 }: DataTableProps<T>) {
   const [searchParams, setSearchParams] = useSearchParams();
   const pk = (k: string) => (urlKey ? `${urlKey}_${k}` : k);
@@ -128,13 +132,29 @@ function DataTable<T>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, sortKey, sortDir, page, urlKey]);
 
+  // Tìm kiếm server: debounce gọi onSearch khi gõ (bỏ qua lần mount đầu để không double-fetch).
+  const onSearchRef = React.useRef(onSearch);
+  onSearchRef.current = onSearch;
+  const firstSearchRef = React.useRef(true);
+  useEffect(() => {
+    if (!onSearchRef.current) return;
+    if (firstSearchRef.current) {
+      firstSearchRef.current = false;
+      return;
+    }
+    const t = setTimeout(() => onSearchRef.current?.(query.trim()), 400);
+    return () => clearTimeout(t);
+  }, [query]);
+
   const filtered = useMemo(() => {
+    // Server mode: dữ liệu đã được lọc/cắt trang ở server -> không lọc client.
+    if (serverPagination || onSearch) return data;
     if (!searchable || !query.trim()) return data;
     const q = query.toLowerCase();
     const toText =
       searchText ?? ((row: T) => columns.map((c) => String(cellValue(row, c) ?? '')).join(' '));
     return data.filter((row) => toText(row).toLowerCase().includes(q));
-  }, [data, query, searchable, searchText, columns]);
+  }, [data, query, searchable, searchText, columns, serverPagination, onSearch]);
 
   const sorted = useMemo(() => {
     if (!sortKey) return filtered;
