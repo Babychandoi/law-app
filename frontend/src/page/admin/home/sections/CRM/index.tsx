@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Search, HeartHandshake, UserCog } from 'lucide-react';
+import { Search, HeartHandshake } from 'lucide-react';
 import crmService, { CaseFilter } from '../../../../../service/crm';
 import { getMe } from '../../../../../service/auth';
 import { CASE_STATUS_VI, CASE_STATUS_OPTIONS, caseStatusLabel } from './caseStatus';
@@ -13,6 +13,7 @@ import {
   Tag,
 } from '../../../../../types/crm';
 import CarePopup from './CarePopup';
+import { Button, DataTable, type Column } from '../../../../../component/common/ui';
 
 const STATUS_OPTIONS = CASE_STATUS_OPTIONS;
 const FOLLOWUP_OPTIONS = [
@@ -120,6 +121,142 @@ export default function CRM() {
 
   const tagMap = useMemo(() => new Map(tags.map((t) => [t.id, t])), [tags]);
 
+  // ---- renderers dùng chung cho bảng (desktop) và thẻ (mobile) ----
+  const renderCustomer = (r: CaseRow) => (
+    <div className="flex items-center gap-3">
+      <span className="w-9 h-9 rounded-full bg-brand-gold/15 text-brand-goldDark grid place-items-center font-semibold shrink-0">
+        {(r.serviceName ?? r.name ?? '?').charAt(0)}
+      </span>
+      <div>
+        <div className="font-medium text-brand-ink">{r.serviceName ?? r.name ?? '—'}</div>
+        <div className="text-xs text-gray-500">{r.customerEmail ?? r.customerPhone}</div>
+      </div>
+    </div>
+  );
+
+  const renderAssigned = (r: CaseRow) =>
+    isAdmin ? (
+      <select
+        className="border border-brand-line rounded-lg px-2 py-1.5 text-xs bg-white max-w-[140px] focus:border-brand-gold outline-none"
+        aria-label="Gán nhân viên phụ trách"
+        value={r.assignedUserId ?? ''}
+        onChange={(e) => assign(r, e.target.value)}
+      >
+        <option value="">Chưa giao</option>
+        {staff.map((s) => (
+          <option key={s.id} value={s.id}>
+            {staffLabel(s)}
+          </option>
+        ))}
+      </select>
+    ) : (
+      <span className="text-sm text-brand-ink">{staffName(r.assignedUserId)}</span>
+    );
+
+  const renderCareStatus = (r: CaseRow) => {
+    const cs = statuses.find((s) => s.id === r.careStatusId);
+    return cs ? (
+      <span
+        className="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium text-white"
+        style={{ background: cs.color || '#9CA3AF' }}
+      >
+        {cs.name}
+      </span>
+    ) : (
+      <span className="text-gray-500">—</span>
+    );
+  };
+
+  const renderFollowUp = (r: CaseRow) =>
+    r.nextFollowUpAt ? (
+      <span className={isOverdue(r.nextFollowUpAt) ? 'text-red-500 font-medium' : 'text-brand-ink'}>
+        {new Date(r.nextFollowUpAt).toLocaleDateString('vi-VN')}
+      </span>
+    ) : (
+      <span className="text-gray-500">—</span>
+    );
+
+  const renderCaseStatus = (r: CaseRow) =>
+    canChangeStatus(r) ? (
+      <select
+        aria-label="Đổi trạng thái vụ việc"
+        value={r.status ?? ''}
+        onChange={(e) => changeStatus(r, e.target.value)}
+        title="Đổi trạng thái vụ việc"
+        className={`appearance-none cursor-pointer px-2 py-0.5 rounded text-xs font-medium border-0 outline-none ${
+          CASE_STATUS_VI[r.status ?? '']?.cls ?? 'bg-gray-100 text-gray-600'
+        }`}
+      >
+        {STATUS_OPTIONS.map((s) => (
+          <option key={s} value={s}>
+            {CASE_STATUS_VI[s]?.label ?? s}
+          </option>
+        ))}
+      </select>
+    ) : r.status ? (
+      <span
+        className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
+          CASE_STATUS_VI[r.status]?.cls ?? 'bg-gray-100 text-gray-600'
+        }`}
+      >
+        {caseStatusLabel(r.status)}
+      </span>
+    ) : (
+      <span className="text-gray-500">—</span>
+    );
+
+  const renderTags = (r: CaseRow) => (
+    <div className="flex flex-wrap gap-1">
+      {r.tagIds.map((id) => {
+        const t = tagMap.get(id);
+        return t ? (
+          <span
+            key={id}
+            className="px-2 py-0.5 rounded-full text-[10px] text-white"
+            style={{ background: t.color }}
+          >
+            {t.name}
+          </span>
+        ) : null;
+      })}
+    </div>
+  );
+
+  const renderAction = (r: CaseRow) => (
+    <Button size="sm" leftIcon={<HeartHandshake size={14} />} onClick={() => setActive(r)}>
+      Chăm sóc
+    </Button>
+  );
+
+  const columns: Column<CaseRow>[] = [
+    {
+      key: 'customer',
+      header: 'Khách / Dịch vụ',
+      sortable: true,
+      sortValue: (r) => r.serviceName ?? r.name ?? '',
+      render: renderCustomer,
+    },
+    { key: 'assigned', header: 'Phụ trách', render: renderAssigned },
+    { key: 'careStatus', header: 'Trạng thái chăm', render: renderCareStatus },
+    {
+      key: 'nextFollowUpAt',
+      header: 'Hẹn chăm lại',
+      sortable: true,
+      sortValue: (r) => (r.nextFollowUpAt ? new Date(r.nextFollowUpAt).getTime() : 0),
+      render: renderFollowUp,
+    },
+    { key: 'status', header: 'Vụ việc', render: renderCaseStatus },
+    { key: 'tags', header: 'Tag', render: renderTags },
+    {
+      key: 'lastCaredAt',
+      header: 'Lần chăm gần nhất',
+      sortable: true,
+      sortValue: (r) => (r.lastCaredAt ? new Date(r.lastCaredAt).getTime() : 0),
+      render: (r) => (r.lastCaredAt ? new Date(r.lastCaredAt).toLocaleDateString('vi-VN') : '—'),
+    },
+    { key: 'actions', header: 'Hành động', align: 'right', render: renderAction },
+  ];
+
   return (
     <div className="bg-white rounded-xl shadow-soft p-4">
       <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
@@ -132,7 +269,8 @@ export default function CRM() {
           <Search size={16} className="text-gray-500" />
           <input
             className="py-2 outline-none flex-1 text-sm"
-            placeholder="Tên / email / SĐT..."
+            placeholder="Tên / email / SĐT... (Enter để tìm)"
+            aria-label="Tìm kiếm vụ việc"
             onKeyDown={(e) =>
               e.key === 'Enter' &&
               setFilter((f) => ({ ...f, keyword: (e.target as HTMLInputElement).value, page: 0 }))
@@ -209,160 +347,32 @@ export default function CRM() {
         </select>
       </div>
 
-      {/* Table */}
-      <div className="overflow-x-auto rounded-xl border border-brand-line">
-        <table className="w-full text-sm">
-          <thead className="bg-brand-surface/60 text-left text-brand-muted">
-            <tr>
-              <th className="py-3 px-4 font-medium">Khách / Dịch vụ</th>
-              <th className="px-3 font-medium">Phụ trách</th>
-              <th className="px-3 font-medium">Trạng thái chăm</th>
-              <th className="px-3 font-medium">Hẹn chăm lại</th>
-              <th className="px-3 font-medium">Vụ việc</th>
-              <th className="px-3 font-medium">Tag</th>
-              <th className="px-3 font-medium">Lần chăm gần nhất</th>
-              <th className="px-3 font-medium text-right">Hành động</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((r) => {
-              const cs = statuses.find((s) => s.id === r.careStatusId);
-              return (
-                <tr
-                  key={r.id}
-                  className="border-t border-brand-line hover:bg-brand-surface/40 transition-colors"
-                >
-                  <td className="py-3 px-4">
-                    <div className="flex items-center gap-3">
-                      <span className="w-9 h-9 rounded-full bg-brand-gold/15 text-brand-goldDark grid place-items-center font-semibold shrink-0">
-                        {(r.serviceName ?? r.name ?? '?').charAt(0)}
-                      </span>
-                      <div>
-                        <div className="font-medium text-brand-ink">
-                          {r.serviceName ?? r.name ?? '—'}
-                        </div>
-                        <div className="text-xs text-brand-muted">
-                          {r.customerEmail ?? r.customerPhone}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-3">
-                    {isAdmin ? (
-                      <select
-                        className="border border-brand-line rounded-lg px-2 py-1.5 text-xs bg-white max-w-[140px] focus:border-brand-gold outline-none"
-                        aria-label="Gán nhân viên phụ trách"
-                        value={r.assignedUserId ?? ''}
-                        onChange={(e) => assign(r, e.target.value)}
-                      >
-                        <option value="">Chưa giao</option>
-                        {staff.map((s) => (
-                          <option key={s.id} value={s.id}>
-                            {staffLabel(s)}
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <span className="text-sm text-brand-ink">{staffName(r.assignedUserId)}</span>
-                    )}
-                  </td>
-                  <td className="px-3">
-                    {cs ? (
-                      <span
-                        className="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium text-white"
-                        style={{ background: cs.color || '#9CA3AF' }}
-                      >
-                        {cs.name}
-                      </span>
-                    ) : (
-                      <span className="text-brand-muted">—</span>
-                    )}
-                  </td>
-                  <td className="px-3">
-                    {r.nextFollowUpAt ? (
-                      <span
-                        className={
-                          isOverdue(r.nextFollowUpAt)
-                            ? 'text-red-500 font-medium'
-                            : 'text-brand-ink'
-                        }
-                      >
-                        {new Date(r.nextFollowUpAt).toLocaleDateString('vi-VN')}
-                      </span>
-                    ) : (
-                      <span className="text-brand-muted">—</span>
-                    )}
-                  </td>
-                  <td className="px-3">
-                    {canChangeStatus(r) ? (
-                      // Click để đổi trạng thái vụ việc ngay (badge màu, là 1 select ẩn viền).
-                      <select
-                        aria-label="Đổi trạng thái vụ việc"
-                        value={r.status ?? ''}
-                        onChange={(e) => changeStatus(r, e.target.value)}
-                        title="Đổi trạng thái vụ việc"
-                        className={`appearance-none cursor-pointer px-2 py-0.5 rounded text-xs font-medium border-0 outline-none ${
-                          CASE_STATUS_VI[r.status ?? '']?.cls ?? 'bg-gray-100 text-gray-600'
-                        }`}
-                      >
-                        {STATUS_OPTIONS.map((s) => (
-                          <option key={s} value={s}>
-                            {CASE_STATUS_VI[s]?.label ?? s}
-                          </option>
-                        ))}
-                      </select>
-                    ) : r.status ? (
-                      <span
-                        className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                          CASE_STATUS_VI[r.status]?.cls ?? 'bg-gray-100 text-gray-600'
-                        }`}
-                      >
-                        {caseStatusLabel(r.status)}
-                      </span>
-                    ) : (
-                      <span className="text-brand-muted">—</span>
-                    )}
-                  </td>
-                  <td className="px-3">
-                    <div className="flex flex-wrap gap-1">
-                      {r.tagIds.map((id) => {
-                        const t = tagMap.get(id);
-                        return t ? (
-                          <span
-                            key={id}
-                            className="px-2 py-0.5 rounded-full text-[10px] text-white"
-                            style={{ background: t.color }}
-                          >
-                            {t.name}
-                          </span>
-                        ) : null;
-                      })}
-                    </div>
-                  </td>
-                  <td className="px-3 text-brand-muted">
-                    {r.lastCaredAt ? new Date(r.lastCaredAt).toLocaleDateString('vi-VN') : '—'}
-                  </td>
-                  <td className="px-3 text-right">
-                    <button
-                      onClick={() => setActive(r)}
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-gold text-white text-xs font-medium hover:bg-brand-goldDark transition-colors"
-                    >
-                      <HeartHandshake size={14} /> Chăm sóc
-                    </button>
-                  </td>
-                </tr>
-              );
-            })}
-            {!loading && rows.length === 0 && (
-              <tr>
-                <td colSpan={8} className="text-center py-8 text-gray-500">
-                  <UserCog className="mx-auto mb-2" /> Không có vụ việc nào khớp bộ lọc
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        columns={columns}
+        data={rows}
+        rowKey={(r) => r.id}
+        loading={loading}
+        pageSize={15}
+        emptyIcon={HeartHandshake}
+        emptyTitle="Không có vụ việc nào khớp bộ lọc"
+        mobileCard={(r) => (
+          <div className="space-y-2">
+            {renderCustomer(r)}
+            <div className="flex flex-wrap items-center gap-2">
+              {renderCareStatus(r)}
+              {renderCaseStatus(r)}
+              {r.nextFollowUpAt && (
+                <span className="text-xs text-gray-500">Hẹn: {renderFollowUp(r)}</span>
+              )}
+            </div>
+            {r.tagIds.length > 0 && renderTags(r)}
+            <div className="flex items-center justify-between gap-2 pt-1">
+              <div className="text-xs text-gray-500">{renderAssigned(r)}</div>
+              {renderAction(r)}
+            </div>
+          </div>
+        )}
+      />
 
       {active && (
         <CarePopup
