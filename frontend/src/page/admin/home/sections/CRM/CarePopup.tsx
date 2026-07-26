@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 import Modal from '../../../../../component/common/Modal';
+import { Button } from '../../../../../component/common/ui';
 import crmService from '../../../../../service/crm';
 import { caseStatusLabel } from './caseStatus';
 import {
@@ -223,17 +224,13 @@ export default function CarePopup({
           </div>
         </div>
 
-        <div className="p-4 border-t flex justify-end gap-2">
-          <button onClick={onClose} className="px-4 py-2 rounded border">
+        <div className="p-4 border-t flex justify-end gap-3">
+          <Button variant="secondary" onClick={onClose} disabled={saving}>
             Hủy
-          </button>
-          <button
-            onClick={save}
-            disabled={saving}
-            className="px-4 py-2 rounded bg-amber-500 text-white disabled:opacity-50"
-          >
-            {saving ? 'Đang lưu...' : 'Lưu chăm sóc'}
-          </button>
+          </Button>
+          <Button onClick={save} loading={saving}>
+            Lưu chăm sóc
+          </Button>
         </div>
       </div>
     </Modal>

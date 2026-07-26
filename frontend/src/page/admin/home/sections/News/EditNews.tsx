@@ -2,8 +2,10 @@ import { useState } from 'react';
 import { News } from '../../../../../types/service';
 import { Upload, X } from 'lucide-react';
 import React from 'react';
+import { toast } from 'react-toastify';
 import ReactQuill from 'react-quill';
 import Modal from '../../../../../component/common/Modal';
+import { Button, Input } from '../../../../../component/common/ui';
 import 'react-quill/dist/quill.snow.css';
 
 interface EditNewsProps {
@@ -66,12 +68,12 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
     if (file) {
       const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
       if (!allowedTypes.includes(file.type)) {
-        alert('Vui lòng chọn file hình ảnh (JPEG, PNG, GIF, WebP)');
+        toast.error('Vui lòng chọn file hình ảnh (JPEG, PNG, GIF, WebP)');
         return;
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        alert('Kích thước file không được vượt quá 5MB');
+        toast.error('Kích thước file không được vượt quá 5MB');
         return;
       }
       setImageFile(file);
@@ -145,28 +147,20 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
         <div className="mb-6">
           <h4 className="text-lg font-semibold text-gray-800 mb-4">Thông tin cơ bản</h4>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Tiêu đề *</label>
-              <input
-                type="text"
-                name="title"
-                value={formData.title}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
-                required
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Tác giả *</label>
-              <input
-                type="text"
-                name="author"
-                value={formData.author}
-                onChange={handleInputChange}
-                className="w-full px-3 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
-                required
-              />
-            </div>
+            <Input
+              label="Tiêu đề *"
+              name="title"
+              value={formData.title}
+              onChange={handleInputChange}
+              required
+            />
+            <Input
+              label="Tác giả *"
+              name="author"
+              value={formData.author}
+              onChange={handleInputChange}
+              required
+            />
           </div>
           <div className="mt-4">
             <label className="block text-sm font-medium text-gray-700 mb-2">Phụ đề *</label>
@@ -221,14 +215,13 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
             </div>
 
             <div className="mb-4">
-              <label className="block text-sm text-gray-600 mb-2">Hoặc nhập URL hình ảnh mới</label>
-              <input
+              <Input
+                label="Hoặc nhập URL hình ảnh mới"
                 type="url"
                 name="image"
                 value={formData.image}
                 onChange={handleUrlChange}
                 placeholder="https://example.com/image.jpg"
-                className="w-full px-3 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400"
               />
             </div>
 
@@ -310,21 +303,11 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
         )}
 
         {/* Action Buttons */}
-        <div className="flex justify-end gap-4">
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-6 py-3 border-2 border-gray-300 text-gray-700 rounded-xl font-semibold hover:bg-gray-50  active:scale-95 transition-all duration-200"
-          >
+        <div className="flex justify-end gap-3">
+          <Button variant="secondary" onClick={onCancel}>
             Hủy
-          </button>
-          <button
-            type="button"
-            onClick={handleSubmit}
-            className="px-6 py-3 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 hover:from-yellow-500 hover:via-orange-500 hover:to-red-500 text-white rounded-xl font-semibold shadow-lg hover:shadow-xl  active:scale-95 transition-all duration-200"
-          >
-            Cập nhật tin tức
-          </button>
+          </Button>
+          <Button onClick={handleSubmit}>Cập nhật tin tức</Button>
         </div>
       </div>
     </Modal>
