@@ -1,161 +1,192 @@
-import { Menu, X } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import {
+  X,
+  LayoutDashboard,
+  Users,
+  UserCog,
+  Newspaper,
+  Briefcase,
+  Mail,
+  MessageSquare,
+  MessagesSquare,
+  HeartHandshake,
+  SlidersHorizontal,
+  Puzzle,
+  type LucideIcon,
+} from 'lucide-react';
+import React, { useEffect } from 'react';
+import { NavLink } from 'react-router-dom';
 import { getMe } from '../../../../service/auth';
+
+const BASE = '/2025/luatpoip/admin';
+
+interface NavItem {
+  label: string;
+  path: string;
+  icon: LucideIcon;
+  end?: boolean;
+  onlyAdmin?: boolean;
+}
+
+interface NavGroup {
+  title: string;
+  items: NavItem[];
+}
+
+const GROUPS: NavGroup[] = [
+  {
+    title: 'Tổng quan',
+    items: [{ label: 'Trang chủ', path: BASE, icon: LayoutDashboard, end: true }],
+  },
+  {
+    title: 'Khách hàng & CRM',
+    items: [
+      { label: 'Khách hàng', path: `${BASE}/customers`, icon: Users },
+      { label: 'CRM chăm sóc', path: `${BASE}/crm`, icon: HeartHandshake },
+      {
+        label: 'Cấu hình CRM',
+        path: `${BASE}/crm/config`,
+        icon: SlidersHorizontal,
+        onlyAdmin: true,
+      },
+    ],
+  },
+  {
+    title: 'Dịch vụ & nội dung',
+    items: [
+      { label: 'Dịch vụ', path: `${BASE}/services`, icon: Puzzle, onlyAdmin: true },
+      { label: 'Bài viết', path: `${BASE}/posts`, icon: Newspaper },
+    ],
+  },
+  {
+    title: 'Giao tiếp',
+    items: [
+      { label: 'Chat khách', path: `${BASE}/chats`, icon: MessageSquare, onlyAdmin: true },
+      { label: 'Chat nội bộ', path: `${BASE}/team-chat`, icon: MessagesSquare },
+      { label: 'Người đăng ký', path: `${BASE}/subscribers`, icon: Mail, onlyAdmin: true },
+    ],
+  },
+  {
+    title: 'Tuyển dụng',
+    items: [{ label: 'Ứng viên', path: `${BASE}/applications`, icon: Briefcase, onlyAdmin: true }],
+  },
+  {
+    title: 'Quản trị hệ thống',
+    items: [{ label: 'Nhân viên', path: `${BASE}/employees`, icon: UserCog, onlyAdmin: true }],
+  },
+];
+
+const linkClass = ({ isActive }: { isActive: boolean }) =>
+  [
+    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold',
+    isActive
+      ? 'bg-brand-gold/20 text-brand-gold'
+      : 'text-white/70 hover:bg-white/10 hover:text-white',
+  ].join(' ');
+
+/** Nội dung điều hướng dùng chung cho cả sidebar desktop và drawer mobile. */
+function NavContent({ isAdmin, onNavigate }: { isAdmin: boolean; onNavigate?: () => void }) {
+  return (
+    <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-4" aria-label="Điều hướng quản trị">
+      {GROUPS.map((group) => {
+        const items = group.items.filter((i) => !i.onlyAdmin || isAdmin);
+        if (items.length === 0) return null;
+        return (
+          <div key={group.title}>
+            <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wide text-white/40">
+              {group.title}
+            </p>
+            <div className="space-y-1">
+              {items.map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  end={item.end}
+                  onClick={onNavigate}
+                  className={linkClass}
+                >
+                  <item.icon size={18} aria-hidden="true" />
+                  <span>{item.label}</span>
+                </NavLink>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </nav>
+  );
+}
 
 const Sidebar: React.FC<{
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
 }> = ({ sidebarOpen, setSidebarOpen }) => {
-  const [activeTab, setActiveTab] = useState<string>('home');
-  const [isAdmin, setIsAdmin] = useState<boolean>(false);
-  const navigate = useNavigate();
+  const [isAdmin, setIsAdmin] = React.useState(false);
 
-  // Role comes from /auth/me now (token is in an httpOnly cookie, not readable by JS).
   useEffect(() => {
     getMe().then((me) => setIsAdmin(me?.role === 'ADMIN'));
   }, []);
 
-  const menuItems = [
-    {
-      category: 'Trang chủ',
-      icon: '🏠',
-      key: 'home',
-      path: '/2025/luatpoip/admin',
-    },
-    {
-      category: 'Quản lý nhân viên',
-      icon: '👥',
-      key: 'employees',
-      path: '/2025/luatpoip/admin/employees',
-      onlyAdmin: true,
-    },
-    {
-      category: 'Quản lý khách hàng',
-      icon: '👤',
-      key: 'customers',
-      path: '/2025/luatpoip/admin/customers',
-    },
-    {
-      category: 'Quản lý bài viết',
-      icon: '📝',
-      key: 'posts',
-      path: '/2025/luatpoip/admin/posts',
-    },
-    {
-      category: 'Quản lý ứng viên',
-      icon: '💼',
-      key: 'applications',
-      path: '/2025/luatpoip/admin/applications',
-      onlyAdmin: true,
-    },
-    {
-      category: 'Người đăng ký',
-      icon: '📧',
-      key: 'subscribers',
-      path: '/2025/luatpoip/admin/subscribers',
-      onlyAdmin: true,
-    },
-    {
-      category: 'Chats',
-      icon: '💬',
-      key: 'chats',
-      path: '/2025/luatpoip/admin/chats',
-      onlyAdmin: true,
-    },
-    {
-      category: 'Chat nội bộ',
-      icon: '🗨️',
-      key: 'team-chat',
-      path: '/2025/luatpoip/admin/team-chat',
-    },
-    {
-      category: 'CRM chăm sóc',
-      icon: '🤝',
-      key: 'crm',
-      path: '/2025/luatpoip/admin/crm',
-    },
-    {
-      category: 'Cấu hình CRM',
-      icon: '⚙️',
-      key: 'crm-config',
-      path: '/2025/luatpoip/admin/crm/config',
-      onlyAdmin: true,
-    },
-    {
-      category: 'Quản lý dịch vụ',
-      icon: '🧩',
-      key: 'services',
-      path: '/2025/luatpoip/admin/services',
-      onlyAdmin: true,
-    },
-  ];
+  // Đóng drawer mobile bằng Escape.
+  useEffect(() => {
+    if (!sidebarOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setSidebarOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [sidebarOpen, setSidebarOpen]);
 
-  const handleTabChange = (key: string, path: string) => {
-    setActiveTab(key);
-    setSidebarOpen(false);
-    navigate(path);
-  };
+  const brand = (
+    <div className="flex h-16 shrink-0 items-center gap-2 border-b border-white/10 px-5">
+      <span className="text-lg font-bold text-white">Luật Poip</span>
+      <span className="rounded bg-brand-gold/20 px-1.5 py-0.5 text-[10px] font-semibold text-brand-gold">
+        Admin
+      </span>
+    </div>
+  );
 
   return (
     <>
+      {/* Desktop: sidebar cố định, là flex child (không overlay) */}
+      <aside className="hidden w-60 shrink-0 flex-col bg-brand-ink lg:flex">
+        {brand}
+        <NavContent isAdmin={isAdmin} />
+      </aside>
+
+      {/* Mobile: drawer */}
       {sidebarOpen && (
         <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40"
+          className="fixed inset-0 z-40 bg-black/50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
         />
       )}
-
-      <button
-        onClick={() => setSidebarOpen(!sidebarOpen)}
-        className="fixed top-4 left-4 z-50 w-12 h-12 bg-gradient-to-r from-pink-500 to-violet-500 rounded-full flex items-center justify-center text-white shadow-lg hover:shadow-xl transition-all duration-200"
-      >
-        {sidebarOpen ? <X size={20} /> : <Menu size={20} />}
-      </button>
-
-      <div
-        className={`fixed inset-y-0 left-0 z-50 w-80 bg-black/90 backdrop-blur-lg border-r border-white/20 p-6 shadow-soft transform transition-transform duration-300 ease-in-out ${
+      <aside
+        className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-brand-ink shadow-xl transition-transform duration-300 lg:hidden ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
+        aria-label="Menu quản trị"
+        aria-hidden={!sidebarOpen}
       >
-        <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-white mb-2">🏢 Admin Panel</h1>
-        </div>
-
-        <div className="bg-black/60 backdrop-blur-sm rounded-2xl p-4 mb-8 border border-white/20">
-          <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-r from-pink-500 to-violet-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
-              A
-            </div>
-            <div>
-              <div className="text-white font-medium">
-                Xin chào, {isAdmin ? 'Quản trị viên' : 'Nhân viên'}
-              </div>
-              <div className="text-white/70 text-sm">{isAdmin ? 'Quản trị viên' : 'Nhân viên'}</div>
-            </div>
+        <div className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 px-5">
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-bold text-white">Luật Poip</span>
+            <span className="rounded bg-brand-gold/20 px-1.5 py-0.5 text-[10px] font-semibold text-brand-gold">
+              Admin
+            </span>
           </div>
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(false)}
+            className="rounded-md p-1 text-white/70 hover:bg-white/10 hover:text-white"
+            aria-label="Đóng menu"
+          >
+            <X size={20} aria-hidden="true" />
+          </button>
         </div>
-
-        <div className="space-y-2">
-          {menuItems
-            .filter((item) => !item.onlyAdmin || isAdmin)
-            .map((item, index) => (
-              <div key={index}>
-                <button
-                  onClick={() => handleTabChange(item.key, item.path)}
-                  className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-white/10 ${
-                    activeTab === item.key
-                      ? 'bg-gradient-to-r from-pink-500/20 to-violet-500/20 border border-pink-500/30'
-                      : 'hover:border-white/20 border border-transparent'
-                  }`}
-                >
-                  <span className="text-xl">{item.icon}</span>
-                  <span className="text-white font-medium text-left">{item.category}</span>
-                </button>
-              </div>
-            ))}
-        </div>
-      </div>
+        <NavContent isAdmin={isAdmin} onNavigate={() => setSidebarOpen(false)} />
+      </aside>
     </>
   );
 };

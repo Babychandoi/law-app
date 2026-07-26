@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Bell, User2, LogOut, Mail, Phone, ChevronDown, Eye } from 'lucide-react';
+import { Bell, User2, LogOut, Mail, Phone, ChevronDown, Eye, Menu } from 'lucide-react';
 import { myProfile, logout, getNotificationById } from '../../../../service/admin';
 import { Notification, User } from '../../../../types/admin';
 import { toast } from 'react-toastify';
 import { markAsRead, markAllRead } from '../../../../service/admin';
 
-const Navbar: React.FC = () => {
+const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => {
   const [showNotifications, setShowNotifications] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [profile, setProfile] = useState<User | null>(null);
@@ -174,12 +174,21 @@ const Navbar: React.FC = () => {
   };
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 px-6 py-4">
-      <div className="flex items-center justify-end">
-        <div className="flex items-center space-x-4">
+    <header className="bg-white shadow-sm border-b border-gray-200 px-4 py-3 sm:px-6">
+      <div className="flex items-center justify-between">
+        <button
+          type="button"
+          onClick={onOpenSidebar}
+          aria-label="Mở menu điều hướng"
+          className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 lg:hidden"
+        >
+          <Menu size={22} />
+        </button>
+        <div className="ml-auto flex items-center space-x-4">
           <div className="relative">
             <button
               onClick={handleNotifications}
+              aria-label="Thông báo"
               className="p-2 rounded-lg hover:bg-gray-100 transition-colors relative"
             >
               <Bell size={20} className="text-gray-600" />
@@ -303,6 +312,7 @@ const Navbar: React.FC = () => {
           <div className="relative">
             <button
               onClick={handleProfile}
+              aria-label="Tài khoản"
               className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
             >
               <User2 size={20} className="text-gray-600" />
@@ -336,7 +346,7 @@ const Navbar: React.FC = () => {
                     onClick={hanldeLogout}
                   >
                     <LogOut size={16} />
-                    <span className="text-sm">LogOut</span>
+                    <span className="text-sm">Đăng xuất</span>
                   </button>
                 </div>
               </div>

@@ -11,7 +11,7 @@ import { tryRefreshToken } from '../../../service/axiosClient';
 const PROACTIVE_REFRESH_MS = 10 * 60 * 1000; // 10 minutes
 
 const AdminDashboard: React.FC = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
   useEffect(() => {
     // Gate on the cookie session. On 401 the axios interceptor tries a refresh transparently.
@@ -29,7 +29,7 @@ const AdminDashboard: React.FC = () => {
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Navbar />
+        <Navbar onOpenSidebar={() => setSidebarOpen(true)} />
 
         <main className="flex-1 overflow-y-auto p-6">
           <Outlet />
