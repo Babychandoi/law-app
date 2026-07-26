@@ -15,7 +15,7 @@
 Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 
 **P0 (bắt buộc trước nghiệm thu): ✅ HOÀN THÀNH TOÀN BỘ (10/10).**
-**P1 (một sprint): ✅ HOÀN THÀNH (12/12; P1.6 server-side áp cho CRM, list nhỏ giữ client-side).**
+**P1 (một sprint): ✅ HOÀN THÀNH (12/12; P1.6 server-side cho TẤT CẢ danh sách).**
 **P2 (nâng cao): ⬜ chưa (ngoài phạm vi đợt này) — nhưng đã bổ sung test tự động (unit 61 + E2E 9).**
 
 > Theo báo cáo, sau khi xong P0 + P1 điểm UI kỳ vọng tăng từ 4,8/10 lên ~7–8/10.
@@ -637,7 +637,7 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 3. ✅ Chuẩn hóa page header, breadcrumb và primary action. *(PageHeader + Breadcrumb + primary action; áp cho Customer/Subscribers/Services/JobApplications)*
 4. ✅ Làm responsive table/card cho mobile. *(DataTable tự đổi bảng → card trên mobile)*
 5. ✅ Thống nhất toast, confirm dialog, loading và error state. *(ConfirmDialog/useConfirm thay window.confirm/alert; Spinner; EmptyState)*
-6. ✅ Thêm pagination server-side. *(CRM dùng Page<CaseRow> + meta thật phía server; DataTable có chế độ serverPagination. Các list nhỏ (customer/user/subscriber) giữ client-side — đủ cho khối lượng hiện tại, cần thêm Pageable ở monolith nếu dữ liệu lớn.)*
+6. ✅ Thêm pagination server-side. *(TẤT CẢ danh sách: CRM + Khách hàng + Nhân viên + Người đăng ký đều phân trang + tìm kiếm/lọc phía server — monolith trả Page + ApiMeta; Customer lọc server-side qua Specification. DataTable có chế độ serverPagination + onSearch.)*
 7. ✅ Thêm sorting. *(DataTable sort theo cột)*
 8. ✅ Thêm bulk action. *(DataTable selectable + bulkActions; Subscribers "Xóa đã chọn")*
 9. ✅ Lưu filter trên URL. *(DataTable urlKey cho Subscribers/Services/Nhân viên; Customer lưu bộ lọc nâng cao q/status/svc/from/to)*
