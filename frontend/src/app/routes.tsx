@@ -5,6 +5,7 @@ import { RouteObject } from 'react-router-dom';
 const PublicLayout = lazy(() => import('./layouts/PublicLayout'));
 const About = lazy(() => import('../page/aboutUs'));
 const PrivacyPolicy = lazy(() => import('../page/legal/PrivacyPolicy'));
+const AdminDashboard = lazy(() => import('../page/admin/home/sections/Dashboard'));
 const Contact = lazy(() => import('../page/contact'));
 const Home = lazy(() => import('../page/home/Home'));
 const Job = lazy(() => import('../page/recruitment/Job'));
@@ -71,6 +72,7 @@ export const adminRoutes: RouteObject[] = [
     path: '/2025/luatpoip/admin',
     element: withSuspense(<AdminHome />),
     children: [
+      { index: true, element: withSuspense(<AdminDashboard />) },
       { path: 'employees', element: withSuspense(<EmployeeManagement />) },
       { path: 'posts', element: withSuspense(<PostManagement />) },
       { path: 'customers', element: withSuspense(<CustomerManagement />) },
