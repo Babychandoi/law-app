@@ -1,4 +1,5 @@
 import React from 'react';
+import { CARD_BASE } from './tokens';
 
 export interface CardProps {
   title?: React.ReactNode;
@@ -16,7 +17,7 @@ const Card: React.FC<CardProps> = ({
   bodyClassName = '',
   children,
 }) => (
-  <div className={`bg-white rounded-xl border border-gray-200 shadow-sm ${className}`}>
+  <div className={`${CARD_BASE} ${className}`}>
     {(title || actions) && (
       <div className="flex items-center justify-between gap-3 px-5 py-4 border-b border-gray-100">
         {typeof title === 'string' ? (

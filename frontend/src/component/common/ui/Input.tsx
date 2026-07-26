@@ -1,4 +1,5 @@
 import React, { useId } from 'react';
+import { FIELD_FOCUS } from './tokens';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -29,12 +30,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             id={inputId}
             ref={ref}
             aria-invalid={!!error}
-            className={`w-full rounded-md border px-3 py-2 text-sm outline-none transition-colors focus:ring-2 ${
+            className={`w-full rounded-control border px-3 py-2 text-sm transition-colors ${
               leftIcon ? 'pl-9' : ''
             } ${
               error
-                ? 'border-red-500 focus:ring-red-500'
-                : 'border-gray-300 focus:ring-brand-goldDark focus:border-brand-goldDark'
+                ? 'border-red-500 outline-none focus:ring-2 focus:ring-red-500'
+                : `border-gray-300 ${FIELD_FOCUS}`
             } ${className}`}
             {...rest}
           />

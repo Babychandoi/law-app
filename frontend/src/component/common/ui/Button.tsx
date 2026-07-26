@@ -1,11 +1,11 @@
 import React from 'react';
 import { Loader2 } from 'lucide-react';
+import { FOCUS_RING } from './tokens';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
-const base =
-  'inline-flex items-center justify-center gap-2 rounded-lg font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark/40 disabled:opacity-50 disabled:cursor-not-allowed';
+const base = `inline-flex items-center justify-center gap-2 rounded-control font-medium transition-colors ${FOCUS_RING} disabled:opacity-50 disabled:cursor-not-allowed`;
 
 const VARIANTS: Record<ButtonVariant, string> = {
   primary: 'bg-brand-goldDark text-white hover:bg-brand-gold',
