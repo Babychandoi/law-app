@@ -1,6 +1,16 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Send, Paperclip, Users, Plus, Search, UserPlus, UsersRound, X } from 'lucide-react';
+import {
+  Send,
+  Paperclip,
+  Users,
+  Plus,
+  Search,
+  UserPlus,
+  UsersRound,
+  X,
+  ArrowLeft,
+} from 'lucide-react';
 import teamChatService from '../../../../../service/teamChat';
 import { getMe } from '../../../../../service/auth';
 import { ConversationSummary, StaffUser, TeamMessage } from '../../../../../types/teamChat';
@@ -220,8 +230,12 @@ export default function TeamChat() {
 
   return (
     <div className="flex h-[calc(100vh-7rem)] bg-white rounded-xl shadow-soft overflow-hidden">
-      {/* Sidebar: conversation list */}
-      <aside className="w-80 border-r border-brand-line flex flex-col">
+      {/* Sidebar: conversation list — master-detail: ẩn trên mobile khi đã chọn hội thoại */}
+      <aside
+        className={`w-full flex-col border-r border-brand-line lg:flex lg:w-80 ${
+          activeId ? 'hidden' : 'flex'
+        }`}
+      >
         <div className="p-4 border-b border-brand-line flex items-center justify-between">
           <h2 className="font-semibold text-brand-ink flex items-center gap-2">
             Chat nội bộ
@@ -384,11 +398,19 @@ export default function TeamChat() {
         </div>
       </aside>
 
-      {/* Main: messages */}
-      <section className="flex-1 flex flex-col">
+      {/* Main: messages — ẩn trên mobile khi chưa chọn hội thoại */}
+      <section className={`flex-1 flex-col ${activeId ? 'flex' : 'hidden lg:flex'}`}>
         {active ? (
           <>
             <header className="p-4 border-b border-brand-line flex items-center gap-3">
+              <button
+                type="button"
+                onClick={() => setActiveId(null)}
+                aria-label="Quay lại danh sách"
+                className="-ml-1 rounded-lg p-2 text-brand-muted hover:bg-brand-surface lg:hidden"
+              >
+                <ArrowLeft size={20} />
+              </button>
               <span className="w-9 h-9 rounded-full bg-brand-gold/20 text-brand-goldDark grid place-items-center font-semibold">
                 {active.type === 'DIRECT' ? convTitle(active).charAt(0) : <UsersRound size={18} />}
               </span>

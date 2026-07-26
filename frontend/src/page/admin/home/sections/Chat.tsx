@@ -11,6 +11,7 @@ import {
   Edit2,
   Check,
   X,
+  ArrowLeft,
 } from 'lucide-react';
 import SockJS from 'sockjs-client';
 import { Client, IMessage } from '@stomp/stompjs';
@@ -401,7 +402,12 @@ const AdminChatDashboard: React.FC = () => {
 
   return (
     <div className="flex h-[calc(100vh-64px)] bg-gray-100">
-      <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
+      {/* Master (list): full-width trên mobile; ẩn khi đã chọn hội thoại (master-detail) */}
+      <div
+        className={`w-full flex-col border-r border-gray-200 bg-white lg:flex lg:w-80 ${
+          selectedConversation ? 'hidden' : 'flex'
+        }`}
+      >
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-bold text-gray-900">Quản lý Chat</h1>
@@ -538,12 +544,21 @@ const AdminChatDashboard: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col">
+      {/* Detail (messages): ẩn trên mobile khi chưa chọn hội thoại */}
+      <div className={`flex-1 flex-col ${selectedConversation ? 'flex' : 'hidden lg:flex'}`}>
         {selectedConversation ? (
           <>
             <div className="bg-white border-b border-gray-200 p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedConversation(null)}
+                    aria-label="Quay lại danh sách"
+                    className="-ml-1 rounded-lg p-2 text-gray-600 hover:bg-gray-100 lg:hidden"
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </button>
                   <div className="relative">
                     <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
                       <User className="w-5 h-5 text-gray-600" />
