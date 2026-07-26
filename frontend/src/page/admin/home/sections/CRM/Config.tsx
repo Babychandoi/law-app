@@ -212,8 +212,8 @@ function Row({
     <div className="flex items-center justify-between border rounded px-3 py-2">
       <div className="flex items-center gap-2">
         {color && <span className="w-3 h-3 rounded-full" style={{ background: color }} />}
-        <span className={active ? '' : 'line-through text-gray-400'}>{name}</span>
-        {sub && <span className="text-xs text-gray-400">{sub}</span>}
+        <span className={active ? '' : 'line-through text-gray-500'}>{name}</span>
+        {sub && <span className="text-xs text-gray-500">{sub}</span>}
         {badges.map((b) => (
           <span key={b} className="text-[10px] bg-gray-100 rounded px-1.5">
             {b}

@@ -129,7 +129,7 @@ export default function CRM() {
       {/* Filter bar */}
       <div className="flex flex-wrap gap-2 mb-4">
         <div className="flex items-center gap-1 border rounded px-2 flex-1 min-w-[200px]">
-          <Search size={16} className="text-gray-400" />
+          <Search size={16} className="text-gray-500" />
           <input
             className="py-2 outline-none flex-1 text-sm"
             placeholder="Tên / email / SĐT..."
@@ -355,7 +355,7 @@ export default function CRM() {
             })}
             {!loading && rows.length === 0 && (
               <tr>
-                <td colSpan={8} className="text-center py-8 text-gray-400">
+                <td colSpan={8} className="text-center py-8 text-gray-500">
                   <UserCog className="mx-auto mb-2" /> Không có vụ việc nào khớp bộ lọc
                 </td>
               </tr>

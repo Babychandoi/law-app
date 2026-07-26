@@ -102,7 +102,7 @@ export default function CarePopup({
         <div className="p-4 border-b">
           <div className="font-medium mb-2">Lịch sử chăm sóc</div>
           {logs.length === 0 && (
-            <div className="text-sm text-gray-400">Chưa có lần chăm sóc nào</div>
+            <div className="text-sm text-gray-500">Chưa có lần chăm sóc nào</div>
           )}
           <div className="space-y-2 max-h-40 overflow-y-auto">
             {logs.map((l) => (

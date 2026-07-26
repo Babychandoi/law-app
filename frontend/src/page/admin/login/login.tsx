@@ -129,7 +129,7 @@ const LoginForm: React.FC = () => {
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-200">Username</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
                 <input
                   type="text"
                   name="username"
@@ -148,7 +148,7 @@ const LoginForm: React.FC = () => {
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-200">Mật khẩu</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   name="password"
@@ -162,7 +162,7 @@ const LoginForm: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-white transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
@@ -188,7 +188,7 @@ const LoginForm: React.FC = () => {
           </div>
           {/* Footer */}
           <div className="text-center">
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-gray-500">
               © {new Date().getFullYear()} Luật Poip Legal. Tất cả quyền được bảo lưu.
             </p>
           </div>

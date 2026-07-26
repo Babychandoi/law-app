@@ -427,7 +427,7 @@ const AdminChatDashboard: React.FC = () => {
           </div>
 
           <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
             <input
               type="text"
               placeholder="Tìm kiếm cuộc trò chuyện..."
@@ -604,7 +604,7 @@ const AdminChatDashboard: React.FC = () => {
                         </h2>
                         <button
                           onClick={handleStartEditName}
-                          className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+                          className="p-1 text-gray-500 hover:text-gray-600 hover:bg-gray-100 rounded"
                           title="Đổi tên"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -644,7 +644,7 @@ const AdminChatDashboard: React.FC = () => {
                   </select>
                   <button
                     aria-label="Tùy chọn hội thoại"
-                    className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                    className="p-2 text-gray-500 hover:text-gray-600 rounded-lg hover:bg-gray-100"
                   >
                     <MoreVertical className="w-5 h-5" />
                   </button>
@@ -688,8 +688,8 @@ const AdminChatDashboard: React.FC = () => {
                     <div
                       className={`text-xs mt-1 px-2 ${
                         message.senderType === 'ADMIN'
-                          ? 'text-right text-gray-400'
-                          : 'text-left text-gray-400'
+                          ? 'text-right text-gray-500'
+                          : 'text-left text-gray-500'
                       }`}
                     >
                       {new Date(message.createdAt).toLocaleTimeString('vi-VN', {
@@ -707,7 +707,7 @@ const AdminChatDashboard: React.FC = () => {
               <div className="flex items-end space-x-3">
                 <button
                   aria-label="Đính kèm tệp"
-                  className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                  className="p-2 text-gray-500 hover:text-gray-600 rounded-lg hover:bg-gray-100"
                 >
                   <Paperclip className="w-5 h-5" />
                 </button>
@@ -725,7 +725,7 @@ const AdminChatDashboard: React.FC = () => {
                   />
                   <button
                     aria-label="Chèn biểu tượng cảm xúc"
-                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 rounded"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-500 hover:text-gray-600 rounded"
                   >
                     <Smile className="w-5 h-5" />
                   </button>

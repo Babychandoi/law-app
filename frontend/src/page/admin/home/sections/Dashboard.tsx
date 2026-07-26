@@ -124,7 +124,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex min-h-[50vh] items-center justify-center text-gray-400">
+      <div className="flex min-h-[50vh] items-center justify-center text-gray-500">
         <Loader2 className="h-8 w-8 animate-spin" aria-hidden="true" />
       </div>
     );
@@ -181,7 +181,7 @@ export default function Dashboard() {
             </Link>
           </div>
           {recent.length === 0 ? (
-            <div className="px-5 py-10 text-center text-sm text-gray-400">
+            <div className="px-5 py-10 text-center text-sm text-gray-500">
               Chưa có khách hàng nào.
             </div>
           ) : (

@@ -269,7 +269,7 @@ const CustomerManagement: React.FC = () => {
       <div className="mb-6 space-y-4">
         <div className="flex gap-3">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
             <input
               type="text"
               placeholder="Tìm kiếm theo tên, điện thoại, email hoặc dịch vụ..."
