@@ -24,11 +24,20 @@ npm run e2e:ui         # chạy có giao diện xem từng bước
 
 Ghi đè môi trường đích: `$env:E2E_BASE_URL="https://luatpoip.com"` (mặc định prod).
 
-## Phạm vi hiện có (`auth.spec.ts`)
+## Phạm vi hiện có (9 test)
 
+**`auth.spec.ts`** — đăng nhập & phân quyền:
 - Sai mật khẩu → vẫn ở trang login.
 - ADMIN đăng nhập → mở được khu Hệ thống (`/he-thong`).
 - NHÂN VIÊN (USER) → truy cập `/he-thong` bị guard đẩy về Vận hành (`/admin`).
+
+**`admin-nav.spec.ts`** — điều hướng & bảng:
+- ADMIN mở màn Khách hàng (DataTable render) và Người đăng ký (khu Hệ thống).
+- NHÂN VIÊN mở được Khách hàng (Vận hành) nhưng bị đẩy khỏi màn Hệ thống.
+
+**`chat.spec.ts`** — chat nội bộ:
+- NHÂN VIÊN & ADMIN tải được danh bạ `/staff-chat/users` (200) — regression cho fix 502.
+- NHÂN VIÊN mở được picker "Nhắn tin mới".
 
 Test tự bỏ qua (skip) nếu thiếu biến môi trường credential tương ứng.
 
