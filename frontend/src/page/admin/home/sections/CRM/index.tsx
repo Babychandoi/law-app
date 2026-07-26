@@ -9,6 +9,7 @@ import {
   CareResult,
   CareStatus,
   CaseRow,
+  PageMeta,
   StaffUser,
   Tag,
 } from '../../../../../types/crm';
@@ -31,7 +32,8 @@ export default function CRM() {
   const [results, setResults] = useState<CareResult[]>([]);
   const [tags, setTags] = useState<Tag[]>([]);
   const [staff, setStaff] = useState<StaffUser[]>([]);
-  const [filter, setFilter] = useState<CaseFilter>({ assignedTo: 'me', page: 0, size: 30 });
+  const [filter, setFilter] = useState<CaseFilter>({ assignedTo: 'me', page: 0, size: 15 });
+  const [meta, setMeta] = useState<PageMeta | null>(null);
   const [active, setActive] = useState<CaseRow | null>(null);
   const [loading, setLoading] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -52,8 +54,9 @@ export default function CRM() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const { rows } = await crmService.cases(filter);
+      const { rows, meta } = await crmService.cases(filter);
       setRows(rows);
+      setMeta(meta ?? null);
     } catch {
       toast.error('Không tải được danh sách');
     } finally {
@@ -352,7 +355,12 @@ export default function CRM() {
         data={rows}
         rowKey={(r) => r.id}
         loading={loading}
-        pageSize={15}
+        serverPagination={{
+          page: (filter.page ?? 0) + 1,
+          totalPages: meta?.totalPages ?? 1,
+          totalElements: meta?.totalElements,
+          onPageChange: (p) => setFilter((f) => ({ ...f, page: p - 1 })),
+        }}
         emptyIcon={HeartHandshake}
         emptyTitle="Không có vụ việc nào khớp bộ lọc"
         mobileCard={(r) => (

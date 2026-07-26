@@ -44,6 +44,16 @@ export interface DataTableProps<T> {
   selectable?: boolean;
   /** Render các nút hành động hàng loạt; nhận danh sách dòng đang chọn + hàm xoá chọn. */
   bulkActions?: (selected: T[], clearSelection: () => void) => React.ReactNode;
+  /**
+   * Phân trang phía SERVER: `data` là dữ liệu của trang hiện tại; DataTable không tự cắt trang.
+   * page 1-based. Khi đặt, DataTable hiển thị điều khiển trang theo tổng số trang từ server.
+   */
+  serverPagination?: {
+    page: number;
+    totalPages: number;
+    totalElements?: number;
+    onPageChange: (page: number) => void;
+  };
 }
 
 const ALIGN: Record<'left' | 'right' | 'center', string> = {
@@ -83,6 +93,7 @@ function DataTable<T>({
   urlKey,
   selectable = false,
   bulkActions,
+  serverPagination,
 }: DataTableProps<T>) {
   const [searchParams, setSearchParams] = useSearchParams();
   const pk = (k: string) => (urlKey ? `${urlKey}_${k}` : k);
@@ -140,7 +151,10 @@ function DataTable<T>({
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
   const safePage = Math.min(page, totalPages);
-  const pageRows = sorted.slice((safePage - 1) * pageSize, safePage * pageSize);
+  // Server mode: server đã trả đúng trang -> không cắt phía client.
+  const pageRows = serverPagination
+    ? sorted
+    : sorted.slice((safePage - 1) * pageSize, safePage * pageSize);
 
   const toggleSort = (key: string) => {
     if (sortKey === key) {
@@ -350,8 +364,42 @@ function DataTable<T>({
             ))}
           </div>
 
-          {/* Phân trang */}
-          {totalPages > 1 && (
+          {/* Phân trang phía SERVER */}
+          {serverPagination && serverPagination.totalPages > 1 && (
+            <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
+              <span>
+                {serverPagination.totalElements != null
+                  ? `${serverPagination.totalElements} mục`
+                  : ''}
+              </span>
+              <div className="flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => serverPagination.onPageChange(serverPagination.page - 1)}
+                  disabled={serverPagination.page <= 1}
+                  aria-label="Trang trước"
+                  className="p-2 rounded-lg border border-gray-300 disabled:opacity-40 hover:bg-gray-50"
+                >
+                  <ChevronLeft size={16} />
+                </button>
+                <span className="px-2">
+                  {serverPagination.page}/{serverPagination.totalPages}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => serverPagination.onPageChange(serverPagination.page + 1)}
+                  disabled={serverPagination.page >= serverPagination.totalPages}
+                  aria-label="Trang sau"
+                  className="p-2 rounded-lg border border-gray-300 disabled:opacity-40 hover:bg-gray-50"
+                >
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Phân trang phía CLIENT */}
+          {!serverPagination && totalPages > 1 && (
             <div className="flex items-center justify-between mt-4 text-sm text-gray-600">
               <span>
                 {(safePage - 1) * pageSize + 1}–{Math.min(safePage * pageSize, sorted.length)} /{' '}
