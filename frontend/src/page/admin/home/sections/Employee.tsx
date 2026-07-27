@@ -249,7 +249,11 @@ const UserManagement: React.FC = () => {
       {error && (
         <div className="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg flex justify-between items-center">
           <span>{error}</span>
-          <button onClick={handleCloseError} className="text-red-700 hover:text-red-900">
+          <button
+            onClick={handleCloseError}
+            aria-label="Đóng thông báo lỗi"
+            className="text-red-700 hover:text-red-900"
+          >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"

@@ -35,7 +35,7 @@ function NavContent({
       <div className="flex-1 space-y-6">
         {groups.map((group) => (
           <div key={group.title}>
-            <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wide text-white/40">
+            <p className="mb-2 px-3 text-[11px] font-semibold uppercase tracking-wide text-white/70">
               {group.title}
             </p>
             <div className="space-y-1">

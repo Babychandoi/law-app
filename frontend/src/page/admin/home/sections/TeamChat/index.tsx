@@ -529,7 +529,7 @@ export default function TeamChat() {
                 return (
                   <div key={m.id}>
                     {showTime && (
-                      <div className="text-center text-[11px] text-gray-400 py-2">
+                      <div className="text-center text-[11px] text-gray-500 py-2">
                         {fmtDivider(m.createdAt)}
                       </div>
                     )}

@@ -17,6 +17,7 @@ import SockJS from 'sockjs-client';
 import { Client, IMessage } from '@stomp/stompjs';
 import chatService from '../../../../service/chat';
 import { toast } from 'react-toastify';
+import { getMe } from '../../../../service/auth';
 import { EmojiPicker } from '../../../../component/common/ui';
 
 interface ChatMessage {
@@ -88,11 +89,13 @@ const AdminChatDashboard: React.FC = () => {
   const messageInputRef = useRef<HTMLTextAreaElement>(null);
   const clientRef = useRef<Client | null>(null);
 
-  const currentAdmin: AdminUser = {
-    id: 'admin-001',
-    name: 'Admin User',
-    isOnline: true,
-  };
+  // Danh tính admin thật (không hard-code) — dùng cho gửi tin, thống kê, phân công.
+  const [currentAdmin, setCurrentAdmin] = useState<AdminUser>({ id: '', name: '', isOnline: true });
+  useEffect(() => {
+    getMe().then((u) => {
+      if (u) setCurrentAdmin({ id: u.id, name: u.fullName || u.username, isOnline: true });
+    });
+  }, []);
 
   const fetchConversations = useCallback(async () => {
     try {
@@ -386,6 +389,8 @@ const AdminChatDashboard: React.FC = () => {
   };
 
   useEffect(() => {
+    // Chờ có danh tính admin thật trước khi kết nối/thống kê (tránh gửi adminId rỗng).
+    if (!currentAdmin.id) return;
     fetchConversations();
     fetchStats();
     connectWebSocket();
@@ -393,7 +398,7 @@ const AdminChatDashboard: React.FC = () => {
     return () => {
       clientRef.current?.deactivate();
     };
-  }, [connectWebSocket, fetchConversations, fetchStats]);
+  }, [currentAdmin.id, connectWebSocket, fetchConversations, fetchStats]);
 
   useEffect(() => {
     scrollToBottom();
@@ -473,8 +478,17 @@ const AdminChatDashboard: React.FC = () => {
               {filteredConversations.map((conversation) => (
                 <div
                   key={conversation.guestId}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={selectedConversation === conversation.guestId}
                   onClick={() => handleConversationSelect(conversation.guestId)}
-                  className={`p-4 border-b border-gray-100 cursor-pointer transition-colors ${
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleConversationSelect(conversation.guestId);
+                    }
+                  }}
+                  className={`p-4 border-b border-gray-100 cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark ${
                     selectedConversation === conversation.guestId
                       ? 'bg-brand-surface border border-l-blue-500'
                       : 'hover:bg-gray-50'

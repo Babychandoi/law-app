@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Swal from 'sweetalert2';
 import Modal from '../../../../component/common/Modal';
 import { getNews, getNew } from '../../../../service/service';
@@ -13,7 +13,7 @@ import { News } from '../../../../types/service';
 import { sanitizeHtml } from '../../../../shared/utils/sanitizeHtml';
 import AddNews from './News/AddNews';
 import EditNews from './News/EditNews';
-import { Eye, Pencil, Trash2, Send } from 'lucide-react';
+import { Eye, Pencil, Trash2, Send, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Spinner } from '../../../../component/common/ui';
 
 const NewsManagement: React.FC = () => {
@@ -24,28 +24,33 @@ const NewsManagement: React.FC = () => {
   const [editingNews, setEditingNews] = useState<News | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [page, setPage] = useState(1); // 1-based
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalElements, setTotalElements] = useState(0);
+  const PAGE_SIZE = 12;
 
-  // Fetch news list on component mount
-  useEffect(() => {
-    fetchNewsList();
-  }, []);
-
-  const fetchNewsList = async () => {
+  const fetchNewsList = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await getNews();
+      const response = await getNews({ page: page - 1, size: PAGE_SIZE });
       if (response.code === 200) {
         setNewsList(response.data);
+        setTotalPages(response.meta?.totalPages ?? 1);
+        setTotalElements(response.meta?.totalElements ?? response.data.length);
       } else {
-        setError('Failed to fetch news: ' + response.message);
+        setError('Không tải được tin tức: ' + response.message);
       }
     } catch (error) {
-      setError('Error fetching news: ' + (error as Error).message);
+      setError('Lỗi khi tải tin tức: ' + (error as Error).message);
     } finally {
       setLoading(false);
     }
-  };
+  }, [page]);
+
+  useEffect(() => {
+    fetchNewsList();
+  }, [fetchNewsList]);
 
   const handleEdit = async (id: string) => {
     // Hiển thị loading
@@ -464,6 +469,36 @@ const NewsManagement: React.FC = () => {
             ))
           )}
         </div>
+
+        {/* Phân trang (server-side) */}
+        {totalPages > 1 && (
+          <div className="mt-6 flex items-center justify-between text-sm text-gray-600">
+            <span>{totalElements} bài viết</span>
+            <div className="flex items-center gap-1">
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page <= 1}
+                aria-label="Trang trước"
+                className="p-2 rounded-lg border border-gray-300 disabled:opacity-40 hover:bg-gray-50"
+              >
+                <ChevronLeft size={16} />
+              </button>
+              <span className="px-2">
+                {page}/{totalPages}
+              </span>
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page >= totalPages}
+                aria-label="Trang sau"
+                className="p-2 rounded-lg border border-gray-300 disabled:opacity-40 hover:bg-gray-50"
+              >
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* News Detail Modal */}
         {selectedNews && (

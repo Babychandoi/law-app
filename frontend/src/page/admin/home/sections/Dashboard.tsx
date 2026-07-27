@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Users,
@@ -31,7 +31,8 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [me, setMe] = useState<MeResponse | null>(null);
-  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [counts, setCounts] = useState({ newLead: 0, pending: 0, total: 0 });
+  const [recent, setRecent] = useState<Customer[]>([]);
   const [unread, setUnread] = useState(0);
 
   useEffect(() => {
@@ -41,17 +42,21 @@ export default function Dashboard() {
       setError(false);
       try {
         const user = await getMe();
-        const [custs, stats] = await Promise.all([
-          getCustomers().catch(() => ({ data: [] as Customer[] }) as never),
+        // Đếm CHÍNH XÁC toàn hệ thống qua meta.totalElements (không dùng .length của trang đầu).
+        const countOf = async (status?: string) =>
+          (await getCustomers({ page: 0, size: 1, status })).meta?.totalElements ?? 0;
+        const [total, newLead, received, processing, recentRes, stats] = await Promise.all([
+          countOf(),
+          countOf('NEW'),
+          countOf('RECEIVED'),
+          countOf('PROCESSING'),
+          getCustomers({ page: 0, size: 6 }),
           user ? chatService.fetchStats(user.id) : Promise.resolve(null),
         ]);
         if (cancelled) return;
         setMe(user);
-        setCustomers(
-          Array.isArray((custs as { data: Customer[] }).data)
-            ? (custs as { data: Customer[] }).data
-            : []
-        );
+        setCounts({ total, newLead, pending: received + processing });
+        setRecent(Array.isArray(recentRes.data) ? recentRes.data : []);
         setUnread(stats?.unreadConversations ?? 0);
       } catch {
         if (!cancelled) setError(true);
@@ -63,23 +68,6 @@ export default function Dashboard() {
       cancelled = true;
     };
   }, []);
-
-  const counts = useMemo(() => {
-    const c = { newLead: 0, pending: 0, total: customers.length };
-    for (const cus of customers) {
-      if (cus.status === 'NEW') c.newLead += 1;
-      if (cus.status === 'RECEIVED' || cus.status === 'PROCESSING') c.pending += 1;
-    }
-    return c;
-  }, [customers]);
-
-  const recent = useMemo(
-    () =>
-      [...customers]
-        .sort((a, b) => (b.createdAt || '').localeCompare(a.createdAt || ''))
-        .slice(0, 6),
-    [customers]
-  );
 
   const stats: Stat[] = [
     {
