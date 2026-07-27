@@ -16,10 +16,10 @@ Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 
 > **Đính chính trung thực (đã bị nhắc 2 lần vì overclaim — không lặp lại):** bản nghiệm thu độc lập
 > trước (commit 6a467fa) chấm **P0: 6 xong · 4 một phần** và **P1: 5 xong · 7 một phần**. Đợt đóng
-> tiếp 28/07 (các batch A–F) đã đóng thật thêm nhiều mục ⚠️, nay tự chấm **P0: 9 xong · 1 một phần**
-> và **P1: 8 xong · 4 một phần** — nhưng **các con số này chưa được nghiệm thu độc lập lại**, nên
-> vẫn là tự đánh giá, **KHÔNG khẳng định "hoàn thành tuyệt đối"**. Điểm ước ~**7,5–8/10** — đủ beta
-> nội bộ, còn mục ⚠️ ở dưới.
+> tiếp 28/07 (các batch A–F + axe) đã đóng thật thêm nhiều mục ⚠️, nay tự chấm **P0: 10 xong (đã
+> đóng hết)** và **P1: 8 xong · 4 một phần** — nhưng **các con số này chưa được nghiệm thu độc lập
+> lại**, nên vẫn là tự đánh giá, **KHÔNG khẳng định "hoàn thành tuyệt đối"**; riêng axe mới quét 3 màn
+> đại diện. Điểm ước ~**8/10** — đủ beta nội bộ, còn mục ⚠️ (P1/P2) ở dưới.
 
 **Đóng thêm ở đợt 28/07 (batch A–F), đã build + 62 unit test pass + deploy:**
 - A11y: ServiceEditor field ĐỘNG (process/pricing/section/features/file/checkbox) đã có aria-label; drawer mobile đưa/giữ focus + Tab-trap + Escape + nền `inert`.
@@ -27,9 +27,10 @@ Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 - Guest chat: nút **"Tải thêm hội thoại"** (không còn kẹt 30 hội thoại đầu).
 - **Bỏ toàn bộ `window.prompt`**: CRM Config (4 nút Thêm) + "lưu chế độ xem" → modal/input có validation, Enter/Escape, loading.
 - PageHeader cho **CRM Config**.
+- **axe-core (`e2e/a11y.spec.ts`)**: 0 lỗi `color-contrast` trên đăng nhập + Khách hàng + Người đăng ký → đóng P0.8.
 
 **Còn tồn thật (không tô vẽ):**
-- Accessibility: chưa chạy **axe tự động** để chắc đạt 100% (contrast/aria toàn cục).
+- Accessibility: axe mới quét **3 màn đại diện**, chưa quét toàn bộ màn + chưa gắn cổng chặn mỗi PR.
 - URL filter: **CRM/bài viết** chưa lưu URL (mới có ở customer/user/subscriber).
 - Sorting: **CRM chưa sort server-side** (đã gỡ nút sort chết để không đánh lừa).
 - P2.1 "chế độ xem" mới lưu mật độ + cột ẩn, **chưa lưu tìm kiếm/sort/bộ lọc** — chưa phải "saved filter" đúng nghĩa (nhưng đã bỏ `window.prompt`).
@@ -655,7 +656,7 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 
 ## 9. Lộ trình cải thiện
 
-## P0 – Bắt buộc sửa trước khi nghiệm thu  → 9 xong · 1 một phần
+## P0 – Bắt buộc sửa trước khi nghiệm thu  → 10 xong (đã đóng hết)
 
 1. ✅ Tạo dashboard mặc định cho route admin. *(Dashboard.tsx: KPI đếm qua meta + KH gần đây + quick actions)*
 2. ✅ Sửa active menu theo URL bằng `NavLink`. *(Sidebar.tsx)*
@@ -664,7 +665,7 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 5. ✅ Accessible name cho icon button + input. *(nút icon-only có aria-label; ServiceEditor field ĐỘNG process/pricing/section/features/file/checkbox đã thêm aria-label; ô tìm/select có label)*
 6. ✅ Label đúng chuẩn cho input/select. *(login + select + ServiceEditor tĩnh liên kết `htmlFor/id`; field động có aria-label)*
 7. ✅ Document title theo route.
-8. ⚠️ Sửa contrast. *(gray-400→500, sidebar /70, CRM chip đã tự chọn đen/trắng theo luminance; **chưa rà axe tự động để chắc đạt 100%**)*
+8. ✅ Sửa contrast. *(gray-400→500, sidebar /70, CRM chip tự chọn đen/trắng theo luminance; **đã chạy axe-core (`e2e/a11y.spec.ts`) — 0 lỗi `color-contrast`** trên đăng nhập + Khách hàng (sidebar/DataTable/PageHeader/chip) + Người đăng ký. Ghi chú: axe mới quét 3 màn đại diện, chưa quét toàn bộ màn)*
 9. ✅ Chuẩn hóa modal (dialog role/focus trap/Escape/focus return + fix mất focus).
 10. ✅ Bàn phím hoàn thành luồng chính. *(guest-chat rows + Navbar thông báo + drawer đưa/giữ focus khi mở + Tab-trap + Escape + nền `inert` khi đóng)*
 
@@ -695,7 +696,7 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 8. ⬜ Draft và version history.
 9. ⬜ Preview theo desktop/tablet/mobile.
 10. ⬜ Visual regression test.
-11. ⚠️ Accessibility test trong CI. *(chưa có axe-in-CI; nhưng đã có unit test a11y cho component + E2E)*
+11. ⚠️ Accessibility test trong CI. *(**đã có axe-core trong bộ E2E** `e2e/a11y.spec.ts` — chạy qua workflow E2E; nhưng workflow còn chạy thủ công/khi có secrets, chưa gắn cổng chặn trên mỗi PR + mới quét 3 màn)*
 12. ⬜ Theo dõi analytics cho luồng admin quan trọng.
 
 ---

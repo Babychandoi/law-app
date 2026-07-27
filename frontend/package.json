@@ -67,6 +67,7 @@
     ]
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
     "@craco/craco": "^7.1.0",
     "@playwright/test": "^1.62.0",
     "@types/sockjs-client": "^1.5.4",
