@@ -645,11 +645,11 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 11. ✅ Chuẩn hóa thuật ngữ VI/EN. *(login "Username"→"Tên đăng nhập"; "Đăng xuất"; năm login động; nav toàn tiếng Việt)*
 12. ✅ Hiển thị dữ liệu người dùng đăng nhập thực tế. *(Navbar: avatar chữ cái đầu tên thật + tên + vai trò; email/SĐT trong dropdown)*
 
-## P2 – Nâng lên mức sản phẩm tốt  → ⬜ chưa (ngoài phạm vi đợt này)
+## P2 – Nâng lên mức sản phẩm tốt  → đang triển khai
 
-1. ⬜ Saved view và saved filter.
-2. ⬜ Column visibility.
-3. ⬜ Table density.
+1. ✅ Saved view và saved filter. *(DataTable: lưu/áp/xóa "chế độ xem" = mật độ + cột ẩn, theo tableId trong localStorage; saved-filter cho Customer đã có qua URL ở P1.9)*
+2. ✅ Column visibility. *(công cụ "Cột" ẩn/hiện từng cột, cột Thao tác khóa hiện)*
+3. ✅ Table density. *(nút Thoáng/Gọn, lưu localStorage)*
 4. ⬜ Audit log.
 5. ⬜ Lịch sử thay đổi dữ liệu.
 6. ⬜ Global search hoặc command palette.
