@@ -315,13 +315,15 @@ function DataTable<T>({
       next.has(key) ? next.delete(key) : next.add(key);
       return next;
     });
-  const saveView = () => {
-    const name = window.prompt('Tên chế độ xem:')?.trim();
+  const [viewName, setViewName] = useState('');
+  const addView = () => {
+    const name = viewName.trim();
     if (!name) return;
     setViews((prev) => [
       ...prev.filter((v) => v.name !== name),
       { name, density, hidden: Array.from(hidden) },
     ]);
+    setViewName('');
   };
   const applyView = (v: SavedView) => {
     setDensity(v.density);
@@ -423,16 +425,33 @@ function DataTable<T>({
                         </button>
                       </div>
                     ))}
-                    <button
-                      type="button"
-                      onClick={() => {
-                        saveView();
-                        close();
-                      }}
-                      className="mt-1 flex w-full items-center gap-2 rounded-lg border-t border-gray-100 px-2 py-2 text-sm text-brand-goldDark hover:bg-gray-50"
-                    >
-                      <Save size={14} /> Lưu chế độ xem hiện tại
-                    </button>
+                    <div className="mt-1 flex items-center gap-1 border-t border-gray-100 pt-2">
+                      <input
+                        value={viewName}
+                        onChange={(e) => setViewName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            addView();
+                            close();
+                          }
+                        }}
+                        placeholder="Tên chế độ xem…"
+                        aria-label="Tên chế độ xem để lưu"
+                        className="flex-1 rounded-lg border border-gray-300 px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-brand-goldDark"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          addView();
+                          close();
+                        }}
+                        disabled={!viewName.trim()}
+                        aria-label="Lưu chế độ xem hiện tại"
+                        className="rounded-lg p-2 text-brand-goldDark hover:bg-gray-50 disabled:opacity-40"
+                      >
+                        <Save size={16} />
+                      </button>
+                    </div>
                   </div>
                 )}
               </Popover>

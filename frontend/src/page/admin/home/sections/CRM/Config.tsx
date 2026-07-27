@@ -3,6 +3,7 @@ import { toast } from 'react-toastify';
 import { Plus } from 'lucide-react';
 import crmService from '../../../../../service/crm';
 import { CareAction, CareResult, CareStatus, Tag } from '../../../../../types/crm';
+import { Input, Button } from '../../../../../component/common/ui';
 
 type TabKey = 'status' | 'action' | 'result' | 'tag';
 const TABS: { key: TabKey; label: string }[] = [
@@ -39,47 +40,45 @@ export default function CrmConfig() {
   };
   useEffect(reload, []);
 
-  const addStatus = async () => {
-    const name = window.prompt('Tên trạng thái chăm sóc?');
-    if (!name) return;
-    await crmService.saveCareStatus({
-      name,
-      code: name.toUpperCase().replace(/\s+/g, '_'),
-      color: '#3B82F6',
-      active: true,
-    });
-    toast.success('Đã thêm');
-    reload();
+  const [adding, setAdding] = useState<TabKey | null>(null);
+  const [newName, setNewName] = useState('');
+  const [saving, setSaving] = useState(false);
+  const openAdd = (key: TabKey) => {
+    setAdding(key);
+    setNewName('');
   };
-  const addAction = async () => {
-    const name = window.prompt('Tên hành động?');
-    if (!name) return;
-    await crmService.saveCareAction({
-      name,
-      code: name.toUpperCase().replace(/\s+/g, '_'),
-      active: true,
-    });
-    toast.success('Đã thêm');
-    reload();
+  const addLabel: Record<TabKey, string> = {
+    status: 'Tên trạng thái chăm sóc',
+    action: 'Tên hành động',
+    result: 'Tên kết quả',
+    tag: 'Tên tag',
   };
-  const addResult = async () => {
-    const name = window.prompt('Tên kết quả?');
-    if (!name) return;
-    await crmService.saveCareResult({
-      name,
-      code: name.toUpperCase().replace(/\s+/g, '_'),
-      active: true,
-      requireFollowUpDate: false,
-    });
-    toast.success('Đã thêm');
-    reload();
-  };
-  const addTag = async () => {
-    const name = window.prompt('Tên tag?');
-    if (!name) return;
-    await crmService.saveTag({ name, color: '#F59E0B', active: true });
-    toast.success('Đã thêm');
-    reload();
+  const submitAdd = async () => {
+    const name = newName.trim();
+    if (!name || !adding) return;
+    const code = name.toUpperCase().replace(/\s+/g, '_');
+    try {
+      setSaving(true);
+      if (adding === 'status')
+        await crmService.saveCareStatus({ name, code, color: '#3B82F6', active: true });
+      else if (adding === 'action') await crmService.saveCareAction({ name, code, active: true });
+      else if (adding === 'result')
+        await crmService.saveCareResult({
+          name,
+          code,
+          active: true,
+          requireFollowUpDate: false,
+        });
+      else await crmService.saveTag({ name, color: '#F59E0B', active: true });
+      toast.success('Đã thêm');
+      setAdding(null);
+      setNewName('');
+      reload();
+    } catch {
+      toast.error('Không thể thêm. Vui lòng thử lại.');
+    } finally {
+      setSaving(false);
+    }
   };
 
   const toggleStatus = async (s: CareStatus) => {
@@ -115,7 +114,7 @@ export default function CrmConfig() {
       </div>
 
       {tab === 'status' && (
-        <Section onAdd={addStatus}>
+        <Section onAdd={() => openAdd('status')}>
           {statuses.map((s) => (
             <Row
               key={s.id}
@@ -136,7 +135,7 @@ export default function CrmConfig() {
         </Section>
       )}
       {tab === 'action' && (
-        <Section onAdd={addAction}>
+        <Section onAdd={() => openAdd('action')}>
           {actions.map((a) => (
             <Row
               key={a.id}
@@ -149,7 +148,7 @@ export default function CrmConfig() {
         </Section>
       )}
       {tab === 'result' && (
-        <Section onAdd={addResult}>
+        <Section onAdd={() => openAdd('result')}>
           {results.map((r) => (
             <Row
               key={r.id}
@@ -163,7 +162,7 @@ export default function CrmConfig() {
         </Section>
       )}
       {tab === 'tag' && (
-        <Section onAdd={addTag}>
+        <Section onAdd={() => openAdd('tag')}>
           {tags.map((t) => (
             <Row
               key={t.id}
@@ -174,6 +173,42 @@ export default function CrmConfig() {
             />
           ))}
         </Section>
+      )}
+
+      {adding && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-label={addLabel[adding]}
+          onClick={() => !saving && setAdding(null)}
+        >
+          <div
+            className="w-full max-w-sm rounded-xl bg-white p-4 shadow-card"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h3 className="mb-3 text-base font-semibold">{addLabel[adding]}</h3>
+            <Input
+              autoFocus
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') submitAdd();
+                if (e.key === 'Escape') setAdding(null);
+              }}
+              placeholder={addLabel[adding]}
+              aria-label={addLabel[adding]}
+            />
+            <div className="mt-4 flex justify-end gap-2">
+              <Button variant="ghost" onClick={() => setAdding(null)} disabled={saving}>
+                Hủy
+              </Button>
+              <Button onClick={submitAdd} loading={saving} disabled={!newName.trim()}>
+                Thêm
+              </Button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
