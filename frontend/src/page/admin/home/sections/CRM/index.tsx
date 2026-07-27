@@ -16,6 +16,18 @@ import {
 import CarePopup from './CarePopup';
 import { Button, DataTable, PageHeader, type Column } from '../../../../../component/common/ui';
 
+// Chọn màu chữ (đen/trắng) tương phản đủ trên nền màu tuỳ ý của tag/trạng thái (WCAG).
+function textOn(bg?: string): string {
+  if (!bg) return '#fff';
+  const h = bg.replace('#', '');
+  const full = h.length === 3 ? h.replace(/(.)/g, '$1$1') : h;
+  const r = parseInt(full.slice(0, 2), 16) || 0;
+  const g = parseInt(full.slice(2, 4), 16) || 0;
+  const b = parseInt(full.slice(4, 6), 16) || 0;
+  const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  return lum > 0.6 ? '#111827' : '#ffffff';
+}
+
 const STATUS_OPTIONS = CASE_STATUS_OPTIONS;
 const FOLLOWUP_OPTIONS = [
   { v: '', label: 'Hẹn chăm: tất cả' },
@@ -158,10 +170,11 @@ export default function CRM() {
 
   const renderCareStatus = (r: CaseRow) => {
     const cs = statuses.find((s) => s.id === r.careStatusId);
+    const bg = cs?.color || '#9CA3AF';
     return cs ? (
       <span
-        className="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium text-white"
-        style={{ background: cs.color || '#9CA3AF' }}
+        className="inline-block px-2.5 py-0.5 rounded-full text-xs font-medium"
+        style={{ background: bg, color: textOn(bg) }}
       >
         {cs.name}
       </span>
@@ -215,8 +228,8 @@ export default function CRM() {
         return t ? (
           <span
             key={id}
-            className="px-2 py-0.5 rounded-full text-[10px] text-white"
-            style={{ background: t.color }}
+            className="px-2 py-0.5 rounded-full text-[10px] font-medium"
+            style={{ background: t.color, color: textOn(t.color) }}
           >
             {t.name}
           </span>
@@ -235,8 +248,6 @@ export default function CRM() {
     {
       key: 'customer',
       header: 'Khách / Dịch vụ',
-      sortable: true,
-      sortValue: (r) => r.serviceName ?? r.name ?? '',
       render: renderCustomer,
     },
     { key: 'assigned', header: 'Phụ trách', render: renderAssigned },
@@ -244,8 +255,6 @@ export default function CRM() {
     {
       key: 'nextFollowUpAt',
       header: 'Hẹn chăm lại',
-      sortable: true,
-      sortValue: (r) => (r.nextFollowUpAt ? new Date(r.nextFollowUpAt).getTime() : 0),
       render: renderFollowUp,
     },
     { key: 'status', header: 'Vụ việc', render: renderCaseStatus },
@@ -253,8 +262,6 @@ export default function CRM() {
     {
       key: 'lastCaredAt',
       header: 'Lần chăm gần nhất',
-      sortable: true,
-      sortValue: (r) => (r.lastCaredAt ? new Date(r.lastCaredAt).getTime() : 0),
       render: (r) => (r.lastCaredAt ? new Date(r.lastCaredAt).toLocaleDateString('vi-VN') : '—'),
     },
     { key: 'actions', header: 'Hành động', align: 'right', hideable: false, render: renderAction },

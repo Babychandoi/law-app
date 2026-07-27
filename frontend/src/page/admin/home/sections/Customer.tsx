@@ -182,8 +182,10 @@ const CustomerManagement: React.FC = () => {
   };
 
   const quickFilterByDate = (date: string) => {
-    setDateFromFilter(date);
-    setDateToFilter(date);
+    // input type=date + backend LocalDate cần yyyy-MM-dd (cắt phần giờ của ISO).
+    const day = (date || '').slice(0, 10);
+    setDateFromFilter(day);
+    setDateToFilter(day);
     setShowFilters(true);
   };
 

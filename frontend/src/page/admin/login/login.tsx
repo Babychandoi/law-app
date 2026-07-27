@@ -127,11 +127,14 @@ const LoginForm: React.FC = () => {
           <div className="space-y-4">
             {/* Tên đăng nhập */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-200">Tên đăng nhập</label>
+              <label htmlFor="login-username" className="text-sm font-medium text-gray-200">
+                Tên đăng nhập
+              </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
                 <input
                   type="text"
+                  id="login-username"
                   name="username"
                   value={formData.username}
                   onChange={handleInputChange}
@@ -146,11 +149,14 @@ const LoginForm: React.FC = () => {
 
             {/* Password */}
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-200">Mật khẩu</label>
+              <label htmlFor="login-password" className="text-sm font-medium text-gray-200">
+                Mật khẩu
+              </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
                 <input
                   type={showPassword ? 'text' : 'password'}
+                  id="login-password"
                   name="password"
                   value={formData.password}
                   onChange={handleInputChange}

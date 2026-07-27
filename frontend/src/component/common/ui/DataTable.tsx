@@ -97,6 +97,8 @@ export interface DataTableProps<T> {
   };
   /** Tìm kiếm phía server: gọi (debounce) khi người dùng gõ vào ô tìm kiếm. */
   onSearch?: (q: string) => void;
+  /** Giá trị khởi tạo cho ô tìm kiếm (dùng khi cha lưu q trên URL để hiện lại sau reload). */
+  searchDefault?: string;
   /** Sắp xếp phía SERVER: trạng thái sort hiện tại (do cha quản lý). */
   sortState?: { key: string; dir: 'asc' | 'desc' } | null;
   /** Sắp xếp phía SERVER: gọi khi bấm tiêu đề cột sortable. Khi đặt, KHÔNG sort client. */
@@ -147,6 +149,7 @@ function DataTable<T>({
   bulkActions,
   serverPagination,
   onSearch,
+  searchDefault,
   sortState,
   onSortChange,
   tableId,
@@ -154,7 +157,9 @@ function DataTable<T>({
   const [searchParams, setSearchParams] = useSearchParams();
   const pk = (k: string) => (urlKey ? `${urlKey}_${k}` : k);
 
-  const [query, setQuery] = useState(() => (urlKey ? (searchParams.get(pk('q')) ?? '') : ''));
+  const [query, setQuery] = useState(() =>
+    urlKey ? (searchParams.get(pk('q')) ?? '') : (searchDefault ?? '')
+  );
   const [sortKey, setSortKey] = useState<string | null>(() =>
     urlKey ? searchParams.get(pk('sort')) : null
   );

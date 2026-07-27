@@ -291,6 +291,7 @@ const UserManagement: React.FC = () => {
         onChangePassword={handleChangePassword}
         onRoleChange={handleRoleChange}
         onActiveChange={handleActiveChange}
+        searchDefault={q}
         onSearch={(v) => {
           setQ(v);
           setPage(1);

@@ -203,6 +203,7 @@ const Subscribers: React.FC = () => {
           )}
           searchable
           searchPlaceholder="Tìm kiếm theo email..."
+          searchDefault={q}
           onSearch={(v) => {
             setQ(v);
             setPage(1);

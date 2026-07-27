@@ -229,13 +229,22 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
                     displayedNotifications.map((n) => (
                       <div
                         key={n.id}
-                        className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${
+                        role="button"
+                        tabIndex={0}
+                        className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark ${
                           !n.read ? 'bg-brand-surface' : ''
                         }`}
                         onClick={() => {
                           if (!n.read) markRead(n.id);
                           if (n.link) {
                             window.location.href = n.link;
+                          }
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            if (!n.read) markRead(n.id);
+                            if (n.link) window.location.href = n.link;
                           }
                         }}
                       >
