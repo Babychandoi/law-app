@@ -95,7 +95,7 @@ const UserTable: React.FC<UserTableProps> = ({
           </button>
           <button
             onClick={() => onChangePassword(user)}
-            className="p-2 text-orange-600 hover:text-orange-800 hover:bg-orange-50 rounded-lg transition-colors"
+            className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
             title="Đổi mật khẩu"
             aria-label="Đổi mật khẩu"
           >

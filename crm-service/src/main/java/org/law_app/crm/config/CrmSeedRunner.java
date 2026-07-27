@@ -9,8 +9,8 @@ import org.law_app.crm.domain.CareStatus;
 import org.law_app.crm.repository.CareActionRepository;
 import org.law_app.crm.repository.CareResultRepository;
 import org.law_app.crm.repository.CareStatusRepository;
-import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.ApplicationArguments;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 /** Seeds a sensible default care workflow once, so the module is usable out of the box. */

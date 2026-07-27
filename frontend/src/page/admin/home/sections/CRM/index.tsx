@@ -248,6 +248,7 @@ export default function CRM() {
     {
       key: 'customer',
       header: 'Khách / Dịch vụ',
+      sortable: true,
       render: renderCustomer,
     },
     { key: 'assigned', header: 'Phụ trách', render: renderAssigned },
@@ -255,17 +256,26 @@ export default function CRM() {
     {
       key: 'nextFollowUpAt',
       header: 'Hẹn chăm lại',
+      sortable: true,
       render: renderFollowUp,
     },
-    { key: 'status', header: 'Vụ việc', render: renderCaseStatus },
+    { key: 'status', header: 'Vụ việc', sortable: true, render: renderCaseStatus },
     { key: 'tags', header: 'Tag', render: renderTags },
     {
       key: 'lastCaredAt',
       header: 'Lần chăm gần nhất',
+      sortable: true,
       render: (r) => (r.lastCaredAt ? new Date(r.lastCaredAt).toLocaleDateString('vi-VN') : '—'),
     },
     { key: 'actions', header: 'Hành động', align: 'right', hideable: false, render: renderAction },
   ];
+
+  // Sort server-side: chuyển "field,dir" (filter.sort) <-> {key,dir} cho DataTable.
+  const sortState = (() => {
+    if (!filter.sort) return null;
+    const [key, dir] = filter.sort.split(',');
+    return key ? { key, dir: dir === 'asc' ? ('asc' as const) : ('desc' as const) } : null;
+  })();
 
   return (
     <div className="bg-white rounded-xl shadow-soft p-4">
@@ -372,6 +382,8 @@ export default function CRM() {
           totalElements: meta?.totalElements,
           onPageChange: (p) => setFilter((f) => ({ ...f, page: p - 1 })),
         }}
+        sortState={sortState}
+        onSortChange={(key, dir) => setFilter((f) => ({ ...f, sort: `${key},${dir}`, page: 0 }))}
         emptyIcon={HeartHandshake}
         emptyTitle="Không có vụ việc nào khớp bộ lọc"
         mobileCard={(r) => (

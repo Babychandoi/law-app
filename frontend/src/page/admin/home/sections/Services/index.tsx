@@ -126,7 +126,7 @@ const ServiceManager: React.FC = () => {
           href={service.href}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1 text-amber-700 hover:underline"
+          className="inline-flex items-center gap-1 text-brand-goldDark hover:underline"
         >
           {service.href}
           <ExternalLink className="h-3.5 w-3.5" />
@@ -241,7 +241,7 @@ const ServiceManager: React.FC = () => {
               variant="secondary"
               leftIcon={<FolderPlus className="h-4 w-4" />}
               onClick={openAddGroup}
-              className="!border-amber-700 !text-amber-700 hover:!bg-amber-50"
+              className="!border-brand-goldDark !text-brand-goldDark hover:!bg-brand-surface"
             >
               Thêm nhóm
             </Button>

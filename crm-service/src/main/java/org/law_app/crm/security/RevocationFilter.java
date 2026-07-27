@@ -13,7 +13,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-/** Rejects tokens the monolith blacklisted on logout. Same Redis convention: {@code revoked:{jti}}. */
+/**
+ * Rejects tokens the monolith blacklisted on logout. Same Redis convention: {@code revoked:{jti}}.
+ */
 @Component
 @RequiredArgsConstructor
 public class RevocationFilter extends OncePerRequestFilter {

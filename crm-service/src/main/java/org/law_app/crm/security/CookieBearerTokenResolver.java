@@ -6,7 +6,9 @@ import org.springframework.security.oauth2.server.resource.web.BearerTokenResolv
 import org.springframework.security.oauth2.server.resource.web.DefaultBearerTokenResolver;
 import org.springframework.stereotype.Component;
 
-/** Reads the JWT from the shared httpOnly {@code accessToken} cookie, falling back to the header. */
+/**
+ * Reads the JWT from the shared httpOnly {@code accessToken} cookie, falling back to the header.
+ */
 @Component
 public class CookieBearerTokenResolver implements BearerTokenResolver {
 

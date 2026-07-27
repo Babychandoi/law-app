@@ -7,6 +7,7 @@ import {
   updateServiceImage,
   uploadFile,
 } from '../../../../service/admin';
+import { PageHeader } from '../../../../component/common/ui';
 
 const ServiceImages: React.FC = () => {
   const [services, setServices] = useState<AdminChildrenService[]>([]);
@@ -62,16 +63,13 @@ const ServiceImages: React.FC = () => {
 
   return (
     <div className="p-4 sm:p-6">
-      <div className="mb-6">
-        <h1 className="flex items-center gap-2 text-xl font-semibold text-gray-900">
-          <ImageIcon className="h-5 w-5 text-amber-700" />
-          Ảnh dịch vụ
-        </h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Tải ảnh mới để thay ảnh hiển thị của từng dịch vụ. Nên nén ảnh (WebP, &lt; 200KB) trước
-          khi tải để trang tải nhanh.
-        </p>
-      </div>
+      <PageHeader
+        className="mb-6"
+        icon={ImageIcon}
+        title="Ảnh dịch vụ"
+        subtitle="Tải ảnh mới để thay ảnh hiển thị của từng dịch vụ. Nên nén ảnh (WebP, < 200KB) trước khi tải để trang tải nhanh."
+        breadcrumb={[{ label: 'Quản trị hệ thống' }, { label: 'Ảnh dịch vụ' }]}
+      />
 
       {loading ? (
         <div className="flex items-center justify-center py-20 text-gray-500">
@@ -114,7 +112,7 @@ const ServiceImages: React.FC = () => {
                     className={`mt-3 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white transition-colors ${
                       uploading
                         ? 'cursor-not-allowed bg-gray-400'
-                        : 'bg-amber-700 hover:bg-amber-800'
+                        : 'bg-brand-goldDark hover:bg-brand-gold'
                     }`}
                   >
                     <Upload className="h-4 w-4" />

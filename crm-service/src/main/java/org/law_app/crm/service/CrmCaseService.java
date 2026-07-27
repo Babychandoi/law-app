@@ -173,7 +173,8 @@ public class CrmCaseService {
   }
 
   private CaseRow toRow(CrmCase c) {
-    List<Long> tagIds = caseTagRepo.findByCaseId(c.getId()).stream().map(CaseTag::getTagId).toList();
+    List<Long> tagIds =
+        caseTagRepo.findByCaseId(c.getId()).stream().map(CaseTag::getTagId).toList();
     return new CaseRow(
         c.getId(),
         c.getCustomerEmail(),

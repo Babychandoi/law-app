@@ -24,7 +24,8 @@ import lombok.NoArgsConstructor;
     name = "crm_care_log",
     indexes = @Index(name = "idx_care_log_case", columnList = "case_id, created_at"))
 public class CareLog {
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private String caseId;

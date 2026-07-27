@@ -13,8 +13,17 @@ import { News } from '../../../../types/service';
 import { sanitizeHtml } from '../../../../shared/utils/sanitizeHtml';
 import AddNews from './News/AddNews';
 import EditNews from './News/EditNews';
-import { Eye, Pencil, Trash2, Send, ChevronLeft, ChevronRight, Newspaper } from 'lucide-react';
-import { Spinner, useConfirm } from '../../../../component/common/ui';
+import {
+  Eye,
+  Pencil,
+  Trash2,
+  Send,
+  ChevronLeft,
+  ChevronRight,
+  Newspaper,
+  AlertTriangle,
+} from 'lucide-react';
+import { Spinner, useConfirm, PageHeader, Button } from '../../../../component/common/ui';
 
 const NewsManagement: React.FC = () => {
   const [newsList, setNewsList] = useState<News[]>([]);
@@ -205,28 +214,24 @@ const NewsManagement: React.FC = () => {
       {confirmDialog}
       <div className="relative max-w-7xl mx-auto">
         {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-3xl font-bold text-brand-ink mb-2">Quản lý tin tức</h2>
-              <p className="text-gray-600">Tạo, chỉnh sửa và quản lý các bài viết tin tức</p>
-            </div>
-            <button
-              onClick={handleAddNew}
-              disabled={loading}
-              className="inline-flex items-center gap-2 bg-brand-goldDark hover:bg-brand-gold disabled:bg-gray-300 text-white px-6 py-3 rounded-xl font-semibold shadow-sm transition-colors"
-            >
-              <span className="text-xl leading-none">+</span>
+        <PageHeader
+          className="mb-8"
+          icon={Newspaper}
+          title="Quản lý tin tức"
+          subtitle="Tạo, chỉnh sửa và quản lý các bài viết tin tức"
+          breadcrumb={[{ label: 'Quản trị hệ thống' }, { label: 'Tin tức' }]}
+          actions={
+            <Button onClick={handleAddNew} disabled={loading}>
               {loading ? 'Đang tải...' : 'Thêm tin tức'}
-            </button>
-          </div>
-        </div>
+            </Button>
+          }
+        />
 
         {/* Error Message */}
         {error && (
           <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
             <div className="flex items-center">
-              <span className="text-2xl mr-3">⚠️</span>
+              <AlertTriangle className="w-5 h-5 mr-3 text-red-600" aria-hidden="true" />
               <span className="text-red-700 font-medium flex-1">{error}</span>
               <button
                 onClick={() => setError(null)}
@@ -244,7 +249,7 @@ const NewsManagement: React.FC = () => {
         {/* News Cards Grid */}
         <div className="grid grid-cols-1 gap-6">
           {newsList.length === 0 ? (
-            <div className="bg-white rounded-2xl shadow-lg p-12 text-center border-2 border-gray-100">
+            <div className="bg-white rounded-2xl shadow-card p-12 text-center border border-gray-100">
               <Newspaper className="w-14 h-14 mx-auto mb-4 text-gray-300" aria-hidden="true" />
               <p className="text-gray-500 text-lg">
                 {loading ? 'Đang tải tin tức...' : 'Chưa có tin tức nào'}
@@ -254,7 +259,7 @@ const NewsManagement: React.FC = () => {
             newsList.map((news, index) => (
               <div
                 key={news.id}
-                className="group bg-white rounded-2xl shadow-md hover:shadow-soft border-2 border-gray-100 hover:border-orange-200 transition-all duration-300 overflow-hidden"
+                className="group bg-white rounded-2xl shadow-md hover:shadow-soft border-2 border-gray-100 hover:border-brand-line transition-all duration-300 overflow-hidden"
                 style={{ animationDelay: `${index * 50}ms` }}
               >
                 <div className="flex flex-col md:flex-row">
@@ -305,7 +310,7 @@ const NewsManagement: React.FC = () => {
                         onClick={() => news.id && handleViewDetails(news.id)}
                         disabled={loading}
                         title="Xem chi tiết"
-                        className="flex items-center gap-2 px-4 py-2 bg-brand-goldDark hover:bg-brand-gold text-white rounded-lg font-medium shadow-md hover:shadow-lg  active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 bg-brand-goldDark hover:bg-brand-gold text-white rounded-lg font-medium shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Eye size={18} />
                         <span>Xem</span>
@@ -315,7 +320,7 @@ const NewsManagement: React.FC = () => {
                         onClick={() => handleEdit(news.id ?? '')}
                         disabled={loading}
                         title="Sửa"
-                        className="flex items-center gap-2 px-4 py-2 bg-brand-goldDark hover:bg-brand-gold text-white rounded-lg font-medium shadow-md hover:shadow-lg  active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 bg-brand-goldDark hover:bg-brand-gold text-white rounded-lg font-medium shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Pencil size={18} />
                         <span>Sửa</span>
@@ -325,7 +330,7 @@ const NewsManagement: React.FC = () => {
                         onClick={() => handleDelete(news.id ?? '')}
                         disabled={loading}
                         title="Xóa"
-                        className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium shadow-md hover:shadow-lg  active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg font-medium shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Trash2 size={18} />
                         <span>Xóa</span>
@@ -335,7 +340,7 @@ const NewsManagement: React.FC = () => {
                         onClick={() => handleSendEmail(news.id ?? '')}
                         disabled={loading}
                         title="Gửi email"
-                        className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium shadow-md hover:shadow-lg  active:scale-95 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Send size={18} />
                         <span>Gửi email</span>
@@ -384,7 +389,7 @@ const NewsManagement: React.FC = () => {
             <div>
               <div className="mb-6">
                 {/* Hero Image */}
-                <div className="relative h-64 rounded-2xl overflow-hidden mb-6 shadow-lg">
+                <div className="relative h-64 rounded-2xl overflow-hidden mb-6 shadow-card">
                   <img
                     src={selectedNews.image}
                     alt={selectedNews.title}
@@ -409,7 +414,7 @@ const NewsManagement: React.FC = () => {
                     <span className="text-xl">👤</span>
                     <span className="text-gray-700 font-semibold">{selectedNews.author}</span>
                   </div>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-green-100 rounded-xl border-2 border-green-200">
+                  <div className="flex items-center gap-2 px-4 py-2 bg-green-50 rounded-xl border border-green-200">
                     <span className="text-xl">📅</span>
                     <span className="text-gray-700 font-semibold">
                       {selectedNews.createdAt
@@ -436,13 +441,13 @@ const NewsManagement: React.FC = () => {
                           prose-h2:text-xl prose-h2:mb-3 prose-h2:mt-5
                           prose-h3:text-lg prose-h3:mb-2 prose-h3:mt-4
                           prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-3
-                          prose-a:text-orange-500 prose-a:no-underline hover:prose-a:text-orange-600 hover:prose-a:underline
+                          prose-a:text-brand-goldDark prose-a:no-underline hover:prose-a:text-brand-gold hover:prose-a:underline
                           prose-strong:text-gray-900 prose-strong:font-semibold
                           prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-3
                           prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-3
                           prose-li:text-gray-700 prose-li:mb-1
                           prose-img:rounded-xl prose-img:shadow-lg prose-img:my-4 prose-img:max-w-full
-                          prose-blockquote:border prose-blockquote:border-orange-400 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600
+                          prose-blockquote:border prose-blockquote:border-brand-gold prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600
                           prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm prose-code:text-gray-800
                         "
                       dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedNews.fullContent) }}

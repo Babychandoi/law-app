@@ -107,7 +107,7 @@ export default function CarePopup({
           )}
           <div className="space-y-2 max-h-40 overflow-y-auto">
             {logs.map((l) => (
-              <div key={l.id} className="text-sm border-l-2 border-amber-400 pl-2">
+              <div key={l.id} className="text-sm border-l-2 border-brand-gold pl-2">
                 <div className="text-gray-500">
                   {new Date(l.createdAt).toLocaleString('vi-VN')} · {staffName(l.staffId)}
                 </div>

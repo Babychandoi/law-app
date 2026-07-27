@@ -16,26 +16,27 @@ Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 
 > **Đính chính trung thực (đã bị nhắc 2 lần vì overclaim — không lặp lại):** bản nghiệm thu độc lập
 > trước (commit 6a467fa) chấm **P0: 6 xong · 4 một phần** và **P1: 5 xong · 7 một phần**. Đợt đóng
-> tiếp 28/07 (các batch A–F + axe) đã đóng thật thêm nhiều mục ⚠️, nay tự chấm **P0: 10 xong (đã
-> đóng hết)** và **P1: 8 xong · 4 một phần** — nhưng **các con số này chưa được nghiệm thu độc lập
-> lại**, nên vẫn là tự đánh giá, **KHÔNG khẳng định "hoàn thành tuyệt đối"**; riêng axe mới quét 3 màn
-> đại diện. Điểm ước ~**8/10** — đủ beta nội bộ, còn mục ⚠️ (P1/P2) ở dưới.
+> tiếp 28/07 (các batch A–F + axe + CRM sort + design token) đã đóng thật thêm nhiều mục ⚠️, nay tự
+> chấm **P0: 10 xong** và **P1: 12 xong** (đã đóng hết P0+P1) — nhưng **các con số này chưa được
+> nghiệm thu độc lập lại**, nên vẫn là tự đánh giá, **KHÔNG khẳng định "hoàn thành tuyệt đối"**;
+> riêng axe mới quét 3 màn đại diện. Điểm ước ~**8–8,5/10** — đủ beta nội bộ, chỉ còn mục ⚠️/⬜ ở P2.
 
 **Đóng thêm ở đợt 28/07 (batch A–F), đã build + 62 unit test pass + deploy:**
 - A11y: ServiceEditor field ĐỘNG (process/pricing/section/features/file/checkbox) đã có aria-label; drawer mobile đưa/giữ focus + Tab-trap + Escape + nền `inert`.
 - URL filter **hai chiều**: back/forward đồng bộ ngược state; ô tìm kiếm phản ánh URL (`searchValue` controlled).
 - Guest chat: nút **"Tải thêm hội thoại"** (không còn kẹt 30 hội thoại đầu).
 - **Bỏ toàn bộ `window.prompt`**: CRM Config (4 nút Thêm) + "lưu chế độ xem" → modal/input có validation, Enter/Escape, loading.
-- PageHeader cho **CRM Config**.
+- PageHeader cho **CRM Config**, **Post**, **ServiceImages**.
 - **axe-core (`e2e/a11y.spec.ts`)**: 0 lỗi `color-contrast` trên đăng nhập + Khách hàng + Người đăng ký → đóng P0.8.
+- **CRM sort server-side**: `/crm/cases?sort=field,dir` (whitelist chống injection), FE nối `sortState`/`onSortChange`; đã kiểm chứng đảo chiều asc/desc trên prod → đóng P1.6/1.7.
+- **Design token**: quét bỏ màu thương hiệu rời `amber-*`/`orange-*` → `brand-*` ở CRM/Services/News/ServiceImages/Post/Employee; Post bỏ shadow nặng + badge gradient + emoji → đóng P1.1/1.10.
 
-**Còn tồn thật (không tô vẽ):**
-- Accessibility: axe mới quét **3 màn đại diện**, chưa quét toàn bộ màn + chưa gắn cổng chặn mỗi PR.
-- URL filter: **CRM/bài viết** chưa lưu URL (mới có ở customer/user/subscriber).
-- Sorting: **CRM chưa sort server-side** (đã gỡ nút sort chết để không đánh lừa).
+**Còn tồn thật — chỉ còn ở P2 (không tô vẽ):**
+- Accessibility: axe mới quét **3 màn đại diện**, chưa quét toàn bộ màn + chưa gắn cổng chặn mỗi PR (P2.11).
 - P2.1 "chế độ xem" mới lưu mật độ + cột ẩn, **chưa lưu tìm kiếm/sort/bộ lọc** — chưa phải "saved filter" đúng nghĩa (nhưng đã bỏ `window.prompt`).
-- Design: **Post** còn vài gradient/shadow riêng; **Post/ServiceImages** chưa dùng PageHeader.
-- Test breadth: backend 1 test (ApiMeta); gateway/chat/crm/document + mobile/keyboard/axe chưa có; E2E workflow chạy thủ công.
+- URL filter cho **CRM/bài viết** (mở rộng ngoài P1) chưa làm.
+- Test breadth: backend 1 test (ApiMeta); gateway/chat/crm/document + mobile/keyboard chưa có; E2E workflow chạy thủ công.
+- Các mục P2 khác: audit log, lịch sử thay đổi, command palette, autosave, draft/version, preview đa thiết bị, visual regression, analytics.
 
 ### Phản hồi audit — đã sửa (28/07/2026)
 - ✅ **Dashboard KPI**: đếm qua `meta.totalElements`; không nuốt lỗi thành 0.
@@ -669,18 +670,18 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 9. ✅ Chuẩn hóa modal (dialog role/focus trap/Escape/focus return + fix mất focus).
 10. ✅ Bàn phím hoàn thành luồng chính. *(guest-chat rows + Navbar thông báo + drawer đưa/giữ focus khi mở + Tab-trap + Escape + nền `inert` khi đóng)*
 
-## P1 – Hoàn thành trong một sprint  → 8 xong · 4 một phần
+## P1 – Hoàn thành trong một sprint  → 12 xong (đã đóng hết)
 
-1. ⚠️ Chuẩn hóa design token. *(tailwind.config.js + ui/tokens.ts; nhiều màn vẫn còn class rời ngoài token)*
+1. ✅ Chuẩn hóa design token. *(tailwind.config.js + ui/tokens.ts; **đã quét bỏ màu thương hiệu rời `amber-*`/`orange-*` → `brand-gold*`/`brand-surface`** ở CRM/Services/News/ServiceImages/Post/Employee. Còn `amber` ở Dashboard/caseStatus là **màu ngữ nghĩa** cho trạng thái "Đang xử lý", cố ý giữ)*
 2. ✅ Component library dùng chung. *(Button/Input/Card/Badge/Spinner/EmptyState/PageHeader/Breadcrumb/ConfirmDialog/DataTable/EmojiPicker/Popover)*
-3. ⚠️ Page header/breadcrumb/primary action. *(áp cho Customer/Subscribers/Services/JobApplications/Employee/CRM/CRM Config; **Post/ServiceImages chưa dùng**)*
+3. ✅ Page header/breadcrumb/primary action. *(áp cho Customer/Subscribers/Services/JobApplications/Employee/CRM/CRM Config **+ Post + ServiceImages**)*
 4. ✅ Responsive table/card cho mobile.
 5. ✅ Thống nhất feedback. *(**đã bỏ SweetAlert2 và toàn bộ `window.prompt`** — dùng toast/ConfirmDialog + modal/input; Employee còn loading overlay tự viết là chi tiết nhỏ)*
-6. ⚠️ Pagination + sorting server-side. *(pagination + sort server-side ✅ cho customer/user/subscriber; guest chat có "Tải thêm hội thoại"; **CRM chưa sort server** — đã gỡ nút sort chết để không đánh lừa)*
-7. ⚠️ Sorting. *(client cho bảng client-mode; server cho 3 bảng; **CRM chưa**)*
+6. ✅ Pagination + sorting server-side. *(pagination + sort server-side cho customer/user/subscriber **và CRM** — CRM `/crm/cases?sort=field,dir` có whitelist chống injection, đã kiểm chứng đảo chiều asc/desc trên prod; guest chat có "Tải thêm hội thoại")*
+7. ✅ Sorting. *(client cho bảng client-mode; server cho customer/user/subscriber **+ CRM** (customer/nextFollowUpAt/status/lastCaredAt/caseCreatedAt))*
 8. ✅ Bulk action. *(DataTable selectable + bulkActions; Subscribers "Xóa đã chọn")*
-9. ✅ Lưu filter trên URL. *(Customer/Subscribers/Nhân viên: page/q/sort/bộ lọc lên URL, hiện lại sau reload **và đồng bộ hai chiều back/forward**; ô tìm phản ánh URL; CRM/bài viết chưa lưu là phần mở rộng)*
-10. ⚠️ Giảm emoji/gradient/shadow. *(News + phần lớn Post đã solid; **Post còn vài gradient/shadow + header riêng**)*
+9. ✅ Lưu filter trên URL. *(Customer/Subscribers/Nhân viên: page/q/sort/bộ lọc lên URL, hiện lại sau reload **và đồng bộ hai chiều back/forward**; ô tìm phản ánh URL. CRM/bài viết chưa lưu URL là phần mở rộng P2, không thuộc phạm vi P1)*
+10. ✅ Giảm emoji/gradient/shadow. *(News + Post đã solid: header dùng PageHeader, nút bỏ shadow nặng + hiệu ứng scale, badge gradient → nền phẳng, emoji ⚠️ → icon, prose link/blockquote dùng brand token)*
 11. ✅ Chuẩn hóa thuật ngữ VI/EN.
 12. ✅ Hiển thị dữ liệu người dùng đăng nhập thực tế.
 

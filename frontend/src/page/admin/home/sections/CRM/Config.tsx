@@ -112,7 +112,7 @@ export default function CrmConfig() {
           <button
             key={t.key}
             onClick={() => setTab(t.key)}
-            className={`px-3 py-2 text-sm ${tab === t.key ? 'border-b-2 border-amber-500 font-medium' : 'text-gray-500'}`}
+            className={`px-3 py-2 text-sm ${tab === t.key ? 'border-b-2 border-brand-gold font-medium' : 'text-gray-500'}`}
           >
             {t.label}
           </button>
@@ -225,7 +225,7 @@ function Section({ onAdd, children }: { onAdd: () => void; children: React.React
     <div>
       <button
         onClick={onAdd}
-        className="mb-3 flex items-center gap-1 text-sm text-amber-600 hover:underline"
+        className="mb-3 flex items-center gap-1 text-sm text-brand-goldDark hover:underline"
       >
         <Plus size={16} /> Thêm
       </button>

@@ -18,7 +18,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "crm_care_action")
 public class CareAction {
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private String name;

@@ -14,10 +14,10 @@ import org.law_app.crm.web.CrmDtos.AssignRequest;
 import org.law_app.crm.web.CrmDtos.CareLogRequest;
 import org.law_app.crm.web.CrmDtos.CaseRow;
 import org.law_app.crm.web.CrmDtos.TagsRequest;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -44,10 +44,10 @@ public class CrmCaseController {
       @RequestParam(required = false) String assignedTo,
       @RequestParam(required = false) String followUp,
       @RequestParam(required = false) Long tagId,
+      @RequestParam(required = false) String sort,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "30") int size) {
-    PageRequest pageable =
-        PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "caseCreatedAt"));
+    PageRequest pageable = PageRequest.of(page, size, resolveSort(sort));
     // Non-admins only ever see cases assigned to themselves, regardless of the requested filter.
     String effectiveAssignedTo = CurrentUser.isAdmin() ? assignedTo : "me";
     Page<CaseRow> result =
@@ -86,8 +86,10 @@ public class CrmCaseController {
     return ApiResponse.ok(row);
   }
 
-  /** Change the case status (Mới→Đang xử lý→...). Admin or the assignee only; proxied to monolith
-   * which is the source of truth and re-syncs back via event. */
+  /**
+   * Change the case status (Mới→Đang xử lý→...). Admin or the assignee only; proxied to monolith
+   * which is the source of truth and re-syncs back via event.
+   */
   @PutMapping("/cases/{id}/status")
   public ApiResponse<Void> changeStatus(
       @PathVariable String id, @RequestBody StatusRequest req, HttpServletRequest request) {
@@ -140,4 +142,31 @@ public class CrmCaseController {
   }
 
   public record Meta(int page, int pageSize, long totalElements, int totalPages) {}
+
+  /** Cột được phép sắp xếp phía server (whitelist chống injection). Map key FE -> field entity. */
+  private static final java.util.Map<String, String> SORTABLE =
+      java.util.Map.of(
+          "caseCreatedAt", "caseCreatedAt",
+          "nextFollowUpAt", "nextFollowUpAt",
+          "lastCaredAt", "lastCaredAt",
+          "status", "status",
+          "customer", "serviceName");
+
+  /** Phân tích "field,dir"; chỉ chấp nhận cột trong whitelist, mặc định mới nhất trước. */
+  private static Sort resolveSort(String sort) {
+    Sort fallback = Sort.by(Sort.Direction.DESC, "caseCreatedAt");
+    if (sort == null || sort.isBlank()) {
+      return fallback;
+    }
+    String[] parts = sort.split(",");
+    String field = SORTABLE.get(parts[0].trim());
+    if (field == null) {
+      return fallback;
+    }
+    Sort.Direction dir =
+        parts.length > 1 && "asc".equalsIgnoreCase(parts[1].trim())
+            ? Sort.Direction.ASC
+            : Sort.Direction.DESC;
+    return Sort.by(dir, field);
+  }
 }

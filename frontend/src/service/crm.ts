@@ -24,6 +24,7 @@ export interface CaseFilter {
   assignedTo?: string; // me | none | any | userId
   followUp?: string; // today | overdue | next7 | none
   tagId?: number;
+  sort?: string; // "field,dir" — field trong whitelist server (customer|nextFollowUpAt|lastCaredAt|status|caseCreatedAt)
   page?: number;
   size?: number;
 }

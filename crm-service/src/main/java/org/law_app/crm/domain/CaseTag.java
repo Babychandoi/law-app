@@ -21,10 +21,13 @@ import lombok.NoArgsConstructor;
 @Table(
     name = "crm_case_tag",
     uniqueConstraints =
-        @UniqueConstraint(name = "uq_case_tag", columnNames = {"case_id", "tag_id"}),
+        @UniqueConstraint(
+            name = "uq_case_tag",
+            columnNames = {"case_id", "tag_id"}),
     indexes = @Index(name = "idx_case_tag_tag", columnList = "tag_id"))
 public class CaseTag {
-  @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   private String caseId;
