@@ -14,11 +14,39 @@
 
 Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 
-**P0 (bắt buộc trước nghiệm thu): ✅ HOÀN THÀNH TOÀN BỘ (10/10).**
-**P1 (một sprint): ✅ HOÀN THÀNH (12/12; P1.6 server-side cho TẤT CẢ danh sách).**
-**P2 (nâng cao): ⬜ chưa (ngoài phạm vi đợt này) — nhưng đã bổ sung test tự động (unit 61 + E2E 9).**
+> **Đính chính trung thực:** bản đánh giá nghiệm thu độc lập chỉ ra tôi đã **overclaim** P0 10/10 và
+> P1 12/12. Điểm thực tế lúc đó ~**6,2–6,5/10** (beta nội bộ, chưa nghiệm thu cuối). Sau đó tôi đã
+> sửa các lỗi đúng/sai dữ liệu và một phần a11y (xem "Phản hồi audit" bên dưới). **Không tự chấm
+> 10/10 nữa** — trạng thái hiện tại vẫn còn một số mục ⚠️ partial cần đóng trước nghiệm thu cuối.
 
-> Theo báo cáo, sau khi xong P0 + P1 điểm UI kỳ vọng tăng từ 4,8/10 lên ~7–8/10.
+**P0:** phần lớn ✅; còn ⚠️ **P0.6** (nhiều `<label>` trong ServiceEditor chưa liên kết `htmlFor/id`).
+**P1:** ✅ nền tảng (dashboard/nav/modal/component/DataTable/tokens); ⚠️ còn:
+- P1.5 feedback **chưa thống nhất** — Post/Employee/Services vẫn dùng SweetAlert2 song song Toastify/ConfirmDialog.
+- P1.6 sort **chưa server-side thật** (DataTable chỉ sort client; các bảng server đã tắt nút sort để không gây hiểu nhầm).
+- P1.9 URL persistence **chưa phủ** trang của server-pagination (Subscribers/Nhân viên).
+- P1.3 PageHeader **chưa áp cho toàn bộ** màn.
+**P2:** ✅ P2.1–2.3 (saved view/ẩn cột/mật độ). Còn lại ⬜.
+
+### Phản hồi audit — đã sửa (28/07/2026)
+- ✅ **Dashboard KPI**: đếm qua `meta.totalElements` (không dùng `.length` trang đầu 20); không nuốt lỗi thành 0.
+- ✅ **Bài viết**: thêm phân trang server (trước chỉ thấy 12 bài mới nhất).
+- ✅ **Guest chat**: bỏ hard-code `admin-001`, dùng danh tính admin thật.
+- ✅ **A11y**: login hiện/ẩn mật khẩu (aria-label), nút đóng lỗi Nhân viên, dòng guest-chat (role=button+bàn phím), drawer mobile `inert` khi đóng.
+- ✅ **Contrast**: sidebar `text-white/40`→`/70`; team-chat mốc thời gian `gray-400`→`gray-500`.
+- ✅ **Xác nhận**: đổi vai trò / khóa tài khoản Nhân viên nay có ConfirmDialog.
+
+### Còn tồn (đúng như audit) — sẽ làm tiếp
+- ⬜ ServiceEditor: liên kết `htmlFor/id` cho toàn bộ field.
+- ⬜ Thay SweetAlert2 (Post/Employee/Services) bằng ConfirmDialog/Toast để thống nhất; bỏ nốt emoji/gradient/chuỗi tiếng Anh ở trang bài viết.
+- ⬜ Sort server-side thật (truyền sort xuống backend).
+- ⬜ Đưa page/filter của server-pagination vào URL cho Subscribers/Nhân viên.
+- ⬜ PageHeader cho toàn bộ màn.
+- ⬜ Test: E2E chạy trong CI; test mobile/keyboard/axe/server-sort/pagination bài viết; test cho các module Java.
+
+### Số liệu test (chính xác)
+- **60** unit test (14 suite) — *không phải 61*.
+- **12** kịch bản Playwright = **10** test nghiệp vụ + **2** bước setup — *không phải 9*; **chưa chạy trong CI**.
+- Năm module Java **chưa có** test tự động.
 
 Điểm bổ sung ngoài báo cáo: tách khu Vận hành/Hệ thống theo vai trò + guard; vá bảo mật
 (RBAC, rò rỉ PII); redesign chat nội bộ kiểu Messenger + icon chat header; sửa bug mất focus
@@ -617,30 +645,30 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 
 ## 9. Lộ trình cải thiện
 
-## P0 – Bắt buộc sửa trước khi nghiệm thu  → ✅ HOÀN THÀNH (10/10)
+## P0 – Bắt buộc sửa trước khi nghiệm thu  → phần lớn ✅, còn ⚠️ P0.6 (ServiceEditor labels)
 
 1. ✅ Tạo dashboard mặc định cho route admin. *(Dashboard.tsx: KPI + KH gần đây + quick actions)*
 2. ✅ Sửa active menu theo URL bằng `NavLink`. *(Sidebar.tsx dùng NavLink)*
 3. ✅ Tách sidebar desktop và drawer mobile. *(desktop cố định + drawer mobile)*
 4. ✅ Làm lại responsive cho guest chat và team chat. *(master-detail; team chat redesign Messenger)*
 5. ✅ Bổ sung accessible name cho icon button. *(toàn bộ icon-only đã có aria-label)*
-6. ✅ Bổ sung label đúng chuẩn cho input và select. *(13 select + component Input liên kết id)*
+6. ⚠️ Bổ sung label đúng chuẩn cho input và select. *(13 select + component Input đã liên kết id; **nhưng nhiều field trong ServiceEditor vẫn dùng `<label>` rời chưa có htmlFor/id** — chưa đóng)*
 7. ✅ Bổ sung document title theo từng route.
 8. ✅ Sửa contrast không đạt. *(text-gray-400 → text-gray-500 đạt WCAG AA)*
 9. ✅ Chuẩn hóa modal: dialog role, focus trap, Escape, focus return. *(Modal.tsx + fix bug mất focus)*
 10. ✅ Bảo đảm người dùng bàn phím hoàn thành được các luồng chính. *(focus trap + aria; còn cần UAT bàn phím sâu)*
 
-## P1 – Hoàn thành trong một sprint  → ✅ HOÀN THÀNH (12/12; P1.6 có ghi chú phạm vi)
+## P1 – Hoàn thành trong một sprint  → nền tảng ✅; còn ⚠️ P1.3/P1.5/P1.6/P1.7/P1.9 (xem mục 0)
 
 1. ✅ Chuẩn hóa design token. *(tailwind.config.js + ui/tokens.ts)*
 2. ✅ Tạo component library dùng chung. *(src/component/common/ui: Button/Input/Card/Badge/Spinner/EmptyState/PageHeader/Breadcrumb/Modal/ConfirmDialog/DataTable/EmojiPicker)*
-3. ✅ Chuẩn hóa page header, breadcrumb và primary action. *(PageHeader + Breadcrumb + primary action; áp cho Customer/Subscribers/Services/JobApplications)*
+3. ⚠️ Chuẩn hóa page header, breadcrumb và primary action. *(PageHeader + Breadcrumb áp cho Customer/Subscribers/Services/JobApplications; **chưa phủ toàn bộ màn** — Employee/CRM/Chat còn header riêng)*
 4. ✅ Làm responsive table/card cho mobile. *(DataTable tự đổi bảng → card trên mobile)*
-5. ✅ Thống nhất toast, confirm dialog, loading và error state. *(ConfirmDialog/useConfirm thay window.confirm/alert; Spinner; EmptyState)*
-6. ✅ Thêm pagination server-side. *(TẤT CẢ danh sách: CRM + Khách hàng + Nhân viên + Người đăng ký đều phân trang + tìm kiếm/lọc phía server — monolith trả Page + ApiMeta; Customer lọc server-side qua Specification. DataTable có chế độ serverPagination + onSearch.)*
-7. ✅ Thêm sorting. *(DataTable sort theo cột)*
+5. ⚠️ Thống nhất toast, confirm dialog, loading và error state. *(có ConfirmDialog/useConfirm/Spinner/EmptyState; **nhưng Post/Employee/Services vẫn còn dùng SweetAlert2 song song** — chưa thống nhất hẳn)*
+6. ⚠️ Pagination + sorting server-side. *(**Pagination server-side: ✅** cho tất cả danh sách — monolith trả Page + ApiMeta, Customer lọc qua Specification. **Sorting server-side: ⬜** — DataTable mới chỉ sort client trên trang hiện tại; các bảng server đã TẮT nút sort để không gây hiểu nhầm. Cần truyền `sort` xuống backend.)*
+7. ⚠️ Thêm sorting. *(sort client cho bảng client-mode; **chưa** sort server-side cho bảng phân trang server — xem mục 6)*
 8. ✅ Thêm bulk action. *(DataTable selectable + bulkActions; Subscribers "Xóa đã chọn")*
-9. ✅ Lưu filter trên URL. *(DataTable urlKey cho Subscribers/Services/Nhân viên; Customer lưu bộ lọc nâng cao q/status/svc/from/to)*
+9. ⚠️ Lưu filter trên URL. *(Customer lưu bộ lọc q/status/svc/from/to ✅; Services (client) ✅; **nhưng Subscribers/Nhân viên chuyển sang server-pagination nên trang/tìm kiếm CHƯA vào URL** — cần bổ sung)*
 10. ✅ Giảm emoji, gradient và shadow trang trí. *(Post + News bỏ gradient vàng-cam-đỏ → solid/trung tính; sidebar/nav dùng Lucide, không emoji; gradient còn lại chỉ ở avatar trang trí)*
 11. ✅ Chuẩn hóa thuật ngữ VI/EN. *(login "Username"→"Tên đăng nhập"; "Đăng xuất"; năm login động; nav toàn tiếng Việt)*
 12. ✅ Hiển thị dữ liệu người dùng đăng nhập thực tế. *(Navbar: avatar chữ cái đầu tên thật + tên + vai trò; email/SĐT trong dropdown)*
