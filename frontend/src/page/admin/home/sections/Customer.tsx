@@ -68,6 +68,27 @@ const CustomerManagement: React.FC = () => {
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, statusFilter, serviceFilter, dateFromFilter, dateToFilter, page, sort]);
+
+  // Đồng bộ NGƯỢC: URL đổi (back/forward, sửa tay) -> cập nhật bộ lọc/trang/sort.
+  useEffect(() => {
+    const g = (k: string, d = '') => searchParams.get(k) ?? d;
+    setSearchTerm((p) => (p !== g('q') ? g('q') : p));
+    setStatusFilter((p) => (p !== g('status', 'ALL') ? g('status', 'ALL') : p));
+    setServiceFilter((p) => (p !== g('svc', 'ALL') ? g('svc', 'ALL') : p));
+    setDateFromFilter((p) => (p !== g('from') ? g('from') : p));
+    setDateToFilter((p) => (p !== g('to') ? g('to') : p));
+    const pg = Math.max(1, Number(searchParams.get('page')) || 1);
+    setPage((p) => (p !== pg ? pg : p));
+    const s = searchParams.get('sort');
+    const sortObj = s
+      ? {
+          key: s.split(',')[0],
+          dir: (s.split(',')[1] === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc',
+        }
+      : null;
+    setSort((p) => (JSON.stringify(p) !== JSON.stringify(sortObj) ? sortObj : p));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<{ id: string } | null>(null);

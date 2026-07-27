@@ -11,7 +11,7 @@ interface UserTableProps {
   onRoleChange: (userId: string, newRole: 'ADMIN' | 'USER') => void;
   onActiveChange: (userId: string, newActive: 'ACTIVE' | 'INACTIVE') => void;
   onSearch?: (q: string) => void;
-  searchDefault?: string;
+  searchValue?: string;
   serverPagination?: {
     page: number;
     totalPages: number;
@@ -30,7 +30,7 @@ const UserTable: React.FC<UserTableProps> = ({
   onRoleChange,
   onActiveChange,
   onSearch,
-  searchDefault,
+  searchValue,
   serverPagination,
   sortState,
   onSortChange,
@@ -115,7 +115,7 @@ const UserTable: React.FC<UserTableProps> = ({
       tableId="users"
       searchable
       searchPlaceholder="Tìm theo tên đăng nhập, họ tên, email..."
-      searchDefault={searchDefault}
+      searchValue={searchValue}
       onSearch={onSearch}
       serverPagination={serverPagination}
       sortState={sortState}

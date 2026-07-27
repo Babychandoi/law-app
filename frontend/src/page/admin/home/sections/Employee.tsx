@@ -54,6 +54,23 @@ const UserManagement: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, q, sort]);
 
+  // Đồng bộ NGƯỢC: URL đổi (back/forward) -> cập nhật state.
+  useEffect(() => {
+    const p = Math.max(1, Number(searchParams.get('page')) || 1);
+    const qq = searchParams.get('q') ?? '';
+    const s = searchParams.get('sort');
+    const sortObj = s
+      ? {
+          key: s.split(',')[0],
+          dir: (s.split(',')[1] === 'asc' ? 'asc' : 'desc') as 'asc' | 'desc',
+        }
+      : null;
+    setPage((prev) => (prev !== p ? p : prev));
+    setQ((prev) => (prev !== qq ? qq : prev));
+    setSort((prev) => (JSON.stringify(prev) !== JSON.stringify(sortObj) ? sortObj : prev));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
   const fetchUsers = useCallback(async () => {
     try {
       setIsLoading(true);
@@ -291,7 +308,7 @@ const UserManagement: React.FC = () => {
         onChangePassword={handleChangePassword}
         onRoleChange={handleRoleChange}
         onActiveChange={handleActiveChange}
-        searchDefault={q}
+        searchValue={q}
         onSearch={(v) => {
           setQ(v);
           setPage(1);

@@ -97,8 +97,11 @@ export interface DataTableProps<T> {
   };
   /** Tìm kiếm phía server: gọi (debounce) khi người dùng gõ vào ô tìm kiếm. */
   onSearch?: (q: string) => void;
-  /** Giá trị khởi tạo cho ô tìm kiếm (dùng khi cha lưu q trên URL để hiện lại sau reload). */
-  searchDefault?: string;
+  /**
+   * Giá trị ô tìm kiếm do CHA kiểm soát (đồng bộ với URL). Khi thay đổi từ ngoài (reload,
+   * back/forward, sửa URL), ô tìm kiếm cập nhật theo; người dùng gõ vẫn debounce qua onSearch.
+   */
+  searchValue?: string;
   /** Sắp xếp phía SERVER: trạng thái sort hiện tại (do cha quản lý). */
   sortState?: { key: string; dir: 'asc' | 'desc' } | null;
   /** Sắp xếp phía SERVER: gọi khi bấm tiêu đề cột sortable. Khi đặt, KHÔNG sort client. */
@@ -149,7 +152,7 @@ function DataTable<T>({
   bulkActions,
   serverPagination,
   onSearch,
-  searchDefault,
+  searchValue,
   sortState,
   onSortChange,
   tableId,
@@ -158,8 +161,14 @@ function DataTable<T>({
   const pk = (k: string) => (urlKey ? `${urlKey}_${k}` : k);
 
   const [query, setQuery] = useState(() =>
-    urlKey ? (searchParams.get(pk('q')) ?? '') : (searchDefault ?? '')
+    urlKey ? (searchParams.get(pk('q')) ?? '') : (searchValue ?? '')
   );
+
+  // Cha đổi searchValue (từ URL/back-forward) -> cập nhật ô tìm kiếm.
+  useEffect(() => {
+    if (searchValue !== undefined && searchValue !== query) setQuery(searchValue);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchValue]);
   const [sortKey, setSortKey] = useState<string | null>(() =>
     urlKey ? searchParams.get(pk('sort')) : null
   );
