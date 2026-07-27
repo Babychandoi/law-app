@@ -33,8 +33,7 @@ Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 
 **Còn tồn thật — chỉ còn ở P2 (không tô vẽ):**
 - Accessibility: axe mới quét **3 màn đại diện**, chưa quét toàn bộ màn + chưa gắn cổng chặn mỗi PR (P2.11).
-- P2.1 "chế độ xem" mới lưu mật độ + cột ẩn, **chưa lưu tìm kiếm/sort/bộ lọc** — chưa phải "saved filter" đúng nghĩa (nhưng đã bỏ `window.prompt`).
-- URL filter cho **CRM/bài viết** (mở rộng ngoài P1) chưa làm.
+- URL filter cho **CRM/bài viết** (mở rộng ngoài P1) chưa làm — cũng là điều kiện để "chế độ xem" của CRM lưu được bộ lọc.
 - Test breadth: backend 1 test (ApiMeta); gateway/chat/crm/document + mobile/keyboard chưa có; E2E workflow chạy thủ công.
 - Các mục P2 khác: audit log, lịch sử thay đổi, command palette, autosave, draft/version, preview đa thiết bị, visual regression, analytics.
 
@@ -685,9 +684,9 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 11. ✅ Chuẩn hóa thuật ngữ VI/EN.
 12. ✅ Hiển thị dữ liệu người dùng đăng nhập thực tế.
 
-## P2 – Nâng lên mức sản phẩm tốt  → 2 xong · 2 một phần · 8 chưa
+## P2 – Nâng lên mức sản phẩm tốt  → 3 xong · 1 một phần · 8 chưa
 
-1. ⚠️ Saved view / saved filter. *(lưu mật độ + cột ẩn theo tableId, đặt tên qua input (đã bỏ `window.prompt`); **chưa lưu tìm kiếm/sort/bộ lọc vào view** — chưa phải "saved filter" đúng nghĩa)*
+1. ✅ Saved view / saved filter. *(view lưu **tìm kiếm + sort + trang + bộ lọc** (ảnh chụp query URL) **cùng** mật độ + cột ẩn theo tableId; áp view khôi phục đủ trạng thái. Có unit test round-trip (`DataTable.test.tsx`: lưu 'Ali' → xóa → áp lại → ô tìm về 'Ali'). Áp cho bảng đẩy trạng thái lên URL (customer/subscriber/user + bảng urlKey); CRM dùng state nội bộ nên chỉ lưu mật độ/cột cho tới khi CRM chuyển sang URL)*
 2. ✅ Column visibility. *(ẩn/hiện cột — thẻ mobile mặc định tôn trọng cột ẩn; chỉ `mobileCard` tùy biến là do màn tự dựng)*
 3. ✅ Table density. *(nút Thoáng/Gọn, lưu localStorage — áp cho bảng desktop)*
 4. ⬜ Audit log.

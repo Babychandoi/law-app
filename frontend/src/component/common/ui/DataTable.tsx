@@ -41,6 +41,9 @@ interface SavedView {
   name: string;
   density: Density;
   hidden: string[];
+  /** Ảnh chụp query params (tìm kiếm + sort + trang + bộ lọc) tại thời điểm lưu — để khôi phục
+   * đầy đủ "saved filter", không chỉ mật độ/cột ẩn. View cũ không có trường này vẫn tương thích. */
+  query?: string;
 }
 
 export interface Column<T> {
@@ -321,13 +324,27 @@ function DataTable<T>({
     if (!name) return;
     setViews((prev) => [
       ...prev.filter((v) => v.name !== name),
-      { name, density, hidden: Array.from(hidden) },
+      // Lưu kèm ảnh chụp toàn bộ query hiện tại: tìm kiếm/sort/trang/bộ lọc đều nằm trên URL.
+      { name, density, hidden: Array.from(hidden), query: searchParams.toString() },
     ]);
     setViewName('');
   };
   const applyView = (v: SavedView) => {
     setDensity(v.density);
     setHidden(new Set(v.hidden));
+    if (v.query !== undefined) {
+      const params = new URLSearchParams(v.query);
+      // Khôi phục URL -> bảng server (cha) tự đồng bộ ngược q/sort/bộ lọc/trang.
+      setSearchParams(params);
+      // Bảng tự quản URL (urlKey): cập nhật luôn state nội bộ để ô tìm/sort phản ánh ngay.
+      if (urlKey) {
+        setQuery(params.get(pk('q')) ?? '');
+        setSortKey(params.get(pk('sort')));
+        setSortDir(params.get(pk('dir')) === 'desc' ? 'desc' : 'asc');
+        const p = Number(params.get(pk('page')));
+        setPage(p && p > 0 ? p : 1);
+      }
+    }
   };
   const deleteView = (name: string) => setViews((prev) => prev.filter((v) => v.name !== name));
 
@@ -400,6 +417,9 @@ function DataTable<T>({
               <Popover label="Chế độ xem" icon={Check}>
                 {(close) => (
                   <div>
+                    <p className="px-2 pb-1.5 text-[11px] leading-snug text-gray-400">
+                      Lưu lại tìm kiếm, sắp xếp, bộ lọc, mật độ và cột đang hiển thị.
+                    </p>
                     {views.length === 0 && (
                       <p className="px-2 py-1.5 text-xs text-gray-500">Chưa có chế độ xem nào</p>
                     )}

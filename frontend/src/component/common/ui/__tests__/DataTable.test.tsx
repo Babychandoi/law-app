@@ -96,6 +96,27 @@ describe('DataTable', () => {
     expect(screen.getByRole('button', { name: /mật độ/i })).toHaveTextContent('Gọn');
   });
 
+  it('chế độ xem lưu & khôi phục cả bộ lọc tìm kiếm (saved filter)', async () => {
+    localStorage.clear();
+    setup({ tableId: 'test-views', urlKey: 'v', searchable: true, searchText: (r) => r.name });
+    const searchBox = screen.getByPlaceholderText('Tìm kiếm...') as HTMLInputElement;
+
+    // Lọc 'Ali' rồi lưu thành chế độ xem "Của tôi".
+    await userEvent.type(searchBox, 'Ali');
+    await userEvent.click(screen.getByRole('button', { name: /Chế độ xem/ }));
+    await userEvent.type(screen.getByPlaceholderText('Tên chế độ xem…'), 'Của tôi');
+    await userEvent.click(screen.getByRole('button', { name: 'Lưu chế độ xem hiện tại' }));
+
+    // Xóa bộ lọc -> quay lại đủ hàng.
+    await userEvent.clear(searchBox);
+    expect(searchBox.value).toBe('');
+
+    // Áp lại chế độ xem -> ô tìm kiếm khôi phục 'Ali'.
+    await userEvent.click(screen.getByRole('button', { name: /Chế độ xem/ }));
+    await userEvent.click(screen.getByRole('button', { name: 'Của tôi' }));
+    expect((screen.getByPlaceholderText('Tìm kiếm...') as HTMLInputElement).value).toBe('Ali');
+  });
+
   it('phân trang: giới hạn số hàng và chuyển trang', async () => {
     const many: Row[] = Array.from({ length: 5 }, (_, i) => ({
       id: String(i),
