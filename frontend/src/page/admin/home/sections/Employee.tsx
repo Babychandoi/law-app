@@ -13,6 +13,7 @@ import {
   editUser,
 } from '../../../../service/admin';
 import Swal from 'sweetalert2';
+import { useConfirm } from '../../../../component/common/ui';
 
 const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -26,6 +27,7 @@ const UserManagement: React.FC = () => {
   const [q, setQ] = useState('');
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
+  const { confirm, confirmDialog } = useConfirm();
 
   const PAGE_SIZE = 10;
 
@@ -191,6 +193,18 @@ const UserManagement: React.FC = () => {
   };
 
   const handleRoleChange = async (userId: string, newRole: 'ADMIN' | 'USER') => {
+    const ok = await confirm({
+      title: 'Đổi vai trò',
+      message:
+        newRole === 'ADMIN'
+          ? 'Cấp quyền QUẢN TRỊ VIÊN cho người dùng này? Họ sẽ vào được khu Quản trị hệ thống.'
+          : 'Hạ về vai trò Nhân viên? Người dùng sẽ mất quyền quản trị hệ thống.',
+      confirmText: 'Đổi vai trò',
+    });
+    if (!ok) {
+      fetchUsers(); // trả select về giá trị cũ
+      return;
+    }
     try {
       setIsLoading(true);
       const response = await changeRole(userId, newRole);
@@ -210,6 +224,19 @@ const UserManagement: React.FC = () => {
   };
 
   const handleActiveChange = async (userId: string, newActive: 'ACTIVE' | 'INACTIVE') => {
+    const ok = await confirm({
+      title: 'Đổi trạng thái',
+      message:
+        newActive === 'INACTIVE'
+          ? 'Khóa tài khoản này? Người dùng sẽ không đăng nhập được.'
+          : 'Mở khóa tài khoản này?',
+      confirmText: newActive === 'INACTIVE' ? 'Khóa' : 'Mở khóa',
+      variant: newActive === 'INACTIVE' ? 'danger' : 'primary',
+    });
+    if (!ok) {
+      fetchUsers();
+      return;
+    }
     try {
       setIsLoading(true);
       const response = await changeActive(userId, newActive);
@@ -234,6 +261,7 @@ const UserManagement: React.FC = () => {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
+      {confirmDialog}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Quản lý Người dùng</h2>
         <button

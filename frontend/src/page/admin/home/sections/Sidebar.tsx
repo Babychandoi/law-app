@@ -1,5 +1,5 @@
 import { X, type LucideIcon } from 'lucide-react';
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { NavLink } from 'react-router-dom';
 import type { NavGroup } from '../navConfig';
 
@@ -77,6 +77,8 @@ const Sidebar: React.FC<{
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
 }> = ({ groups, footer, workspaceTitle = 'Admin', sidebarOpen, setSidebarOpen }) => {
+  const drawerRef = useRef<HTMLElement>(null);
+
   useEffect(() => {
     if (!sidebarOpen) return;
     const onKey = (e: KeyboardEvent) => {
@@ -85,6 +87,15 @@ const Sidebar: React.FC<{
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, [sidebarOpen, setSidebarOpen]);
+
+  // Khi drawer đóng (trượt khỏi màn hình), đặt `inert` để link bên trong không nhận
+  // focus/tab (aria-hidden thôi chưa đủ — vẫn tab được vào phần tử ngoài màn hình).
+  useEffect(() => {
+    const el = drawerRef.current;
+    if (!el) return;
+    if (sidebarOpen) el.removeAttribute('inert');
+    else el.setAttribute('inert', '');
+  }, [sidebarOpen]);
 
   const brand = (onClose?: () => void) => (
     <div className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 px-5">
@@ -124,11 +135,11 @@ const Sidebar: React.FC<{
         />
       )}
       <aside
+        ref={drawerRef}
         className={`fixed inset-y-0 left-0 z-50 flex w-64 flex-col bg-brand-ink shadow-xl transition-transform duration-300 lg:hidden ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
         aria-label="Menu quản trị"
-        aria-hidden={!sidebarOpen}
       >
         {brand(() => setSidebarOpen(false))}
         <NavContent groups={groups} footer={footer} onNavigate={() => setSidebarOpen(false)} />
