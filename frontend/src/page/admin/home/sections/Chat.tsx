@@ -84,6 +84,7 @@ const AdminChatDashboard: React.FC = () => {
   const [editingName, setEditingName] = useState(false);
   const [newGuestName, setNewGuestName] = useState('');
   const [showEmoji, setShowEmoji] = useState(false);
+  const [convSize, setConvSize] = useState(30); // số hội thoại tải (tăng khi "Tải thêm")
 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageInputRef = useRef<HTMLTextAreaElement>(null);
@@ -100,14 +101,14 @@ const AdminChatDashboard: React.FC = () => {
   const fetchConversations = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await chatService.fetchConversations();
+      const data = await chatService.fetchConversations(convSize);
       setConversations(data);
     } catch (error) {
       console.error('Error fetching conversations:', error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [convSize]);
 
   const fetchStats = useCallback(async () => {
     try {
@@ -554,6 +555,17 @@ const AdminChatDashboard: React.FC = () => {
                   <MessageCircle className="w-12 h-12 mx-auto mb-4 text-gray-300" />
                   <p>Không có cuộc trò chuyện nào</p>
                 </div>
+              )}
+
+              {/* Tải thêm — backend phân trang; nếu đủ 1 trang thì có thể còn nữa. */}
+              {!searchQuery && conversations.length >= convSize && (
+                <button
+                  type="button"
+                  onClick={() => setConvSize((s) => s + 30)}
+                  className="w-full py-3 text-sm font-medium text-brand-goldDark hover:bg-gray-50"
+                >
+                  Tải thêm hội thoại
+                </button>
               )}
             </>
           )}

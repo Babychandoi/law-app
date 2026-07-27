@@ -383,6 +383,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                     Tải ảnh
                     <input
                       type="file"
+                      aria-label="Tải ảnh"
                       accept="image/*"
                       className="hidden"
                       onChange={(e) => {
@@ -485,6 +486,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                       <input
                         className={inputCls}
                         value={step.step}
+                        aria-label="Số thứ tự bước"
                         placeholder="01"
                         onChange={(e) =>
                           setProcess(
@@ -495,6 +497,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                       <input
                         className={inputCls}
                         value={step.title}
+                        aria-label="Tên bước"
                         placeholder="Tên bước (VD: Tra cứu, đánh giá)"
                         onChange={(e) =>
                           setProcess(
@@ -507,6 +510,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                       className={`${inputCls} mt-3`}
                       rows={2}
                       value={step.description}
+                      aria-label="Mô tả bước"
                       placeholder="Mô tả bước này"
                       onChange={(e) =>
                         setProcess(
@@ -530,6 +534,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                                 <input
                                   className={inputCls}
                                   value={d.type}
+                                  aria-label="Tên giai đoạn con"
                                   placeholder="Tên giai đoạn (VD: Thẩm định hình thức)"
                                   onChange={(e) =>
                                     setProcess(
@@ -549,6 +554,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                                 <input
                                   className={inputCls}
                                   value={d.time}
+                                  aria-label="Thời gian giai đoạn"
                                   placeholder="Thời gian"
                                   onChange={(e) =>
                                     setProcess(
@@ -569,6 +575,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                               <input
                                 className={inputCls}
                                 value={d.desc}
+                                aria-label="Mô tả giai đoạn con"
                                 placeholder="Mô tả giai đoạn"
                                 onChange={(e) =>
                                   setProcess(
@@ -683,6 +690,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                       <input
                         className={inputCls}
                         value={plan.title}
+                        aria-label="Tên gói giá"
                         placeholder="Tên gói (VD: Gói cơ bản)"
                         onChange={(e) =>
                           setPricing(
@@ -694,6 +702,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                         <input
                           className={inputCls}
                           value={plan.price}
+                          aria-label="Giá gói"
                           placeholder="Giá (VD: 1.800.000 hoặc Liên hệ)"
                           onChange={(e) =>
                             setPricing(
@@ -704,6 +713,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                         <input
                           className={`${inputCls} !w-16`}
                           value={plan.currency}
+                          aria-label="Đơn vị tiền tệ"
                           placeholder="đ"
                           onChange={(e) =>
                             setPricing(
@@ -719,6 +729,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                       className={`${inputCls} mt-3`}
                       rows={2}
                       value={plan.description}
+                      aria-label="Mô tả gói giá"
                       placeholder="Mô tả gói"
                       onChange={(e) =>
                         setPricing(
@@ -731,6 +742,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                     <textarea
                       className={`${inputCls} mt-3`}
                       rows={3}
+                      aria-label="Danh sách tính năng, mỗi dòng một mục"
                       value={plan.features.join('\n')}
                       placeholder={
                         'Các quyền lợi, mỗi dòng một mục\nVD: Tra cứu miễn phí\nSoạn hồ sơ trọn gói'
@@ -756,6 +768,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                         {plan.image ? 'Đổi ảnh gói' : 'Thêm ảnh gói'}
                         <input
                           type="file"
+                          aria-label="Tải ảnh"
                           accept="image/*"
                           className="hidden"
                           onChange={(e) => {
@@ -784,6 +797,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                     </div>
                     <label className="mt-3 inline-flex items-center gap-2 text-sm text-gray-700">
                       <input
+                        aria-label="Đánh dấu gói nổi bật"
                         type="checkbox"
                         checked={plan.featured}
                         onChange={(e) =>
@@ -972,6 +986,7 @@ function SectionsEditor({
               <input
                 className={inputCls}
                 value={section.title || ''}
+                aria-label="Tiêu đề section"
                 placeholder="Tiêu đề section"
                 onChange={(e) => update(i, { title: e.target.value })}
               />
@@ -991,6 +1006,7 @@ function SectionsEditor({
                   className={`${inputCls} mt-2`}
                   rows={4}
                   value={section.content || ''}
+                  aria-label="Nội dung đoạn văn"
                   placeholder="Nội dung đoạn văn (xuống dòng để tách đoạn)"
                   onChange={(e) => update(i, { content: e.target.value })}
                 />
@@ -1010,6 +1026,7 @@ function SectionsEditor({
                     Ảnh minh họa
                     <input
                       type="file"
+                      aria-label="Tải ảnh"
                       accept="image/*"
                       className="hidden"
                       onChange={(e) => {
@@ -1037,6 +1054,7 @@ function SectionsEditor({
                         <textarea
                           className={inputCls}
                           rows={2}
+                          aria-label="Mô tả mục"
                           value={item.description || ''}
                           placeholder={labels.description}
                           onChange={(e) => updateItem(i, ii, { description: e.target.value })}
@@ -1045,6 +1063,7 @@ function SectionsEditor({
                           <textarea
                             className={inputCls}
                             rows={2}
+                            aria-label="Nội dung phụ"
                             value={item.secondary || ''}
                             placeholder={labels.secondary}
                             onChange={(e) => updateItem(i, ii, { secondary: e.target.value })}
@@ -1064,6 +1083,7 @@ function SectionsEditor({
                               Ảnh thẻ
                               <input
                                 type="file"
+                                aria-label="Tải ảnh"
                                 accept="image/*"
                                 className="hidden"
                                 onChange={(e) => {

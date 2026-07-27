@@ -35,10 +35,12 @@ interface ChatStats {
 
 const chatService = {
   // Fetch all conversations
-  fetchConversations: async (): Promise<Conversation[]> => {
+  fetchConversations: async (size = 30): Promise<Conversation[]> => {
     try {
-      const response =
-        await axiosClient.get<Promise<ApiResponse<Conversation[]>>>(`/chat/admin/conversations`);
+      const response = await axiosClient.get<Promise<ApiResponse<Conversation[]>>>(
+        `/chat/admin/conversations`,
+        { params: { size } }
+      );
       const data = await response.data;
       if (data.code === 200) {
         return data.data;

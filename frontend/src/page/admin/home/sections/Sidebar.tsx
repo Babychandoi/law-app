@@ -79,10 +79,34 @@ const Sidebar: React.FC<{
 }> = ({ groups, footer, workspaceTitle = 'Admin', sidebarOpen, setSidebarOpen }) => {
   const drawerRef = useRef<HTMLElement>(null);
 
+  // Khi drawer mở: đưa focus vào drawer, bẫy Tab bên trong, đóng bằng Escape.
   useEffect(() => {
     if (!sidebarOpen) return;
+    const el = drawerRef.current;
+    const focusables = () =>
+      Array.from(
+        el?.querySelectorAll<HTMLElement>(
+          'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])'
+        ) ?? []
+      ).filter((x) => x.offsetParent !== null);
+    focusables()[0]?.focus();
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setSidebarOpen(false);
+      if (e.key === 'Escape') {
+        setSidebarOpen(false);
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const items = focusables();
+      if (!items.length) return;
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
