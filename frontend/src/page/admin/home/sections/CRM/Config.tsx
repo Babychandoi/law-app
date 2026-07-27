@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
-import { Plus } from 'lucide-react';
+import { Plus, Settings2 } from 'lucide-react';
 import crmService from '../../../../../service/crm';
 import { CareAction, CareResult, CareStatus, Tag } from '../../../../../types/crm';
-import { Input, Button } from '../../../../../component/common/ui';
+import { Input, Button, PageHeader } from '../../../../../component/common/ui';
 
 type TabKey = 'status' | 'action' | 'result' | 'tag';
 const TABS: { key: TabKey; label: string }[] = [
@@ -100,7 +100,13 @@ export default function CrmConfig() {
 
   return (
     <div className="bg-white rounded-xl shadow-soft p-4">
-      <h2 className="text-lg font-semibold mb-3">Cấu hình chăm sóc</h2>
+      <PageHeader
+        className="mb-4"
+        icon={Settings2}
+        title="Cấu hình chăm sóc"
+        subtitle="Quản lý trạng thái, hành động, kết quả và tag cho quy trình CRM"
+        breadcrumb={[{ label: 'Vận hành' }, { label: 'CRM' }, { label: 'Cấu hình' }]}
+      />
       <div className="flex gap-2 mb-4 border-b">
         {TABS.map((t) => (
           <button
