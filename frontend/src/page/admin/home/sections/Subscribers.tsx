@@ -126,6 +126,7 @@ const Subscribers: React.FC = () => {
       key: 'actions',
       header: 'Thao tác',
       align: 'right',
+      hideable: false,
       render: (s) => (
         <Button
           size="sm"
@@ -158,6 +159,7 @@ const Subscribers: React.FC = () => {
           data={subscribers}
           rowKey={(s) => s.id}
           loading={loading}
+          tableId="subscribers"
           selectable
           bulkActions={(rows, clear) => (
             <Button

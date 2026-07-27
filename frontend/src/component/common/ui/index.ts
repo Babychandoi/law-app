@@ -22,3 +22,5 @@ export type { PageHeaderProps } from './PageHeader';
 export { default as EmojiPicker } from './EmojiPicker';
 export { default as Breadcrumb } from './Breadcrumb';
 export type { BreadcrumbItem, BreadcrumbProps } from './Breadcrumb';
+export { default as Popover } from './Popover';
+export type { PopoverProps } from './Popover';

@@ -151,6 +151,7 @@ const ServiceManager: React.FC = () => {
       key: 'actions',
       header: 'Thao tác',
       align: 'right',
+      hideable: false,
       render: (service) => (
         <div className="flex justify-end gap-2">
           <Button
@@ -220,6 +221,7 @@ const ServiceManager: React.FC = () => {
           rowKey={(s) => s.id}
           loading={loading}
           urlKey="svc"
+          tableId="services"
           searchable
           searchPlaceholder="Tìm theo tên hoặc đường dẫn..."
           searchText={(s) => `${s.title} ${s.href}`}

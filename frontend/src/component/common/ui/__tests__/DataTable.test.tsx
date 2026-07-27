@@ -76,6 +76,26 @@ describe('DataTable', () => {
     expect(within(bodyRows[0]).getByText('Bob')).toBeInTheDocument();
   });
 
+  it('ẩn cột qua công cụ "Cột" (tableId)', async () => {
+    localStorage.clear();
+    setup({ tableId: 'test-cols' });
+    await userEvent.click(screen.getByRole('button', { name: /Cột/ }));
+    // Bỏ tick cột "Tuổi" trong popover.
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Tuổi' }));
+    // Header "Tuổi" biến mất khỏi bảng.
+    expect(within(screen.getByRole('table')).queryByText('Tuổi')).not.toBeInTheDocument();
+    expect(within(screen.getByRole('table')).getByText('Tên')).toBeInTheDocument();
+  });
+
+  it('đổi mật độ bảng (comfortable <-> compact)', async () => {
+    localStorage.clear();
+    setup({ tableId: 'test-density' });
+    const btn = screen.getByRole('button', { name: /mật độ/i });
+    expect(btn).toHaveTextContent('Thoáng');
+    await userEvent.click(btn);
+    expect(screen.getByRole('button', { name: /mật độ/i })).toHaveTextContent('Gọn');
+  });
+
   it('phân trang: giới hạn số hàng và chuyển trang', async () => {
     const many: Row[] = Array.from({ length: 5 }, (_, i) => ({
       id: String(i),

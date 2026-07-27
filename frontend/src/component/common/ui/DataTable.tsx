@@ -1,9 +1,47 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import {
+  ArrowUpDown,
+  ArrowUp,
+  ArrowDown,
+  ChevronLeft,
+  ChevronRight,
+  Search,
+  Columns3,
+  Rows3,
+  Rows4,
+  Save,
+  Trash2,
+  Check,
+} from 'lucide-react';
 import { LucideIcon } from 'lucide-react';
 import Spinner from './Spinner';
 import EmptyState from './EmptyState';
+import Popover from './Popover';
+
+// localStorage an toàn (bỏ qua khi lỗi/không có).
+const lsGet = <V,>(key: string, fallback: V): V => {
+  try {
+    const v = localStorage.getItem(key);
+    return v ? (JSON.parse(v) as V) : fallback;
+  } catch {
+    return fallback;
+  }
+};
+const lsSet = (key: string, value: unknown) => {
+  try {
+    localStorage.setItem(key, JSON.stringify(value));
+  } catch {
+    /* ignore */
+  }
+};
+
+type Density = 'comfortable' | 'compact';
+interface SavedView {
+  name: string;
+  density: Density;
+  hidden: string[];
+}
 
 export interface Column<T> {
   key: string;
@@ -19,6 +57,8 @@ export interface Column<T> {
   headerClassName?: string;
   /** Ẩn cột này trong thẻ mobile mặc định. */
   hideOnCard?: boolean;
+  /** Cho phép người dùng ẩn/hiện cột này (mặc định true; đặt false cho cột Thao tác). */
+  hideable?: boolean;
 }
 
 export interface DataTableProps<T> {
@@ -57,6 +97,11 @@ export interface DataTableProps<T> {
   };
   /** Tìm kiếm phía server: gọi (debounce) khi người dùng gõ vào ô tìm kiếm. */
   onSearch?: (q: string) => void;
+  /**
+   * Bật công cụ bảng nâng cao (ẩn/hiện cột, mật độ, chế độ xem đã lưu) + lưu vào localStorage
+   * theo namespace này. Bỏ trống thì không hiện các công cụ đó.
+   */
+  tableId?: string;
 }
 
 const ALIGN: Record<'left' | 'right' | 'center', string> = {
@@ -98,6 +143,7 @@ function DataTable<T>({
   bulkActions,
   serverPagination,
   onSearch,
+  tableId,
 }: DataTableProps<T>) {
   const [searchParams, setSearchParams] = useSearchParams();
   const pk = (k: string) => (urlKey ? `${urlKey}_${k}` : k);
@@ -206,11 +252,56 @@ function DataTable<T>({
     });
   const selectedRows = sorted.filter((r) => selected.has(rowKey(r)));
 
+  // ----- Bảng nâng cao: mật độ + ẩn/hiện cột + chế độ xem đã lưu (persist theo tableId) -----
+  const advanced = !!tableId;
+  const [density, setDensity] = useState<Density>(() =>
+    tableId ? lsGet<Density>(`dt:${tableId}:density`, 'comfortable') : 'comfortable'
+  );
+  const [hidden, setHidden] = useState<Set<string>>(() =>
+    tableId ? new Set(lsGet<string[]>(`dt:${tableId}:hidden`, [])) : new Set()
+  );
+  const [views, setViews] = useState<SavedView[]>(() =>
+    tableId ? lsGet<SavedView[]>(`dt:${tableId}:views`, []) : []
+  );
+
+  useEffect(() => {
+    if (tableId) lsSet(`dt:${tableId}:density`, density);
+  }, [tableId, density]);
+  useEffect(() => {
+    if (tableId) lsSet(`dt:${tableId}:hidden`, Array.from(hidden));
+  }, [tableId, hidden]);
+  useEffect(() => {
+    if (tableId) lsSet(`dt:${tableId}:views`, views);
+  }, [tableId, views]);
+
+  const visibleColumns = advanced ? columns.filter((c) => !hidden.has(c.key)) : columns;
+  const cellPad = density === 'compact' ? 'px-4 py-1.5' : 'px-4 py-3';
+
+  const toggleColumn = (key: string) =>
+    setHidden((prev) => {
+      const next = new Set(prev);
+      next.has(key) ? next.delete(key) : next.add(key);
+      return next;
+    });
+  const saveView = () => {
+    const name = window.prompt('Tên chế độ xem:')?.trim();
+    if (!name) return;
+    setViews((prev) => [
+      ...prev.filter((v) => v.name !== name),
+      { name, density, hidden: Array.from(hidden) },
+    ]);
+  };
+  const applyView = (v: SavedView) => {
+    setDensity(v.density);
+    setHidden(new Set(v.hidden));
+  };
+  const deleteView = (name: string) => setViews((prev) => prev.filter((v) => v.name !== name));
+
   if (loading) return <Spinner center />;
 
   return (
     <div>
-      {(searchable || toolbar) && (
+      {(searchable || toolbar || advanced) && (
         <div className="flex flex-wrap items-center gap-3 mb-4">
           {searchable && (
             <div className="relative flex-1 min-w-[200px]">
@@ -232,6 +323,89 @@ function DataTable<T>({
             </div>
           )}
           {toolbar}
+
+          {advanced && (
+            <div className="ml-auto flex items-center gap-2">
+              {/* Mật độ bảng */}
+              <button
+                type="button"
+                onClick={() => setDensity((d) => (d === 'compact' ? 'comfortable' : 'compact'))}
+                aria-label={density === 'compact' ? 'Chuyển mật độ thoáng' : 'Chuyển mật độ gọn'}
+                title={density === 'compact' ? 'Mật độ: gọn' : 'Mật độ: thoáng'}
+                className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+              >
+                {density === 'compact' ? <Rows4 size={16} /> : <Rows3 size={16} />}
+                <span className="hidden sm:inline">{density === 'compact' ? 'Gọn' : 'Thoáng'}</span>
+              </button>
+
+              {/* Ẩn/hiện cột */}
+              <Popover label="Cột" icon={Columns3}>
+                {() => (
+                  <div className="max-h-72 overflow-y-auto">
+                    {columns
+                      .filter((c) => c.hideable !== false)
+                      .map((c) => (
+                        <label
+                          key={c.key}
+                          className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm hover:bg-gray-50 cursor-pointer"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={!hidden.has(c.key)}
+                            onChange={() => toggleColumn(c.key)}
+                            className="h-4 w-4 accent-brand-goldDark"
+                          />
+                          {c.header}
+                        </label>
+                      ))}
+                  </div>
+                )}
+              </Popover>
+
+              {/* Chế độ xem đã lưu */}
+              <Popover label="Chế độ xem" icon={Check}>
+                {(close) => (
+                  <div>
+                    {views.length === 0 && (
+                      <p className="px-2 py-1.5 text-xs text-gray-500">Chưa có chế độ xem nào</p>
+                    )}
+                    {views.map((v) => (
+                      <div key={v.name} className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            applyView(v);
+                            close();
+                          }}
+                          className="flex-1 rounded-lg px-2 py-1.5 text-left text-sm hover:bg-gray-50"
+                        >
+                          {v.name}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => deleteView(v.name)}
+                          aria-label={`Xóa chế độ xem ${v.name}`}
+                          className="rounded-lg p-1.5 text-red-500 hover:bg-red-50"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        saveView();
+                        close();
+                      }}
+                      className="mt-1 flex w-full items-center gap-2 rounded-lg border-t border-gray-100 px-2 py-2 text-sm text-brand-goldDark hover:bg-gray-50"
+                    >
+                      <Save size={14} /> Lưu chế độ xem hiện tại
+                    </button>
+                  </div>
+                )}
+              </Popover>
+            </div>
+          )}
         </div>
       )}
 
@@ -261,7 +435,7 @@ function DataTable<T>({
               <thead>
                 <tr className="bg-gray-50 border-b border-gray-200">
                   {selectable && (
-                    <th className="px-4 py-3 w-10">
+                    <th className={`${cellPad} w-10`}>
                       <input
                         type="checkbox"
                         aria-label="Chọn tất cả dòng trên trang"
@@ -271,12 +445,12 @@ function DataTable<T>({
                       />
                     </th>
                   )}
-                  {columns.map((col) => {
+                  {visibleColumns.map((col) => {
                     const active = sortKey === col.key;
                     return (
                       <th
                         key={col.key}
-                        className={`px-4 py-3 text-sm font-semibold text-gray-700 ${
+                        className={`${cellPad} text-sm font-semibold text-gray-700 ${
                           ALIGN[col.align ?? 'left']
                         } ${col.headerClassName ?? ''}`}
                       >
@@ -315,7 +489,7 @@ function DataTable<T>({
                     } ${selected.has(rowKey(row)) ? 'bg-brand-surface/50' : ''}`}
                   >
                     {selectable && (
-                      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                      <td className={cellPad} onClick={(e) => e.stopPropagation()}>
                         <input
                           type="checkbox"
                           aria-label="Chọn dòng"
@@ -325,10 +499,10 @@ function DataTable<T>({
                         />
                       </td>
                     )}
-                    {columns.map((col) => (
+                    {visibleColumns.map((col) => (
                       <td
                         key={col.key}
-                        className={`px-4 py-3 text-sm text-gray-800 ${ALIGN[col.align ?? 'left']} ${
+                        className={`${cellPad} text-sm text-gray-800 ${ALIGN[col.align ?? 'left']} ${
                           col.className ?? ''
                         }`}
                       >
@@ -370,7 +544,7 @@ function DataTable<T>({
                 )}
                 {mobileCard
                   ? mobileCard(row)
-                  : columns
+                  : visibleColumns
                       .filter((c) => !c.hideOnCard)
                       .map((col) => (
                         <div key={col.key} className="flex justify-between gap-3 py-1 text-sm">

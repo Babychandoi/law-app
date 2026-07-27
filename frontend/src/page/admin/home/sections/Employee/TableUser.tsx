@@ -75,6 +75,7 @@ const UserTable: React.FC<UserTableProps> = ({
     {
       key: 'actions',
       header: 'Thao tác',
+      hideable: false,
       render: (user) => (
         <div className="flex gap-2">
           <button
@@ -104,6 +105,7 @@ const UserTable: React.FC<UserTableProps> = ({
       data={users}
       rowKey={(u) => u.id}
       loading={loading}
+      tableId="users"
       searchable
       searchPlaceholder="Tìm theo tên đăng nhập, họ tên, email..."
       onSearch={onSearch}

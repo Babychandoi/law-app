@@ -308,6 +308,7 @@ const CustomerManagement: React.FC = () => {
       key: 'actions',
       header: 'Thao tác',
       align: 'right',
+      hideable: false,
       render: (c) => (
         <Button size="sm" variant="secondary" onClick={() => handleView(c.id)}>
           Xem
@@ -423,6 +424,7 @@ const CustomerManagement: React.FC = () => {
         data={customers}
         rowKey={(c) => c.id}
         loading={loading}
+        tableId="customers"
         serverPagination={{
           page,
           totalPages,

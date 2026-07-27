@@ -257,7 +257,7 @@ export default function CRM() {
       sortValue: (r) => (r.lastCaredAt ? new Date(r.lastCaredAt).getTime() : 0),
       render: (r) => (r.lastCaredAt ? new Date(r.lastCaredAt).toLocaleDateString('vi-VN') : '—'),
     },
-    { key: 'actions', header: 'Hành động', align: 'right', render: renderAction },
+    { key: 'actions', header: 'Hành động', align: 'right', hideable: false, render: renderAction },
   ];
 
   return (
@@ -355,6 +355,7 @@ export default function CRM() {
         data={rows}
         rowKey={(r) => r.id}
         loading={loading}
+        tableId="crm-cases"
         serverPagination={{
           page: (filter.page ?? 0) + 1,
           totalPages: meta?.totalPages ?? 1,
