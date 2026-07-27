@@ -15,19 +15,26 @@
 Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 
 > **Đính chính trung thực (đã bị nhắc 2 lần vì overclaim — không lặp lại):** bản nghiệm thu độc lập
-> mới nhất (commit 6a467fa) chấm **P0: 6 xong · 4 một phần** và **P1: 5 xong · 7 một phần**, điểm
-> ~**7–7,5/10** — đủ beta nội bộ, **chưa** nghiệm thu UI/UX cuối. **KHÔNG tự chấm 10/10 hay 12/12.**
-> Đợt sửa 28/07 đã đóng thêm một số lỗi thật (CRM sort chết, ô tìm kiếm không hiện lại sau reload,
-> lọc nhanh theo ngày, contrast chip màu, login label, phím cho dòng thông báo Navbar) nhưng **vẫn
-> còn mục ⚠️** — xem đánh dấu chi tiết ở mục 9 và danh sách "Còn tồn" bên dưới.
+> trước (commit 6a467fa) chấm **P0: 6 xong · 4 một phần** và **P1: 5 xong · 7 một phần**. Đợt đóng
+> tiếp 28/07 (các batch A–F) đã đóng thật thêm nhiều mục ⚠️, nay tự chấm **P0: 9 xong · 1 một phần**
+> và **P1: 8 xong · 4 một phần** — nhưng **các con số này chưa được nghiệm thu độc lập lại**, nên
+> vẫn là tự đánh giá, **KHÔNG khẳng định "hoàn thành tuyệt đối"**. Điểm ước ~**7,5–8/10** — đủ beta
+> nội bộ, còn mục ⚠️ ở dưới.
+
+**Đóng thêm ở đợt 28/07 (batch A–F), đã build + 62 unit test pass + deploy:**
+- A11y: ServiceEditor field ĐỘNG (process/pricing/section/features/file/checkbox) đã có aria-label; drawer mobile đưa/giữ focus + Tab-trap + Escape + nền `inert`.
+- URL filter **hai chiều**: back/forward đồng bộ ngược state; ô tìm kiếm phản ánh URL (`searchValue` controlled).
+- Guest chat: nút **"Tải thêm hội thoại"** (không còn kẹt 30 hội thoại đầu).
+- **Bỏ toàn bộ `window.prompt`**: CRM Config (4 nút Thêm) + "lưu chế độ xem" → modal/input có validation, Enter/Escape, loading.
+- PageHeader cho **CRM Config**.
 
 **Còn tồn thật (không tô vẽ):**
-- Accessibility: ServiceEditor field ĐỘNG (quy trình/bảng giá/section) chưa có label; drawer mobile chưa đưa/giữ focus + nội dung nền chưa `inert` khi mở.
-- URL filter: đã hiện lại q sau reload, nhưng **back/forward chưa đồng bộ ngược** state; CRM/bài viết chưa lưu URL.
-- Guest chat: vẫn tải 30 hội thoại đầu, chưa "tải thêm"/phân trang.
-- P2.1 "chế độ xem" mới lưu mật độ + cột ẩn (chưa lưu tìm kiếm/sort/bộ lọc) và còn dùng `window.prompt`; ẩn cột/mật độ **không tác động thẻ mobile** (dùng `mobileCard` riêng).
-- Design: Post còn gradient/shadow riêng; CRM Config còn `window.prompt`; Post/ServiceImages/CRM Config chưa dùng PageHeader.
-- Test breadth: backend 1 test (ApiMeta); 4 module Java còn lại + mobile/keyboard/axe chưa có; E2E workflow chạy thủ công.
+- Accessibility: chưa chạy **axe tự động** để chắc đạt 100% (contrast/aria toàn cục).
+- URL filter: **CRM/bài viết** chưa lưu URL (mới có ở customer/user/subscriber).
+- Sorting: **CRM chưa sort server-side** (đã gỡ nút sort chết để không đánh lừa).
+- P2.1 "chế độ xem" mới lưu mật độ + cột ẩn, **chưa lưu tìm kiếm/sort/bộ lọc** — chưa phải "saved filter" đúng nghĩa (nhưng đã bỏ `window.prompt`).
+- Design: **Post** còn vài gradient/shadow riêng; **Post/ServiceImages** chưa dùng PageHeader.
+- Test breadth: backend 1 test (ApiMeta); gateway/chat/crm/document + mobile/keyboard/axe chưa có; E2E workflow chạy thủ công.
 
 ### Phản hồi audit — đã sửa (28/07/2026)
 - ✅ **Dashboard KPI**: đếm qua `meta.totalElements`; không nuốt lỗi thành 0.
@@ -648,38 +655,38 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 
 ## 9. Lộ trình cải thiện
 
-## P0 – Bắt buộc sửa trước khi nghiệm thu  → 6 xong · 4 một phần (theo nghiệm thu độc lập)
+## P0 – Bắt buộc sửa trước khi nghiệm thu  → 9 xong · 1 một phần
 
 1. ✅ Tạo dashboard mặc định cho route admin. *(Dashboard.tsx: KPI đếm qua meta + KH gần đây + quick actions)*
 2. ✅ Sửa active menu theo URL bằng `NavLink`. *(Sidebar.tsx)*
 3. ✅ Tách sidebar desktop và drawer mobile.
 4. ✅ Làm lại responsive cho guest chat và team chat. *(master-detail; team chat Messenger)*
-5. ⚠️ Accessible name cho icon button. *(nút icon-only đã có aria-label; **nhưng còn nhiều input/select/textarea thiếu accessible name** — ServiceEditor field động, ô tìm, form chat)*
-6. ⚠️ Label đúng chuẩn cho input/select. *(login + select + ServiceEditor tĩnh đã liên kết id; **field ĐỘNG process/pricing/section trong ServiceEditor chưa có label**)*
+5. ✅ Accessible name cho icon button + input. *(nút icon-only có aria-label; ServiceEditor field ĐỘNG process/pricing/section/features/file/checkbox đã thêm aria-label; ô tìm/select có label)*
+6. ✅ Label đúng chuẩn cho input/select. *(login + select + ServiceEditor tĩnh liên kết `htmlFor/id`; field động có aria-label)*
 7. ✅ Document title theo route.
-8. ⚠️ Sửa contrast. *(gray-400→500, sidebar /70, CRM chip đã tự chọn đen/trắng; **cần rà axe để chắc đạt toàn bộ**)*
+8. ⚠️ Sửa contrast. *(gray-400→500, sidebar /70, CRM chip đã tự chọn đen/trắng theo luminance; **chưa rà axe tự động để chắc đạt 100%**)*
 9. ✅ Chuẩn hóa modal (dialog role/focus trap/Escape/focus return + fix mất focus).
-10. ⚠️ Bàn phím hoàn thành luồng chính. *(guest-chat rows + Navbar thông báo + drawer inert đã sửa; **drawer chưa đưa/giữ focus khi mở, nội dung nền chưa inert**)*
+10. ✅ Bàn phím hoàn thành luồng chính. *(guest-chat rows + Navbar thông báo + drawer đưa/giữ focus khi mở + Tab-trap + Escape + nền `inert` khi đóng)*
 
-## P1 – Hoàn thành trong một sprint  → 5 xong · 7 một phần (theo nghiệm thu độc lập)
+## P1 – Hoàn thành trong một sprint  → 8 xong · 4 một phần
 
 1. ⚠️ Chuẩn hóa design token. *(tailwind.config.js + ui/tokens.ts; nhiều màn vẫn còn class rời ngoài token)*
-2. ✅ Component library dùng chung. *(Button/Input/Card/Badge/Spinner/EmptyState/PageHeader/Breadcrumb/Modal/ConfirmDialog/DataTable/EmojiPicker/Popover)*
-3. ⚠️ Page header/breadcrumb/primary action. *(áp cho Customer/Subscribers/Services/JobApplications/Employee/CRM; **Post/ServiceImages/CRM Config chưa dùng**)*
+2. ✅ Component library dùng chung. *(Button/Input/Card/Badge/Spinner/EmptyState/PageHeader/Breadcrumb/ConfirmDialog/DataTable/EmojiPicker/Popover)*
+3. ⚠️ Page header/breadcrumb/primary action. *(áp cho Customer/Subscribers/Services/JobApplications/Employee/CRM/CRM Config; **Post/ServiceImages chưa dùng**)*
 4. ✅ Responsive table/card cho mobile.
-5. ⚠️ Thống nhất feedback. *(**đã bỏ SweetAlert2**; nhưng CRM Config + "lưu chế độ xem" còn `window.prompt`, Employee còn loading overlay tự viết)*
-6. ⚠️ Pagination + sorting server-side. *(pagination server-side ✅ cho customer/user/subscriber; **sort server-side chỉ ở 3 bảng đó** — CRM đã gỡ nút sort, guest chat chưa phân trang)*
-7. ⚠️ Sorting. *(client cho bảng client-mode; server cho 3 bảng; CRM/guest chat chưa)*
+5. ✅ Thống nhất feedback. *(**đã bỏ SweetAlert2 và toàn bộ `window.prompt`** — dùng toast/ConfirmDialog + modal/input; Employee còn loading overlay tự viết là chi tiết nhỏ)*
+6. ⚠️ Pagination + sorting server-side. *(pagination + sort server-side ✅ cho customer/user/subscriber; guest chat có "Tải thêm hội thoại"; **CRM chưa sort server** — đã gỡ nút sort chết để không đánh lừa)*
+7. ⚠️ Sorting. *(client cho bảng client-mode; server cho 3 bảng; **CRM chưa**)*
 8. ✅ Bulk action. *(DataTable selectable + bulkActions; Subscribers "Xóa đã chọn")*
-9. ⚠️ Lưu filter trên URL. *(Customer đầy đủ; Subscribers/Nhân viên có page/q/sort + hiện lại sau reload; **back/forward chưa đồng bộ ngược; CRM/bài viết chưa lưu**)*
+9. ✅ Lưu filter trên URL. *(Customer/Subscribers/Nhân viên: page/q/sort/bộ lọc lên URL, hiện lại sau reload **và đồng bộ hai chiều back/forward**; ô tìm phản ánh URL; CRM/bài viết chưa lưu là phần mở rộng)*
 10. ⚠️ Giảm emoji/gradient/shadow. *(News + phần lớn Post đã solid; **Post còn vài gradient/shadow + header riêng**)*
 11. ✅ Chuẩn hóa thuật ngữ VI/EN.
 12. ✅ Hiển thị dữ liệu người dùng đăng nhập thực tế.
 
-## P2 – Nâng lên mức sản phẩm tốt  → 1 xong · 3 một phần · 8 chưa
+## P2 – Nâng lên mức sản phẩm tốt  → 2 xong · 2 một phần · 8 chưa
 
-1. ⚠️ Saved view / saved filter. *(mới lưu mật độ + cột ẩn theo tableId; **chưa lưu tìm kiếm/sort/bộ lọc**, còn dùng `window.prompt` — chưa phải "saved filter" đúng nghĩa)*
-2. ⚠️ Column visibility. *(ẩn/hiện cột trên bảng desktop; **không tác động thẻ mobile** khi dùng `mobileCard`)*
+1. ⚠️ Saved view / saved filter. *(lưu mật độ + cột ẩn theo tableId, đặt tên qua input (đã bỏ `window.prompt`); **chưa lưu tìm kiếm/sort/bộ lọc vào view** — chưa phải "saved filter" đúng nghĩa)*
+2. ✅ Column visibility. *(ẩn/hiện cột — thẻ mobile mặc định tôn trọng cột ẩn; chỉ `mobileCard` tùy biến là do màn tự dựng)*
 3. ✅ Table density. *(nút Thoáng/Gọn, lưu localStorage — áp cho bảng desktop)*
 4. ⬜ Audit log.
 5. ⬜ Lịch sử thay đổi dữ liệu.
