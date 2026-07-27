@@ -21,7 +21,13 @@ Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 > nghiệm thu độc lập lại**, nên vẫn là tự đánh giá, **KHÔNG khẳng định "hoàn thành tuyệt đối"**;
 > riêng axe mới quét 3 màn đại diện. Điểm ước ~**8–8,5/10** — đủ beta nội bộ, chỉ còn mục ⚠️/⬜ ở P2.
 
-**Đóng thêm ở đợt 28/07 (batch A–F), đã build + 62 unit test pass + deploy:**
+**Sửa theo audit độc lập lần 3 (28/07) — đã kiểm chứng bằng axe trên prod:**
+- **Contrast (P0.8)**: `textOn()` viết lại đúng WCAG (gamma sRGB + chọn đen/trắng theo tỉ lệ cao nhất) → 3 màu seed CRM đạt ≥4.96:1; overdue red-500→red-600, nút Gửi email green-600→green-700. **axe mở rộng sang CRM + Tin tức, 7/7 pass**.
+- **Accessible name (P0.5/0.6)**: thêm aria-label/label cho ~11 control còn thiếu (guest chat, team chat, tìm Khách hàng, ServiceEditor subtitle/mục con, textarea phụ đề News).
+- **Drawer (P0.10)**: trả focus về nút "Mở menu" khi đóng + đặt `inert` cho nền khi mở.
+- **Emoji (P1.10)**: bỏ nốt 👤/📅 (Post) và ⚠️ (AddNews/EditNews) → Lucide icon.
+
+**Đóng thêm ở đợt 28/07 (batch A–F), đã build + 63 unit test pass + deploy:**
 - A11y: ServiceEditor field ĐỘNG (process/pricing/section/features/file/checkbox) đã có aria-label; drawer mobile đưa/giữ focus + Tab-trap + Escape + nền `inert`.
 - URL filter **hai chiều**: back/forward đồng bộ ngược state; ô tìm kiếm phản ánh URL (`searchValue` controlled).
 - Guest chat: nút **"Tải thêm hội thoại"** (không còn kẹt 30 hội thoại đầu).
@@ -662,12 +668,12 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 2. ✅ Sửa active menu theo URL bằng `NavLink`. *(Sidebar.tsx)*
 3. ✅ Tách sidebar desktop và drawer mobile.
 4. ✅ Làm lại responsive cho guest chat và team chat. *(master-detail; team chat Messenger)*
-5. ✅ Accessible name cho icon button + input. *(nút icon-only có aria-label; ServiceEditor field ĐỘNG process/pricing/section/features/file/checkbox đã thêm aria-label; ô tìm/select có label)*
-6. ✅ Label đúng chuẩn cho input/select. *(login + select + ServiceEditor tĩnh liên kết `htmlFor/id`; field động có aria-label)*
+5. ✅ Accessible name cho icon button + input. *(nút icon-only có aria-label; **bổ sung theo audit độc lập**: ô tìm + đổi tên khách + ô nhập tin của guest chat & team chat, ô tìm Khách hàng, subtitle section + tiêu đề mục con ServiceEditor, textarea phụ đề AddNews/EditNews — đều đã có aria-label/label)*
+6. ✅ Label đúng chuẩn cho input/select. *(login + select + ServiceEditor tĩnh liên kết `htmlFor/id`; field động + textarea phụ đề News liên kết `htmlFor/id`; field khác có aria-label)*
 7. ✅ Document title theo route.
-8. ✅ Sửa contrast. *(gray-400→500, sidebar /70, CRM chip tự chọn đen/trắng theo luminance; **đã chạy axe-core (`e2e/a11y.spec.ts`) — 0 lỗi `color-contrast`** trên đăng nhập + Khách hàng (sidebar/DataTable/PageHeader/chip) + Người đăng ký. Ghi chú: axe mới quét 3 màn đại diện, chưa quét toàn bộ màn)*
+8. ✅ Sửa contrast. *(**`textOn()` viết lại theo đúng WCAG 2.1** — độ sáng tương đối có gamma sRGB + chọn đen/trắng theo tỉ lệ tương phản cao nhất; 3 màu seed CRM (#3B82F6/#8B5CF6/#10B981) nay đạt 4.96–8.28:1. Chữ "quá hạn" đổi red-500→red-600, nút "Gửi email" green-600→green-700. **axe-core (`e2e/a11y.spec.ts`) 7/7 pass, 0 lỗi `color-contrast`** trên đăng nhập + Khách hàng + Người đăng ký + **CRM** + **Tin tức**. Ghi chú: 5 màn đại diện, chưa phải toàn bộ)*
 9. ✅ Chuẩn hóa modal (dialog role/focus trap/Escape/focus return + fix mất focus).
-10. ✅ Bàn phím hoàn thành luồng chính. *(guest-chat rows + Navbar thông báo + drawer đưa/giữ focus khi mở + Tab-trap + Escape + nền `inert` khi đóng)*
+10. ✅ Bàn phím hoàn thành luồng chính. *(guest-chat rows + Navbar thông báo + drawer: đưa/giữ focus khi mở + Tab-trap + Escape + **trả focus về nút "Mở menu" khi đóng** + **nền `#admin-content-region` đặt `inert` khi drawer mở**)*
 
 ## P1 – Hoàn thành trong một sprint  → 12 xong (đã đóng hết)
 
@@ -680,7 +686,7 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 7. ✅ Sorting. *(client cho bảng client-mode; server cho customer/user/subscriber **+ CRM** (customer/nextFollowUpAt/status/lastCaredAt/caseCreatedAt))*
 8. ✅ Bulk action. *(DataTable selectable + bulkActions; Subscribers "Xóa đã chọn")*
 9. ✅ Lưu filter trên URL. *(Customer/Subscribers/Nhân viên: page/q/sort/bộ lọc lên URL, hiện lại sau reload **và đồng bộ hai chiều back/forward**; ô tìm phản ánh URL. CRM/bài viết chưa lưu URL là phần mở rộng P2, không thuộc phạm vi P1)*
-10. ✅ Giảm emoji/gradient/shadow. *(News + Post đã solid: header dùng PageHeader, nút bỏ shadow nặng + hiệu ứng scale, badge gradient → nền phẳng, emoji ⚠️ → icon, prose link/blockquote dùng brand token)*
+10. ✅ Giảm emoji/gradient/shadow. *(News + Post đã solid: header dùng PageHeader, nút bỏ shadow nặng + hiệu ứng scale, badge gradient → nền phẳng, prose link/blockquote dùng brand token. **Bỏ nốt emoji theo audit**: Post 👤/📅 → icon User/Calendar, AddNews/EditNews ⚠️ → icon AlertTriangle)*
 11. ✅ Chuẩn hóa thuật ngữ VI/EN.
 12. ✅ Hiển thị dữ liệu người dùng đăng nhập thực tế.
 
@@ -696,7 +702,7 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 8. ⬜ Draft và version history.
 9. ⬜ Preview theo desktop/tablet/mobile.
 10. ⬜ Visual regression test.
-11. ⚠️ Accessibility test trong CI. *(**đã có axe-core trong bộ E2E** `e2e/a11y.spec.ts` — chạy qua workflow E2E; nhưng workflow còn chạy thủ công/khi có secrets, chưa gắn cổng chặn trên mỗi PR + mới quét 3 màn)*
+11. ⚠️ Accessibility test trong CI. *(**đã có axe-core trong bộ E2E** `e2e/a11y.spec.ts` — 5 màn (đăng nhập/Khách hàng/Người đăng ký/CRM/Tin tức), chạy qua workflow E2E; nhưng workflow còn chạy thủ công/khi có secrets, **chưa gắn cổng chặn tự động trên mỗi PR**)*
 12. ⬜ Theo dõi analytics cho luồng admin quan trọng.
 
 ---

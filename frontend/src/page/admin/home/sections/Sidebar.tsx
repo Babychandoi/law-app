@@ -78,6 +78,22 @@ const Sidebar: React.FC<{
   setSidebarOpen: (open: boolean) => void;
 }> = ({ groups, footer, workspaceTitle = 'Admin', sidebarOpen, setSidebarOpen }) => {
   const drawerRef = useRef<HTMLElement>(null);
+  // Nút vừa mở drawer (thường là "Mở menu") — để trả focus về đúng chỗ khi đóng.
+  const openerRef = useRef<HTMLElement | null>(null);
+
+  // Khi drawer mở: khóa nền (inert) để không tab ra ngoài; khi đóng: trả focus về nút mở.
+  useEffect(() => {
+    const content = document.getElementById('admin-content-region');
+    if (sidebarOpen) {
+      openerRef.current = document.activeElement as HTMLElement | null;
+      content?.setAttribute('inert', '');
+    } else {
+      content?.removeAttribute('inert');
+      openerRef.current?.focus?.();
+      openerRef.current = null;
+    }
+    return () => content?.removeAttribute('inert');
+  }, [sidebarOpen]);
 
   // Khi drawer mở: đưa focus vào drawer, bẫy Tab bên trong, đóng bằng Escape.
   useEffect(() => {

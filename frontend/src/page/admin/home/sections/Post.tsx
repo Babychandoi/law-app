@@ -22,6 +22,8 @@ import {
   ChevronRight,
   Newspaper,
   AlertTriangle,
+  User,
+  Calendar,
 } from 'lucide-react';
 import { Spinner, useConfirm, PageHeader, Button } from '../../../../component/common/ui';
 
@@ -291,11 +293,11 @@ const NewsManagement: React.FC = () => {
                     {/* Meta Info */}
                     <div className="flex flex-wrap items-center gap-4 mb-4 text-sm">
                       <div className="flex items-center gap-2 px-3 py-1 bg-brand-surface rounded-lg">
-                        <span className="text-brand-goldDark">👤</span>
+                        <User className="w-4 h-4 text-brand-goldDark" aria-hidden="true" />
                         <span className="text-gray-700 font-medium">{news.author}</span>
                       </div>
                       <div className="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-lg">
-                        <span className="text-green-600">📅</span>
+                        <Calendar className="w-4 h-4 text-green-600" aria-hidden="true" />
                         <span className="text-gray-700">
                           {news.createdAt
                             ? new Date(news.createdAt).toLocaleDateString('vi-VN')
@@ -340,7 +342,7 @@ const NewsManagement: React.FC = () => {
                         onClick={() => handleSendEmail(news.id ?? '')}
                         disabled={loading}
                         title="Gửi email"
-                        className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg font-medium shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 bg-green-700 hover:bg-green-800 text-white rounded-lg font-medium shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Send size={18} />
                         <span>Gửi email</span>
@@ -410,12 +412,12 @@ const NewsManagement: React.FC = () => {
 
                 {/* Meta Info */}
                 <div className="flex flex-wrap items-center gap-4 mb-8">
-                  <div className="flex items-center gap-2 px-4 py-2 bg-brand-surface rounded-xl border-2 border-brand-line">
-                    <span className="text-xl">👤</span>
+                  <div className="flex items-center gap-2 px-4 py-2 bg-brand-surface rounded-xl border border-brand-line">
+                    <User className="w-5 h-5 text-brand-goldDark" aria-hidden="true" />
                     <span className="text-gray-700 font-semibold">{selectedNews.author}</span>
                   </div>
                   <div className="flex items-center gap-2 px-4 py-2 bg-green-50 rounded-xl border border-green-200">
-                    <span className="text-xl">📅</span>
+                    <Calendar className="w-5 h-5 text-green-600" aria-hidden="true" />
                     <span className="text-gray-700 font-semibold">
                       {selectedNews.createdAt
                         ? new Date(selectedNews.createdAt).toLocaleString('vi-VN')

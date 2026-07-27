@@ -993,6 +993,7 @@ function SectionsEditor({
               <input
                 className={`${inputCls} mt-2`}
                 value={section.subtitle || ''}
+                aria-label="Mô tả ngắn của section"
                 placeholder={
                   section.type === 'comparison'
                     ? 'Tên 2 cột, ngăn bằng | — VD: Nhãn hiệu|Thương hiệu'
@@ -1048,6 +1049,7 @@ function SectionsEditor({
                         <input
                           className={inputCls}
                           value={item.title || ''}
+                          aria-label={labels.title}
                           placeholder={labels.title}
                           onChange={(e) => updateItem(i, ii, { title: e.target.value })}
                         />

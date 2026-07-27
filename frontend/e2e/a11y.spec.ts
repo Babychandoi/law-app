@@ -42,5 +42,20 @@ test.describe('A11y — tương phản màu (color-contrast)', () => {
       await expect(page.getByRole('heading', { name: 'Quản lý người đăng ký' })).toBeVisible();
       await expectNoContrastViolations(page);
     });
+
+    test('Màn CRM (chip trạng thái/tag chọn màu chữ theo WCAG)', async ({ page }) => {
+      await page.goto(`${ADMIN_BASE}/crm`);
+      await expect(page.getByRole('heading', { name: /CRM/ })).toBeVisible();
+      // Chờ dữ liệu vụ việc + chip màu render xong để axe đo tương phản thật.
+      await page.waitForTimeout(1500);
+      await expectNoContrastViolations(page);
+    });
+
+    test('Màn Tin tức (khu Hệ thống)', async ({ page }) => {
+      await page.goto(`${SYS_BASE}/posts`);
+      await expect(page.getByRole('heading', { name: 'Quản lý tin tức' })).toBeVisible();
+      await page.waitForTimeout(1000);
+      await expectNoContrastViolations(page);
+    });
   });
 });

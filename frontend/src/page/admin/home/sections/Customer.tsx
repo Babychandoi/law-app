@@ -365,6 +365,7 @@ const CustomerManagement: React.FC = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
             <input
               type="text"
+              aria-label="Tìm kiếm khách hàng"
               placeholder="Tìm kiếm theo tên, điện thoại, email hoặc dịch vụ..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}

@@ -16,16 +16,21 @@ import {
 import CarePopup from './CarePopup';
 import { Button, DataTable, PageHeader, type Column } from '../../../../../component/common/ui';
 
-// Chọn màu chữ (đen/trắng) tương phản đủ trên nền màu tuỳ ý của tag/trạng thái (WCAG).
+// Chọn màu chữ (đen/trắng) đạt tương phản CAO NHẤT trên nền màu tuỳ ý (theo WCAG 2.1).
+// Dùng độ sáng tương đối chuẩn (có hiệu chỉnh gamma sRGB), rồi so tỉ lệ tương phản
+// của chữ trắng vs chữ đen và chọn bên cao hơn — luôn ưu tiên cạnh dễ đọc nhất.
 function textOn(bg?: string): string {
-  if (!bg) return '#fff';
+  if (!bg) return '#111827';
   const h = bg.replace('#', '');
   const full = h.length === 3 ? h.replace(/(.)/g, '$1$1') : h;
-  const r = parseInt(full.slice(0, 2), 16) || 0;
-  const g = parseInt(full.slice(2, 4), 16) || 0;
-  const b = parseInt(full.slice(4, 6), 16) || 0;
-  const lum = (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
-  return lum > 0.6 ? '#111827' : '#ffffff';
+  const chan = (i: number) => {
+    const c = (parseInt(full.slice(i, i + 2), 16) || 0) / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  };
+  const L = 0.2126 * chan(0) + 0.7152 * chan(2) + 0.0722 * chan(4);
+  const contrastWhite = 1.05 / (L + 0.05); // tỉ lệ với chữ trắng
+  const contrastBlack = (L + 0.05) / 0.05; // tỉ lệ với chữ đen
+  return contrastBlack >= contrastWhite ? '#111827' : '#ffffff';
 }
 
 const STATUS_OPTIONS = CASE_STATUS_OPTIONS;
@@ -185,7 +190,7 @@ export default function CRM() {
 
   const renderFollowUp = (r: CaseRow) =>
     r.nextFollowUpAt ? (
-      <span className={isOverdue(r.nextFollowUpAt) ? 'text-red-500 font-medium' : 'text-brand-ink'}>
+      <span className={isOverdue(r.nextFollowUpAt) ? 'text-red-600 font-medium' : 'text-brand-ink'}>
         {new Date(r.nextFollowUpAt).toLocaleDateString('vi-VN')}
       </span>
     ) : (

@@ -438,6 +438,7 @@ const AdminChatDashboard: React.FC = () => {
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
             <input
               type="text"
+              aria-label="Tìm kiếm cuộc trò chuyện"
               placeholder="Tìm kiếm cuộc trò chuyện..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -601,6 +602,7 @@ const AdminChatDashboard: React.FC = () => {
                       <div className="flex items-center space-x-2">
                         <input
                           type="text"
+                          aria-label="Đổi tên khách"
                           value={newGuestName}
                           onChange={(e) => setNewGuestName(e.target.value)}
                           onKeyDown={(e) => {
@@ -743,6 +745,7 @@ const AdminChatDashboard: React.FC = () => {
                 <div className="flex-1 relative">
                   <textarea
                     ref={messageInputRef}
+                    aria-label="Nhập tin nhắn"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyDown={handleKeyPress}

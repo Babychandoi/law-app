@@ -328,6 +328,7 @@ export default function TeamChat() {
           <div className="flex items-center gap-2 bg-gray-100 rounded-full px-3 py-2">
             <Search size={16} className="text-gray-500" />
             <input
+              aria-label="Tìm kiếm trên đoạn chat"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Tìm kiếm trên đoạn chat"
@@ -379,6 +380,7 @@ export default function TeamChat() {
               </button>
             </div>
             <input
+              aria-label="Tên nhóm"
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
               placeholder="Tên nhóm..."
@@ -643,6 +645,7 @@ export default function TeamChat() {
               </label>
               <div className="relative flex-1 flex items-center bg-gray-100 rounded-full px-4">
                 <input
+                  aria-label="Nhập tin nhắn"
                   value={draft}
                   onChange={(e) => handleDraftChange(e.target.value)}
                   onKeyDown={(e) =>

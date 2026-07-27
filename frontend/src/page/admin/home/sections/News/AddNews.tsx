@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { News } from '../../../../../types/service';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, AlertTriangle } from 'lucide-react';
 import React from 'react';
 import { toast } from 'react-toastify';
 import Modal from '../../../../../component/common/Modal';
@@ -160,8 +160,11 @@ const AddNews: React.FC<AddNewsProps> = ({ onSave, onCancel }) => {
             />
           </div>
           <div className="mt-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Phụ đề *</label>
+            <label htmlFor="add-subtitle" className="block text-sm font-medium text-gray-700 mb-2">
+              Phụ đề *
+            </label>
             <textarea
+              id="add-subtitle"
               name="subtitle"
               value={formData.subtitle}
               onChange={handleInputChange}
@@ -279,7 +282,7 @@ const AddNews: React.FC<AddNewsProps> = ({ onSave, onCancel }) => {
         {error && (
           <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-xl">
             <div className="flex items-center">
-              <span className="text-2xl mr-3">⚠️</span>
+              <AlertTriangle className="w-5 h-5 mr-3 text-red-600" aria-hidden="true" />
               <span className="text-red-700 font-medium flex-1">{error}</span>
             </div>
           </div>

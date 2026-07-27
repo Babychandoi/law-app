@@ -56,7 +56,7 @@ const AdminDashboard: React.FC = () => {
         setSidebarOpen={setSidebarOpen}
       />
 
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div id="admin-content-region" className="flex-1 flex flex-col overflow-hidden">
         <Navbar onOpenSidebar={() => setSidebarOpen(true)} />
 
         <main className="flex-1 overflow-y-auto p-6">
