@@ -13,7 +13,7 @@ import {
   createUser,
   editUser,
 } from '../../../../service/admin';
-import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 import { useConfirm } from '../../../../component/common/ui';
 
 const UserManagement: React.FC = () => {
@@ -90,88 +90,43 @@ const UserManagement: React.FC = () => {
     setIsPasswordFormOpen(true);
   };
 
-  // Handle creating new user
+  // Tạo người dùng
   const handleSaveUser = async (formData: UserCreate) => {
     try {
-      // Hiển thị loading UI
-      Swal.fire({
-        title: 'Đang tạo người dùng...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading(),
-      });
-
+      setIsLoading(true);
       const response = await createUser(formData);
-
       if (response.data) {
         fetchUsers();
         setIsUserFormOpen(false);
         setError(null);
-
-        Swal.fire({
-          icon: 'success',
-          title: 'Tạo người dùng thành công!',
-          showConfirmButton: false,
-          timer: 1500,
-        });
+        toast.success('Tạo người dùng thành công!');
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Không thể tạo người dùng',
-          text: response.message || 'Đã có lỗi xảy ra.',
-        });
+        toast.error(response.message || 'Không thể tạo người dùng');
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Lỗi khi tạo người dùng',
-        text: (error as Error).message || 'Đã xảy ra lỗi không xác định.',
-      });
+      toast.error((error as Error).message || 'Lỗi khi tạo người dùng');
     } finally {
-      setIsLoading(false); // Nếu bạn vẫn cần quản lý isLoading cho UI ngoài Swal
+      setIsLoading(false);
     }
   };
 
-  // Handle updating existing user
+  // Cập nhật người dùng
   const handleUpdateUser = async (formData: UserCreate, userId: string) => {
     try {
-      // Hiển thị loading SweetAlert
-      Swal.fire({
-        title: 'Đang cập nhật người dùng...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading(),
-      });
-
+      setIsLoading(true);
       const response = await editUser(userId, formData);
-
       if (response.data) {
-        // Cập nhật state người dùng
         setUsers((prev) =>
           prev.map((user) => (user.id === userId ? { ...user, ...response.data } : user))
         );
-
         setEditingUser(null);
         setError(null);
-
-        // Thông báo thành công
-        Swal.fire({
-          icon: 'success',
-          title: 'Cập nhật thành công!',
-          showConfirmButton: false,
-          timer: 1500,
-        });
+        toast.success('Cập nhật thành công!');
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Không thể cập nhật người dùng',
-          text: response.message || 'Có lỗi xảy ra.',
-        });
+        toast.error(response.message || 'Không thể cập nhật người dùng');
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Lỗi khi cập nhật người dùng',
-        text: (error as Error).message || 'Đã xảy ra lỗi không xác định.',
-      });
+      toast.error((error as Error).message || 'Lỗi khi cập nhật người dùng');
     } finally {
       setIsLoading(false);
     }
@@ -179,41 +134,18 @@ const UserManagement: React.FC = () => {
 
   const handleSavePassword = async (userId: string, newPassword: string) => {
     try {
-      // Hiển thị Swal loading
-      Swal.fire({
-        title: 'Đang thay đổi mật khẩu...',
-        allowOutsideClick: false,
-        didOpen: () => Swal.showLoading(),
-      });
-
+      setIsLoading(true);
       const response = await changePassword(userId, newPassword);
-
       if (response.data) {
-        // Đóng form đổi mật khẩu
         setIsPasswordFormOpen(false);
         setPasswordChangeUser(null);
         setError(null);
-
-        // Thông báo thành công
-        Swal.fire({
-          icon: 'success',
-          title: 'Đã thay đổi mật khẩu thành công!',
-          showConfirmButton: false,
-          timer: 1500,
-        });
+        toast.success('Đã thay đổi mật khẩu thành công!');
       } else {
-        Swal.fire({
-          icon: 'error',
-          title: 'Không thể thay đổi mật khẩu',
-          text: response.message || '',
-        });
+        toast.error(response.message || 'Không thể thay đổi mật khẩu');
       }
     } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Lỗi khi thay đổi mật khẩu',
-        text: (error as Error).message || 'Đã xảy ra lỗi không xác định.',
-      });
+      toast.error((error as Error).message || 'Lỗi khi thay đổi mật khẩu');
     } finally {
       setIsLoading(false);
     }
