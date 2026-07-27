@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { Mail, Trash2, Calendar, Users } from 'lucide-react';
 import { toast } from 'react-toastify';
 import axiosClient from '../../../../service/axiosClient';
@@ -30,17 +31,44 @@ const Subscribers: React.FC = () => {
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [page, setPage] = useState(1); // 1-based
-  const [q, setQ] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [page, setPage] = useState(() => Math.max(1, Number(searchParams.get('page')) || 1));
+  const [q, setQ] = useState(() => searchParams.get('q') ?? '');
+  const [sort, setSort] = useState<{ key: string; dir: 'asc' | 'desc' } | null>(() => {
+    const s = searchParams.get('sort');
+    if (!s) return null;
+    const [key, dir] = s.split(',');
+    return key ? { key, dir: dir === 'asc' ? 'asc' : 'desc' } : null;
+  });
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
   const { confirm, confirmDialog } = useConfirm();
+
+  // Lưu trạng thái phân trang/tìm kiếm/sắp xếp lên URL (deep-link, reload giữ nguyên).
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        page > 1 ? next.set('page', String(page)) : next.delete('page');
+        q ? next.set('q', q) : next.delete('q');
+        sort ? next.set('sort', `${sort.key},${sort.dir}`) : next.delete('sort');
+        return next;
+      },
+      { replace: true }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, q, sort]);
 
   const fetchSubscribers = React.useCallback(async () => {
     try {
       setLoading(true);
       const response = await axiosClient.get<ApiResponse<Subscriber[]>>('/news/subscribers', {
-        params: { page: page - 1, size: PAGE_SIZE, q: q || undefined },
+        params: {
+          page: page - 1,
+          size: PAGE_SIZE,
+          q: q || undefined,
+          sort: sort ? `${sort.key},${sort.dir}` : undefined,
+        },
       });
       if (response.data.code === 200) {
         setSubscribers(response.data.data);
@@ -53,7 +81,7 @@ const Subscribers: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, q]);
+  }, [page, q, sort]);
 
   useEffect(() => {
     fetchSubscribers();
@@ -105,6 +133,7 @@ const Subscribers: React.FC = () => {
     {
       key: 'email',
       header: 'Email',
+      sortable: true,
       render: (s) => (
         <span className="inline-flex items-center gap-3 font-medium text-gray-900">
           <Mail className="w-5 h-5 text-gray-500" aria-hidden="true" />
@@ -115,6 +144,7 @@ const Subscribers: React.FC = () => {
     {
       key: 'createdAt',
       header: 'Ngày đăng ký',
+      sortable: true,
       render: (s) => (
         <span className="inline-flex items-center gap-2 text-gray-500">
           <Calendar className="w-4 h-4" aria-hidden="true" />
@@ -182,6 +212,11 @@ const Subscribers: React.FC = () => {
             totalPages,
             totalElements,
             onPageChange: setPage,
+          }}
+          sortState={sort}
+          onSortChange={(key, dir) => {
+            setSort({ key, dir });
+            setPage(1);
           }}
           emptyIcon={Mail}
           emptyTitle="Chưa có người đăng ký nào"

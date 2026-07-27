@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { User, UserCreate } from '../../../../types/admin';
 import UserTable from './Employee/TableUser';
 import UserForm from './Employee/User';
@@ -23,18 +24,44 @@ const UserManagement: React.FC = () => {
   const [passwordChangeUser, setPasswordChangeUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [page, setPage] = useState(1); // 1-based
-  const [q, setQ] = useState('');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [page, setPage] = useState(() => Math.max(1, Number(searchParams.get('page')) || 1));
+  const [q, setQ] = useState(() => searchParams.get('q') ?? '');
+  const [sort, setSort] = useState<{ key: string; dir: 'asc' | 'desc' } | null>(() => {
+    const s = searchParams.get('sort');
+    if (!s) return null;
+    const [key, dir] = s.split(',');
+    return key ? { key, dir: dir === 'asc' ? 'asc' : 'desc' } : null;
+  });
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
   const { confirm, confirmDialog } = useConfirm();
 
   const PAGE_SIZE = 10;
 
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        page > 1 ? next.set('page', String(page)) : next.delete('page');
+        q ? next.set('q', q) : next.delete('q');
+        sort ? next.set('sort', `${sort.key},${sort.dir}`) : next.delete('sort');
+        return next;
+      },
+      { replace: true }
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page, q, sort]);
+
   const fetchUsers = useCallback(async () => {
     try {
       setIsLoading(true);
-      const response = await getUsers({ page: page - 1, size: PAGE_SIZE, q: q || undefined });
+      const response = await getUsers({
+        page: page - 1,
+        size: PAGE_SIZE,
+        q: q || undefined,
+        sort: sort ? `${sort.key},${sort.dir}` : undefined,
+      });
       setUsers(response.data);
       setTotalPages(response.meta?.totalPages ?? 1);
       setTotalElements(response.meta?.totalElements ?? response.data.length);
@@ -44,7 +71,7 @@ const UserManagement: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  }, [page, q]);
+  }, [page, q, sort]);
 
   useEffect(() => {
     fetchUsers();
@@ -335,6 +362,11 @@ const UserManagement: React.FC = () => {
           setPage(1);
         }}
         serverPagination={{ page, totalPages, totalElements, onPageChange: setPage }}
+        sortState={sort}
+        onSortChange={(key, dir) => {
+          setSort({ key, dir });
+          setPage(1);
+        }}
       />
 
       {/* User Edit Modal */}

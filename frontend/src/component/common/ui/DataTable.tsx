@@ -97,6 +97,10 @@ export interface DataTableProps<T> {
   };
   /** Tìm kiếm phía server: gọi (debounce) khi người dùng gõ vào ô tìm kiếm. */
   onSearch?: (q: string) => void;
+  /** Sắp xếp phía SERVER: trạng thái sort hiện tại (do cha quản lý). */
+  sortState?: { key: string; dir: 'asc' | 'desc' } | null;
+  /** Sắp xếp phía SERVER: gọi khi bấm tiêu đề cột sortable. Khi đặt, KHÔNG sort client. */
+  onSortChange?: (key: string, dir: 'asc' | 'desc') => void;
   /**
    * Bật công cụ bảng nâng cao (ẩn/hiện cột, mật độ, chế độ xem đã lưu) + lưu vào localStorage
    * theo namespace này. Bỏ trống thì không hiện các công cụ đó.
@@ -143,6 +147,8 @@ function DataTable<T>({
   bulkActions,
   serverPagination,
   onSearch,
+  sortState,
+  onSortChange,
   tableId,
 }: DataTableProps<T>) {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -203,6 +209,8 @@ function DataTable<T>({
   }, [data, query, searchable, searchText, columns, serverPagination, onSearch]);
 
   const sorted = useMemo(() => {
+    // Server sort: dữ liệu đã được server sắp xếp -> không sort client.
+    if (onSortChange || serverPagination) return filtered;
     if (!sortKey) return filtered;
     const col = columns.find((c) => c.key === sortKey);
     if (!col) return filtered;
@@ -213,7 +221,7 @@ function DataTable<T>({
       if (typeof va === 'number' && typeof vb === 'number') return (va - vb) * dir;
       return String(va).localeCompare(String(vb), 'vi') * dir;
     });
-  }, [filtered, sortKey, sortDir, columns]);
+  }, [filtered, sortKey, sortDir, columns, onSortChange, serverPagination]);
 
   const totalPages = Math.max(1, Math.ceil(sorted.length / pageSize));
   const safePage = Math.min(page, totalPages);
@@ -223,6 +231,12 @@ function DataTable<T>({
     : sorted.slice((safePage - 1) * pageSize, safePage * pageSize);
 
   const toggleSort = (key: string) => {
+    if (onSortChange) {
+      // Server sort: tính chiều mới rồi báo cho cha (cha refetch).
+      const dir = sortState?.key === key && sortState.dir === 'asc' ? 'desc' : 'asc';
+      onSortChange(key, dir);
+      return;
+    }
     if (sortKey === key) {
       setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
     } else {
@@ -231,6 +245,10 @@ function DataTable<T>({
     }
     setPage(1);
   };
+
+  // Cột đang sort + chiều (client dùng state nội bộ, server dùng sortState từ cha).
+  const activeSortKey = onSortChange ? (sortState?.key ?? null) : sortKey;
+  const activeSortDir = onSortChange ? (sortState?.dir ?? 'asc') : sortDir;
 
   // ----- Chọn nhiều dòng -----
   const [selected, setSelected] = useState<Set<string>>(new Set());
@@ -446,7 +464,7 @@ function DataTable<T>({
                     </th>
                   )}
                   {visibleColumns.map((col) => {
-                    const active = sortKey === col.key;
+                    const active = activeSortKey === col.key;
                     return (
                       <th
                         key={col.key}
@@ -462,7 +480,7 @@ function DataTable<T>({
                           >
                             {col.header}
                             {active ? (
-                              sortDir === 'asc' ? (
+                              activeSortDir === 'asc' ? (
                                 <ArrowUp size={14} />
                               ) : (
                                 <ArrowDown size={14} />

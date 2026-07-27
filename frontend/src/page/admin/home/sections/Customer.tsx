@@ -20,10 +20,16 @@ const CustomerManagement: React.FC = () => {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<CustomerDetail | null>(null);
   const [showModal, setShowModal] = useState(false);
-  const [page, setPage] = useState(1); // 1-based
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [page, setPage] = useState(() => Math.max(1, Number(searchParams.get('page')) || 1));
   const [totalPages, setTotalPages] = useState(1);
   const [totalElements, setTotalElements] = useState(0);
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [sort, setSort] = useState<{ key: string; dir: 'asc' | 'desc' } | null>(() => {
+    const s = searchParams.get('sort');
+    if (!s) return null;
+    const [key, dir] = s.split(',');
+    return key ? { key, dir: dir === 'asc' ? 'asc' : 'desc' } : null;
+  });
   const [searchTerm, setSearchTerm] = useState<string>(() => searchParams.get('q') ?? '');
   const [statusFilter, setStatusFilter] = useState<string>(
     () => searchParams.get('status') ?? 'ALL'
@@ -54,12 +60,14 @@ const CustomerManagement: React.FC = () => {
         serviceFilter !== 'ALL' ? next.set('svc', serviceFilter) : next.delete('svc');
         dateFromFilter ? next.set('from', dateFromFilter) : next.delete('from');
         dateToFilter ? next.set('to', dateToFilter) : next.delete('to');
+        page > 1 ? next.set('page', String(page)) : next.delete('page');
+        sort ? next.set('sort', `${sort.key},${sort.dir}`) : next.delete('sort');
         return next;
       },
       { replace: true }
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchTerm, statusFilter, serviceFilter, dateFromFilter, dateToFilter]);
+  }, [searchTerm, statusFilter, serviceFilter, dateFromFilter, dateToFilter, page, sort]);
   const [services, setServices] = useState<ServiceItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState<{ id: string } | null>(null);
@@ -108,6 +116,7 @@ const CustomerManagement: React.FC = () => {
         serviceId: serviceFilter !== 'ALL' ? serviceFilter : undefined,
         from: dateFromFilter || undefined,
         to: dateToFilter || undefined,
+        sort: sort ? `${sort.key},${sort.dir}` : undefined,
       });
       if (response.code === 200) {
         setCustomers(response.data);
@@ -121,7 +130,7 @@ const CustomerManagement: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, searchTerm, statusFilter, serviceFilter, dateFromFilter, dateToFilter]);
+  }, [page, searchTerm, statusFilter, serviceFilter, dateFromFilter, dateToFilter, sort]);
 
   const fetchRef = useRef(fetchCustomers);
   fetchRef.current = fetchCustomers;
@@ -269,6 +278,7 @@ const CustomerManagement: React.FC = () => {
     {
       key: 'name',
       header: 'Tên khách hàng',
+      sortable: true,
       render: (c) => <span className="font-medium text-gray-900">{c.name}</span>,
     },
     {
@@ -294,6 +304,7 @@ const CustomerManagement: React.FC = () => {
     {
       key: 'createdAt',
       header: 'Ngày tạo',
+      sortable: true,
       render: (c) => (
         <button
           type="button"
@@ -430,6 +441,11 @@ const CustomerManagement: React.FC = () => {
           totalPages,
           totalElements,
           onPageChange: setPage,
+        }}
+        sortState={sort}
+        onSortChange={(key, dir) => {
+          setSort({ key, dir });
+          setPage(1);
         }}
         emptyIcon={Search}
         emptyTitle="Không tìm thấy khách hàng"

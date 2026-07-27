@@ -39,6 +39,7 @@ export interface CustomerQuery {
   serviceId?: string;
   from?: string;
   to?: string;
+  sort?: string; // "field,dir" (Spring Pageable)
 }
 export const getCustomers = async (params?: CustomerQuery): Promise<ApiResponse<Customer[]>> => {
   const response = await axiosClient.get<ApiResponse<Customer[]>>(`/customer`, { params });
@@ -209,6 +210,7 @@ export interface UserQuery {
   page?: number;
   size?: number;
   q?: string;
+  sort?: string; // "field,dir" (Spring Pageable)
 }
 export const getUsers = async (params?: UserQuery): Promise<ApiResponse<User[]>> => {
   const response = await axiosClient.get<ApiResponse<User[]>>(`/auth/users`, { params });

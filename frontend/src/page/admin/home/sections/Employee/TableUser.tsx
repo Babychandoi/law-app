@@ -17,6 +17,8 @@ interface UserTableProps {
     totalElements?: number;
     onPageChange: (page: number) => void;
   };
+  sortState?: { key: string; dir: 'asc' | 'desc' } | null;
+  onSortChange?: (key: string, dir: 'asc' | 'desc') => void;
 }
 
 const UserTable: React.FC<UserTableProps> = ({
@@ -28,11 +30,13 @@ const UserTable: React.FC<UserTableProps> = ({
   onActiveChange,
   onSearch,
   serverPagination,
+  sortState,
+  onSortChange,
 }) => {
   const columns: Column<User>[] = [
-    { key: 'username', header: 'Tên đăng nhập' },
-    { key: 'fullName', header: 'Họ tên' },
-    { key: 'email', header: 'Email' },
+    { key: 'username', header: 'Tên đăng nhập', sortable: true },
+    { key: 'fullName', header: 'Họ tên', sortable: true },
+    { key: 'email', header: 'Email', sortable: true },
     { key: 'phoneNumber', header: 'Điện thoại' },
     { key: 'position', header: 'Chức vụ' },
     {
@@ -70,6 +74,7 @@ const UserTable: React.FC<UserTableProps> = ({
     {
       key: 'createdAt',
       header: 'Ngày tạo',
+      sortable: true,
       render: (user) => new Date(user.createdAt).toLocaleString(),
     },
     {
@@ -110,6 +115,8 @@ const UserTable: React.FC<UserTableProps> = ({
       searchPlaceholder="Tìm theo tên đăng nhập, họ tên, email..."
       onSearch={onSearch}
       serverPagination={serverPagination}
+      sortState={sortState}
+      onSortChange={onSortChange}
       emptyTitle="Chưa có người dùng nào"
     />
   );
