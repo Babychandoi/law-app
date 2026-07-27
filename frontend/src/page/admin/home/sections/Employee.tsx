@@ -14,7 +14,8 @@ import {
   editUser,
 } from '../../../../service/admin';
 import { toast } from 'react-toastify';
-import { useConfirm } from '../../../../component/common/ui';
+import { Users } from 'lucide-react';
+import { Button, PageHeader, useConfirm } from '../../../../component/common/ui';
 
 const UserManagement: React.FC = () => {
   const [users, setUsers] = useState<User[]>([]);
@@ -221,16 +222,17 @@ const UserManagement: React.FC = () => {
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       {confirmDialog}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800">Quản lý Người dùng</h2>
-        <button
-          onClick={handleAddNew}
-          className="bg-brand-goldDark hover:bg-brand-goldDark text-white px-4 py-2 rounded-lg transition-colors disabled:opacity-50"
-          disabled={isLoading}
-        >
-          Thêm người dùng
-        </button>
-      </div>
+      <PageHeader
+        className="mb-6"
+        icon={Users}
+        title="Quản lý người dùng"
+        breadcrumb={[{ label: 'Quản trị hệ thống' }, { label: 'Nhân viên' }]}
+        actions={
+          <Button onClick={handleAddNew} disabled={isLoading}>
+            Thêm người dùng
+          </Button>
+        }
+      />
 
       {/* Error Display */}
       {error && (

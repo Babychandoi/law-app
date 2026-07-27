@@ -310,8 +310,11 @@ export default function ServiceEditor({ service, onClose }: Props) {
           {tab === 'general' && (
             <div className="space-y-4">
               <div>
-                <label className={labelCls}>Tên dịch vụ *</label>
+                <label htmlFor="se-title" className={labelCls}>
+                  Tên dịch vụ *
+                </label>
                 <input
+                  id="se-title"
                   className={inputCls}
                   value={general.title}
                   onChange={(e) => setGeneral({ ...general, title: e.target.value })}
@@ -319,8 +322,11 @@ export default function ServiceEditor({ service, onClose }: Props) {
                 />
               </div>
               <div>
-                <label className={labelCls}>Đường dẫn trang *</label>
+                <label htmlFor="se-href" className={labelCls}>
+                  Đường dẫn trang *
+                </label>
                 <input
+                  id="se-href"
                   className={inputCls}
                   value={general.href}
                   onChange={(e) => setGeneral({ ...general, href: e.target.value })}
@@ -332,8 +338,11 @@ export default function ServiceEditor({ service, onClose }: Props) {
                 </p>
               </div>
               <div>
-                <label className={labelCls}>Nhóm dịch vụ</label>
+                <label htmlFor="se-parent" className={labelCls}>
+                  Nhóm dịch vụ
+                </label>
                 <select
+                  id="se-parent"
                   aria-label="Nhóm dịch vụ"
                   className={inputCls}
                   value={general.parentServiceId}
@@ -348,8 +357,11 @@ export default function ServiceEditor({ service, onClose }: Props) {
                 </select>
               </div>
               <div>
-                <label className={labelCls}>Mô tả ngắn (hiện ở danh mục dịch vụ)</label>
+                <label htmlFor="se-desc" className={labelCls}>
+                  Mô tả ngắn (hiện ở danh mục dịch vụ)
+                </label>
                 <textarea
+                  id="se-desc"
                   className={inputCls}
                   rows={2}
                   value={general.description}
@@ -357,7 +369,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                 />
               </div>
               <div>
-                <label className={labelCls}>Ảnh đại diện</label>
+                <p className={labelCls}>Ảnh đại diện</p>
                 <div className="flex items-center gap-3">
                   {general.image && (
                     <img
@@ -393,8 +405,11 @@ export default function ServiceEditor({ service, onClose }: Props) {
           {tab === 'hero' && (
             <div className="space-y-4">
               <div>
-                <label className={labelCls}>Tiêu đề lớn *</label>
+                <label htmlFor="se-hero-title" className={labelCls}>
+                  Tiêu đề lớn *
+                </label>
                 <input
+                  id="se-hero-title"
                   className={inputCls}
                   value={hero.title}
                   onChange={(e) => setHero({ ...hero, title: e.target.value })}
@@ -402,16 +417,22 @@ export default function ServiceEditor({ service, onClose }: Props) {
                 />
               </div>
               <div>
-                <label className={labelCls}>Phụ đề</label>
+                <label htmlFor="se-hero-subtitle" className={labelCls}>
+                  Phụ đề
+                </label>
                 <input
+                  id="se-hero-subtitle"
                   className={inputCls}
                   value={hero.subtitle}
                   onChange={(e) => setHero({ ...hero, subtitle: e.target.value })}
                 />
               </div>
               <div>
-                <label className={labelCls}>Mô tả</label>
+                <label htmlFor="se-hero-desc" className={labelCls}>
+                  Mô tả
+                </label>
                 <textarea
+                  id="se-hero-desc"
                   className={inputCls}
                   rows={3}
                   value={hero.description}

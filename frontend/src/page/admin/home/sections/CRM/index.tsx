@@ -14,7 +14,7 @@ import {
   Tag,
 } from '../../../../../types/crm';
 import CarePopup from './CarePopup';
-import { Button, DataTable, type Column } from '../../../../../component/common/ui';
+import { Button, DataTable, PageHeader, type Column } from '../../../../../component/common/ui';
 
 const STATUS_OPTIONS = CASE_STATUS_OPTIONS;
 const FOLLOWUP_OPTIONS = [
@@ -262,9 +262,12 @@ export default function CRM() {
 
   return (
     <div className="bg-white rounded-xl shadow-soft p-4">
-      <h2 className="text-lg font-semibold mb-3 flex items-center gap-2">
-        <HeartHandshake size={20} className="text-amber-500" /> CRM — Chăm sóc khách hàng
-      </h2>
+      <PageHeader
+        className="mb-4"
+        icon={HeartHandshake}
+        title="CRM — Chăm sóc khách hàng"
+        breadcrumb={[{ label: 'Vận hành' }, { label: 'CRM' }]}
+      />
 
       {/* Filter bar */}
       <div className="flex flex-wrap gap-2 mb-4">
