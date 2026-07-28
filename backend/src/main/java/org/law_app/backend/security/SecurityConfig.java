@@ -44,7 +44,8 @@ public class SecurityConfig {
         "/news/**",
         "/chat/{guestId}",
         "/chat/conversation",
-        "/sitemap.xml"
+        "/sitemap.xml",
+        "/og/**"
       };
 
   @Autowired private CustomJwtDecoder customJwtDecoder;
