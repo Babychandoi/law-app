@@ -339,6 +339,25 @@ services:
       - law-app-network
     restart: unless-stopped
 
+  # ==================== KEEP-WARM (chống cold-start tunnel/pool) ====================
+  # Ping nhẹ định kỳ qua PUBLIC URL để giữ ấm đường Cloudflare edge->tunnel->origin và pool
+  # kết nối backend, tránh request đầu sau lúc nhàn rỗi bị chậm (1-2s). Miễn phí, ~1 req/phút.
+  warmer:
+    image: curlimages/curl:latest
+    container_name: law-app-warmer
+    command:
+      - sh
+      - -c
+      - |
+        while true; do
+          curl -s -o /dev/null -m 15 "https://api.luatpoip.com/services?_w=$$(date +%s)" || true
+          curl -s -o /dev/null -m 15 "https://gateway.luatpoip.com/ws-staff/info?_w=$$(date +%s)" || true
+          sleep 60
+        done
+    networks:
+      - law-app-network
+    restart: unless-stopped
+
 volumes:
   mysql_data:
   mongodb_data:
