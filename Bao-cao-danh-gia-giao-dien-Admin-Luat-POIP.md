@@ -690,7 +690,7 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 11. ✅ Chuẩn hóa thuật ngữ VI/EN.
 12. ✅ Hiển thị dữ liệu người dùng đăng nhập thực tế.
 
-## P2 – Nâng lên mức sản phẩm tốt  → 3 xong · 1 một phần · 8 chưa
+## P2 – Nâng lên mức sản phẩm tốt  → 4 xong · 8 chưa
 
 1. ✅ Saved view / saved filter. *(view lưu **tìm kiếm + sort + trang + bộ lọc** (ảnh chụp query URL) **cùng** mật độ + cột ẩn theo tableId; áp view khôi phục đủ trạng thái. Có unit test round-trip (`DataTable.test.tsx`: lưu 'Ali' → xóa → áp lại → ô tìm về 'Ali'). Áp cho bảng đẩy trạng thái lên URL (customer/subscriber/user + bảng urlKey); CRM dùng state nội bộ nên chỉ lưu mật độ/cột cho tới khi CRM chuyển sang URL)*
 2. ✅ Column visibility. *(ẩn/hiện cột — thẻ mobile mặc định tôn trọng cột ẩn; chỉ `mobileCard` tùy biến là do màn tự dựng)*
@@ -702,7 +702,7 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 8. ⬜ Draft và version history.
 9. ⬜ Preview theo desktop/tablet/mobile.
 10. ⬜ Visual regression test.
-11. ⚠️ Accessibility test trong CI. *(**đã có axe-core trong bộ E2E** `e2e/a11y.spec.ts` — 5 màn (đăng nhập/Khách hàng/Người đăng ký/CRM/Tin tức), chạy qua workflow E2E; nhưng workflow còn chạy thủ công/khi có secrets, **chưa gắn cổng chặn tự động trên mỗi PR**)*
+11. ✅ Accessibility test trong CI. *(**cổng chặn PR tự động** — job `a11y` trong `.github/workflows/ci.yml` chạy mỗi push/PR: build tĩnh → serve → axe-core (`e2e/a11y-public.spec.ts`, project `public`) quét `color-contrast` trên trang đăng nhập + trang preview `/2025/luatpoip/_a11y` (gom Button/Input/Badge + chip màu CRM). **Không cần secret prod**. Bonus: bộ E2E có secrets vẫn quét 5 màn thật; `textOn` tách ra `shared/utils/contrast.ts` + 7 unit test. Cổng này đã bắt được lỗi thật: #8B5CF6 với chữ `#111827` chỉ 4.19:1 → đổi sang đen tuyền `#000000` (4.96:1))*
 12. ⬜ Theo dõi analytics cho luồng admin quan trọng.
 
 ---

@@ -25,8 +25,19 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   projects: [
+    // Cổng chặn a11y public — KHÔNG đăng nhập, dùng cho CI trên bản build tĩnh.
+    {
+      name: 'public',
+      testMatch: /a11y-public\.spec\.ts/,
+      use: { ...devices['Desktop Chrome'] },
+    },
     // Đăng nhập MỘT LẦN mỗi vai trò rồi lưu session (tránh trip rate-limit /auth/login = 10/5phút).
     { name: 'setup', testMatch: /.*\.setup\.ts/ },
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] }, dependencies: ['setup'] },
+    {
+      name: 'chromium',
+      testIgnore: /a11y-public\.spec\.ts/,
+      use: { ...devices['Desktop Chrome'] },
+      dependencies: ['setup'],
+    },
   ],
 });

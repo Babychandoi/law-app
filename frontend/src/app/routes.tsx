@@ -30,6 +30,7 @@ const ServiceManager = lazy(() => import('../page/admin/home/sections/Services')
 const CRM = lazy(() => import('../page/admin/home/sections/CRM'));
 const CrmConfig = lazy(() => import('../page/admin/home/sections/CRM/Config'));
 const TeamChat = lazy(() => import('../page/admin/home/sections/TeamChat'));
+const A11yPreview = lazy(() => import('../page/admin/A11yPreview'));
 const DocumentLayout = lazy(() => import('../page/documents/DocumentLayout'));
 const TemplateList = lazy(() => import('../page/documents/TemplateList'));
 const TemplateUpload = lazy(() => import('../page/documents/TemplateUpload'));
@@ -69,6 +70,8 @@ export const publicRoutes: RouteObject = {
 
 export const adminRoutes: RouteObject[] = [
   { path: '/2025/luatpoip/admin/login', element: withSuspense(<Login />) },
+  // Trang preview a11y offline (không cần đăng nhập) — dùng cho axe-core làm cổng chặn PR.
+  { path: '/2025/luatpoip/_a11y', element: withSuspense(<A11yPreview />) },
   // Khu VẬN HÀNH (nhân viên + admin)
   {
     path: '/2025/luatpoip/admin',

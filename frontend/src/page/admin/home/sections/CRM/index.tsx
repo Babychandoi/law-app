@@ -15,23 +15,7 @@ import {
 } from '../../../../../types/crm';
 import CarePopup from './CarePopup';
 import { Button, DataTable, PageHeader, type Column } from '../../../../../component/common/ui';
-
-// Chọn màu chữ (đen/trắng) đạt tương phản CAO NHẤT trên nền màu tuỳ ý (theo WCAG 2.1).
-// Dùng độ sáng tương đối chuẩn (có hiệu chỉnh gamma sRGB), rồi so tỉ lệ tương phản
-// của chữ trắng vs chữ đen và chọn bên cao hơn — luôn ưu tiên cạnh dễ đọc nhất.
-function textOn(bg?: string): string {
-  if (!bg) return '#111827';
-  const h = bg.replace('#', '');
-  const full = h.length === 3 ? h.replace(/(.)/g, '$1$1') : h;
-  const chan = (i: number) => {
-    const c = (parseInt(full.slice(i, i + 2), 16) || 0) / 255;
-    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
-  };
-  const L = 0.2126 * chan(0) + 0.7152 * chan(2) + 0.0722 * chan(4);
-  const contrastWhite = 1.05 / (L + 0.05); // tỉ lệ với chữ trắng
-  const contrastBlack = (L + 0.05) / 0.05; // tỉ lệ với chữ đen
-  return contrastBlack >= contrastWhite ? '#111827' : '#ffffff';
-}
+import { textOn } from '../../../../../shared/utils/contrast';
 
 const STATUS_OPTIONS = CASE_STATUS_OPTIONS;
 const FOLLOWUP_OPTIONS = [
