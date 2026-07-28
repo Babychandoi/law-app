@@ -31,11 +31,17 @@ export default defineConfig({
       testMatch: /a11y-public\.spec\.ts/,
       use: { ...devices['Desktop Chrome'] },
     },
+    // Visual regression — KHÔNG đăng nhập; chạy trong Docker image Playwright để render ổn định.
+    {
+      name: 'visual',
+      testMatch: /visual\.spec\.ts/,
+      use: { ...devices['Desktop Chrome'] },
+    },
     // Đăng nhập MỘT LẦN mỗi vai trò rồi lưu session (tránh trip rate-limit /auth/login = 10/5phút).
     { name: 'setup', testMatch: /.*\.setup\.ts/ },
     {
       name: 'chromium',
-      testIgnore: /a11y-public\.spec\.ts/,
+      testIgnore: /(a11y-public|visual)\.spec\.ts/,
       use: { ...devices['Desktop Chrome'] },
       dependencies: ['setup'],
     },

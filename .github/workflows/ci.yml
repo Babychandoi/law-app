@@ -65,6 +65,42 @@ jobs:
         env:
           E2E_BASE_URL: http://localhost:3000
 
+  visual:
+    name: Visual regression (Playwright container)
+    runs-on: ubuntu-latest
+    # Chạy TRONG image Playwright chính thức để render khớp baseline sinh ở local.
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.0-jammy
+      options: --ipc=host
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci --legacy-peer-deps
+      - name: Build production
+        run: npm run build
+        env:
+          CI: 'true'
+      - name: Serve build + so ảnh với baseline (public)
+        run: |
+          if ! ls e2e/visual.spec.ts-snapshots/*.png >/dev/null 2>&1; then
+            echo "::notice::Chưa có baseline ảnh — chạy workflow 'Visual baseline' để sinh. Bỏ qua so sánh."
+            exit 0
+          fi
+          npx --yes serve -s build -l 3000 >/tmp/serve.log 2>&1 &
+          npx --yes wait-on http://localhost:3000 -t 60000
+          npx playwright test --project=visual
+        env:
+          E2E_BASE_URL: http://localhost:3000
+      - name: Tải ảnh diff khi thất bại
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diff
+          path: frontend/test-results
+          if-no-files-found: ignore
+
   java:
     name: Java build (${{ matrix.service }})
     runs-on: ubuntu-latest
