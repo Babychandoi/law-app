@@ -2,6 +2,7 @@ package org.law_app.backend.service;
 
 import jakarta.persistence.criteria.Predicate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -77,6 +78,33 @@ public class AuditService {
     return String.format(
         "{\"%s\":{\"old\":\"%s\",\"new\":\"%s\"}}",
         field, String.valueOf(oldVal), String.valueOf(newVal));
+  }
+
+  /* ===== Analytics luồng admin (P2.12) — tổng hợp từ audit_logs ===== */
+
+  public record ActionCount(String action, long count) {}
+
+  public record DayCount(String day, long count) {}
+
+  public record StatsResponse(long total, List<ActionCount> byAction, List<DayCount> byDay) {}
+
+  /** Thống kê hoạt động trong `days` ngày gần nhất: tổng, theo hành động, theo ngày. */
+  public StatsResponse stats(int days) {
+    int d = Math.max(1, Math.min(days, 365));
+    Date from = new Date(System.currentTimeMillis() - (long) d * 86_400_000L);
+    long total = auditLogRepository.countByCreatedAtGreaterThanEqual(from);
+    List<ActionCount> byAction =
+        auditLogRepository.countByAction(from).stream()
+            .map(r -> new ActionCount((String) r[0], ((Number) r[1]).longValue()))
+            .toList();
+    java.text.SimpleDateFormat fmt = new java.text.SimpleDateFormat("yyyy-MM-dd");
+    java.util.Map<String, Long> perDay = new java.util.TreeMap<>();
+    for (Date dt : auditLogRepository.createdAtSince(from)) {
+      if (dt != null) perDay.merge(fmt.format(dt), 1L, Long::sum);
+    }
+    List<DayCount> byDay = new ArrayList<>();
+    perDay.forEach((k, v) -> byDay.add(new DayCount(k, v)));
+    return new StatsResponse(total, byAction, byDay);
   }
 
   /** Danh sách nhật ký có lọc (targetType/action/keyword) + phân trang. */

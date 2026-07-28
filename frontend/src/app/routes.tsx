@@ -32,6 +32,7 @@ const CrmConfig = lazy(() => import('../page/admin/home/sections/CRM/Config'));
 const TeamChat = lazy(() => import('../page/admin/home/sections/TeamChat'));
 const A11yPreview = lazy(() => import('../page/admin/A11yPreview'));
 const AuditLog = lazy(() => import('../page/admin/home/sections/AuditLog'));
+const AuditAnalytics = lazy(() => import('../page/admin/home/sections/AuditAnalytics'));
 const DocumentLayout = lazy(() => import('../page/documents/DocumentLayout'));
 const TemplateList = lazy(() => import('../page/documents/TemplateList'));
 const TemplateUpload = lazy(() => import('../page/documents/TemplateUpload'));
@@ -99,6 +100,7 @@ export const adminRoutes: RouteObject[] = [
       { path: 'subscribers', element: withSuspense(<Subscribers />) },
       { path: 'crm-config', element: withSuspense(<CrmConfig />) },
       { path: 'audit-logs', element: withSuspense(<AuditLog />) },
+      { path: 'activity-stats', element: withSuspense(<AuditAnalytics />) },
     ],
   },
 ];

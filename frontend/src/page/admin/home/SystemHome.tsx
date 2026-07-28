@@ -21,6 +21,7 @@ const TITLES: Record<string, string> = {
   '/2025/luatpoip/he-thong/subscribers': 'Người đăng ký',
   '/2025/luatpoip/he-thong/crm-config': 'Cấu hình CRM',
   '/2025/luatpoip/he-thong/audit-logs': 'Nhật ký kiểm toán',
+  '/2025/luatpoip/he-thong/activity-stats': 'Thống kê hoạt động',
 };
 
 const SystemHome: React.FC = () => {

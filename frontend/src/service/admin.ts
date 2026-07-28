@@ -338,3 +338,15 @@ export const restoreNewsVersion = async (
   );
   return response.data;
 };
+
+export interface AuditStats {
+  total: number;
+  byAction: { action: string; count: number }[];
+  byDay: { day: string; count: number }[];
+}
+export const getAuditStats = async (days = 30): Promise<ApiResponse<AuditStats>> => {
+  const response = await axiosClient.get<ApiResponse<AuditStats>>(`/audit-logs/stats`, {
+    params: { days },
+  });
+  return response.data;
+};

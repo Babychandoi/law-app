@@ -12,6 +12,7 @@ import {
   Puzzle,
   Image,
   ScrollText,
+  BarChart3,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -75,6 +76,7 @@ export const SYSTEM_GROUPS: NavGroup[] = [
       { label: 'Người đăng ký', path: `${SYS_BASE}/subscribers`, icon: Mail },
       { label: 'Cấu hình CRM', path: `${SYS_BASE}/crm-config`, icon: SlidersHorizontal },
       { label: 'Nhật ký kiểm toán', path: `${SYS_BASE}/audit-logs`, icon: ScrollText },
+      { label: 'Thống kê hoạt động', path: `${SYS_BASE}/activity-stats`, icon: BarChart3 },
     ],
   },
 ];
