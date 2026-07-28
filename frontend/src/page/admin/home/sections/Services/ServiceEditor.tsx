@@ -1,4 +1,16 @@
-import { ArrowDown, ArrowLeft, ArrowUp, Loader2, Plus, Save, Trash2, Upload } from 'lucide-react';
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowUp,
+  Loader2,
+  Plus,
+  Save,
+  Trash2,
+  Upload,
+  Monitor,
+  Tablet,
+  Smartphone,
+} from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { toast } from 'react-toastify';
 import {
@@ -87,6 +99,9 @@ const TABS: { key: Tab; label: string }[] = [
 export default function ServiceEditor({ service, onClose }: Props) {
   const [serviceId, setServiceId] = useState<string | null>(service?.id ?? null);
   const [tab, setTab] = useState<Tab>('general');
+  // Xem trước theo thiết bị (P2.9): giới hạn bề rộng khung preview.
+  const [device, setDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const DEVICE_WIDTH = { desktop: '100%', tablet: '768px', mobile: '390px' } as const;
   const [changed, setChanged] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(!!service);
@@ -861,9 +876,40 @@ export default function ServiceEditor({ service, onClose }: Props) {
         {/* Cột phải: preview toàn trang, cập nhật ngay theo nội dung đang nhập */}
         <div className="min-w-0">
           <div className="xl:sticky xl:top-4">
-            <p className="mb-2 text-sm font-semibold text-gray-500">
-              Xem trước — trang hiển thị như thế này (chưa cần lưu)
-            </p>
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <p className="text-sm font-semibold text-gray-500">
+                Xem trước — trang hiển thị như thế này (chưa cần lưu)
+              </p>
+              <div
+                className="flex items-center gap-1 rounded-lg border border-gray-200 p-0.5"
+                role="group"
+                aria-label="Xem trước theo thiết bị"
+              >
+                {(
+                  [
+                    { key: 'desktop', Icon: Monitor, label: 'Máy tính' },
+                    { key: 'tablet', Icon: Tablet, label: 'Máy tính bảng' },
+                    { key: 'mobile', Icon: Smartphone, label: 'Điện thoại' },
+                  ] as const
+                ).map(({ key, Icon, label }) => (
+                  <button
+                    key={key}
+                    type="button"
+                    onClick={() => setDevice(key)}
+                    aria-label={label}
+                    aria-pressed={device === key}
+                    title={label}
+                    className={`rounded-md p-1.5 ${
+                      device === key
+                        ? 'bg-brand-surface text-brand-goldDark'
+                        : 'text-gray-500 hover:bg-gray-50'
+                    }`}
+                  >
+                    <Icon size={16} />
+                  </button>
+                ))}
+              </div>
+            </div>
             <div className="overflow-hidden rounded-xl border-2 border-gray-300 shadow-sm">
               <div className="flex items-center gap-2 border-b border-gray-200 bg-gray-100 px-4 py-2">
                 <span className="h-2.5 w-2.5 rounded-full bg-red-400" />
@@ -873,8 +919,13 @@ export default function ServiceEditor({ service, onClose }: Props) {
                   luatpoip.com{general.href || '/...'}
                 </span>
               </div>
-              <div className="max-h-[80vh] overflow-y-auto">
-                <ServicePageView data={previewData} />
+              <div className="max-h-[80vh] overflow-y-auto bg-gray-50">
+                <div
+                  className="mx-auto bg-white transition-[max-width] duration-300"
+                  style={{ maxWidth: DEVICE_WIDTH[device] }}
+                >
+                  <ServicePageView data={previewData} />
+                </div>
               </div>
             </div>
           </div>
