@@ -55,6 +55,23 @@ public class AuditService {
     }
   }
 
+  /** Người thực hiện hiện tại (id + username), null nếu không có context. */
+  public record Actor(String id, String username) {}
+
+  public Actor currentActor() {
+    try {
+      Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+      if (auth != null && auth.getName() != null) {
+        String id = auth.getName();
+        User u = userRepository.findById(id).orElse(null);
+        return new Actor(id, u != null ? u.getUsername() : null);
+      }
+    } catch (Exception ignored) {
+      // không có context -> trả actor rỗng
+    }
+    return new Actor(null, null);
+  }
+
   /** Tiện ích tạo detail dạng diff một trường: {"field":{"old":..,"new":..}}. */
   public static String diff(String field, Object oldVal, Object newVal) {
     return String.format(

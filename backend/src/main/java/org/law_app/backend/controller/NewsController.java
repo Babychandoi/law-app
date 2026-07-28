@@ -76,6 +76,38 @@ public class NewsController {
         .build();
   }
 
+  /** Lịch sử phiên bản của bài viết (Admin). GET /news/{id}/versions */
+  @GetMapping("/{id}/versions")
+  @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+  public ApiResponse<List<org.law_app.backend.entity.NewsVersion>> getVersions(
+      @PathVariable String id) {
+    return ApiResponse.<List<org.law_app.backend.entity.NewsVersion>>builder()
+        .message("News versions retrieved successfully")
+        .data(newsService.getNewsVersions(id))
+        .build();
+  }
+
+  /** Nội dung đầy đủ của một phiên bản (Admin). GET /news/{id}/versions/{versionId} */
+  @GetMapping("/{id}/versions/{versionId}")
+  @org.springframework.security.access.prepost.PreAuthorize("hasRole('ADMIN')")
+  public ApiResponse<org.law_app.backend.entity.NewsVersion> getVersion(
+      @PathVariable String id, @PathVariable String versionId) {
+    return ApiResponse.<org.law_app.backend.entity.NewsVersion>builder()
+        .message("News version retrieved successfully")
+        .data(newsService.getNewsVersion(versionId))
+        .build();
+  }
+
+  /** Khôi phục bài viết về một phiên bản (Admin). POST /news/{id}/versions/{versionId}/restore */
+  @PostMapping("/{id}/versions/{versionId}/restore")
+  public ApiResponse<NewsResponse> restoreVersion(
+      @PathVariable String id, @PathVariable String versionId) {
+    return ApiResponse.<NewsResponse>builder()
+        .message("News restored successfully")
+        .data(newsService.restoreNewsVersion(id, versionId))
+        .build();
+  }
+
   /** Get subscribers (Admin only) — phân trang + tìm kiếm server-side. GET /news/subscribers */
   @GetMapping("/subscribers")
   public ApiResponse<List<SubscriberResponse>> getAllSubscribers(

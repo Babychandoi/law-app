@@ -22,6 +22,13 @@ public interface NewsService {
 
   Boolean deleteNews(String id);
 
+  // Version history (P2.8)
+  List<org.law_app.backend.entity.NewsVersion> getNewsVersions(String id);
+
+  org.law_app.backend.entity.NewsVersion getNewsVersion(String versionId);
+
+  NewsResponse restoreNewsVersion(String id, String versionId);
+
   List<SubscriberResponse> getAllSubscribers();
 
   /** Danh sách người đăng ký có phân trang + tìm kiếm theo email (server-side). */

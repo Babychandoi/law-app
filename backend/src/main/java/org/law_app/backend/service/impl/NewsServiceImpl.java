@@ -36,6 +36,7 @@ public class NewsServiceImpl implements NewsService {
   MinioService minioService;
   MinioConfig minioConfig;
   org.law_app.backend.service.AuditService auditService;
+  org.law_app.backend.repository.NewsVersionRepository newsVersionRepository;
 
   @Override
   @Transactional
@@ -176,6 +177,9 @@ public class NewsServiceImpl implements NewsService {
           newsRepository
               .findById(id)
               .orElseThrow(() -> new RuntimeException("News not found with id: " + id));
+
+      // Lưu phiên bản TRƯỚC khi ghi đè (version history).
+      snapshotVersion(existingNews);
 
       // Update news from request
       newsMapper.updateNewsFromRequest(existingNews, newsRequest);
@@ -488,5 +492,77 @@ public class NewsServiceImpl implements NewsService {
     log.info("Subscriber deleted: {}", id);
     auditService.record("SUBSCRIBER_DELETED", "SUBSCRIBER", id, "Xóa người đăng ký", null);
     return true;
+  }
+
+  /* ===== Version history (P2.8) ===== */
+
+  /** Chụp trạng thái hiện tại của bài viết thành một phiên bản (gắn người thực hiện hiện tại). */
+  private void snapshotVersion(News news) {
+    try {
+      org.law_app.backend.service.AuditService.Actor actor = auditService.currentActor();
+      newsVersionRepository.save(
+          org.law_app.backend.entity.NewsVersion.builder()
+              .newsId(news.getId())
+              .title(news.getTitle())
+              .subtitle(news.getSubtitle())
+              .author(news.getAuthor())
+              .fullContent(news.getFullContent())
+              .image(news.getImage())
+              .editorId(actor.id())
+              .editorUsername(actor.username())
+              .build());
+    } catch (Exception e) {
+      log.warn("Không lưu được phiên bản bài viết {}: {}", news.getId(), e.getMessage());
+    }
+  }
+
+  @Override
+  public List<org.law_app.backend.entity.NewsVersion> getNewsVersions(String id) {
+    return newsVersionRepository.findByNewsIdOrderByCreatedAtDesc(id);
+  }
+
+  @Override
+  public org.law_app.backend.entity.NewsVersion getNewsVersion(String versionId) {
+    return newsVersionRepository
+        .findById(versionId)
+        .orElseThrow(() -> new RuntimeException("Version not found: " + versionId));
+  }
+
+  @Override
+  @Transactional
+  @PreAuthorize("hasRole('ADMIN')")
+  public NewsResponse restoreNewsVersion(String id, String versionId) {
+    News news =
+        newsRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("News not found with id: " + id));
+    org.law_app.backend.entity.NewsVersion v =
+        newsVersionRepository
+            .findById(versionId)
+            .orElseThrow(() -> new RuntimeException("Version not found: " + versionId));
+    if (!id.equals(v.getNewsId())) {
+      throw new RuntimeException("Phiên bản không thuộc bài viết này");
+    }
+    // Chụp trạng thái hiện tại trước khi khôi phục để không mất bản đang có.
+    snapshotVersion(news);
+    news.setTitle(v.getTitle());
+    news.setSubtitle(v.getSubtitle());
+    news.setAuthor(v.getAuthor());
+    news.setFullContent(v.getFullContent());
+    news.setImage(v.getImage());
+    newsRepository.save(news);
+    auditService.record(
+        "NEWS_RESTORED",
+        "NEWS",
+        id,
+        "Khôi phục bài viết về phiên bản " + v.getCreatedAt(),
+        org.law_app.backend.service.AuditService.diff("version", versionId, "restored"));
+    NewsResponse resp = newsMapper.toNewsResponse(news);
+    String imageUrl = news.getImage();
+    if (imageUrl != null && !imageUrl.startsWith("http://") && !imageUrl.startsWith("https://")) {
+      imageUrl = minioService.generateFileUrl(minioConfig.getImagesBucket(), imageUrl);
+    }
+    resp.setImage(imageUrl);
+    return resp;
   }
 }

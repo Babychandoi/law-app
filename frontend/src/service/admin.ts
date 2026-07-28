@@ -303,3 +303,38 @@ export const getAuditLogs = async (params?: AuditQuery): Promise<ApiResponse<Aud
   const response = await axiosClient.get<ApiResponse<AuditLog[]>>(`/audit-logs`, { params });
   return response.data;
 };
+
+export interface NewsVersion {
+  id: string;
+  newsId: string;
+  title: string;
+  subtitle?: string;
+  author?: string;
+  fullContent?: string;
+  image?: string;
+  editorId?: string | null;
+  editorUsername?: string | null;
+  createdAt: string;
+}
+export const getNewsVersions = async (id: string): Promise<ApiResponse<NewsVersion[]>> => {
+  const response = await axiosClient.get<ApiResponse<NewsVersion[]>>(`/news/${id}/versions`);
+  return response.data;
+};
+export const getNewsVersion = async (
+  id: string,
+  versionId: string
+): Promise<ApiResponse<NewsVersion>> => {
+  const response = await axiosClient.get<ApiResponse<NewsVersion>>(
+    `/news/${id}/versions/${versionId}`
+  );
+  return response.data;
+};
+export const restoreNewsVersion = async (
+  id: string,
+  versionId: string
+): Promise<ApiResponse<News>> => {
+  const response = await axiosClient.post<ApiResponse<News>>(
+    `/news/${id}/versions/${versionId}/restore`
+  );
+  return response.data;
+};

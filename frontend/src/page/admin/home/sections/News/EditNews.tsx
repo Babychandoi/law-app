@@ -1,11 +1,17 @@
 import { useState } from 'react';
 import { News } from '../../../../../types/service';
-import { Upload, X, AlertTriangle } from 'lucide-react';
+import { Upload, X, AlertTriangle, History, RotateCcw, Eye } from 'lucide-react';
 import React from 'react';
 import { toast } from 'react-toastify';
 import ReactQuill from 'react-quill';
 import Modal from '../../../../../component/common/Modal';
-import { Button, Input } from '../../../../../component/common/ui';
+import { Button, Input, useConfirm } from '../../../../../component/common/ui';
+import {
+  getNewsVersions,
+  restoreNewsVersion,
+  type NewsVersion,
+} from '../../../../../service/admin';
+import { sanitizeHtml } from '../../../../../shared/utils/sanitizeHtml';
 import 'react-quill/dist/quill.snow.css';
 
 interface EditNewsProps {
@@ -26,6 +32,65 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
   const [imagePreview, setImagePreview] = useState<string>('');
   const [error, setError] = useState<string>('');
   const [fullContent, setFullContent] = useState<string>(news.fullContent || '');
+
+  // Lịch sử phiên bản (P2.8)
+  const { confirm, confirmDialog } = useConfirm();
+  const [showHistory, setShowHistory] = useState(false);
+  const [versions, setVersions] = useState<NewsVersion[]>([]);
+  const [loadingVersions, setLoadingVersions] = useState(false);
+  const [preview, setPreview] = useState<NewsVersion | null>(null);
+  const [restoring, setRestoring] = useState<string | null>(null);
+
+  const newsId = news.id ?? '';
+
+  const toggleHistory = async () => {
+    const next = !showHistory;
+    setShowHistory(next);
+    if (next && versions.length === 0) {
+      try {
+        setLoadingVersions(true);
+        const res = await getNewsVersions(newsId);
+        if (res.code === 200) setVersions(res.data);
+      } catch {
+        toast.error('Không tải được lịch sử phiên bản');
+      } finally {
+        setLoadingVersions(false);
+      }
+    }
+  };
+
+  const handleRestore = async (v: NewsVersion) => {
+    const ok = await confirm({
+      title: 'Khôi phục phiên bản',
+      message: `Khôi phục bài viết về phiên bản lúc ${new Date(v.createdAt).toLocaleString('vi-VN')}? Nội dung hiện tại sẽ được lưu thành một phiên bản mới trước khi thay thế.`,
+      confirmText: 'Khôi phục',
+    });
+    if (!ok) return;
+    try {
+      setRestoring(v.id);
+      const res = await restoreNewsVersion(newsId, v.id);
+      if (res.code === 200 && res.data) {
+        const d = res.data;
+        setFormData({
+          title: d.title,
+          subtitle: d.subtitle,
+          author: d.author,
+          image: d.image,
+        });
+        setFullContent(d.fullContent || '');
+        setPreview(null);
+        toast.success('Đã khôi phục và lưu phiên bản này.');
+        const list = await getNewsVersions(newsId);
+        if (list.code === 200) setVersions(list.data);
+      } else {
+        toast.error(res.message || 'Khôi phục thất bại');
+      }
+    } catch {
+      toast.error('Khôi phục thất bại');
+    } finally {
+      setRestoring(null);
+    }
+  };
 
   // Quill modules configuration
   const quillModules = {
@@ -142,7 +207,87 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
 
   return (
     <Modal title="Chỉnh sửa tin tức" onClose={onCancel} size="xl">
+      {confirmDialog}
       <div>
+        {/* Lịch sử phiên bản (P2.8) */}
+        <div className="mb-4 rounded-xl border border-brand-line">
+          <button
+            type="button"
+            onClick={toggleHistory}
+            aria-expanded={showHistory}
+            className="flex w-full items-center justify-between gap-2 px-4 py-2.5 text-sm font-medium text-brand-ink hover:bg-brand-surface"
+          >
+            <span className="inline-flex items-center gap-2">
+              <History size={16} className="text-brand-goldDark" aria-hidden="true" />
+              Lịch sử phiên bản
+              {versions.length > 0 && (
+                <span className="rounded-full bg-brand-surface px-2 text-xs text-brand-goldDark">
+                  {versions.length}
+                </span>
+              )}
+            </span>
+            <span className="text-xs text-gray-400">{showHistory ? 'Ẩn' : 'Xem'}</span>
+          </button>
+          {showHistory && (
+            <div className="border-t border-brand-line p-3">
+              {loadingVersions ? (
+                <p className="py-2 text-center text-sm text-gray-500">Đang tải…</p>
+              ) : versions.length === 0 ? (
+                <p className="py-2 text-center text-sm text-gray-500">
+                  Chưa có phiên bản nào. Mỗi lần lưu chỉnh sửa sẽ tạo một phiên bản.
+                </p>
+              ) : (
+                <ul className="space-y-1">
+                  {versions.map((v) => (
+                    <li
+                      key={v.id}
+                      className="flex flex-wrap items-center justify-between gap-2 rounded-lg px-2 py-1.5 hover:bg-gray-50"
+                    >
+                      <span className="text-sm text-gray-700">
+                        <strong>{new Date(v.createdAt).toLocaleString('vi-VN')}</strong>
+                        {v.editorUsername && (
+                          <span className="ml-2 text-xs text-gray-400">bởi {v.editorUsername}</span>
+                        )}
+                        <span className="ml-2 text-xs text-gray-400">— {v.title}</span>
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <button
+                          type="button"
+                          onClick={() => setPreview(preview?.id === v.id ? null : v)}
+                          className="inline-flex items-center gap-1 rounded-md border border-gray-300 px-2 py-1 text-xs text-gray-600 hover:bg-gray-100"
+                        >
+                          <Eye size={13} /> {preview?.id === v.id ? 'Đóng' : 'Xem'}
+                        </button>
+                        <button
+                          type="button"
+                          disabled={restoring === v.id}
+                          onClick={() => handleRestore(v)}
+                          className="inline-flex items-center gap-1 rounded-md bg-brand-goldDark px-2 py-1 text-xs font-medium text-white hover:bg-brand-gold disabled:opacity-50"
+                        >
+                          <RotateCcw size={13} /> {restoring === v.id ? 'Đang…' : 'Khôi phục'}
+                        </button>
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              {preview && (
+                <div className="mt-3 rounded-lg border border-gray-200 bg-white p-3">
+                  <p className="mb-2 text-xs font-semibold text-gray-500">
+                    Xem trước phiên bản {new Date(preview.createdAt).toLocaleString('vi-VN')}
+                  </p>
+                  <h5 className="font-semibold text-brand-ink">{preview.title}</h5>
+                  <p className="mb-2 text-sm text-gray-500">{preview.subtitle}</p>
+                  <div
+                    className="prose prose-sm max-h-64 max-w-none overflow-y-auto"
+                    dangerouslySetInnerHTML={{ __html: sanitizeHtml(preview.fullContent || '') }}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+
         {/* Thông tin cơ bản */}
         <div className="mb-6">
           <h4 className="text-lg font-semibold text-gray-800 mb-4">Thông tin cơ bản</h4>
