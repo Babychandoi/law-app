@@ -11,7 +11,7 @@ import {
   Tablet,
   Smartphone,
 } from 'lucide-react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'react-toastify';
 import {
   AdminChildrenService,
@@ -88,6 +88,27 @@ interface Props {
 
 type Tab = 'general' | 'hero' | 'sections' | 'process' | 'pricing';
 
+interface GeneralForm {
+  title: string;
+  href: string;
+  description: string;
+  descriptionHome: string;
+  image: string;
+  parentServiceId: string;
+}
+interface HeroForm {
+  title: string;
+  subtitle: string;
+  description: string;
+}
+interface DraftData {
+  general?: GeneralForm;
+  hero?: HeroForm;
+  sections?: ServiceSection[];
+  process?: ProcessStepForm[];
+  pricing?: PricingForm[];
+}
+
 const TABS: { key: Tab; label: string }[] = [
   { key: 'general', label: 'Thông tin chung' },
   { key: 'hero', label: 'Hero (đầu trang)' },
@@ -102,6 +123,11 @@ export default function ServiceEditor({ service, onClose }: Props) {
   // Xem trước theo thiết bị (P2.9): giới hạn bề rộng khung preview.
   const [device, setDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const DEVICE_WIDTH = { desktop: '100%', tablet: '768px', mobile: '390px' } as const;
+  // Autosave nháp cục bộ (P2.7).
+  const DRAFT_KEY = `se:draft:${service?.id ?? 'new'}`;
+  const [hydrated, setHydrated] = useState(false);
+  const [draft, setDraft] = useState<{ savedAt: number; data: DraftData } | null>(null);
+  const draftBaseRef = useRef<string | null>(null);
   const [changed, setChanged] = useState(false);
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(!!service);
@@ -170,6 +196,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
   useEffect(() => {
     if (!service?.href) {
       setLoading(false);
+      setHydrated(true);
       return;
     }
     getServicePage(service.href)
@@ -208,8 +235,68 @@ export default function ServiceEditor({ service, onClose }: Props) {
         );
       })
       .catch(() => toast.warn('Chưa tải được nội dung trang (trang có thể chưa có nội dung).'))
-      .finally(() => setLoading(false));
+      .finally(() => {
+        setLoading(false);
+        setHydrated(true);
+      });
   }, [service]);
+
+  // Sau khi nạp xong: phát hiện bản nháp cũ để mời khôi phục.
+  useEffect(() => {
+    if (!hydrated) return;
+    try {
+      const raw = localStorage.getItem(DRAFT_KEY);
+      if (raw) setDraft(JSON.parse(raw));
+    } catch {
+      /* nháp hỏng thì bỏ qua */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated]);
+
+  // Autosave nháp (debounce). Lần chạy đầu sau khi nạp = baseline, không ghi;
+  // chỉ ghi khi trạng thái khác baseline -> tránh tạo nháp rỗng mỗi lần mở.
+  useEffect(() => {
+    if (!hydrated) return;
+    const cur = JSON.stringify({ general, hero, sections, process, pricing });
+    if (draftBaseRef.current === null) {
+      draftBaseRef.current = cur;
+      return;
+    }
+    if (cur === draftBaseRef.current) return;
+    const t = setTimeout(() => {
+      try {
+        localStorage.setItem(
+          DRAFT_KEY,
+          JSON.stringify({ savedAt: Date.now(), data: JSON.parse(cur) })
+        );
+      } catch {
+        /* hết quota thì bỏ qua */
+      }
+    }, 800);
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hydrated, general, hero, sections, process, pricing]);
+
+  const clearDraft = () => {
+    try {
+      localStorage.removeItem(DRAFT_KEY);
+    } catch {
+      /* bỏ qua */
+    }
+    draftBaseRef.current = JSON.stringify({ general, hero, sections, process, pricing });
+    setDraft(null);
+  };
+
+  const restoreDraft = () => {
+    if (!draft) return;
+    const d = draft.data;
+    if (d.general) setGeneral(d.general);
+    if (d.hero) setHero(d.hero);
+    if (d.sections) setSections(d.sections);
+    if (d.process) setProcess(d.process);
+    if (d.pricing) setPricing(d.pricing);
+    setDraft(null);
+  };
 
   /* ===== save handlers ===== */
 
@@ -229,6 +316,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
         toast.success('Đã tạo dịch vụ. Hãy nhập tiếp Hero, Nội dung, Quy trình, Bảng giá.');
       }
       setChanged(true);
+      clearDraft();
     } catch (e: any) {
       toast.error(e?.response?.data?.message || 'Lưu thất bại.');
     } finally {
@@ -245,6 +333,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
     try {
       await fn();
       setChanged(true);
+      clearDraft();
       toast.success(okMsg);
     } catch (e: any) {
       toast.error(e?.response?.data?.message || 'Lưu thất bại.');
@@ -295,6 +384,24 @@ export default function ServiceEditor({ service, onClose }: Props) {
           </a>
         )}
       </div>
+
+      {/* Banner khôi phục bản nháp tự lưu (P2.7) */}
+      {draft && (
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3 rounded-lg border border-brand-line bg-brand-surface px-4 py-3">
+          <p className="text-sm text-brand-ink">
+            Có bản nháp chưa lưu lúc{' '}
+            <strong>{new Date(draft.savedAt).toLocaleString('vi-VN')}</strong>. Khôi phục?
+          </p>
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={restoreDraft} className={btnPrimary}>
+              Khôi phục
+            </button>
+            <button type="button" onClick={clearDraft} className={btnGhost}>
+              Bỏ nháp
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* tabs */}
       <div className="mb-5 flex flex-wrap gap-1 border-b border-gray-200">
