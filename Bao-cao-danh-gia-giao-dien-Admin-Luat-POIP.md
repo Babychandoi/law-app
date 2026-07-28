@@ -26,16 +26,21 @@ Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 > trước (commit 6a467fa) chấm **P0: 6 xong · 4 một phần** và **P1: 5 xong · 7 một phần**. Đợt đóng
 > tiếp 28/07 (các batch A–F + axe + CRM sort + design token + toàn bộ P2) đã đóng thật, nay tự
 > chấm **P0: 10 xong**, **P1: 12 xong**, **P2: 11 xong · 1 một phần** (chỉ visual-regression cần
-> merge baseline vào `main`) — nhưng **các con số này chưa được nghiệm thu độc lập lại**, nên vẫn là
-> tự đánh giá, **KHÔNG khẳng định "hoàn thành tuyệt đối"**. Điểm ước ~**8,5/10** — đủ beta nội bộ.
+> merge baseline vào `main`). **Đã có kiểm tra độc lập lại (28/07 @ `c9d13ac2`) xác nhận checklist
+> này**; tuy vậy vẫn nên chạy **UAT chính thức** bằng dữ liệu/tài khoản thật trước khi ký nghiệm thu
+> cuối. Điểm ước ~**8,5/10**.
+>
+> 📄 **Bản nghiệm thu sạch (deliverable) để gửi khách hàng:** `Bao-cao-nghiem-thu-Admin-Luat-POIP.md`
+> — viết theo trạng thái hiện tại, có bảng điểm hiện trạng, đưa đánh giá gốc 4,8/10 vào Phụ lục A.
+> File này (`Bao-cao-danh-gia-...`) giữ nguyên đánh giá gốc + nhật ký cập nhật để đối chiếu.
 
 **Sửa theo audit độc lập lần 3 (28/07) — đã kiểm chứng bằng axe trên prod:**
-- **Contrast (P0.8)**: `textOn()` viết lại đúng WCAG (gamma sRGB + chọn đen/trắng theo tỉ lệ cao nhất) → 3 màu seed CRM đạt ≥4.96:1; overdue red-500→red-600, nút Gửi email green-600→green-700. **axe mở rộng sang CRM + Tin tức, 7/7 pass**.
+- **Contrast (P0.8)**: `textOn()` viết lại đúng WCAG (gamma sRGB + chọn đen/trắng theo tỉ lệ cao nhất) → 3 màu seed CRM đạt ≥4.96:1; overdue red-500→red-600, nút Gửi email green-600→green-700. **axe (`e2e/a11y.spec.ts`) quét 5 màn: đăng nhập/Khách hàng/Người đăng ký/CRM/Tin tức — 0 lỗi `color-contrast`** (thêm 2 màn public ở cổng CI).
 - **Accessible name (P0.5/0.6)**: thêm aria-label/label cho ~11 control còn thiếu (guest chat, team chat, tìm Khách hàng, ServiceEditor subtitle/mục con, textarea phụ đề News).
 - **Drawer (P0.10)**: trả focus về nút "Mở menu" khi đóng + đặt `inert` cho nền khi mở.
 - **Emoji (P1.10)**: bỏ nốt 👤/📅 (Post) và ⚠️ (AddNews/EditNews) → Lucide icon.
 
-**Đóng thêm ở đợt 28/07 (batch A–F), đã build + 63 unit test pass + deploy:**
+**Đóng thêm ở đợt 28/07 (batch A–F), đã build + unit test pass (số test tăng dần, nay **73**) + deploy:**
 - A11y: ServiceEditor field ĐỘNG (process/pricing/section/features/file/checkbox) đã có aria-label; drawer mobile đưa/giữ focus + Tab-trap + Escape + nền `inert`.
 - URL filter **hai chiều**: back/forward đồng bộ ngược state; ô tìm kiếm phản ánh URL (`searchValue` controlled).
 - Guest chat: nút **"Tải thêm hội thoại"** (không còn kẹt 30 hội thoại đầu).
@@ -706,7 +711,7 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 5. ✅ Accessible name cho icon button + input. *(nút icon-only có aria-label; **bổ sung theo audit độc lập**: ô tìm + đổi tên khách + ô nhập tin của guest chat & team chat, ô tìm Khách hàng, subtitle section + tiêu đề mục con ServiceEditor, textarea phụ đề AddNews/EditNews — đều đã có aria-label/label)*
 6. ✅ Label đúng chuẩn cho input/select. *(login + select + ServiceEditor tĩnh liên kết `htmlFor/id`; field động + textarea phụ đề News liên kết `htmlFor/id`; field khác có aria-label)*
 7. ✅ Document title theo route.
-8. ✅ Sửa contrast. *(**`textOn()` viết lại theo đúng WCAG 2.1** — độ sáng tương đối có gamma sRGB + chọn đen/trắng theo tỉ lệ tương phản cao nhất; 3 màu seed CRM (#3B82F6/#8B5CF6/#10B981) nay đạt 4.96–8.28:1. Chữ "quá hạn" đổi red-500→red-600, nút "Gửi email" green-600→green-700. **axe-core (`e2e/a11y.spec.ts`) 7/7 pass, 0 lỗi `color-contrast`** trên đăng nhập + Khách hàng + Người đăng ký + **CRM** + **Tin tức**. Ghi chú: 5 màn đại diện, chưa phải toàn bộ)*
+8. ✅ Sửa contrast. *(**`textOn()` viết lại theo đúng WCAG 2.1** — độ sáng tương đối có gamma sRGB + chọn đen/trắng theo tỉ lệ tương phản cao nhất; 3 màu seed CRM (#3B82F6/#8B5CF6/#10B981) nay đạt 4.96–8.28:1. Chữ "quá hạn" đổi red-500→red-600, nút "Gửi email" green-600→green-700. **axe-core (`e2e/a11y.spec.ts`) quét 5 màn — đăng nhập + Khách hàng + Người đăng ký + CRM + Tin tức — 0 lỗi `color-contrast`** (cổng CI public quét thêm 2 màn). Ghi chú: 5 màn đại diện, chưa phải toàn bộ)*
 9. ✅ Chuẩn hóa modal (dialog role/focus trap/Escape/focus return + fix mất focus).
 10. ✅ Bàn phím hoàn thành luồng chính. *(guest-chat rows + Navbar thông báo + drawer: đưa/giữ focus khi mở + Tab-trap + Escape + **trả focus về nút "Mở menu" khi đóng** + **nền `#admin-content-region` đặt `inert` khi drawer mở**)*
 
