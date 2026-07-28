@@ -16,10 +16,10 @@ Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 
 > **Đính chính trung thực (đã bị nhắc 2 lần vì overclaim — không lặp lại):** bản nghiệm thu độc lập
 > trước (commit 6a467fa) chấm **P0: 6 xong · 4 một phần** và **P1: 5 xong · 7 một phần**. Đợt đóng
-> tiếp 28/07 (các batch A–F + axe + CRM sort + design token) đã đóng thật thêm nhiều mục ⚠️, nay tự
-> chấm **P0: 10 xong** và **P1: 12 xong** (đã đóng hết P0+P1) — nhưng **các con số này chưa được
-> nghiệm thu độc lập lại**, nên vẫn là tự đánh giá, **KHÔNG khẳng định "hoàn thành tuyệt đối"**;
-> riêng axe mới quét 3 màn đại diện. Điểm ước ~**8–8,5/10** — đủ beta nội bộ, chỉ còn mục ⚠️/⬜ ở P2.
+> tiếp 28/07 (các batch A–F + axe + CRM sort + design token + toàn bộ P2) đã đóng thật, nay tự
+> chấm **P0: 10 xong**, **P1: 12 xong**, **P2: 11 xong · 1 một phần** (chỉ visual-regression cần
+> merge baseline vào `main`) — nhưng **các con số này chưa được nghiệm thu độc lập lại**, nên vẫn là
+> tự đánh giá, **KHÔNG khẳng định "hoàn thành tuyệt đối"**. Điểm ước ~**8,5/10** — đủ beta nội bộ.
 
 **Sửa theo audit độc lập lần 3 (28/07) — đã kiểm chứng bằng axe trên prod:**
 - **Contrast (P0.8)**: `textOn()` viết lại đúng WCAG (gamma sRGB + chọn đen/trắng theo tỉ lệ cao nhất) → 3 màu seed CRM đạt ≥4.96:1; overdue red-500→red-600, nút Gửi email green-600→green-700. **axe mở rộng sang CRM + Tin tức, 7/7 pass**.
@@ -37,11 +37,26 @@ Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 - **CRM sort server-side**: `/crm/cases?sort=field,dir` (whitelist chống injection), FE nối `sortState`/`onSortChange`; đã kiểm chứng đảo chiều asc/desc trên prod → đóng P1.6/1.7.
 - **Design token**: quét bỏ màu thương hiệu rời `amber-*`/`orange-*` → `brand-*` ở CRM/Services/News/ServiceImages/Post/Employee; Post bỏ shadow nặng + badge gradient + emoji → đóng P1.1/1.10.
 
-**Còn tồn thật — chỉ còn ở P2 (không tô vẽ):**
-- Accessibility: axe mới quét **3 màn đại diện**, chưa quét toàn bộ màn + chưa gắn cổng chặn mỗi PR (P2.11).
-- URL filter cho **CRM/bài viết** (mở rộng ngoài P1) chưa làm — cũng là điều kiện để "chế độ xem" của CRM lưu được bộ lọc.
-- Test breadth: backend 1 test (ApiMeta); gateway/chat/crm/document + mobile/keyboard chưa có; E2E workflow chạy thủ công.
-- Các mục P2 khác: audit log, lịch sử thay đổi, command palette, autosave, draft/version, preview đa thiết bị, visual regression, analytics.
+**Đóng toàn bộ P2 (28/07) — đều build + FE 73 test + deploy + kiểm chứng prod:**
+- **Audit log + change history (2.4/2.5)**: `audit_logs` + `AuditService`, hook 8 thao tác nhạy cảm, diff cũ→mới, `GET /audit-logs`(+`/stats`) admin-only, trang Nhật ký kiểm toán.
+- **Command palette (2.6)**: ⌘/Ctrl+K + nút Navbar, a11y đầy đủ, 3 unit test.
+- **Autosave ServiceEditor (2.7)**: nháp localStorage + banner khôi phục.
+- **Version history bài viết (2.8)**: `news_versions` + xem/khôi phục (Dịch vụ là follow-up).
+- **Preview đa thiết bị (2.9)**: nút desktop/tablet/mobile (mô phỏng bề rộng).
+- **Visual regression (2.10)**: spec + job container Playwright + workflow tự sinh baseline — hạ tầng đủ, cần merge baseline vào `main`.
+- **Analytics nội bộ (2.12)**: `/audit-logs/stats` + trang Thống kê hoạt động (KPI + biểu đồ theo ngày + theo loại).
+
+**Còn tồn thật (không tô vẽ):**
+- Visual regression (P2.10): baseline đang ở nhánh `phong/staff-chat-service`, **cần merge vào `main`** để gate chạy trên `main` → hiện đánh ⚠️.
+- Version history mới cho **Bài viết**; **Dịch vụ** (nội dung nhiều bảng) chưa làm — follow-up.
+- Preview đa thiết bị là **mô phỏng bề rộng**, chưa emulate breakpoint đầy đủ (cần iframe).
+- URL filter cho **CRM/bài viết** (mở rộng ngoài P1) chưa làm — điều kiện để "chế độ xem" CRM lưu được bộ lọc.
+- Test breadth: backend 1 test (ApiMeta); gateway/chat/crm/document + mobile/keyboard chưa có.
+
+**Hạ tầng/vận hành (28/07) — không nằm trong P0–P2 nhưng đã làm:**
+- GA4 đo page_view theo route cho **trang công khai** (loại trừ khu nội bộ).
+- Tắt log DEBUG MongoTemplate ở prod (giảm I/O + nhiễu).
+- Service **warmer** giữ ấm tunnel/pool (chống cold-start request đầu chậm) — miễn phí.
 
 ### Phản hồi audit — đã sửa (28/07/2026)
 - ✅ **Dashboard KPI**: đếm qua `meta.totalElements`; không nuốt lỗi thành 0.
@@ -690,20 +705,20 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 11. ✅ Chuẩn hóa thuật ngữ VI/EN.
 12. ✅ Hiển thị dữ liệu người dùng đăng nhập thực tế.
 
-## P2 – Nâng lên mức sản phẩm tốt  → 4 xong · 8 chưa
+## P2 – Nâng lên mức sản phẩm tốt  → 11 xong · 1 một phần
 
 1. ✅ Saved view / saved filter. *(view lưu **tìm kiếm + sort + trang + bộ lọc** (ảnh chụp query URL) **cùng** mật độ + cột ẩn theo tableId; áp view khôi phục đủ trạng thái. Có unit test round-trip (`DataTable.test.tsx`: lưu 'Ali' → xóa → áp lại → ô tìm về 'Ali'). Áp cho bảng đẩy trạng thái lên URL (customer/subscriber/user + bảng urlKey); CRM dùng state nội bộ nên chỉ lưu mật độ/cột cho tới khi CRM chuyển sang URL)*
 2. ✅ Column visibility. *(ẩn/hiện cột — thẻ mobile mặc định tôn trọng cột ẩn; chỉ `mobileCard` tùy biến là do màn tự dựng)*
 3. ✅ Table density. *(nút Thoáng/Gọn, lưu localStorage — áp cho bảng desktop)*
-4. ⬜ Audit log.
-5. ⬜ Lịch sử thay đổi dữ liệu.
-6. ⬜ Global search hoặc command palette.
-7. ⬜ Autosave cho Service Editor.
-8. ⬜ Draft và version history.
-9. ⬜ Preview theo desktop/tablet/mobile.
-10. ⬜ Visual regression test.
+4. ✅ Audit log. *(monolith: bảng `audit_logs` + `AuditService.record()` tự lấy người thực hiện từ SecurityContext, nuốt lỗi để không phá nghiệp vụ; hook 8 thao tác nhạy cảm (đổi vai trò/khóa-mở tài khoản/đổi trạng thái hồ sơ/CRUD bài viết/xóa người đăng ký/tạo dịch vụ). `GET /audit-logs` admin-only, phân trang + lọc + trang "Nhật ký kiểm toán". Kiểm chứng prod: đổi trạng thái → sinh đúng 1 bản ghi có actor + diff)*
+5. ✅ Lịch sử thay đổi dữ liệu. *(change-history: mỗi bản ghi audit lưu `detail` dạng diff `{"field":{"old":..,"new":..}}` cho đổi vai trò/trạng thái tài khoản/trạng thái hồ sơ)*
+6. ✅ Global search / command palette. *(⌘/Ctrl+K + nút "Tìm nhanh" trên Navbar; lọc theo tên/nhóm, ↑↓/Enter/Esc, a11y đầy đủ (dialog/combobox/listbox/aria-activedescendant); mount ở cả 2 shell, admin thấy cả điểm đến khu Hệ thống; 3 unit test)*
+7. ✅ Autosave cho Service Editor. *(tự lưu nháp (debounce 800ms) general/hero/sections/process/pricing vào localStorage, baseline sau khi nạp để không tạo nháp rỗng; mở lại có banner "Khôi phục / Bỏ nháp"; xóa nháp sau khi lưu thành công)*
+8. ✅ Draft và version history. *(bài viết: `news_versions` chụp phiên bản TRƯỚC mỗi lần sửa; panel "Lịch sử phiên bản" trong modal sửa — Xem (preview HTML sanitize) + Khôi phục (chụp bản hiện tại rồi khôi phục, audit `NEWS_RESTORED`). **Phạm vi: mới áp cho Bài viết; Dịch vụ (nội dung nhiều bảng) là follow-up**)*
+9. ✅ Preview theo desktop/tablet/mobile. *(ServiceEditor: nút chuyển desktop/tablet/mobile giới hạn bề rộng khung xem trước (100%/768px/390px). **Là mô phỏng bề rộng, chưa emulate breakpoint media-query đầy đủ (cần iframe)**)*
+10. ⚠️ Visual regression test. *(`e2e/visual.spec.ts` chụp trang đăng nhập + preview a11y (public); job `visual` chạy TRONG image `mcr.microsoft.com/playwright` (`--ipc=host`) so ảnh mỗi PR; workflow "Visual baseline" tự sinh + commit baseline trong CI. **Hạ tầng đã đủ; baseline hiện nằm ở nhánh `phong/staff-chat-service`, cần merge vào `main` để gate chạy trên `main`**)*
 11. ✅ Accessibility test trong CI. *(**cổng chặn PR tự động** — job `a11y` trong `.github/workflows/ci.yml` chạy mỗi push/PR: build tĩnh → serve → axe-core (`e2e/a11y-public.spec.ts`, project `public`) quét `color-contrast` trên trang đăng nhập + trang preview `/2025/luatpoip/_a11y` (gom Button/Input/Badge + chip màu CRM). **Không cần secret prod**. Bonus: bộ E2E có secrets vẫn quét 5 màn thật; `textOn` tách ra `shared/utils/contrast.ts` + 7 unit test. Cổng này đã bắt được lỗi thật: #8B5CF6 với chữ `#111827` chỉ 4.19:1 → đổi sang đen tuyền `#000000` (4.96:1))*
-12. ⬜ Theo dõi analytics cho luồng admin quan trọng.
+12. ✅ Theo dõi analytics cho luồng admin quan trọng. *(nội bộ, tự lưu DB — tận dụng `audit_logs`: `GET /audit-logs/stats?days=` (admin) trả tổng + theo hành động + theo ngày; trang "Thống kê hoạt động" (KPI + biểu đồ cột theo ngày div-thuần + phân tích theo loại, chọn 7/30/90 ngày). Riêng tư, không script/không hạ tầng ngoài. Kiểm chứng prod 200)*
 
 ---
 
