@@ -73,7 +73,7 @@ logging:
   level:
     org.hibernate.SQL: ${LOGGING_LEVEL_ORG_HIBERNATE_SQL}
     org.hibernate.type.descriptor.sql: ${LOGGING_LEVEL_ORG_HIBERNATE_TYPE_DESCRIPTOR_SQL}
-    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+    org.springframework.data.mongodb.core.MongoTemplate: ${LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_MONGODB_CORE_MONGOTEMPLATE:INFO}
     org.springframework.boot.autoconfigure.condition: ERROR
 
 # ================= JWT =================
