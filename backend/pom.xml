@@ -20,11 +20,11 @@
     <packaging>jar</packaging>
 
     <name>backend</name>
-    <description>Spring Boot 4 Backend</description>
+    <description>Spring Boot 3 Backend</description>
 
     <!-- ================= PROPERTIES ================= -->
     <properties>
-        <!-- Spring Boot 4 bắt buộc Java 21 -->
+        <!-- Java 21 is required by the Docker/runtime target. -->
         <java.version>21</java.version>
 
         <mapstruct.version>1.5.5.Final</mapstruct.version>
@@ -35,6 +35,29 @@
 
     <!-- ================= DEPENDENCIES ================= -->
     <dependencies>
+        <!-- ===== OBSERVABILITY: health/readiness probes + Prometheus metrics ===== -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- ===== IMAGE COMPRESSION (tự nén ảnh khi upload) ===== -->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.20</version>
+        </dependency>
+        <dependency>
+            <groupId>org.sejda.imageio</groupId>
+            <artifactId>webp-imageio</artifactId>
+            <version>0.1.6</version>
+        </dependency>
+
         <!-- ===== EMAIL (JavaMail/Jakarta Mail) ===== -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -76,6 +99,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+
+        <!-- AMQP (publish CRM domain events to RabbitMQ) -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
         <!-- ===== SECURITY ===== -->
@@ -198,6 +227,23 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- Formatting -->
+            <plugin>
+                <groupId>com.diffplug.spotless</groupId>
+                <artifactId>spotless-maven-plugin</artifactId>
+                <version>2.43.0</version>
+                <configuration>
+                    <java>
+                        <googleJavaFormat>
+                            <version>1.22.0</version>
+                        </googleJavaFormat>
+                        <removeUnusedImports/>
+                        <trimTrailingWhitespace/>
+                        <endWithNewline/>
+                    </java>
+                </configuration>
             </plugin>
 
         </plugins>

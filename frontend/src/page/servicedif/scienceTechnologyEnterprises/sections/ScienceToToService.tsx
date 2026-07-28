@@ -14,58 +14,58 @@ interface Props {
 }
 
 const ToToLawServices: React.FC<Props> = ({
-  title = "CÔNG VIỆC LUẬT POIP THỰC HIỆN",
+  title = 'CÔNG VIỆC LUẬT POIP THỰC HIỆN',
   services = [
     {
       id: 1,
-      description: "Tra cứu hiệu lực văn bản và thủ tục theo yêu cầu của quý khách"
+      description: 'Tra cứu hiệu lực văn bản và thủ tục theo yêu cầu của quý khách',
     },
     {
       id: 2,
-      description: "Hỗ trợ và giải đáp các thắc mắc của quý khách thông qua email và điện thoại"
+      description: 'Hỗ trợ và giải đáp các thắc mắc của quý khách thông qua email và điện thoại',
     },
     {
       id: 3,
-      description: "Tham vấn ý kiến chuyên gia theo yêu cầu của quý khách (nếu cần)"
+      description: 'Tham vấn ý kiến chuyên gia theo yêu cầu của quý khách (nếu cần)',
     },
     {
       id: 4,
-      description: "Hợp tác và hướng dẫn quý khách chuẩn bị tài liệu, hồ sơ, giấy tờ"
+      description: 'Hợp tác và hướng dẫn quý khách chuẩn bị tài liệu, hồ sơ, giấy tờ',
     },
     {
       id: 5,
-      description: "Hỗ trợ soạn thảo hồ sơ, giấy tờ, xác thực thông tin và đề nghị chỉnh sửa"
+      description: 'Hỗ trợ soạn thảo hồ sơ, giấy tờ, xác thực thông tin và đề nghị chỉnh sửa',
     },
     {
       id: 6,
-      description: "Đại diện cho quý khách nộp, nhận hồ sơ, hỗ trợ việc nộp phí – lệ phí của Nhà nước"
+      description:
+        'Đại diện cho quý khách nộp, nhận hồ sơ, hỗ trợ việc nộp phí – lệ phí của Nhà nước',
     },
     {
       id: 7,
-      description: "Đại diện và/hoặc hỗ trợ cho quý khách làm việc với cơ quan Nhà nước khi có yêu cầu, bao gồm những nội dung liên quan đến tiếp nhận, sửa đổi, bổ sung, thay thế và/hoặc loại bỏ thông tin trong hồ sơ, giấy tờ để phù hợp với pháp luật và/hoặc thông lệ làm việc."
-    }
+      description:
+        'Đại diện và/hoặc hỗ trợ cho quý khách làm việc với cơ quan Nhà nước khi có yêu cầu, bao gồm những nội dung liên quan đến tiếp nhận, sửa đổi, bổ sung, thay thế và/hoặc loại bỏ thông tin trong hồ sơ, giấy tờ để phù hợp với pháp luật và/hoặc thông lệ làm việc.',
+    },
   ],
   headerIcon = <Brush className="w-8 h-8 text-emerald-600" />,
-  serviceIcon = <CheckCircle className="w-5 h-5 text-emerald-500" />
+  serviceIcon = <CheckCircle className="w-5 h-5 text-emerald-500" />,
 }) => {
   return (
-    <div className="bg-gradient-to-br from-emerald-50 to-blue-50 py-16">
+    <div className="bg-green-600 py-16">
       {/* Header */}
       <section className="mb-12">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-2xl shadow-lg mb-6">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-white rounded-lg shadow-sm mb-6">
             {headerIcon}
           </div>
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">
-            {title}
-          </h1>
+          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 leading-tight">{title}</h1>
         </div>
       </section>
 
       {/* Services List */}
       <section>
         <div className="max-w-4xl mx-auto px-6">
-          <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+          <div className="bg-white rounded-lg shadow-soft p-8 md:p-12">
             <div className="space-y-6">
               {services.map((service) => (
                 <div
@@ -79,9 +79,7 @@ const ToToLawServices: React.FC<Props> = ({
                   </div>
                   <div className="flex-1">
                     <p className="text-gray-700 leading-relaxed text-justify">
-                      <span className="font-semibold text-emerald-600 mr-2">
-                        {service.id}.
-                      </span>
+                      <span className="font-semibold text-emerald-600 mr-2">{service.id}.</span>
                       {service.description}
                     </p>
                   </div>

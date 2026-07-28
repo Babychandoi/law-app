@@ -4,21 +4,21 @@ import { GoogleMapProps } from '../types/GoogleMap.types';
 export const DEFAULT_PROPS: Required<Omit<GoogleMapProps, 'className' | 'style' | 'ariaLabel'>> = {
   width: '100%',
   height: 600,
-  coordinates: { lat: 20.951164, lng: 105.8095075 },
-  zoom: 14,
-  language: 'en',
+  coordinates: { lat: 20.974852, lng: 105.65274 },
+  zoom: 15,
+  language: 'vi',
   mapType: 'roadmap',
-  label: 'Luật Poip',
+  label: 'Luật Poip Legal',
   borderRadius: '8px',
   loading: false,
-  loadingText: 'Đang tải bản đồ...'
+  loadingText: 'Đang tải bản đồ...',
 };
 
 export const FAMOUS_LOCATIONS = {
-  toto: { lat: 20.951164, lng: 105.8095075, label: 'Luật Poip' },
+  toto: { lat: 20.974852, lng: 105.65274, label: 'Luật Poip Legal' },
   hoanKiem: { lat: 21.0285, lng: 105.8542, label: 'Hồ Hoàn Kiếm' },
   onePillar: { lat: 21.0368, lng: 105.8344, label: 'Chùa Một Cột' },
   literature: { lat: 21.0227, lng: 105.8356, label: 'Văn Miếu' },
   hoChiMinhMausoleum: { lat: 21.0368, lng: 105.8345, label: 'Lăng Chủ Tịch Hồ Chí Minh' },
-  templeOfLiterature: { lat: 21.0227, lng: 105.8356, label: 'Văn Miếu Quốc Tử Giám' }
+  templeOfLiterature: { lat: 21.0227, lng: 105.8356, label: 'Văn Miếu Quốc Tử Giám' },
 } as const;

@@ -34,6 +34,13 @@ spring:
       host: ${SPRING_DATA_REDIS_HOST}
       port: ${SPRING_DATA_REDIS_PORT}
 
+  # ================= RABBITMQ (AMQP — publish CRM events) =================
+  rabbitmq:
+    host: ${RABBITMQ_AMQP_HOST:law-app-rabbitmq}
+    port: ${RABBITMQ_AMQP_PORT:5672}
+    username: ${RABBITMQ_USER:guest}
+    password: ${RABBITMQ_PASS:guest}
+
   # ================= FILE UPLOAD =================
   servlet:
     multipart:
@@ -53,8 +60,16 @@ spring:
           starttls:
             enable: true
 
+# ================= APP NOTIFICATIONS =================
+app:
+  # Inbox nhận thông báo khi có khách đăng ký dịch vụ. Mặc định = email gửi đi.
+  notification-email: ${ADMIN_NOTIFICATION_EMAIL:${EMAIL_USERNAME}}
+
 # ================= LOGGING =================
 logging:
+  pattern:
+    # Chèn correlation id [reqId] vào mỗi dòng log
+    level: "%5p [%X{reqId:-}]"
   level:
     org.hibernate.SQL: ${LOGGING_LEVEL_ORG_HIBERNATE_SQL}
     org.hibernate.type.descriptor.sql: ${LOGGING_LEVEL_ORG_HIBERNATE_TYPE_DESCRIPTOR_SQL}
@@ -67,6 +82,14 @@ jwt:
   valid-duration: ${JWT_VALID_DURATION}
   refreshable-duration: ${JWT_REFRESHABLE_DURATION}
 
+# ================= AUTH COOKIES =================
+auth:
+  cookie:
+    # Shared across *.luatpoip.com so api/gateway/frontend see the same cookie. Empty in dev.
+    domain: ${AUTH_COOKIE_DOMAIN:}
+    # Must be true in prod (HTTPS). Set false for local http dev.
+    secure: ${AUTH_COOKIE_SECURE:true}
+
 # ================= MINIO =================
 minio:
   url: ${MINIO_URL}
@@ -77,14 +100,38 @@ minio:
     images: ${MINIO_BUCKET_IMAGES}
     cvs: ${MINIO_BUCKET_CVS}
 
-# ================= DEEPSEEK AI CHATBOT =================
-deepseek:
-  api:
-    key: ${DEEPSEEK_API_KEY}
-    url: ${DEEPSEEK_API_URL:https://api.deepseek.com/v1/chat/completions}
-  model: ${DEEPSEEK_MODEL:deepseek-chat}
-  temperature: ${DEEPSEEK_TEMPERATURE:0.7}
-  max-tokens: ${DEEPSEEK_MAX_TOKENS:8192}
+# ================= AI CHATBOT (OpenAI-compatible: 9Router) =================
+ai:
+  chat:
+    provider-name: ${AI_CHAT_PROVIDER_NAME:9Router}
+    api:
+      key: ${AI_CHAT_API_KEY:}
+      url: ${AI_CHAT_API_URL:}
+      key-required: ${AI_CHAT_API_KEY_REQUIRED:true}
+    model: ${AI_CHAT_MODEL:AI-PRO}
+    temperature: ${AI_CHAT_TEMPERATURE:0.7}
+    max-tokens: ${AI_CHAT_MAX_TOKENS:8192}
+    http-referer: ${AI_CHAT_HTTP_REFERER:}
+    x-title: ${AI_CHAT_X_TITLE:}
 
 chatbot:
   enabled: ${CHATBOT_ENABLED:true}
+
+# ===== Observability: health/readiness probes + Prometheus =====
+management:
+  server:
+    port: 9100
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true

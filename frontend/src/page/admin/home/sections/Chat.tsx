@@ -1,9 +1,24 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { Search, MessageCircle, Send, MoreVertical, CheckCheck, User, Paperclip, Smile, Edit2, Check, X } from 'lucide-react';
+import {
+  Search,
+  MessageCircle,
+  Send,
+  MoreVertical,
+  CheckCheck,
+  User,
+  Paperclip,
+  Smile,
+  Edit2,
+  Check,
+  X,
+  ArrowLeft,
+} from 'lucide-react';
 import SockJS from 'sockjs-client';
 import { Client, IMessage } from '@stomp/stompjs';
 import chatService from '../../../../service/chat';
 import { toast } from 'react-toastify';
+import { getMe } from '../../../../service/auth';
+import { EmojiPicker } from '../../../../component/common/ui';
 
 interface ChatMessage {
   id: string;
@@ -62,34 +77,58 @@ const AdminChatDashboard: React.FC = () => {
     unreadConversations: 0,
     assignedToAdmin: 0,
     onlineUsers: 0,
-    todayMessages: 0
+    todayMessages: 0,
   });
   const [isConnected, setIsConnected] = useState(false);
   const [loading, setLoading] = useState(false);
   const [editingName, setEditingName] = useState(false);
   const [newGuestName, setNewGuestName] = useState('');
-  
+  const [showEmoji, setShowEmoji] = useState(false);
+  const [convSize, setConvSize] = useState(30); // số hội thoại tải (tăng khi "Tải thêm")
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messageInputRef = useRef<HTMLTextAreaElement>(null);
   const clientRef = useRef<Client | null>(null);
 
-  const currentAdmin: AdminUser = {
-    id: 'admin-001',
-    name: 'Admin User',
-    isOnline: true,
-  };
+  // Danh tính admin thật (không hard-code) — dùng cho gửi tin, thống kê, phân công.
+  const [currentAdmin, setCurrentAdmin] = useState<AdminUser>({ id: '', name: '', isOnline: true });
+  useEffect(() => {
+    getMe().then((u) => {
+      if (u) setCurrentAdmin({ id: u.id, name: u.fullName || u.username, isOnline: true });
+    });
+  }, []);
 
   const fetchConversations = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await chatService.fetchConversations();
+      const data = await chatService.fetchConversations(convSize);
       setConversations(data);
     } catch (error) {
       console.error('Error fetching conversations:', error);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [convSize]);
+
+  const fetchStats = useCallback(async () => {
+    try {
+      const data = await chatService.fetchStats(currentAdmin.id);
+      setStats(data);
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  }, [currentAdmin.id]);
+
+  // Debounce: khi nhiều tin nhắn đến dồn dập, gom việc refresh list+stats thành 1 lần
+  // (tránh gọi lại API liên tục mỗi tin — mỗi request tốn ~400ms qua tunnel).
+  const refreshTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const debouncedRefresh = useCallback(() => {
+    if (refreshTimerRef.current) clearTimeout(refreshTimerRef.current);
+    refreshTimerRef.current = setTimeout(() => {
+      fetchConversations();
+      fetchStats();
+    }, 800);
+  }, [fetchConversations, fetchStats]);
 
   const connectWebSocket = useCallback(() => {
     try {
@@ -104,22 +143,22 @@ const AdminChatDashboard: React.FC = () => {
         heartbeatIncoming: 4000,
         heartbeatOutgoing: 4000,
         connectHeaders: {
-          adminId: currentAdmin.id // Send adminId in CONNECT headers
+          adminId: currentAdmin.id, // Send adminId in CONNECT headers
         },
         onConnect: () => {
           setIsConnected(true);
-          
+
           client.subscribe('/topic/admin/messages', (message: IMessage) => {
             try {
               const newMessage: ChatMessage = JSON.parse(message.body);
-              
-              // Update conversations list
-              fetchConversations();
-              
+
+              // Realtime: refresh the conversation list + stats (debounced to coalesce bursts).
+              debouncedRefresh();
+
               // If this message is for the currently selected conversation, add it to messages
               if (selectedConversation === newMessage.guestId) {
-                setMessages(prev => {
-                  const exists = prev.some(msg => msg.id === newMessage.id);
+                setMessages((prev) => {
+                  const exists = prev.some((msg) => msg.id === newMessage.id);
                   if (!exists) {
                     return [...prev, newMessage];
                   }
@@ -136,8 +175,8 @@ const AdminChatDashboard: React.FC = () => {
             client.subscribe(`/topic/chat/${selectedConversation}`, (message: IMessage) => {
               try {
                 const newMessage: ChatMessage = JSON.parse(message.body);
-                setMessages(prev => {
-                  const exists = prev.some(msg => msg.id === newMessage.id);
+                setMessages((prev) => {
+                  const exists = prev.some((msg) => msg.id === newMessage.id);
                   if (!exists) {
                     return [...prev, newMessage];
                   }
@@ -153,9 +192,11 @@ const AdminChatDashboard: React.FC = () => {
           client.subscribe('/topic/admin/online-status', (message: IMessage) => {
             try {
               const payload: StatusUpdate = JSON.parse(message.body);
-              setConversations(prev => prev.map(conv =>
-                conv.guestId === payload.guestId ? { ...conv, isOnline: payload.isOnline } : conv
-              ));
+              setConversations((prev) =>
+                prev.map((conv) =>
+                  conv.guestId === payload.guestId ? { ...conv, isOnline: payload.isOnline } : conv
+                )
+              );
             } catch (error) {
               console.error('Error parsing status update:', error);
             }
@@ -174,7 +215,7 @@ const AdminChatDashboard: React.FC = () => {
         onWebSocketError: (error) => {
           console.error('WebSocket error:', error);
           setIsConnected(false);
-        }
+        },
       });
 
       client.activate();
@@ -183,7 +224,7 @@ const AdminChatDashboard: React.FC = () => {
       console.error('Error connecting WebSocket:', error);
       setIsConnected(false);
     }
-  }, [selectedConversation, fetchConversations, currentAdmin.id]);
+  }, [selectedConversation, debouncedRefresh, currentAdmin.id]);
 
   const fetchMessages = useCallback(async (guestId: string) => {
     try {
@@ -194,43 +235,27 @@ const AdminChatDashboard: React.FC = () => {
     }
   }, []);
 
-  const fetchStats = useCallback(async () => {
-    try {
-      const data = await chatService.fetchStats(currentAdmin.id);
-      setStats(data);
-    } catch (error) {
-      console.error('Error fetching stats:', error);
-    }
-  }, [currentAdmin.id]);
-
   const markConversationAsRead = useCallback(async (guestId: string) => {
     try {
       await chatService.markConversationAsRead(guestId);
-      setConversations(prev => prev.map(conv =>
-        conv.guestId === guestId ? { ...conv, unreadCount: 0 } : conv
-      ));
+      setConversations((prev) =>
+        prev.map((conv) => (conv.guestId === guestId ? { ...conv, unreadCount: 0 } : conv))
+      );
     } catch (error) {
       console.error('Error marking conversation as read:', error);
-    }
-  }, []);
-
-  const assignConversation = useCallback(async (guestId: string, adminId: string) => {
-    try {
-      await chatService.assignConversation(guestId, adminId);
-      setConversations(prev => prev.map(conv =>
-        conv.guestId === guestId ? { ...conv, assignedAdmin: adminId } : conv
-      ));
-    } catch (error) {
-      console.error('Error assigning conversation:', error);
     }
   }, []);
 
   const updatePriority = useCallback(async (guestId: string, priority: string) => {
     try {
       await chatService.updatePriority(guestId, priority);
-      setConversations(prev => prev.map(conv =>
-        conv.guestId === guestId ? { ...conv, priority: priority as 'low' | 'normal' | 'high' } : conv
-      ));
+      setConversations((prev) =>
+        prev.map((conv) =>
+          conv.guestId === guestId
+            ? { ...conv, priority: priority as 'low' | 'normal' | 'high' }
+            : conv
+        )
+      );
     } catch (error) {
       console.error('Error updating priority:', error);
     }
@@ -239,9 +264,9 @@ const AdminChatDashboard: React.FC = () => {
   const updateGuestName = useCallback(async (guestId: string, name: string) => {
     try {
       await chatService.updateGuestName(guestId, name);
-      setConversations(prev => prev.map(conv =>
-        conv.guestId === guestId ? { ...conv, guestName: name } : conv
-      ));
+      setConversations((prev) =>
+        prev.map((conv) => (conv.guestId === guestId ? { ...conv, guestName: name } : conv))
+      );
       setEditingName(false);
       setNewGuestName('');
     } catch (error) {
@@ -249,8 +274,8 @@ const AdminChatDashboard: React.FC = () => {
     }
   }, []);
 
-  const currentConversation = useMemo(() => 
-    conversations.find(conv => conv.guestId === selectedConversation),
+  const currentConversation = useMemo(
+    () => conversations.find((conv) => conv.guestId === selectedConversation),
     [conversations, selectedConversation]
   );
 
@@ -272,51 +297,49 @@ const AdminChatDashboard: React.FC = () => {
 
   const sendMessage = useCallback(() => {
     const trimmedMessage = newMessage.trim();
-    if (!trimmedMessage || !selectedConversation || !clientRef.current) return;
+    if (!trimmedMessage || !selectedConversation) return;
 
-    const messagePayload = {
-      guestId: selectedConversation,
-      content: trimmedMessage,
-      senderType: 'ADMIN',
-      adminId: currentAdmin.id
-    };
-
-    try {
-      clientRef.current.publish({
-        destination: '/app/chat.sendMessage',
-        body: JSON.stringify(messagePayload),
+    // Admin replies go through the authenticated REST endpoint (not the public socket).
+    // The server persists it, disables AI for the conversation, and broadcasts to the guest.
+    chatService
+      .adminSendMessage(selectedConversation, trimmedMessage, currentAdmin.id)
+      .then(() => {
+        setNewMessage('');
+        setTimeout(() => messageInputRef.current?.focus(), 100);
+      })
+      .catch((error) => {
+        console.error('Error sending message:', error);
+        toast.error('Không thể gửi tin nhắn');
       });
-
-      setNewMessage('');
-      setTimeout(() => messageInputRef.current?.focus(), 100);
-    } catch (error) {
-      console.error('Error sending message:', error);
-    }
   }, [newMessage, selectedConversation, currentAdmin.id]);
 
-  const handleConversationSelect = useCallback((guestId: string) => {
-    setSelectedConversation(guestId);
-    fetchMessages(guestId);
-    markConversationAsRead(guestId);
-  }, [fetchMessages, markConversationAsRead]);
+  const handleConversationSelect = useCallback(
+    (guestId: string) => {
+      setSelectedConversation(guestId);
+      fetchMessages(guestId);
+      markConversationAsRead(guestId);
+    },
+    [fetchMessages, markConversationAsRead]
+  );
 
   const filteredConversations = useMemo(() => {
     let filtered = conversations;
 
     if (searchQuery) {
-      filtered = filtered.filter(conv =>
-        conv.guestName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        conv.guestId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        conv.lastMessage?.content.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        (conv) =>
+          conv.guestName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          conv.guestId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          conv.lastMessage?.content.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     switch (filterStatus) {
       case 'unread':
-        filtered = filtered.filter(conv => conv.unreadCount > 0);
+        filtered = filtered.filter((conv) => conv.unreadCount > 0);
         break;
       case 'assigned':
-        filtered = filtered.filter(conv => conv.assignedAdmin === currentAdmin.id);
+        filtered = filtered.filter((conv) => conv.assignedAdmin === currentAdmin.id);
         break;
     }
 
@@ -355,14 +378,20 @@ const AdminChatDashboard: React.FC = () => {
 
   const getPriorityColor = (priority: string) => {
     switch (priority) {
-      case 'high': return 'text-red-600 bg-red-100';
-      case 'normal': return 'text-blue-600 bg-blue-100';
-      case 'low': return 'text-gray-600 bg-gray-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'high':
+        return 'text-red-600 bg-red-100';
+      case 'normal':
+        return 'text-brand-goldDark bg-brand-surface';
+      case 'low':
+        return 'text-gray-600 bg-gray-100';
+      default:
+        return 'text-gray-600 bg-gray-100';
     }
   };
 
   useEffect(() => {
+    // Chờ có danh tính admin thật trước khi kết nối/thống kê (tránh gửi adminId rỗng).
+    if (!currentAdmin.id) return;
     fetchConversations();
     fetchStats();
     connectWebSocket();
@@ -370,35 +399,34 @@ const AdminChatDashboard: React.FC = () => {
     return () => {
       clientRef.current?.deactivate();
     };
-  }, [connectWebSocket, fetchConversations, fetchStats]);
+  }, [currentAdmin.id, connectWebSocket, fetchConversations, fetchStats]);
 
   useEffect(() => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      fetchStats();
-      if (!selectedConversation) {
-        fetchConversations();
-      }
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [fetchStats, fetchConversations, selectedConversation]);
+  // Polling removed — conversations + stats now refresh in real time via the
+  // /topic/admin/messages WebSocket handler.
 
   return (
     <div className="flex h-[calc(100vh-64px)] bg-gray-100">
-      <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
+      {/* Master (list): full-width trên mobile; ẩn khi đã chọn hội thoại (master-detail) */}
+      <div
+        className={`w-full flex-col border-r border-gray-200 bg-white lg:flex lg:w-80 ${
+          selectedConversation ? 'hidden' : 'flex'
+        }`}
+      >
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-bold text-gray-900">Quản lý Chat</h1>
           </div>
 
           <div className="grid grid-cols-2 gap-3 mb-4">
-            <div className="bg-blue-50 p-3 rounded-lg">
-              <div className="text-2xl font-bold text-blue-600">{stats.totalConversations}</div>
-              <div className="text-xs text-blue-800">Tổng cuộc trò chuyện</div>
+            <div className="bg-brand-surface p-3 rounded-lg">
+              <div className="text-2xl font-bold text-brand-goldDark">
+                {stats.totalConversations}
+              </div>
+              <div className="text-xs text-brand-goldDark">Tổng cuộc trò chuyện</div>
             </div>
             <div className="bg-red-50 p-3 rounded-lg">
               <div className="text-2xl font-bold text-red-600">{stats.unreadConversations}</div>
@@ -407,13 +435,14 @@ const AdminChatDashboard: React.FC = () => {
           </div>
 
           <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-4 h-4" />
             <input
               type="text"
+              aria-label="Tìm kiếm cuộc trò chuyện"
               placeholder="Tìm kiếm cuộc trò chuyện..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent text-sm"
             />
           </div>
 
@@ -422,7 +451,7 @@ const AdminChatDashboard: React.FC = () => {
               onClick={() => setFilterStatus('all')}
               className={`px-3 py-1 rounded-full text-xs font-medium ${
                 filterStatus === 'all'
-                  ? 'bg-blue-100 text-blue-800'
+                  ? 'bg-brand-surface text-brand-goldDark'
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
@@ -444,17 +473,26 @@ const AdminChatDashboard: React.FC = () => {
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="flex justify-center items-center p-8">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+              <div className="animate-spin rounded-full h-8 w-8 border-b border-brand-line"></div>
             </div>
           ) : (
             <>
               {filteredConversations.map((conversation) => (
                 <div
                   key={conversation.guestId}
+                  role="button"
+                  tabIndex={0}
+                  aria-pressed={selectedConversation === conversation.guestId}
                   onClick={() => handleConversationSelect(conversation.guestId)}
-                  className={`p-4 border-b border-gray-100 cursor-pointer transition-colors ${
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      handleConversationSelect(conversation.guestId);
+                    }
+                  }}
+                  className={`p-4 border-b border-gray-100 cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark ${
                     selectedConversation === conversation.guestId
-                      ? 'bg-blue-50 border-l-4 border-l-blue-500'
+                      ? 'bg-brand-surface border border-l-blue-500'
                       : 'hover:bg-gray-50'
                   }`}
                 >
@@ -468,15 +506,21 @@ const AdminChatDashboard: React.FC = () => {
                           <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></div>
                         )}
                       </div>
-                      
+
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
                           <h3 className="text-sm font-semibold text-gray-900 truncate">
                             {conversation.guestName || conversation.guestId}
                           </h3>
                           <div className="flex items-center space-x-1">
-                            <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(conversation.priority)}`}>
-                              {conversation.priority === 'high' ? 'Cao' : conversation.priority === 'normal' ? 'Bình thường' : 'Thấp'}
+                            <span
+                              className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(conversation.priority)}`}
+                            >
+                              {conversation.priority === 'high'
+                                ? 'Cao'
+                                : conversation.priority === 'normal'
+                                  ? 'Bình thường'
+                                  : 'Thấp'}
                             </span>
                             {conversation.unreadCount > 0 && (
                               <span className="bg-red-500 text-white text-xs rounded-full px-2 py-1 min-w-[1.25rem] text-center">
@@ -485,16 +529,18 @@ const AdminChatDashboard: React.FC = () => {
                             )}
                           </div>
                         </div>
-                        
+
                         <p className="text-xs text-gray-600 mt-1 truncate">
                           {conversation.lastMessage?.content || 'Chưa có tin nhắn'}
                         </p>
-                        
+
                         <div className="flex items-center justify-between mt-2">
                           <span className="text-xs text-gray-500">
-                            {conversation.lastMessage ? formatTime(conversation.lastMessage.createdAt) : ''}
+                            {conversation.lastMessage
+                              ? formatTime(conversation.lastMessage.createdAt)
+                              : ''}
                           </span>
-                          
+
                           {/* {conversation.assignedAdmin === currentAdmin.id && (
                             <span className="text-xs text-green-600 font-medium">Được giao</span>
                           )} */}
@@ -504,24 +550,44 @@ const AdminChatDashboard: React.FC = () => {
                   </div>
                 </div>
               ))}
-              
+
               {filteredConversations.length === 0 && (
                 <div className="p-8 text-center text-gray-500">
                   <MessageCircle className="w-12 h-12 mx-auto mb-4 text-gray-300" />
                   <p>Không có cuộc trò chuyện nào</p>
                 </div>
               )}
+
+              {/* Tải thêm — backend phân trang; nếu đủ 1 trang thì có thể còn nữa. */}
+              {!searchQuery && conversations.length >= convSize && (
+                <button
+                  type="button"
+                  onClick={() => setConvSize((s) => s + 30)}
+                  className="w-full py-3 text-sm font-medium text-brand-goldDark hover:bg-gray-50"
+                >
+                  Tải thêm hội thoại
+                </button>
+              )}
             </>
           )}
         </div>
       </div>
 
-      <div className="flex-1 flex flex-col">
+      {/* Detail (messages): ẩn trên mobile khi chưa chọn hội thoại */}
+      <div className={`flex-1 flex-col ${selectedConversation ? 'flex' : 'hidden lg:flex'}`}>
         {selectedConversation ? (
           <>
             <div className="bg-white border-b border-gray-200 p-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-3">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedConversation(null)}
+                    aria-label="Quay lại danh sách"
+                    className="-ml-1 rounded-lg p-2 text-gray-600 hover:bg-gray-100 lg:hidden"
+                  >
+                    <ArrowLeft className="h-5 w-5" />
+                  </button>
                   <div className="relative">
                     <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
                       <User className="w-5 h-5 text-gray-600" />
@@ -530,29 +596,32 @@ const AdminChatDashboard: React.FC = () => {
                       <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></div>
                     )}
                   </div>
-                  
+
                   <div>
                     {editingName ? (
                       <div className="flex items-center space-x-2">
                         <input
                           type="text"
+                          aria-label="Đổi tên khách"
                           value={newGuestName}
                           onChange={(e) => setNewGuestName(e.target.value)}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') handleSaveGuestName();
                             if (e.key === 'Escape') handleCancelEditName();
                           }}
-                          className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="px-2 py-1 border border-gray-300 rounded text-sm focus:outline-none focus:ring-2 focus:ring-brand-goldDark"
                           autoFocus
                         />
                         <button
                           onClick={handleSaveGuestName}
+                          aria-label="Lưu tên"
                           className="p-1 text-green-600 hover:bg-green-50 rounded"
                         >
                           <Check className="w-4 h-4" />
                         </button>
                         <button
                           onClick={handleCancelEditName}
+                          aria-label="Hủy đổi tên"
                           className="p-1 text-red-600 hover:bg-red-50 rounded"
                         >
                           <X className="w-4 h-4" />
@@ -565,7 +634,7 @@ const AdminChatDashboard: React.FC = () => {
                         </h2>
                         <button
                           onClick={handleStartEditName}
-                          className="p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded"
+                          className="p-1 text-gray-500 hover:text-gray-600 hover:bg-gray-100 rounded"
                           title="Đổi tên"
                         >
                           <Edit2 className="w-4 h-4" />
@@ -579,7 +648,8 @@ const AdminChatDashboard: React.FC = () => {
                           Đang trực tuyến
                         </>
                       ) : (
-                        currentConversation?.lastSeen && `Hoạt động ${formatTime(currentConversation.lastSeen)}`
+                        currentConversation?.lastSeen &&
+                        `Hoạt động ${formatTime(currentConversation.lastSeen)}`
                       )}
                     </p>
                   </div>
@@ -588,11 +658,12 @@ const AdminChatDashboard: React.FC = () => {
                 <div className="flex items-center space-x-2">
                   {/* <button
                     onClick={() => assignConversation(selectedConversation, currentAdmin.id)}
-                    className="px-3 py-1 bg-blue-100 text-blue-700 rounded-lg text-sm hover:bg-blue-200 transition-colors"
+                    className="px-3 py-1 bg-brand-surface text-brand-goldDark rounded-lg text-sm hover:bg-brand-surface transition-colors"
                   >
                     Giao cho tôi
                   </button> */}
                   <select
+                    aria-label="Độ ưu tiên hội thoại"
                     value={currentConversation?.priority || 'normal'}
                     onChange={(e) => updatePriority(selectedConversation, e.target.value)}
                     className="text-sm border border-gray-300 rounded px-2 py-1"
@@ -601,7 +672,10 @@ const AdminChatDashboard: React.FC = () => {
                     <option value="normal">Bình thường</option>
                     <option value="high">Cao</option>
                   </select>
-                  <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
+                  <button
+                    aria-label="Tùy chọn hội thoại"
+                    className="p-2 text-gray-500 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                  >
                     <MoreVertical className="w-5 h-5" />
                   </button>
                 </div>
@@ -614,37 +688,43 @@ const AdminChatDashboard: React.FC = () => {
                   key={message.id}
                   className={`flex ${message.senderType === 'ADMIN' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`max-w-xs lg:max-w-md ${message.senderType === 'ADMIN' ? 'order-2' : 'order-1'}`}>
+                  <div
+                    className={`max-w-xs lg:max-w-md ${message.senderType === 'ADMIN' ? 'order-2' : 'order-1'}`}
+                  >
                     {message.senderType === 'GUEST' && (
                       <div className="text-xs text-gray-500 mb-1">
                         {currentConversation?.guestName || 'Khách hàng'}
                       </div>
                     )}
-                    
+
                     <div
                       className={`px-4 py-2 rounded-2xl break-words ${
                         message.senderType === 'ADMIN'
-                          ? 'bg-blue-500 text-white rounded-br-md'
+                          ? 'bg-brand-goldDark text-white rounded-br-md'
                           : 'bg-white text-gray-800 border border-gray-200 rounded-bl-md'
                       }`}
                     >
                       <div className="text-sm leading-relaxed whitespace-pre-wrap">
                         {message.content}
                       </div>
-                      
+
                       {message.senderType === 'ADMIN' && (
                         <div className="flex items-center justify-end mt-1 space-x-1">
-                          <CheckCheck className="w-3 h-3 text-blue-200" />
+                          <CheckCheck className="w-3 h-3 text-brand-goldDark" />
                         </div>
                       )}
                     </div>
-                    
-                    <div className={`text-xs mt-1 px-2 ${
-                      message.senderType === 'ADMIN' ? 'text-right text-gray-400' : 'text-left text-gray-400'
-                    }`}>
+
+                    <div
+                      className={`text-xs mt-1 px-2 ${
+                        message.senderType === 'ADMIN'
+                          ? 'text-right text-gray-500'
+                          : 'text-left text-gray-500'
+                      }`}
+                    >
                       {new Date(message.createdAt).toLocaleTimeString('vi-VN', {
                         hour: '2-digit',
-                        minute: '2-digit'
+                        minute: '2-digit',
                       })}
                     </div>
                   </div>
@@ -655,35 +735,52 @@ const AdminChatDashboard: React.FC = () => {
 
             <div className="bg-white border-t border-gray-200 p-4">
               <div className="flex items-end space-x-3">
-                <button className="p-2 text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100">
+                <button
+                  aria-label="Đính kèm tệp"
+                  className="p-2 text-gray-500 hover:text-gray-600 rounded-lg hover:bg-gray-100"
+                >
                   <Paperclip className="w-5 h-5" />
                 </button>
-                
+
                 <div className="flex-1 relative">
                   <textarea
                     ref={messageInputRef}
+                    aria-label="Nhập tin nhắn"
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
                     onKeyDown={handleKeyPress}
                     placeholder="Nhập tin nhắn..."
                     rows={1}
-                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
+                    className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-brand-goldDark focus:border-transparent resize-none text-sm"
                     style={{ minHeight: '44px', maxHeight: '120px' }}
                   />
-                  <button className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 rounded">
+                  <button
+                    type="button"
+                    onClick={() => setShowEmoji((v) => !v)}
+                    aria-label="Chèn biểu tượng cảm xúc"
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-gray-500 hover:text-gray-600 rounded"
+                  >
                     <Smile className="w-5 h-5" />
                   </button>
+                  {showEmoji && (
+                    <EmojiPicker
+                      className="bottom-12 right-0"
+                      onPick={(e) => setNewMessage((m) => m + e)}
+                      onClose={() => setShowEmoji(false)}
+                    />
+                  )}
                 </div>
-                
+
                 <button
                   onClick={sendMessage}
                   disabled={!newMessage.trim() || !isConnected}
-                  className="p-3 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-2xl transition-colors"
+                  aria-label="Gửi tin nhắn"
+                  className="p-3 bg-brand-goldDark hover:bg-brand-goldDark disabled:bg-gray-300 disabled:cursor-not-allowed text-white rounded-2xl transition-colors"
                 >
                   <Send className="w-5 h-5" />
                 </button>
               </div>
-              
+
               <div className="mt-2 text-xs">
                 {!isConnected && (
                   <div className="text-red-500 flex items-center">
@@ -699,7 +796,9 @@ const AdminChatDashboard: React.FC = () => {
             <div className="text-center">
               <MessageCircle className="w-16 h-16 mx-auto mb-4 text-gray-300" />
               <h3 className="text-lg font-semibold text-gray-900 mb-2">Chọn cuộc trò chuyện</h3>
-              <p className="text-gray-500">Chọn một cuộc trò chuyện từ danh sách để bắt đầu nhắn tin</p>
+              <p className="text-gray-500">
+                Chọn một cuộc trò chuyện từ danh sách để bắt đầu nhắn tin
+              </p>
             </div>
           </div>
         )}

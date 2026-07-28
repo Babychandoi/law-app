@@ -10,8 +10,8 @@ import org.law_app.backend.common.SenderType;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChatRequest {
-    String guestId;
-    String content;
-    SenderType senderType;
-    String adminId;
+  String guestId;
+  String content;
+  SenderType senderType;
+  String adminId;
 }

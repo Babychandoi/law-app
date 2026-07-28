@@ -1,0 +1,19 @@
+# Prometheus scrape config — lấy metrics Micrometer từ management port nội bộ (9100) của các service.
+global:
+  scrape_interval: 30s
+  scrape_timeout: 10s
+
+scrape_configs:
+  - job_name: 'law-app-services'
+    metrics_path: /actuator/prometheus
+    static_configs:
+      - targets: ['backend:9100']
+        labels: {service: backend}
+      - targets: ['gateway:9100']
+        labels: {service: gateway}
+      - targets: ['chat-service:9100']
+        labels: {service: chat}
+      - targets: ['crm-service:9100']
+        labels: {service: crm}
+      - targets: ['document-service:9100']
+        labels: {service: document}

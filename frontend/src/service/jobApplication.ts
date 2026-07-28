@@ -1,4 +1,4 @@
-import axiosClient from "./axiosClient";
+import axiosClient from './axiosClient';
 
 export interface JobApplication {
   id: string;
@@ -31,8 +31,12 @@ export const getAllJobApplications = async (): Promise<ApiResponse<JobApplicatio
 /**
  * Get applications by job ID
  */
-export const getApplicationsByJobId = async (jobId: string): Promise<ApiResponse<JobApplication[]>> => {
-  const response = await axiosClient.get<ApiResponse<JobApplication[]>>(`/jobs/${jobId}/applications`);
+export const getApplicationsByJobId = async (
+  jobId: string
+): Promise<ApiResponse<JobApplication[]>> => {
+  const response = await axiosClient.get<ApiResponse<JobApplication[]>>(
+    `/jobs/${jobId}/applications`
+  );
   return response.data;
 };
 
@@ -56,7 +60,7 @@ export const updateApplicationStatus = async (
   if (notes) {
     params.append('notes', notes);
   }
-  
+
   const response = await axiosClient.put<ApiResponse<JobApplication>>(
     `/jobs/applications/${id}/status?${params.toString()}`
   );
@@ -73,15 +77,13 @@ export const deleteApplication = async (id: string): Promise<void> => {
 /**
  * Submit job application (Public - no auth required)
  */
-export const submitJobApplication = async (formData: FormData): Promise<ApiResponse<JobApplication>> => {
-  const response = await axiosClient.post<ApiResponse<JobApplication>>(
-    '/jobs/apply',
-    formData,
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    }
-  );
+export const submitJobApplication = async (
+  formData: FormData
+): Promise<ApiResponse<JobApplication>> => {
+  const response = await axiosClient.post<ApiResponse<JobApplication>>('/jobs/apply', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
   return response.data;
 };

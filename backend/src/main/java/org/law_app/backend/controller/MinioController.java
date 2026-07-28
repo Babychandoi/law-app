@@ -14,14 +14,15 @@ import org.springframework.web.multipart.MultipartFile;
 @RestController
 @RequestMapping("/upload")
 @RequiredArgsConstructor
-@FieldDefaults(makeFinal = true , level = AccessLevel.PRIVATE)
+@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class MinioController {
-    MinioService minioService;
-    @PostMapping
-    ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file ) {
-        return ApiResponse.<String>builder()
-                .message("File uploaded successfully")
-                .data(minioService.uploadImage(file))
-                .build();
-    }
+  MinioService minioService;
+
+  @PostMapping
+  ApiResponse<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    return ApiResponse.<String>builder()
+        .message("File uploaded successfully")
+        .data(minioService.uploadImage(file))
+        .build();
+  }
 }

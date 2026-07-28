@@ -11,10 +11,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class CompanyResponse {
-    String id; // Unique identifier for the company
-    String name; // Name of the company
-    String representative; // Name of the representative
-    String taxCode; // Tax code of the company
-    String websiteName; // Website of the company
-    String email; // Email of the company
+  String id; // Unique identifier for the company
+  String name; // Name of the company
+  String representative; // Name of the representative
+  String taxCode; // Tax code of the company
+  String websiteName; // Website of the company
+  String email; // Email of the company
 }

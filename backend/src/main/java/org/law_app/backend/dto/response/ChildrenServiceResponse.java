@@ -11,10 +11,10 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ChildrenServiceResponse {
-    String id;
-    String title;
-    String href;
-    String description;
-    String image;
-    ServiceResponse parentService;
+  String id;
+  String title;
+  String href;
+  String description;
+  String image;
+  ServiceResponse parentService;
 }

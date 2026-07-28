@@ -1,9 +1,8 @@
 package org.law_app.backend.dto.response;
 
+import java.util.Date;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.Date;
 
 @Data
 @Builder
@@ -11,15 +10,15 @@ import java.util.Date;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class JobApplicationResponse {
-    String id;
-    String jobId;
-    String jobTitle;
-    String candidateName;
-    String candidateEmail;
-    String candidatePhone;
-    String cvFileUrl;
-    String cvFileName;
-    String status;
-    Date appliedDate;
-    String notes;
+  String id;
+  String jobId;
+  String jobTitle;
+  String candidateName;
+  String candidateEmail;
+  String candidatePhone;
+  String cvFileUrl;
+  String cvFileName;
+  String status;
+  Date appliedDate;
+  String notes;
 }

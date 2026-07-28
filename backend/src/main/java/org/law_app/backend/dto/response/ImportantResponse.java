@@ -13,9 +13,9 @@ import org.law_app.backend.common.Icon;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ImportantResponse {
-    String id; // Unique identifier for the important entity
-    String text; // Text content of the important entity
-    String href; // URL or link associated with the important entity
-    Icon icon; // Icon associated with the important entity, if applicable
-    Color color; // Color associated with the important entity, if applicable
+  String id; // Unique identifier for the important entity
+  String text; // Text content of the important entity
+  String href; // URL or link associated with the important entity
+  Icon icon; // Icon associated with the important entity, if applicable
+  Color color; // Color associated with the important entity, if applicable
 }

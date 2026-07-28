@@ -1,2 +1,21 @@
 .env
-.env.*.local.env
+.env.*
+.env.*.local
+!.env.example
+# .env in any subdirectory (crm-service, chat-service, gateway, ...)
+**/.env
+
+# Cloudflare Tunnel secrets / binary
+cloudflared/credentials.json
+cloudflared.exe
+
+# SSL certificates & private keys (KHONG commit private key)
+certbot/conf/live/
+certbot/conf/archive/
+certbot/conf/keys/
+# ACME account key + metadata (private key cua tai khoan Let's Encrypt)
+certbot/conf/accounts/
+
+# Build output (Maven / Java) — build ra, khong commit
+**/target/
+backups/**

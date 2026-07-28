@@ -10,10 +10,9 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
-
 public class ProcessDetailResponse {
-    String type;
-    String desc;
-    String time;
-    String accuracy;
+  String type;
+  String desc;
+  String time;
+  String accuracy;
 }

@@ -16,20 +16,19 @@ services:
     depends_on:
       - frontend
       - backend
+      - gateway
       - minio
     networks:
       - law-app-network
     restart: unless-stopped
 
   # ==================== FRONTEND ====================
+  # Prod urls come from frontend/.env.production (CRA bakes them at `npm run build`),
+  # not from build args — so the bundle can never fall back to localhost.
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-      args:
-        REACT_APP_API_URL: ${REACT_APP_API_URL}
-        REACT_APP_WS_URL: ${REACT_APP_WS_URL}
-        REACT_APP_CHAT_WS_URL: ${REACT_APP_CHAT_WS_URL}
     container_name: law-app-frontend
     networks:
       - law-app-network
@@ -41,8 +40,21 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     container_name: law-app-backend
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9100/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    mem_limit: 900m
     env_file:
       - .env
+    environment:
+      # Cap JVM heap to ~70% of mem_limit so the container is not OOM-killed (exit 137).
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=70"
+    # Reach the 9Router (AI chat) instance running on the host at host.docker.internal.
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     depends_on:
       mysql:
         condition: service_healthy
@@ -52,6 +64,156 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
+    networks:
+      - law-app-network
+    restart: unless-stopped
+
+  # ==================== API GATEWAY ====================
+  gateway:
+    build:
+      context: ./gateway
+      dockerfile: Dockerfile
+    container_name: law-app-gateway
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9100/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    mem_limit: 500m
+    env_file:
+      - .env
+    environment:
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=70"
+    depends_on:
+      - backend
+      - chat-service
+      - crm-service
+      - document-service
+    networks:
+      - law-app-network
+    restart: unless-stopped
+
+  # ==================== CHAT SERVICE (internal staff chat) ====================
+  chat-service:
+    build:
+      context: ./chat-service
+      dockerfile: Dockerfile
+    container_name: law-app-chat
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9100/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    mem_limit: 700m
+    env_file:
+      - .env
+    environment:
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=70"
+      # Override the monolith's MongoDB DB name that leaks in via .env, so chat-service uses its
+      # OWN isolated database instead of writing into law_app_chat (the guest-chat DB).
+      SPRING_DATA_MONGODB_DATABASE: ${CHAT_MONGODB_DATABASE:-law-app-staff-chat}
+    depends_on:
+      mongodb:
+        condition: service_started
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    networks:
+      - law-app-network
+    restart: unless-stopped
+
+  # ==================== CRM SERVICE (customer-care microservice) ====================
+  crm-service:
+    build:
+      context: ./crm-service
+      dockerfile: Dockerfile
+    container_name: law-app-crm
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9100/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    mem_limit: 700m
+    env_file:
+      - .env
+    environment:
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=70"
+      # Override the shared monolith datasource env so CRM points at its OWN database.
+      # (Spring relaxed-binding makes SPRING_DATASOURCE_URL from .env win over application.yml.)
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/law_app_crm?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    networks:
+      - law-app-network
+    restart: unless-stopped
+
+  # ==================== DOCUMENT SERVICE (Word template generation) ====================
+  document-service:
+    build:
+      context: ./document-service
+      dockerfile: Dockerfile
+    container_name: law-app-documents
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9100/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 60s
+    mem_limit: 700m
+    env_file:
+      - .env
+    environment:
+      JAVA_TOOL_OPTIONS: "-XX:MaxRAMPercentage=70"
+      DOCUMENT_MONGODB_HOST: law-app-mongodb
+      DOCUMENT_MONGODB_PORT: 27017
+      DOCUMENT_MONGODB_DATABASE: ${DOCUMENT_MONGODB_DATABASE:-law-app-documents}
+      # Use container-name DNS aliases (these resolve reliably on the running prod network).
+      SPRING_DATA_REDIS_HOST: law-app-redis
+      SPRING_DATA_REDIS_PORT: 6379
+      MINIO_URL: http://law-app-minio:9000
+    depends_on:
+      mongodb:
+        condition: service_started
+      redis:
+        condition: service_healthy
+      minio:
+        condition: service_started
+    networks:
+      law-app-network:
+        aliases:
+          - document-service
+          - law-app-documents
+    restart: unless-stopped
+
+  # ==================== RABBITMQ (STOMP broker relay) ====================
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: law-app-rabbitmq
+    mem_limit: 384m
+    environment:
+      RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER}
+      RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASS}
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+      - ./docker/rabbitmq/enabled_plugins:/etc/rabbitmq/enabled_plugins:ro
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
     networks:
       - law-app-network
     restart: unless-stopped
@@ -151,16 +313,38 @@ services:
       mc alias set myminio http://minio:9000 $${MINIO_ACCESS_KEY} $${MINIO_SECRET_KEY};
       mc mb myminio/$${MINIO_BUCKET_IMAGES} --ignore-existing;
       mc anonymous set public myminio/$${MINIO_BUCKET_IMAGES};
+      mc mb myminio/$${MINIO_BUCKET_STAFF_FILES} --ignore-existing;
+      mc anonymous set none myminio/$${MINIO_BUCKET_STAFF_FILES};
+      mc mb myminio/$${MINIO_BUCKET_DOCUMENT_TEMPLATES} --ignore-existing;
+      mc mb myminio/$${MINIO_BUCKET_GENERATED_DOCUMENTS} --ignore-existing;
       exit 0;
       "
     networks:
       - law-app-network
+
+  # ==================== CLOUDFLARE TUNNEL ====================
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: law-app-cloudflared
+    command: tunnel --no-autoupdate --config /etc/cloudflared/config.yml run
+    volumes:
+      - ./cloudflared/config.yml:/etc/cloudflared/config.yml:ro
+      - ./cloudflared/credentials.json:/etc/cloudflared/credentials.json:ro
+    depends_on:
+      - frontend
+      - backend
+      - gateway
+      - minio
+    networks:
+      - law-app-network
+    restart: unless-stopped
 
 volumes:
   mysql_data:
   mongodb_data:
   redis_data:
   minio_data:
+  rabbitmq_data:
 
 networks:
   law-app-network:

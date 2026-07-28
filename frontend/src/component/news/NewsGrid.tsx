@@ -11,8 +11,8 @@ interface NewsGridProps {
 export const NewsGrid = ({ items, loading, onItemClick }: NewsGridProps) => {
   if (loading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20">
-        <Loader2 className="h-12 w-12 animate-spin text-yellow-500 mb-4" />
+      <div className="flex flex-col items-center justify-center py-20" role="status">
+        <Loader2 className="mb-4 h-10 w-10 animate-spin text-brand-goldDark" aria-hidden="true" />
         <span className="text-gray-600 font-medium">Đang tải bản tin...</span>
       </div>
     );
@@ -31,17 +31,9 @@ export const NewsGrid = ({ items, loading, onItemClick }: NewsGridProps) => {
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {items.map((item, index) => (
-        <div
-          key={item.id}
-          style={{
-            animationDelay: `${index * 0.1}s`
-          }}
-        >
-          <NewsCard 
-            item={item} 
-            onClick={onItemClick}
-          />
+      {items.map((item) => (
+        <div key={item.id}>
+          <NewsCard item={item} onClick={onItemClick} />
         </div>
       ))}
     </div>

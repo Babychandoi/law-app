@@ -16,7 +16,7 @@ export const useGoogleMap = ({
   initialZoom = 14,
   initialLanguage = 'en',
   initialMapType = 'roadmap',
-  initialLabel = 'Location'
+  initialLabel = 'Location',
 }: UseGoogleMapProps = {}) => {
   // State management
   const [coordinates, setCoordinates] = useState<Coordinates>(initialCoordinates);
@@ -27,8 +27,8 @@ export const useGoogleMap = ({
   const [loading, setLoading] = useState<boolean>(false);
 
   // Generate map URL
-  const mapUrl = useMemo(() => 
-    generateMapUrl(coordinates, 600, language, label, mapType, zoom),
+  const mapUrl = useMemo(
+    () => generateMapUrl(coordinates, 600, language, label, mapType, zoom),
     [coordinates, language, label, mapType, zoom]
   );
 
@@ -38,15 +38,14 @@ export const useGoogleMap = ({
     if (newLabel) setLabel(newLabel);
   }, []);
 
-  const updateMapSettings = useCallback((settings: {
-    zoom?: number;
-    language?: MapLanguage;
-    mapType?: MapType;
-  }) => {
-    if (settings.zoom !== undefined) setZoom(settings.zoom);
-    if (settings.language !== undefined) setLanguage(settings.language);
-    if (settings.mapType !== undefined) setMapType(settings.mapType);
-  }, []);
+  const updateMapSettings = useCallback(
+    (settings: { zoom?: number; language?: MapLanguage; mapType?: MapType }) => {
+      if (settings.zoom !== undefined) setZoom(settings.zoom);
+      if (settings.language !== undefined) setLanguage(settings.language);
+      if (settings.mapType !== undefined) setMapType(settings.mapType);
+    },
+    []
+  );
 
   const resetToDefault = useCallback(() => {
     setCoordinates(initialCoordinates);
@@ -57,8 +56,8 @@ export const useGoogleMap = ({
   }, [initialCoordinates, initialZoom, initialLanguage, initialMapType, initialLabel]);
 
   // Utility functions
-  const zoomIn = useCallback(() => setZoom(prev => Math.min(prev + 1, 20)), []);
-  const zoomOut = useCallback(() => setZoom(prev => Math.max(prev - 1, 1)), []);
+  const zoomIn = useCallback(() => setZoom((prev) => Math.min(prev + 1, 20)), []);
+  const zoomOut = useCallback(() => setZoom((prev) => Math.max(prev - 1, 1)), []);
 
   return {
     // State
@@ -69,7 +68,7 @@ export const useGoogleMap = ({
     label,
     loading,
     mapUrl,
-    
+
     // Actions
     setCoordinates,
     setZoom,
@@ -81,6 +80,6 @@ export const useGoogleMap = ({
     updateMapSettings,
     resetToDefault,
     zoomIn,
-    zoomOut
+    zoomOut,
   };
 };

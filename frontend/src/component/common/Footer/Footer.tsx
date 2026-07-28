@@ -1,394 +1,224 @@
-import React, { useEffect, useState } from 'react';
-import { MapPin, Mail, Phone, Send, Facebook, Linkedin, Shield, FileText, Star, Award, Users, Globe } from 'lucide-react';
-import {TotoCompany} from '../../../types/company';
-import { getCompany,addUserNew } from '../../../service/service';
-import { useNavigate } from 'react-router-dom';
-import Swal from 'sweetalert2';
+import {
+  Facebook,
+  Linkedin,
+  Mail,
+  MapPin,
+  MessageCircle,
+  Phone,
+  Send,
+  ShieldCheck,
+} from 'lucide-react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { getCompany, addUserNew } from '../../../service/service';
+import { contactInfo, menuItems } from '../../../shared/config/site';
+import { TotoCompany } from '../../../types/company';
 
-const COLORS = {
-  blue: {
-    text: "text-blue-400",
-    bg: "bg-blue-400",
-    border: "border-blue-400/50",
-    shadow: "shadow-blue-500/20",
-    hover: "hover:text-blue-400"
+const fallbackCompany: TotoCompany = {
+  company: {
+    id: 'fallback',
+    name: 'Luật Poip Legal',
+    representative: '',
+    taxCode: '',
+    websiteName: 'luatpoip.com',
+    email: contactInfo.email,
   },
-  purple: {
-    text: "text-purple-400",
-    bg: "bg-purple-400",
-    border: "border-purple-400/50",
-    shadow: "shadow-purple-500/20",
-    hover: "hover:text-purple-400"
-  },
-  red: {
-    text: "text-red-400",
-    bg: "bg-red-400",
-    border: "border-red-400/50",
-    shadow: "shadow-red-500/20",
-    hover: "hover:text-red-400"
-  },
-  green: {
-    text: "text-green-400",
-    bg: "bg-green-400",
-    border: "border-green-400/50",
-    shadow: "shadow-green-500/20",
-    hover: "hover:text-green-400"
-  }
+  locations: [
+    {
+      id: 'hn',
+      type: 'Văn phòng',
+      address: '70 Ngách 6 Ngõ 10 Tả Thanh Oai, Đại Thanh, Hà Nội, Việt Nam',
+      color: 'gold',
+    },
+  ],
+  phoneContacts: [{ id: 'hotline', label: 'Hotline', number: contactInfo.hotline, color: 'gold' }],
+  importants: [],
+  socials: [],
 };
 
-const Footer: React.FC = () => {
+function normalizePhone(phone: string) {
+  return phone.replace(/[^\d+]/g, '');
+}
+
+export default function Footer() {
+  const [company, setCompany] = useState<TotoCompany>(fallbackCompany);
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [company,setCompany] = useState<TotoCompany>();
-  
-  const iconMap: Record<string, React.ElementType> = {
-    Facebook,
-    Linkedin,
-    Shield,
-    FileText,
-    Star,
-    Award,
-    Users,
-    Globe,
-    MapPin,
-    Mail,
-    Phone,
-    Send
-  };
-  
-  const navigate = useNavigate();
 
-  useEffect(()=>{
-    const fetchCompany = async() =>{
-      const response =  await getCompany();
-      setCompany(response.data);
-    }
-    fetchCompany()
-  },[]);
-
-  const handleSubmit = async () => {
-    if (!email) return;
-    setIsSubmitting(true);
-
-    Swal.fire({
-      title: 'Đang xử lý...',
-      text: 'Vui lòng chờ trong giây lát.',
-      allowOutsideClick: false,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-    });
-  
-    try {
-      const response = await addUserNew(email);
-      Swal.close();
-  
-      if (response.data === true) {
-        Swal.fire({
-          icon: 'success',
-          title: 'Đăng ký thành công!',
-          text: 'Cảm ơn bạn đã đăng ký nhận bản tin.',
-        });
-        setEmail('');
-      } else {
-        Swal.fire({
-          icon: 'info',
-          title: 'Email đã đăng ký!',
-          text: 'Email này đã được đăng ký nhận tin trước đó.',
-        });
-        setEmail('');
-      }
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Lỗi!',
-        text: 'Đăng ký không thành công, vui lòng thử lại sau.',
+  useEffect(() => {
+    let mounted = true;
+    getCompany()
+      .then((response) => {
+        if (mounted && response.data) {
+          setCompany(response.data);
+        }
+      })
+      .catch(() => {
+        if (mounted) {
+          setCompany(fallbackCompany);
+        }
       });
-    }
-  
-    setIsSubmitting(false);
-  };
 
-  const formatPhoneNumber = (number: string) => {
-    return number.replace(/\./g, '');
-  };
-  
-  const hanldeNagivate = (href: string) => {
-    navigate(`/tin-tuc/${href}`);
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const quickLinks = useMemo(() => menuItems.filter((item) => item.href !== '/').slice(0, 6), []);
+
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!email.trim()) return;
+
+    setIsSubmitting(true);
+    try {
+      const response = await addUserNew(email.trim());
+      toast.success(response.message || 'Đã đăng ký nhận tin thành công');
+      setEmail('');
+    } catch {
+      toast.error('Không thể đăng ký nhận tin. Vui lòng thử lại sau.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <footer className="relative text-white overflow-hidden bg-gradient-to-b from-gray-900 via-black to-gray-900">
-      {/* Top Accent Line */}
-      <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400"></div>
-      
-      {/* Animated Background Elements */}
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-r from-yellow-400/10 to-orange-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-green-400/5 to-teal-400/5 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{animationDelay: '0.5s'}}></div>
-      </div>
-
-      {/* Geometric Pattern Overlay */}
-      <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='1'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }}></div>
-      </div>
-
-      <div className="relative z-10 py-16 px-6">
-        {/* Company Header */}
-        <div className="max-w-7xl mx-auto text-center mb-16">
-          <div className="relative inline-block group">
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/20 via-orange-400/20 to-red-400/20 rounded-3xl blur-2xl group-hover:blur-3xl transition-all duration-500"></div>
-            <div className="relative p-8 bg-gradient-to-br from-gray-800/60 via-gray-900/60 to-black/60 rounded-3xl backdrop-blur-xl border border-yellow-400/30 shadow-2xl hover:border-yellow-400/50 transition-all duration-500">
-              <div className="flex items-center justify-center mb-6">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-2xl blur-lg opacity-50 animate-pulse"></div>
-                  <div className="relative p-4 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-2xl shadow-lg transform group-hover:scale-110 transition-transform duration-300">
-                    <Award className="w-10 h-10 text-gray-900" />
-                  </div>
-                </div>
-              </div>
-              <h2 className="text-4xl md:text-5xl font-bold mb-4">
-                <span className="bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-300 bg-clip-text text-transparent">
-                  {company?.company.name}
-                </span>
-              </h2>
-              <div className="flex flex-col md:flex-row items-center justify-center gap-6 text-gray-300">
-                <div className="flex items-center gap-2 group/item hover:scale-105 transition-transform duration-300">
-                  <div className="p-2 bg-yellow-400/10 rounded-lg group-hover/item:bg-yellow-400/20 transition-colors duration-300">
-                    <Users className="w-5 h-5 text-yellow-400" />
-                  </div>
-                  <span>Đại diện bởi: <span className="text-yellow-400 font-semibold">{company?.company.representative}</span></span>
-                </div>
-                <div className="hidden md:block w-2 h-2 bg-yellow-400/50 rounded-full"></div>
-                <div className="flex items-center gap-2 group/item hover:scale-105 transition-transform duration-300">
-                  <div className="p-2 bg-yellow-400/10 rounded-lg group-hover/item:bg-yellow-400/20 transition-colors duration-300">
-                    <Globe className="w-5 h-5 text-yellow-400" />
-                  </div>
-                  <span>MST: <span className="text-white font-mono font-semibold">{company?.company.taxCode}</span></span>
-                </div>
-              </div>
+    <footer className="border-t border-brand-line bg-brand-ink text-white">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.25fr_0.75fr_1fr]">
+        <section>
+          <div className="mb-5 flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-md bg-brand-gold">
+              <ShieldCheck size={24} />
             </div>
-          </div>
-        </div>
-
-        {/* Main Content Grid */}
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
-          {/* Location Section */}
-          <div className="space-y-8">
-            <div className="group">
-              <div className="flex items-center mb-6">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl blur-md opacity-50"></div>
-                  <div className="relative p-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <MapPin className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold text-white ml-4 group-hover:text-blue-400 transition-colors duration-300">Địa điểm</h3>
-              </div>
-              <div className="space-y-4">
-                {company?.locations.map((location) => {
-                  const colorConfig = COLORS[location.color as keyof typeof COLORS];
-                  return (
-                    <div 
-                      key={location.id} 
-                      className={`relative p-6 bg-gradient-to-br from-gray-800/40 to-gray-900/40 rounded-2xl border ${colorConfig.border} hover:border-opacity-100 transition-all duration-500 hover:shadow-2xl hover:${colorConfig.shadow} backdrop-blur-sm group/card hover:transform hover:scale-[1.02]`}
-                    >
-                      <div className="absolute top-2 right-2 opacity-0 group-hover/card:opacity-100 transition-opacity duration-300">
-                        <Star className="w-4 h-4 text-yellow-400 animate-pulse" />
-                      </div>
-                      <h4 className={`${colorConfig.text} font-semibold mb-3 flex items-center text-lg`}>
-                        <div className={`w-2 h-2 ${colorConfig.bg} rounded-full mr-3 animate-pulse`}></div>
-                        {location.type}
-                      </h4>
-                      <p className="text-gray-300 leading-relaxed">{location.address}</p>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Contact Section */}
-          <div className="space-y-8">
-            <div className="group">
-              <div className="flex items-center mb-6">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl blur-md opacity-50"></div>
-                  <div className="relative p-3 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <Phone className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold text-white ml-4 group-hover:text-emerald-400 transition-colors duration-300">Liên hệ</h3>
-              </div>
-              <div className="space-y-4">
-                {/* Email */}
-                <div className="p-6 bg-gradient-to-br from-gray-800/40 to-gray-900/40 rounded-2xl border border-emerald-400/50 hover:border-emerald-400 transition-all duration-500 hover:shadow-2xl hover:shadow-emerald-500/20 backdrop-blur-sm group/card hover:transform hover:scale-[1.02]">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-emerald-400 font-semibold mb-2 flex items-center gap-2">
-                        <Mail className="w-4 h-4" />
-                        Email
-                      </h4>
-                      <a 
-                        href={`mailto:${company?.company.email}`}
-                        className="text-white hover:text-emerald-400 transition-colors duration-300 flex items-center font-medium text-lg"
-                      >
-                        {company?.company.email}
-                      </a>
-                    </div>
-                    <div className="opacity-0 group-hover/card:opacity-100 transition-opacity duration-300">
-                      <Send className="w-5 h-5 text-emerald-400 animate-pulse" />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Phone Numbers */}
-                <div className="p-6 bg-gradient-to-br from-gray-800/40 to-gray-900/40 rounded-2xl border border-yellow-400/50 hover:border-yellow-400 transition-all duration-500 hover:shadow-2xl hover:shadow-yellow-500/20 backdrop-blur-sm">
-                  <h4 className="text-yellow-400 font-semibold mb-4 flex items-center gap-2 text-lg">
-                    <Phone className="w-5 h-5" />
-                    Số điện thoại
-                  </h4>
-                  <div className="space-y-3">
-                    {company?.phoneContacts.map((contact) => {
-                      const colorConfig = COLORS[contact.color as keyof typeof COLORS];
-                      return (
-                        <div 
-                          key={contact.id} 
-                          className="flex items-center justify-between p-4 bg-gray-800/50 rounded-xl hover:bg-gray-700/50 transition-all duration-300 group/phone border border-transparent hover:border-gray-600"
-                        >
-                          <div className="flex items-center gap-3">
-                            <div className={`w-2 h-2 ${colorConfig.bg} rounded-full animate-pulse`}></div>
-                            <span className="text-gray-400 text-sm font-medium">{contact.label}:</span>
-                            <a 
-                              href={`tel:${formatPhoneNumber(contact.number)}`}
-                              className={`${colorConfig.text} hover:text-white transition-colors duration-300 font-mono font-semibold text-base`}
-                            >
-                              {contact.number}
-                            </a>
-                          </div>
-                          <Phone className="w-4 h-4 text-gray-500 group-hover/phone:text-gray-300 transition-colors duration-300" />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Newsletter & Links Section */}
-          <div className="space-y-8">
             <div>
-              <div className="flex items-center mb-6">
-                <div className="relative">
-                  <div className="absolute inset-0 bg-gradient-to-r from-pink-500 to-rose-500 rounded-xl blur-md opacity-50"></div>
-                  <div className="relative p-3 bg-gradient-to-r from-pink-500 to-rose-500 rounded-xl shadow-lg">
-                    <Send className="w-6 h-6 text-white" />
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold text-white ml-4">Nhận tin tức</h3>
-              </div>
-              <div className="p-6 bg-gradient-to-br from-gray-800/40 to-gray-900/40 rounded-2xl border border-pink-400/50 hover:border-pink-400 transition-all duration-500 backdrop-blur-sm hover:shadow-2xl hover:shadow-pink-500/20">
-                <div className="space-y-4">
-                  <div className="relative group">
-                    <input
-                      type="email"
-                      placeholder="Nhập email của bạn..."
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full p-4 pl-12 pr-4 rounded-xl bg-gray-800/50 text-white border border-gray-600 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-transparent transition-all duration-300 placeholder-gray-400 group-hover:bg-gray-800/70"
-                      required
-                    />
-                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-pink-400 transition-colors duration-300" />
-                  </div>
-                  <button
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                    className="w-full p-4 bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold rounded-xl hover:from-pink-600 hover:to-rose-600 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg hover:shadow-pink-500/50 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
-                  >
-                    {isSubmitting ? (
-                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    ) : (
-                      <Send className="w-5 h-5" />
-                    )}
-                    {isSubmitting ? 'Đang gửi...' : 'Đăng ký nhận tin'}
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <div className="p-6 bg-gradient-to-br from-gray-800/40 to-gray-900/40 rounded-2xl border border-blue-400/50 hover:border-blue-400 transition-all duration-500 backdrop-blur-sm hover:shadow-2xl hover:shadow-blue-500/20">
-              <h4 className="text-white font-semibold mb-4 flex items-center text-lg">
-                <Shield className="w-5 h-5 mr-2 text-blue-400" />
-                Liên kết quan trọng
-              </h4>
-              <div className="space-y-2">
-                {company?.importants.map((link) => {
-                  const colorConfig = COLORS[link.color as keyof typeof COLORS];
-                  return (
-                    <button 
-                      key={link.id}
-                      onClick={() => hanldeNagivate(link.href)}
-                      className={`flex items-center w-full p-3 text-gray-400 ${colorConfig.hover} transition-all duration-300 rounded-lg hover:bg-gray-700/50 group/link border border-transparent hover:border-gray-600`}
-                    >
-                      {React.createElement(iconMap[link.icon], { 
-                        className: "w-5 h-5 mr-3 group-hover/link:scale-110 transition-transform duration-300" 
-                      })}
-                      <span className="group-hover/link:translate-x-1 transition-transform duration-300">{link.text}</span>
-                    </button>
-                  );
-                })}
-              </div>
+              <h2 className="text-xl font-semibold">{company.company.name}</h2>
+              <p className="text-sm text-white/60">{company.company.websiteName}</p>
             </div>
           </div>
-        </div>
 
-        {/* Footer Bottom */}
-        <div className="max-w-7xl mx-auto mt-16">
-          <div className="h-px bg-gradient-to-r from-transparent via-yellow-400 to-transparent mb-8"></div>
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-6 md:space-y-0">
-            <div className="text-center md:text-left">
-              <p className="text-gray-400 text-sm mb-2">
-                © 2025 <span className="text-yellow-400 font-semibold">{company?.company.websiteName}</span> - All Rights Reserved
-              </p>
-              <p className="text-gray-500 text-xs">Được thiết kế với ❤️ cho sự thành công của bạn</p>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-gray-500 text-sm mr-2">Theo dõi chúng tôi:</span>
-              {company?.socials.map((social) => (
-                <a
-                  key={social.id}
-                  href={social.href}
-                  aria-label={social.label}
-                  className="relative p-3 bg-gray-800/50 rounded-xl border border-gray-600 text-gray-400 hover:text-white hover:border-yellow-400 transition-all duration-300 hover:scale-110 hover:shadow-lg hover:shadow-yellow-500/20 transform group/social"
-                >
-                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/0 to-orange-400/0 group-hover/social:from-yellow-400/10 group-hover/social:to-orange-400/10 rounded-xl transition-all duration-300"></div>
-                  {React.createElement(iconMap[social.icon], { 
-                    className: "w-5 h-5 relative z-10" 
-                  })}
-                </a>
-              ))}
-            </div>
+          <div className="space-y-4 text-sm text-white/75">
+            {company.locations.map((location) => (
+              <div key={location.id} className="flex gap-3">
+                <MapPin className="mt-0.5 shrink-0 text-brand-gold" size={18} />
+                <div>
+                  <p className="font-medium text-white">{location.type}</p>
+                  <p>{location.address}</p>
+                </div>
+              </div>
+            ))}
+            <a
+              className="flex items-center gap-3 hover:text-brand-gold"
+              href={`mailto:${company.company.email}`}
+            >
+              <Mail size={18} />
+              <span>{company.company.email}</span>
+            </a>
+            {company.phoneContacts.map((phone) => (
+              <a
+                key={phone.id}
+                className="flex items-center gap-3 hover:text-brand-gold"
+                href={`tel:${normalizePhone(phone.number)}`}
+              >
+                <Phone size={18} />
+                <span>
+                  {phone.label}: {phone.number}
+                </span>
+              </a>
+            ))}
           </div>
-        </div>
+        </section>
+
+        <section>
+          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-brand-gold">
+            Liên kết
+          </h3>
+          <div className="grid gap-2 text-sm text-white/75">
+            {quickLinks.map((item) => (
+              <Link key={item.id} to={item.href} className="hover:text-brand-gold">
+                {item.title}
+              </Link>
+            ))}
+            <Link to="/chinh-sach-bao-mat" className="hover:text-brand-gold">
+              Chính sách bảo mật
+            </Link>
+          </div>
+        </section>
+
+        <section>
+          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-brand-gold">
+            Nhận bản tin
+          </h3>
+          <p className="mb-4 text-sm leading-6 text-white/70">
+            Cập nhật tin tức pháp lý và sở hữu trí tuệ mới nhất từ đội ngũ Luật Poip Legal.
+          </p>
+          <form onSubmit={handleSubmit} className="flex gap-2">
+            <label htmlFor="footer-email" className="sr-only">
+              Email nhận bản tin
+            </label>
+            <input
+              id="footer-email"
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="Email của bạn"
+              className="min-w-0 flex-1 rounded-md border border-white/15 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-brand-gold"
+            />
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="inline-flex items-center gap-2 rounded-md bg-brand-goldDark px-4 py-2 text-sm font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              <Send size={16} />
+              Gửi
+            </button>
+          </form>
+
+          <div className="mt-6 flex gap-2">
+            <a
+              href={contactInfo.zaloHref}
+              target="_blank"
+              rel="noreferrer"
+              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-gold hover:text-brand-gold"
+              aria-label="Zalo"
+            >
+              <MessageCircle size={18} />
+            </a>
+            <a
+              href={contactInfo.messengerHref}
+              target="_blank"
+              rel="noreferrer"
+              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-gold hover:text-brand-gold"
+              aria-label="Facebook"
+            >
+              <Facebook size={18} />
+            </a>
+            <a
+              href={contactInfo.emailHref}
+              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-gold hover:text-brand-gold"
+              aria-label="Email"
+            >
+              <Mail size={18} />
+            </a>
+            <a
+              href={company.socials[0]?.href || contactInfo.mapHref}
+              target="_blank"
+              rel="noreferrer"
+              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-gold hover:text-brand-gold"
+              aria-label="LinkedIn"
+            >
+              <Linkedin size={18} />
+            </a>
+          </div>
+        </section>
       </div>
 
-      {/* Custom Animations */}
-      <style>{`
-        @keyframes gradient {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-        .animate-gradient {
-          background-size: 200% 200%;
-          animation: gradient 3s ease infinite;
-        }
-      `}</style>
+      <div className="border-t border-white/10">
+        <div className="mx-auto flex max-w-7xl flex-col gap-2 px-4 py-5 text-xs text-white/55 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+          <span>© 2026 {company.company.websiteName}. All rights reserved.</span>
+          <span>Tư vấn rõ ràng, bảo vệ tài sản trí tuệ bền vững.</span>
+        </div>
+      </div>
     </footer>
   );
-};
-
-export default Footer;
+}

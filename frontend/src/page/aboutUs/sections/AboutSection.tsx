@@ -1,59 +1,45 @@
-import React from 'react';
-import { Sparkles, CheckCircle } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { AboutSectionProps } from '../types';
 
-const AboutSection: React.FC<AboutSectionProps> = ({ title, content, image }) => (
-  <section className="py-16 bg-gradient-to-b from-white via-gray-50 to-white relative overflow-hidden">
-    {/* Animated Background */}
-    <div className="absolute inset-0">
-      <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-r from-yellow-400/5 to-orange-400/5 rounded-full mix-blend-multiply filter blur-3xl"></div>
-    </div>
+const AboutSection = ({ title, content, image }: AboutSectionProps) => (
+  <section className="bg-white py-14 sm:py-16" aria-labelledby="about-section-title">
+    <div className="container mx-auto grid items-center gap-10 px-4 sm:px-6 md:grid-cols-2 lg:px-8">
+      <img
+        src={image}
+        alt="Đội ngũ Luật Poip Legal tư vấn sở hữu trí tuệ"
+        className="h-80 w-full rounded-lg border border-brand-line object-cover shadow-sm md:h-[28rem]"
+        loading="lazy"
+        decoding="async"
+      />
 
-    <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-      <div className="grid md:grid-cols-2 gap-12 items-center">
-        {/* Image */}
-        <div className="order-2 md:order-1 group">
-          <div className="relative">
-            <div className="absolute -inset-4 bg-gradient-to-r from-yellow-400/20 to-orange-400/20 rounded-3xl blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl border-2 border-gray-200 group-hover:border-yellow-400 transition-all duration-500">
-              <img 
-                src={image} 
-                alt="About Poip Law" 
-                className="w-full h-96 object-cover transform group-hover:scale-105 transition-transform duration-500"
+      <div>
+        <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-goldDark">
+          Năng lực đại diện
+        </p>
+        <h2
+          id="about-section-title"
+          className="text-3xl font-semibold leading-tight text-brand-ink"
+        >
+          {title}
+        </h2>
+        <div className="mt-6 space-y-4">
+          {content.map((paragraph, index) => (
+            <div key={paragraph} className="flex gap-3">
+              <CheckCircle
+                className="mt-1 h-5 w-5 flex-none text-brand-goldDark"
+                aria-hidden="true"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+              <p
+                className={
+                  index < 2
+                    ? 'font-semibold leading-7 text-brand-ink'
+                    : 'leading-7 text-brand-muted'
+                }
+              >
+                {paragraph}
+              </p>
             </div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="order-1 md:order-2">
-          <div className="mb-6">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="h-1 w-12 bg-gradient-to-r from-yellow-400 to-orange-400"></div>
-              <Sparkles className="text-yellow-400" size={20} />
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold">
-              <span className="bg-gradient-to-r from-yellow-500 via-orange-500 to-yellow-600 bg-clip-text text-transparent">
-                {title}
-              </span>
-            </h2>
-          </div>
-          
-          <div className="space-y-4">
-            {content.map((paragraph, index) => (
-              <div key={index} className="flex gap-3 group/item">
-                <div className="flex-shrink-0 mt-1">
-                  <div className="w-6 h-6 bg-yellow-50 rounded-full flex items-center justify-center group-hover/item:bg-yellow-100 transition-colors duration-300">
-                    <CheckCircle className="w-4 h-4 text-yellow-600" />
-                  </div>
-                </div>
-                <p className="text-gray-700 leading-relaxed text-justify flex-1">
-                  {paragraph}
-                </p>
-              </div>
-            ))}
-          </div>
+          ))}
         </div>
       </div>
     </div>

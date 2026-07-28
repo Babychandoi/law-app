@@ -1,0 +1,134 @@
+name: CI
+
+on:
+  push:
+    branches: [main, 'phong/**', 'feat/**']
+  pull_request:
+    branches: [main]
+
+# Huỷ các lần chạy cũ trên cùng nhánh khi có push mới.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend (lint · format · build · test)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --legacy-peer-deps
+      - name: Prettier check
+        run: npm run format:check
+      - name: ESLint
+        run: npm run lint
+      - name: Unit tests
+        run: npm test -- --watchAll=false
+      - name: Production build (CI=true, warning = error)
+        run: npm run build
+        env:
+          CI: 'true'
+
+  a11y:
+    name: A11y gate (axe · color-contrast)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --legacy-peer-deps
+      - name: Build production
+        run: npm run build
+        env:
+          CI: 'true'
+      - name: Install Playwright Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Serve build + chạy axe (public, không cần secret)
+        run: |
+          npx serve -s build -l 3000 >/tmp/serve.log 2>&1 &
+          npx wait-on http://localhost:3000 -t 60000
+          npx playwright test --project=public
+        env:
+          E2E_BASE_URL: http://localhost:3000
+
+  visual:
+    name: Visual regression (Playwright container)
+    runs-on: ubuntu-latest
+    # Chạy TRONG image Playwright chính thức để render khớp baseline sinh ở local.
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.0-jammy
+      options: --ipc=host
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm ci --legacy-peer-deps
+      - name: Build production
+        run: npm run build
+        env:
+          CI: 'true'
+      - name: Serve build + so ảnh với baseline (public)
+        run: |
+          if ! ls e2e/visual.spec.ts-snapshots/*.png >/dev/null 2>&1; then
+            echo "::notice::Chưa có baseline ảnh — chạy workflow 'Visual baseline' để sinh. Bỏ qua so sánh."
+            exit 0
+          fi
+          npx --yes serve -s build -l 3000 >/tmp/serve.log 2>&1 &
+          npx --yes wait-on http://localhost:3000 -t 60000
+          npx playwright test --project=visual
+        env:
+          E2E_BASE_URL: http://localhost:3000
+      - name: Tải ảnh diff khi thất bại
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: visual-diff
+          path: frontend/test-results
+          if-no-files-found: ignore
+
+  java:
+    name: Java build (${{ matrix.service }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [backend, gateway, chat-service, crm-service, document-service]
+    defaults:
+      run:
+        working-directory: ${{ matrix.service }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      # Compile + package (tests chạy nếu có). Không dùng -DskipTests trong CI.
+      - name: Maven package
+        run: mvn -B -ntp package
+
+  secret-scan:
+    name: Secret scan (gitleaks)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

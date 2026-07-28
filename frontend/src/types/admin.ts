@@ -1,72 +1,80 @@
 export interface Login {
-    username: string;
-    password: string;
+  username: string;
+  password: string;
 }
-export interface ApiResponse <T> {
-    code: number;
-    message: string;
-    data: T;
+export interface ApiResponse<T> {
+  code: number;
+  message: string;
+  data: T;
+  errors?: Record<string, string>;
+  meta?: {
+    page?: number;
+    size?: number;
+    totalElements?: number;
+    totalPages?: number;
+    hasNext?: boolean;
+    hasPrevious?: boolean;
+  };
 }
 export interface LoginResponse {
-    token : string;
-    refreshToken : string;
+  token: string;
+  refreshToken: string;
 }
 export interface IntrospectResponse {
-    valid : boolean;
+  valid: boolean;
 }
 export interface Customer {
-    id: string;
-    name: string;
-    serviceId: string;
-    serviceName: string;
-    status: 'NEW' | 'RECEIVED' | 'PROCESSING' | 'COMPLETED' | 'CANCELED';
-    createdAt: string;
-    email: string;
-    phone: string;
-  }
-  
+  id: string;
+  name: string;
+  serviceId: string;
+  serviceName: string;
+  status: 'NEW' | 'RECEIVED' | 'PROCESSING' | 'COMPLETED' | 'CANCELED';
+  createdAt: string;
+  email: string;
+  phone: string;
+}
+
 export interface CustomerDetail extends Customer {
-    description: string;
-    updatedAt: string;
-    completedAt?: string;
-    cancelledAt?: string;
-  }
+  description: string;
+  updatedAt: string;
+  completedAt?: string;
+  cancelledAt?: string;
+}
 export interface Service {
-    id : string;
-    title: string;
+  id: string;
+  title: string;
 }
 export interface User {
-    id: string;
-    username: string;
-    password: string;
-    email: string;
-    phoneNumber: string;
-    fullName: string;
-    position : string;
-    role: 'ADMIN' | 'USER';
-    active: 'ACTIVE' | 'INACTIVE';
-    createdAt: Date;
+  id: string;
+  username: string;
+  password: string;
+  email: string;
+  phoneNumber: string;
+  fullName: string;
+  position: string;
+  role: 'ADMIN' | 'USER';
+  active: 'ACTIVE' | 'INACTIVE';
+  createdAt: Date;
 }
 export interface UserCreate {
-    username: string;
-    password?: string;
-    email: string;
-    phoneNumber: string;
-    fullName: string;
-    role?: 'ADMIN' | 'USER';
-    position : string;
+  username: string;
+  password?: string;
+  email: string;
+  phoneNumber: string;
+  fullName: string;
+  role?: 'ADMIN' | 'USER';
+  position: string;
 }
 export interface Notification {
-    id: string;
-    title?: string;
-    content?: string;
-    type?: string;
-    link?: string;
-    referenceId?: string;
-    // Legacy fields for backward compatibility
-    customerServiceName?: string;
-    serviceName?: string;
-    createdAt: string;
-    read: boolean;
-  }
-  
+  id: string;
+  title?: string;
+  content?: string;
+  type?: string;
+  link?: string;
+  referenceId?: string;
+  // Legacy fields for backward compatibility
+  customerServiceName?: string;
+  serviceName?: string;
+  createdAt: string;
+  read: boolean;
+}

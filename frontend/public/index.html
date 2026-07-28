@@ -1,44 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="vi">
+  <head>
+    <!-- Google tag (gtag.js) — 1 loader duy nhất, config nhiều ID (GA4 + Google Ads).
+         data-cfasync="false" để Cloudflare Rocket Loader KHÔNG viết lại type của script
+         (nếu bị viết lại, Google dò không ra thẻ dù thẻ vẫn chạy trên trình duyệt). -->
+    <script
+      data-cfasync="false"
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=G-W3K9FB9FC3"
+    ></script>
+    <script data-cfasync="false">
+      window.dataLayer = window.dataLayer || [];
+      window.gtag =
+        window.gtag ||
+        function gtag() {
+          window.dataLayer.push(arguments);
+        };
+      gtag('js', new Date());
+      gtag('config', 'G-W3K9FB9FC3'); // GA4
+      gtag('config', 'AW-17438859267'); // Google Ads
+    </script>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/assets/images/logo.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#171717" />
+    <link
+      rel="preload"
+      as="image"
+      href="/assets/images/slide.webp"
+      type="image/webp"
+      fetchpriority="high"
+    />
+    <meta
+      name="description"
+      content="Luật Poip Legal tư vấn sở hữu trí tuệ và pháp lý doanh nghiệp cho doanh nghiệp, nhà sáng lập và người sáng tạo."
+    />
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
 
-<head>
-  <meta charset="utf-8" />
-  <link rel="icon" href="%PUBLIC_URL%/assets/images/logo.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#000000" />
-  <meta name="description" content="Web site created using create-react-app" />
-  <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <!-- Open Graph / Twitter TĨNH: bot Zalo/Facebook không chạy JS nên cần thẻ sẵn trong HTML.
+         (react-head vẫn bổ sung OG per-page cho trình duyệt thật lúc runtime.) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Luật Poip Legal" />
+    <meta
+      property="og:title"
+      content="Luật Poip Legal — Tư vấn sở hữu trí tuệ & pháp lý doanh nghiệp"
+    />
+    <meta
+      property="og:description"
+      content="Tư vấn và thực hiện đăng ký nhãn hiệu, bản quyền, sáng chế, kiểu dáng, giấy phép doanh nghiệp — rõ ràng, chuyên nghiệp."
+    />
+    <meta property="og:image" content="https://luatpoip.com/assets/images/og-logo.png" />
+    <meta property="og:locale" content="vi_VN" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content="Luật Poip Legal — Tư vấn sở hữu trí tuệ & pháp lý doanh nghiệp"
+    />
+    <meta
+      name="twitter:description"
+      content="Tư vấn và thực hiện đăng ký nhãn hiệu, bản quyền, sáng chế, kiểu dáng, giấy phép doanh nghiệp — rõ ràng, chuyên nghiệp."
+    />
+    <meta name="twitter:image" content="https://luatpoip.com/assets/images/og-logo.png" />
 
-  <!-- Preconnect to Google Maps for faster loading -->
-  <link rel="preconnect" href="https://www.google.com" />
-  <link rel="preconnect" href="https://maps.googleapis.com" />
-  <link rel="dns-prefetch" href="https://www.google.com" />
-  <link rel="dns-prefetch" href="https://maps.googleapis.com" />
-
-  <!-- ✅ Thêm Google Ads tag ở đây -->
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=AW-17438859267"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() { dataLayer.push(arguments); }
-    gtag('js', new Date());
-
-    gtag('config', 'AW-17438859267');
-  </script>
-  <!-- ✅ Hết phần thêm -->
     <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    "url": "https://luatpoip.com",
-    "logo": "https://luatpoip.com/assets/images/logo.png"
-  }
-  </script>
-</head>
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "url": "https://luatpoip.com",
+        "name": "Luật Poip Legal",
+        "logo": "https://luatpoip.com/assets/images/og-logo.png"
+      }
+    </script>
+  </head>
 
-<body>
-  <noscript>You need to enable JavaScript to run this app.</noscript>
-  <div id="root"></div>
-</body>
-
+  <body>
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <div id="root"></div>
+  </body>
 </html>

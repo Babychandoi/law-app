@@ -5,8 +5,6 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.util.List;
-
 @Getter
 @Setter
 @Builder
@@ -16,13 +14,16 @@ import java.util.List;
 @EntityListeners(AuditingEntityListener.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class Process {
-    @Id
-    @GeneratedValue(strategy =  GenerationType.UUID)
-    String id;
-    String step;
-    String title;
-    String description;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "service_id")
-    ChildrenServices service;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  String id;
+
+  String step;
+  Integer sortOrder;
+  String title;
+  String description;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "service_id")
+  ChildrenServices service;
 }

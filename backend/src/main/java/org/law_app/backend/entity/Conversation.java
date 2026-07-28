@@ -1,14 +1,13 @@
 package org.law_app.backend.entity;
 
-
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
-import java.util.Date;
 
 @Data
 @Builder
@@ -16,16 +15,17 @@ import java.util.Date;
 @AllArgsConstructor
 @Document(collection = "conversations")
 public class Conversation {
-    @Id
-    private String id;
+  @Id private String id;
 
-    private String guestId;
-    private String guestName;
-    private boolean isOnline;
-    private Date lastSeen;
-    private String assignedAdmin;
-    private String priority;
-    private Date createdAt;
-    private Date updatedAt;
-    private Integer unreadCount;
+  @Indexed(unique = true)
+  private String guestId;
+
+  private String guestName;
+  private boolean isOnline;
+  private Date lastSeen;
+  @Indexed private String assignedAdmin;
+  @Indexed private String priority;
+  private Date createdAt;
+  @Indexed private Date updatedAt;
+  @Indexed private Integer unreadCount;
 }

@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SocialRepository extends JpaRepository<Social, String> {
-    // This repository interface will handle CRUD operations for Social entities
-    // Additional custom query methods can be defined here if needed
+  // This repository interface will handle CRUD operations for Social entities
+  // Additional custom query methods can be defined here if needed
 }

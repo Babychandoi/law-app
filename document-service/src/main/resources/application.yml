@@ -1,0 +1,62 @@
+server:
+  port: ${DOCUMENT_SERVICE_PORT:8084}
+
+spring:
+  application:
+    name: document-service
+
+  data:
+    mongodb:
+      # Build connection from document-specific vars ONLY; do not reference monolith/chat SPRING_DATA_MONGODB_*.
+      uri: mongodb://root:${MONGO_ROOT_PASSWORD}@${DOCUMENT_MONGODB_HOST:law-app-mongodb}:${DOCUMENT_MONGODB_PORT:27017}/${DOCUMENT_MONGODB_DATABASE:law-app-documents}?authSource=admin
+      auto-index-creation: true
+
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST}
+      port: ${SPRING_DATA_REDIS_PORT}
+
+  servlet:
+    multipart:
+      max-file-size: ${DOCUMENT_MAX_FILE_SIZE:25MB}
+      max-request-size: ${DOCUMENT_MAX_REQUEST_SIZE:30MB}
+
+jwt:
+  signerKey: ${JWT_SIGNER_KEY}
+
+auth:
+  cookie:
+    domain: ${AUTH_COOKIE_DOMAIN:}
+
+minio:
+  url: ${MINIO_URL}
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
+  bucket:
+    templates: ${MINIO_BUCKET_DOCUMENT_TEMPLATES:document-templates}
+    generated: ${MINIO_BUCKET_GENERATED_DOCUMENTS:generated-documents}
+
+logging:
+  pattern:
+    # Chèn correlation id [reqId] vào mỗi dòng log
+    level: "%5p [%X{reqId:-}]"
+  level:
+    org.law_app.document: INFO
+
+# ===== Observability: health/readiness probes + Prometheus =====
+management:
+  server:
+    port: 9100
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true

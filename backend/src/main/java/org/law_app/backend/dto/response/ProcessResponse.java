@@ -1,10 +1,9 @@
 package org.law_app.backend.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -13,9 +12,9 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ProcessResponse {
-    String id;
-    String step;
-    String title;
-    String description;
-    List<ProcessDetailResponse> details;
+  String id;
+  String step;
+  String title;
+  String description;
+  List<ProcessDetailResponse> details;
 }

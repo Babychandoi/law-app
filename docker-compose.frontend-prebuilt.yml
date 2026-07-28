@@ -1,0 +1,7 @@
+# Override tam thoi: build frontend tu build/ da build san tren host (Dockerfile.prebuilt),
+# tranh chay CRA/webpack trong Docker (gay OOM/rpc-EOF tren may ~4GB RAM).
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prebuilt

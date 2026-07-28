@@ -1,0 +1,88 @@
+server:
+  port: ${GATEWAY_PORT:8081}
+
+spring:
+  application:
+    name: gateway
+  cloud:
+    gateway:
+      # Spring Cloud Gateway 2025.0.0 (Northfields) moved config under server.webflux.*
+      server:
+        webflux:
+          httpclient:
+            connect-timeout: 5000
+            # Generous response timeout; WebSocket routes are exempt from this anyway.
+            response-timeout: 60s
+          # SockJS adds its own CORS header on /ws-staff on top of the gateway's globalcors ->
+          # duplicate Access-Control-Allow-Origin. Collapse any duplicated CORS headers to one.
+          default-filters:
+            - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+          routes:
+            # ---- Staff chat microservice (REST) ----
+            # Public prefix /staff-chat/** keeps it distinct from the monolith's guest /chat/**.
+            - id: chat-service-rest
+              uri: ${CHAT_SERVICE_URI:http://law-app-chat:8082}
+              predicates:
+                - Path=/staff-chat/**
+              filters:
+                - RewritePath=/staff-chat/(?<segment>.*), /chat/${segment}
+
+            # ---- Staff chat microservice (WebSocket / SockJS) ----
+            # http:// (NOT ws://): SockJS uses HTTP polling for /info,/xhr and only upgrades the
+            # websocket transport. Spring Cloud Gateway auto-upgrades when it sees the Upgrade
+            # header, so a ws:// uri would break the plain-HTTP /info handshake (400).
+            - id: chat-service-ws
+              uri: ${CHAT_SERVICE_WS_URI:http://law-app-chat:8082}
+              predicates:
+                - Path=/ws-staff/**
+
+            # ---- CRM microservice (REST) ----
+            - id: crm-service
+              uri: ${CRM_SERVICE_URI:http://law-app-crm:8083}
+              predicates:
+                - Path=/crm/**
+
+            # ---- Document template microservice (REST) ----
+            - id: document-service
+              uri: ${DOCUMENT_SERVICE_URI:http://document-service:8084}
+              predicates:
+                - Path=/documents/**
+
+            # ---- Monolith WebSocket (guest chat + notifications) ----
+            # http:// for the same SockJS reason as chat-service-ws above.
+            - id: monolith-ws
+              uri: ${MONOLITH_WS_URI:http://law-app-backend:8080}
+              predicates:
+                - Path=/ws/**
+
+            # ---- Everything else -> monolith ----
+            - id: monolith
+              uri: ${MONOLITH_URI:http://law-app-backend:8080}
+              predicates:
+                - Path=/auth/**,/services/**,/service/**,/jobs/**,/news/**,/customer/**,/notifications/**,/upload,/chat/**
+
+          globalcors:
+            cors-configurations:
+              '[/**]':
+                allowedOrigins: ${GATEWAY_CORS_ORIGINS:http://localhost:3000,https://luatpoip.com,https://www.luatpoip.com}
+                allowedMethods: [GET, POST, PUT, DELETE, OPTIONS]
+                allowedHeaders: ["*"]
+                allowCredentials: true
+
+management:
+  server:
+    port: 9100
+  endpoints:
+    web:
+      exposure:
+        include: health,info,gateway,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: when_authorized
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true

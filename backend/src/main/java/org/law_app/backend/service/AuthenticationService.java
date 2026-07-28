@@ -1,28 +1,46 @@
 package org.law_app.backend.service;
 
-
 import com.nimbusds.jose.JOSEException;
+import java.text.ParseException;
+import java.util.List;
 import org.law_app.backend.common.Active;
 import org.law_app.backend.common.Role;
 import org.law_app.backend.dto.request.*;
 import org.law_app.backend.dto.response.AuthenticationResponse;
 import org.law_app.backend.dto.response.IntrospectResponse;
+import org.law_app.backend.dto.response.StaffDirectoryResponse;
 import org.law_app.backend.dto.response.UserResponse;
 
-
-import java.text.ParseException;
-import java.util.List;
-
 public interface AuthenticationService {
-    AuthenticationResponse authenticate(AuthenticationRequest request);
-    UserResponse createUser(UserRequest request);
-    IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException;
-    void logout(LogoutRequest request) throws JOSEException, ParseException;
-    AuthenticationResponse refreshToken(RefreshRequest request)throws ParseException, JOSEException;
-    List<UserResponse> getUsers();
-    UserResponse updateUser(String id, UserRequest request);
-    Boolean changePassword(String id, String newPassword);
-    Boolean changeRole(String id , Role role);
-    Boolean changeActive(String id, Active active);
-    UserResponse myProfile(String id);
+  AuthenticationResponse authenticate(AuthenticationRequest request);
+
+  UserResponse createUser(UserRequest request);
+
+  IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException;
+
+  void logout(LogoutRequest request) throws JOSEException, ParseException;
+
+  AuthenticationResponse refreshToken(RefreshRequest request) throws ParseException, JOSEException;
+
+  List<UserResponse> getUsers();
+
+  /** Danh sách người dùng có phân trang + tìm kiếm (server-side, chỉ ADMIN). */
+  org.springframework.data.domain.Page<UserResponse> getUsers(
+      String q, org.springframework.data.domain.Pageable pageable);
+
+  /** Danh bạ nhân sự tối giản cho chat nội bộ — mọi user đã đăng nhập đều gọi được. */
+  List<StaffDirectoryResponse> getStaffDirectory();
+
+  UserResponse updateUser(String id, UserRequest request);
+
+  Boolean changePassword(String id, String newPassword);
+
+  Boolean changeRole(String id, Role role);
+
+  Boolean changeActive(String id, Active active);
+
+  UserResponse myProfile(String id);
+
+  /** Mint a short-lived token for the WebSocket/STOMP handshake for the given user. */
+  String issueWsToken(String userId);
 }

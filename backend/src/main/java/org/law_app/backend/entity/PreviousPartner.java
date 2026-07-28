@@ -14,10 +14,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class PreviousPartner {
-    @Id
-    @GeneratedValue(strategy =  GenerationType.UUID)
-    String id;
-    String title;
-    String image;
-    String shortName;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  String id;
+
+  String title;
+  String image;
+  String shortName;
 }

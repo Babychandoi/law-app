@@ -9,21 +9,25 @@ interface Benefit {
 const CopyrightBenefits: React.FC = () => {
   const benefits: Benefit[] = [
     {
-      title: "Bảo vệ quyền lợi tác giả",
-      description: "Đăng ký bảo hộ bản quyền tác giả giúp tác giả có quyền chủ động và xác định được tác phẩm của mình, tránh việc bị sao chép hoặc sử dụng mà không được cho phép."
+      title: 'Bảo vệ quyền lợi tác giả',
+      description:
+        'Đăng ký bảo hộ bản quyền tác giả giúp tác giả có quyền chủ động và xác định được tác phẩm của mình, tránh việc bị sao chép hoặc sử dụng mà không được cho phép.',
     },
     {
-      title: "Khẳng định sở hữu tác phẩm",
-      description: "Bản quyền đăng ký chính thức là bằng chứng về sở hữu của tác giả, giúp ngăn ngừa tranh chấp và mâu thuẫn liên quan đến quyền sở hữu."
+      title: 'Khẳng định sở hữu tác phẩm',
+      description:
+        'Bản quyền đăng ký chính thức là bằng chứng về sở hữu của tác giả, giúp ngăn ngừa tranh chấp và mâu thuẫn liên quan đến quyền sở hữu.',
     },
     {
-      title: "Được quyền kiểm soát tác phẩm",
-      description: "Tác giả có quyền quyết định việc sử dụng, sao chép, phân phối và bán tác phẩm của mình, tạo điều kiện thuận lợi để khai thác kinh doanh hoặc thương mại từ tác phẩm."
+      title: 'Được quyền kiểm soát tác phẩm',
+      description:
+        'Tác giả có quyền quyết định việc sử dụng, sao chép, phân phối và bán tác phẩm của mình, tạo điều kiện thuận lợi để khai thác kinh doanh hoặc thương mại từ tác phẩm.',
     },
     {
-      title: "Duy trì giá trị thương hiệu",
-      description: "Bản quyền đăng ký tác phẩm thể hiện tính chuyên nghiệp và uy tín, giúp tăng giá trị thương hiệu cho tác giả và tác phẩm trong mắt công chúng và người tiêu dùng."
-    }
+      title: 'Duy trì giá trị thương hiệu',
+      description:
+        'Bản quyền đăng ký tác phẩm thể hiện tính chuyên nghiệp và uy tín, giúp tăng giá trị thương hiệu cho tác giả và tác phẩm trong mắt công chúng và người tiêu dùng.',
+    },
   ];
 
   return (
@@ -36,7 +40,7 @@ const CopyrightBenefits: React.FC = () => {
               <img
                 src="/assets/images/dangkybanquyentacgia.webp"
                 alt="Giấy chứng nhận đăng ký quyền tác giả"
-                className="w-full h-auto rounded-lg shadow-lg"
+                className="w-full h-auto rounded-lg shadow-sm"
                 loading="lazy"
               />
             </div>
@@ -50,7 +54,8 @@ const CopyrightBenefits: React.FC = () => {
                 Lợi ích khi đăng ký bảo hộ bản quyền tác giả
               </h2>
               <h5 className="text-lg text-gray-600 leading-relaxed">
-                Đăng ký bảo hộ bản quyền tác giả mang lại nhiều lợi ích quan trọng cho người sở hữu tác phẩm.
+                Đăng ký bảo hộ bản quyền tác giả mang lại nhiều lợi ích quan trọng cho người sở hữu
+                tác phẩm.
               </h5>
             </div>
 
@@ -64,12 +69,8 @@ const CopyrightBenefits: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex-1">
-                    <h4 className="text-xl font-semibold text-gray-900 mb-2">
-                      {benefit.title}
-                    </h4>
-                    <p className="text-gray-600 leading-relaxed">
-                      {benefit.description}
-                    </p>
+                    <h4 className="text-xl font-semibold text-gray-900 mb-2">{benefit.title}</h4>
+                    <p className="text-gray-600 leading-relaxed">{benefit.description}</p>
                   </div>
                 </div>
               ))}

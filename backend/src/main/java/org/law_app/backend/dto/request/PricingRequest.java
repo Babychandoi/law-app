@@ -1,10 +1,9 @@
 package org.law_app.backend.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -13,12 +12,12 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class PricingRequest {
-    String title;
-    String description;
-    String price;
-    String image;
-    String currency;
-    String serviceId;
-    boolean featured;
-    List<String> features;
+  String title;
+  String description;
+  String price;
+  String image;
+  String currency;
+  String serviceId;
+  boolean featured;
+  List<String> features;
 }

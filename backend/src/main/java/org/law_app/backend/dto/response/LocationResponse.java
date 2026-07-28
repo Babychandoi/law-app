@@ -12,8 +12,8 @@ import org.law_app.backend.common.Color;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class LocationResponse {
-    String id; // Unique identifier for the location
-    String type; // Type of the location (e.g., city, state, country)
-    String address; // Address of the location
-    Color color; // Color associated with the location, if applicable
+  String id; // Unique identifier for the location
+  String type; // Type of the location (e.g., city, state, country)
+  String address; // Address of the location
+  Color color; // Color associated with the location, if applicable
 }

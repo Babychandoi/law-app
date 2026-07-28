@@ -14,15 +14,20 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ProcessDetail {
-    @Id
-    @GeneratedValue(strategy =  GenerationType.UUID)
-    String id;
-    String type;
-    @Column(name = "description", length = 10000)
-    String desc;
-    String time;
-    String accuracy;
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "process_id")
-    Process process;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  String id;
+
+  String type;
+  Integer sortOrder;
+
+  @Column(name = "description", length = 10000)
+  String desc;
+
+  String time;
+  String accuracy;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "process_id")
+  Process process;
 }

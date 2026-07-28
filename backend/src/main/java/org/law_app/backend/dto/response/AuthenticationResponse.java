@@ -1,7 +1,5 @@
 package org.law_app.backend.dto.response;
 
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -13,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AuthenticationResponse {
-    String token;
-    String refreshToken;
-    boolean authenticated;
+  String token;
+  String refreshToken;
+  boolean authenticated;
 }

@@ -37,6 +37,8 @@ services:
     ports:
       - "27017:27017"
     environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: 12345678
       MONGO_INITDB_DATABASE: law-app-chat
     volumes:
       - mongodb_data_dev:/data/db
@@ -83,6 +85,8 @@ services:
       mc alias set myminio http://minio:9000 minioadmin minioadmin;
       mc mb myminio/images --ignore-existing;
       mc anonymous set public myminio/images;
+      mc mb myminio/document-templates --ignore-existing;
+      mc mb myminio/generated-documents --ignore-existing;
       echo 'MinIO bucket setup completed!';
       exit 0;
       "

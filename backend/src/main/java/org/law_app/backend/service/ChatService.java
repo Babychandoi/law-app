@@ -1,37 +1,40 @@
 package org.law_app.backend.service;
 
+import java.util.List;
 import org.law_app.backend.dto.request.ChatRequest;
 import org.law_app.backend.dto.response.ChatMessageResponse;
 import org.law_app.backend.dto.response.ChatStatsResponse;
 import org.law_app.backend.dto.response.ConversationResponse;
 import org.law_app.backend.entity.ChatMessage;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface ChatService {
-    ChatMessage saveMessage(ChatRequest chatMessage);
+  ChatMessage saveMessage(ChatRequest chatMessage);
 
-    List<ChatMessageResponse> getMessagesByGuestId(String guestId);
+  List<ChatMessageResponse> getMessagesByGuestId(String guestId);
 
-    List<ConversationResponse> getAllConversations();
+  List<ConversationResponse> getAllConversations();
 
-    List<ConversationResponse> getConversationsByAdmin(String adminId);
+  Page<ConversationResponse> getAllConversations(Pageable pageable);
 
-    List<ConversationResponse> getUnreadConversations();
+  List<ConversationResponse> getConversationsByAdmin(String adminId);
 
-    ChatStatsResponse getChatStats(String adminId);
+  List<ConversationResponse> getUnreadConversations();
 
-    void markMessageAsRead(String messageId);
+  ChatStatsResponse getChatStats(String adminId);
 
-    void markConversationAsRead(String guestId);
+  void markMessageAsRead(String messageId);
 
-    void assignConversationToAdmin(String guestId, String adminId);
+  void markConversationAsRead(String guestId);
 
-    void updateConversationPriority(String guestId, String priority);
+  void assignConversationToAdmin(String guestId, String adminId);
 
-    void updateGuestOnlineStatus(String guestId, boolean isOnline);
+  void updateConversationPriority(String guestId, String priority);
 
-    void updateGuestName(String guestId, String name);
+  void updateGuestOnlineStatus(String guestId, boolean isOnline);
 
-    ConversationResponse getOrCreateConversation(String guestId);
+  void updateGuestName(String guestId, String name);
+
+  ConversationResponse getOrCreateConversation(String guestId);
 }

@@ -1,282 +1,126 @@
-import React, { useState, useEffect } from 'react';
-import { Sparkles, ArrowRight } from 'lucide-react'
-import { useNavigate } from 'react-router-dom';
+import { ArrowRight, CheckCircle2, MessageCircle, Phone, ShieldCheck } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { contactInfo } from '../../shared/config/site';
 
-interface SlideData {
-  id: string;
-  title: string;
-  description: string;
-  backgroundImage: string;
-  buttonText: string;
-  buttonAction: () => void;
-}
+const assurances = [
+  'Tư vấn bằng ngôn ngữ rõ ràng, dễ hiểu',
+  'Đề xuất lộ trình phù hợp trước khi triển khai',
+  'Theo dõi hồ sơ và phản hồi minh bạch',
+];
 
-const Slider: React.FC = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
-
-  // Ripple effect handler
-  const createRipple = (event: React.MouseEvent<HTMLButtonElement>) => {
-    const button = event.currentTarget;
-    const ripple = document.createElement('span');
-    const rect = button.getBoundingClientRect();
-    const size = Math.max(rect.width, rect.height);
-    const x = event.clientX - rect.left - size / 2;
-    const y = event.clientY - rect.top - size / 2;
-
-    ripple.style.width = ripple.style.height = `${size}px`;
-    ripple.style.left = `${x}px`;
-    ripple.style.top = `${y}px`;
-    ripple.classList.add('ripple');
-
-    button.appendChild(ripple);
-
-    setTimeout(() => {
-      ripple.remove();
-    }, 600);
+export default function Hero() {
+  const scrollToConsultation = () => {
+    document.getElementById('contact-form')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
-
-  const slides: SlideData[] = [
-    {
-      id: 'slide-1',
-      title: 'DỊCH VỤ SỞ HỮU TRÍ TUỆ - POIP LAW',
-      description: `Công ty TNHH Sở hữu trí tuệ Poip là tổ chức Đại Diện Sở
-Hữu Công Nghiệp uy tín tại Việt Nam, có đầy đủ năng lực
-tư vấn và thực thi xác lập quyền Sở Hữu Công Nghiệp cho
-khách hàng trong và ngoài nước.`,
-      backgroundImage: '/assets/images/slide.webp',
-      buttonText: 'Đăng ký tư vấn miễn phí',
-      buttonAction: () => {
-        const contactForm = document.getElementById('contact-form');
-        if (contactForm) {
-          contactForm.scrollIntoView({ behavior: 'smooth' });
-        }
-      }
-    },
-    {
-      id: 'slide-2',
-      title: 'BẢO HỘ NHÃN HIỆU THƯƠNG HIỆU',
-      description: `Dịch vụ đăng ký bảo hộ nhãn hiệu thương hiệu chuyên nghiệp
-với đội ngũ luật sư giàu kinh nghiệm. Cam kết thời gian nhanh chóng
-và tỷ lệ thành công cao cho mọi khách hàng.`,
-      backgroundImage: '/assets/images/slide.webp',
-      buttonText: 'Tìm hiểu thêm',
-      buttonAction: () => {
-        handleNavigate("/dang-ky-bao-ho-nhan-hieu");
-      }
-    },
-    {
-      id: 'slide-3',
-      title: 'TƯ VẤN PHÁP LÝ CHUYÊN NGHIỆP',
-      description: `Với hơn 10 năm kinh nghiệm trong lĩnh vực sở hữu trí tuệ,
-chúng tôi cam kết mang đến dịch vụ tư vấn pháp lý tốt nhất
-cho doanh nghiệp và cá nhân.`,
-      backgroundImage: '/assets/images/slide.webp',
-      buttonText: 'Liên hệ ngay',
-      buttonAction: () => {
-        window.location.href = '/lien-he';
-      }
-    }
-  ];
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
-    return () => clearInterval(timer);
-  }, [slides.length]);
-
-  useEffect(() => {
-    const loadingTimer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
-    return () => clearTimeout(loadingTimer);
-  }, []);
-
-  const handleNavigate = (href: string) => {
-    navigate(`${href}`);
-  }
-
-  const goToSlide = (index: number) => {
-    setCurrentSlide(index);
-  };
-
-  if (isLoading) {
-    return (
-      <div className="relative w-full h-[600px] bg-gradient-to-b from-gray-900 via-black to-gray-900 flex items-center justify-center">
-        <div className="flex space-x-3">
-          <div className="w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-bounce"></div>
-          <div className="w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-          <div className="w-4 h-4 bg-gradient-to-r from-yellow-400 to-orange-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-        </div>
-      </div>
-    );
-  }
 
   return (
-    <div className="relative w-full h-[600px] overflow-hidden bg-gradient-to-b from-gray-900 via-black to-gray-900">
-      {/* Top Accent Line */}
-      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 z-30"></div>
+    <section className="relative isolate overflow-hidden bg-brand-ink text-white">
+      <img
+        src="/assets/images/slide.webp"
+        alt=""
+        aria-hidden="true"
+        width="1600"
+        height="900"
+        loading="eager"
+        decoding="async"
+        fetchPriority="high"
+        className="absolute inset-0 -z-20 h-full w-full object-cover opacity-30"
+      />
+      <div className="absolute inset-0 -z-10 bg-black/55" />
 
-      {/* Slider Container */}
-      <div 
-        className="flex transition-transform duration-700 ease-in-out h-full"
-        style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-      >
-        {slides.map((slide, index) => (
-          <div
-            key={slide.id}
-            className="w-full h-full flex-shrink-0 relative"
-            style={{
-              backgroundImage: `url(${slide.backgroundImage})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat'
-            }}
-          >
-            {/* Enhanced Overlay with Gradient */}
-            <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40"></div>
-            
-            {/* Animated Background Elements */}
-            <div className="absolute inset-0">
-              <div className="absolute top-0 left-0 w-96 h-96 bg-gradient-to-r from-yellow-400/10 to-orange-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-              <div className="absolute bottom-0 right-0 w-96 h-96 bg-gradient-to-r from-blue-400/10 to-purple-400/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-            </div>
-
-            {/* Content */}
-            <div className="relative z-10 h-full flex items-center">
-              <div className="container mx-auto px-4 md:px-8">
-                <div className="max-w-4xl">
-                  {/* Decorative Element */}
-                  <div className={`flex items-center gap-2 mb-4 transition-all duration-1000 ${
-                    index === currentSlide ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-8'
-                  }`}
-                  style={{ transitionDelay: index === currentSlide ? '0.2s' : '0s' }}>
-                    <div className="h-1 w-12 bg-gradient-to-r from-yellow-400 to-orange-400"></div>
-                    <Sparkles className="text-yellow-400" size={20} />
-                  </div>
-
-                  {/* Title */}
-                  <h1 
-                    className={`text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight transition-all duration-1000 ${
-                      index === currentSlide ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-8'
-                    }`}
-                    style={{ 
-                      fontFamily: 'Roboto Slab, serif',
-                      transitionDelay: index === currentSlide ? '0.3s' : '0s'
-                    }}
-                  >
-                    <span className="bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-300 bg-clip-text text-transparent">
-                      {slide.title}
-                    </span>
-                  </h1>
-
-                  {/* Description */}
-                  <div 
-                    className={`text-gray-300 text-base md:text-lg leading-relaxed mb-8 max-w-2xl transition-all duration-1000 ${
-                      index === currentSlide ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-8'
-                    }`}
-                    style={{ 
-                      fontFamily: 'Roboto Slab, serif',
-                      transitionDelay: index === currentSlide ? '0.6s' : '0s'
-                    }}
-                  >
-                    {slide.description.split('\n').map((line, lineIndex) => (
-                      <span key={lineIndex}>
-                        {line}
-                        {lineIndex < slide.description.split('\n').length - 1 && <br />}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* Button */}
-                  <button
-                    onClick={(e) => {
-                      createRipple(e);
-                      setTimeout(() => slide.buttonAction(), 300);
-                    }}
-                    className={`relative inline-flex items-center px-8 py-4 bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 font-bold text-base rounded-xl overflow-hidden group transition-all duration-1000 hover:shadow-2xl hover:shadow-yellow-500/50 hover:scale-105 ${
-                      index === currentSlide ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-8'
-                    }`}
-                    style={{ 
-                      fontFamily: 'Roboto Slab, serif',
-                      transitionDelay: index === currentSlide ? '0.9s' : '0s'
-                    }}
-                  >
-                    <div className="absolute inset-0 bg-gradient-to-r from-orange-400 to-red-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <span className="relative z-10">{slide.buttonText}</span>
-                    <ArrowRight size={20} className="ml-3 relative z-10 group-hover:translate-x-1 transition-transform duration-300" />
-                  </button>
-                </div>
-              </div>
-            </div>
+      <div className="public-home-hero-inner mx-auto grid min-h-[620px] max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:py-20">
+        <div className="max-w-3xl">
+          <div className="mb-6 inline-flex items-center gap-2 border border-white/20 bg-black/25 px-3 py-2 text-sm font-medium text-white/90">
+            <ShieldCheck size={17} className="text-brand-gold" aria-hidden="true" />
+            Tư vấn sở hữu trí tuệ và pháp lý doanh nghiệp
           </div>
-        ))}
+
+          <h1 className="public-home-hero-title max-w-4xl text-4xl font-semibold leading-[1.12] tracking-[-0.025em] text-white sm:text-5xl lg:text-6xl">
+            Bảo vệ tài sản trí tuệ để doanh nghiệp phát triển vững chắc
+          </h1>
+          <p className="mt-6 max-w-2xl text-base leading-8 text-white/80 sm:text-lg">
+            Luật Poip Legal giúp doanh nghiệp, nhà sáng lập và người sáng tạo xác định đúng phương
+            án, chuẩn bị hồ sơ và theo dõi thủ tục pháp lý từ đầu đến kết quả.
+          </p>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <button
+              type="button"
+              onClick={scrollToConsultation}
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-goldDark px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold"
+            >
+              Nhận tư vấn ban đầu
+              <ArrowRight size={18} aria-hidden="true" />
+            </button>
+            <a
+              href={contactInfo.phoneHref}
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-white/30 bg-black/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              <Phone size={18} aria-hidden="true" />
+              Gọi {contactInfo.hotline}
+            </a>
+            <a
+              href={contactInfo.zaloHref}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md border border-white/30 bg-black/20 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-white/10 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white"
+            >
+              <MessageCircle size={18} aria-hidden="true" />
+              Nhắn Zalo
+            </a>
+          </div>
+
+          <ul className="mt-8 grid gap-3 text-sm text-white/80 sm:grid-cols-3">
+            {assurances.map((assurance) => (
+              <li key={assurance} className="flex items-start gap-2">
+                <CheckCircle2
+                  size={17}
+                  className="mt-0.5 shrink-0 text-brand-gold"
+                  aria-hidden="true"
+                />
+                <span>{assurance}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <aside
+          className="border border-white/20 bg-black/35 p-6 sm:p-7"
+          aria-label="Cam kết tư vấn"
+        >
+          <p className="text-sm font-semibold text-brand-gold">Bắt đầu đúng ngay từ đầu</p>
+          <h2 className="mt-3 text-2xl font-semibold leading-snug text-white">
+            Chưa chắc dịch vụ nào phù hợp?
+          </h2>
+          <p className="mt-3 text-sm leading-7 text-white/75">
+            Chia sẻ nhu cầu hiện tại. Đội ngũ Luật Poip Legal sẽ giúp bạn xác định vấn đề, lựa chọn
+            hướng xử lý và chuẩn bị bước tiếp theo.
+          </p>
+
+          <dl className="mt-7 grid grid-cols-3 border-y border-white/15 py-5 text-center">
+            <div>
+              <dt className="text-xs leading-5 text-white/65">Kinh nghiệm tư vấn</dt>
+              <dd className="mt-1 text-2xl font-semibold text-brand-gold">10+</dd>
+            </div>
+            <div className="border-x border-white/15 px-2">
+              <dt className="text-xs leading-5 text-white/65">Nhóm dịch vụ</dt>
+              <dd className="mt-1 text-2xl font-semibold text-brand-gold">8</dd>
+            </div>
+            <div>
+              <dt className="text-xs leading-5 text-white/65">Phản hồi ban đầu</dt>
+              <dd className="mt-1 text-2xl font-semibold text-brand-gold">24h</dd>
+            </div>
+          </dl>
+
+          <Link
+            to="/dich-vu"
+            className="mt-6 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-white underline decoration-brand-gold decoration-2 underline-offset-4 hover:text-brand-gold"
+          >
+            Xem tất cả dịch vụ
+            <ArrowRight size={17} aria-hidden="true" />
+          </Link>
+        </aside>
       </div>
-
-      {/* Dots Indicator */}
-      <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20 flex items-center gap-3 bg-gray-800/50 backdrop-blur-sm px-6 py-3 rounded-full border border-gray-600">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className={`transition-all duration-300 rounded-full ${
-              index === currentSlide 
-                ? 'w-8 h-3 bg-gradient-to-r from-yellow-400 to-orange-400' 
-                : 'w-3 h-3 bg-gray-500 hover:bg-gray-400'
-            }`}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
-
-      {/* Progress Bar */}
-      <div className="absolute bottom-0 left-0 w-full h-1 bg-gray-800/50 z-20">
-        <div 
-          className="h-full bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 transition-all duration-300"
-          style={{ width: `${((currentSlide + 1) / slides.length) * 100}%` }}
-        />
-      </div>
-
-      {/* Bottom Decorative Line */}
-      <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-yellow-400 to-transparent z-20"></div>
-
-      {/* Custom Animations */}
-      <style>{`
-        @keyframes slideIn {
-          from {
-            opacity: 0;
-            transform: translateX(-20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
-        }
-        .animate-slideIn {
-          animation: slideIn 0.5s ease-out;
-        }
-        
-        /* Ripple Effect */
-        .ripple {
-          position: absolute;
-          border-radius: 50%;
-          background: rgba(255, 255, 255, 0.6);
-          transform: scale(0);
-          animation: ripple-animation 0.6s ease-out;
-          pointer-events: none;
-        }
-        
-        @keyframes ripple-animation {
-          to {
-            transform: scale(2);
-            opacity: 0;
-          }
-        }
-      `}</style>
-    </div>
+    </section>
   );
-};
-
-export default Slider;
+}

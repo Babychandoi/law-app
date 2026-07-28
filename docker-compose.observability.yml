@@ -1,0 +1,42 @@
+# Observability stack (OPT-IN). Chạy KÈM base compose để dùng chung network:
+#   docker compose -f docker-compose.yml -f docker-compose.observability.yml up -d prometheus grafana
+# Tách riêng để KHÔNG tự chạy cùng prod (máy RAM thấp) — chỉ bật khi cần xem metrics.
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: law-app-prometheus
+    mem_limit: 256m
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.retention.time=7d'
+    networks:
+      - law-app-network
+    restart: unless-stopped
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: law-app-grafana
+    mem_limit: 256m
+    ports:
+      - "3001:3000"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - law-app-network
+    restart: unless-stopped
+
+volumes:
+  prometheus_data:
+  grafana_data:
+# Network `law-app-network` do docker-compose.yml (base) định nghĩa — chạy overlay cùng base:
+#   docker compose -f docker-compose.yml -f docker-compose.observability.yml up -d prometheus grafana
