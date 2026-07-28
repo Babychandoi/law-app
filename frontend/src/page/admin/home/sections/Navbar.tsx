@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Bell, LogOut, Mail, Phone, ChevronDown, Eye, Menu } from 'lucide-react';
+import { Bell, LogOut, Mail, Phone, ChevronDown, Eye, Menu, Search } from 'lucide-react';
 import { myProfile, logout, getNotificationById } from '../../../../service/admin';
 import { Notification, User } from '../../../../types/admin';
 import { toast } from 'react-toastify';
@@ -186,6 +186,19 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
           className="rounded-lg p-2 text-gray-600 hover:bg-gray-100 lg:hidden"
         >
           <Menu size={22} />
+        </button>
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new CustomEvent('open-command-palette'))}
+          aria-label="Điều hướng nhanh (Ctrl K)"
+          title="Điều hướng nhanh"
+          className="ml-2 hidden items-center gap-2 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-500 hover:bg-gray-50 sm:flex"
+        >
+          <Search size={16} aria-hidden="true" />
+          <span>Tìm nhanh…</span>
+          <kbd className="rounded border border-gray-300 bg-gray-50 px-1.5 text-xs text-gray-500">
+            Ctrl K
+          </kbd>
         </button>
         <div className="ml-auto flex items-center space-x-4">
           <ChatMenu />

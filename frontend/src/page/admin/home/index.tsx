@@ -6,7 +6,8 @@ import { Outlet, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { getMe } from '../../../service/auth';
 import { tryRefreshToken } from '../../../service/axiosClient';
-import { OPERATIONS_GROUPS, SYS_BASE } from './navConfig';
+import { OPERATIONS_GROUPS, SYSTEM_GROUPS, SYS_BASE } from './navConfig';
+import CommandPalette from '../../../component/common/CommandPalette';
 
 // Proactively refresh a bit before the access token expires (default valid-duration ~1h). Keeps
 // the session alive without waiting for a 401. Interval kept modest so an expired idle tab recovers.
@@ -48,6 +49,10 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-gray-100">
+      {/* Bảng lệnh ⌘/Ctrl+K — điều hướng nhanh; admin có thêm khu Hệ thống. */}
+      <CommandPalette
+        groups={isAdmin ? [...OPERATIONS_GROUPS, ...SYSTEM_GROUPS] : OPERATIONS_GROUPS}
+      />
       <Sidebar
         groups={OPERATIONS_GROUPS}
         workspaceTitle="Vận hành"

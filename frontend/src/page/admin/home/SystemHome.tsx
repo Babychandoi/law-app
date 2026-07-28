@@ -5,7 +5,8 @@ import Navbar from './sections/Navbar';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { getMe } from '../../../service/auth';
 import { tryRefreshToken } from '../../../service/axiosClient';
-import { SYSTEM_GROUPS, ADMIN_BASE } from './navConfig';
+import { SYSTEM_GROUPS, OPERATIONS_GROUPS, ADMIN_BASE } from './navConfig';
+import CommandPalette from '../../../component/common/CommandPalette';
 
 const PROACTIVE_REFRESH_MS = 10 * 60 * 1000;
 
@@ -47,6 +48,8 @@ const SystemHome: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-gray-100">
+      {/* Bảng lệnh ⌘/Ctrl+K — khu Hệ thống + lối tắt sang Vận hành. */}
+      <CommandPalette groups={[...SYSTEM_GROUPS, ...OPERATIONS_GROUPS]} />
       <Sidebar
         groups={SYSTEM_GROUPS}
         workspaceTitle="Hệ thống"
