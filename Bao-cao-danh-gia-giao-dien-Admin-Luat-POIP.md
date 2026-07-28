@@ -1,10 +1,18 @@
 # BÁO CÁO ĐÁNH GIÁ GIAO DIỆN QUẢN TRỊ LUẬT POIP
 
 > Góc nhìn: Chuyên gia thiết kế sản phẩm quản trị, PM/Senior và người dùng vận hành thực tế  
-> Ngày đánh giá: 26/07/2026  
-> Repository: `Babychandoi/law-app`  
-> Nhánh: `phong/staff-chat-service`  
-> Commit được kiểm tra: `d963d70a823f305ed5cf29d72dd1bb4e4ddcd1ae`
+> **Đánh giá gốc:** 26/07/2026 tại commit `d963d70a` (điểm 4,8/10 — bản chụp lúc CHƯA sửa).  
+> **Cập nhật + kiểm tra độc lập lại:** 28/07/2026 tại commit `c9d13ac2` — xác nhận **P0 10/10 · P1 12/12 · P2 11 xong · 1 một phần**.  
+> Repository: `Babychandoi/law-app` · Nhánh: `phong/staff-chat-service`
+
+---
+
+> ⚠️ **CÁCH ĐỌC BÁO CÁO NÀY.** Các mục **§0 (Trạng thái cập nhật)** và **§9 (Lộ trình)** phản ánh
+> **trạng thái HIỆN TẠI (28/07, commit `c9d13ac2`)** và **thay thế** mọi kết luận cũ. Các mục
+> **§1, §3, §5, §12** giữ nguyên **nguyên văn đánh giá gốc 26/07 (điểm 4,8/10, "chưa nghiệm thu")**
+> làm **ảnh chụp đối chiếu (baseline "trước khi sửa")** — **KHÔNG còn phản ánh trạng thái hiện tại**.
+> Điểm cập nhật sau khi đóng P0+P1 và phần lớn P2: ước **~8,5/10** (đã kiểm tra độc lập lại xác nhận
+> checklist; vẫn nên chạy UAT chính thức trước khi ký nghiệm thu cuối).
 
 ---
 
@@ -75,9 +83,10 @@ Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 - ⬜ Test coverage breadth: gateway/chat/crm/document chưa có test; chưa có test mobile/keyboard/axe.
 - ⬜ E2E cron tự động (đang chạy thủ công cho tới khi set secrets E2E_* trong repo).
 
-### Số liệu test (chính xác, cập nhật)
-- **62** unit test frontend (14 suite) — gồm 2 test DataTable mới (ẩn cột/mật độ).
-- **12** kịch bản Playwright = **10** test + **2** setup; có **workflow CI** (thủ công).
+### Số liệu test (chính xác, cập nhật 28/07 @ `c9d13ac2`)
+- **73** unit test frontend (16 suite) — gồm DataTable (ẩn cột/mật độ + saved-filter round-trip), CommandPalette (3), `contrast` WCAG (7).
+- Playwright: bộ E2E 5 màn thật (cần secrets) + **cổng a11y public** (project `public`, chạy trong CI không cần secret) + **visual regression** (project `visual`, image Playwright).
+- CI có **3 workflow**: `CI` (lint/build/test + job `a11y` + job `visual`), `E2E (Playwright)`, `Visual baseline`.
 - Backend: **1** test JUnit (ApiMeta) chạy trong CI. 4 module Java còn lại: chưa.
 
 Điểm bổ sung ngoài báo cáo: tách khu Vận hành/Hệ thống theo vai trò + guard; vá bảo mật
@@ -89,6 +98,12 @@ Chi tiết đánh dấu ở **mục 9 (Lộ trình)** phía dưới.
 ---
 
 ## 1. Kết luận điều hành
+
+> 🕓 **BASELINE 26/07 — ĐÃ ĐƯỢC XỬ LÝ, KHÔNG CÒN HIỆU LỰC.** Toàn bộ 6 vấn đề lớn nêu dưới đây
+> (dashboard trống, sidebar/active, responsive, accessibility, design system, công cụ dữ liệu) **đã
+> được đóng ở đợt 28/07** — xem §0 và §9. Điểm 4,8/10 dưới đây là **của lúc chưa sửa**; trạng thái
+> hiện tại tự chấm **~8,5/10** (P0 10/10 · P1 12/12 · P2 11+1, đã kiểm tra độc lập lại). Giữ nguyên
+> văn bên dưới chỉ để **đối chiếu**.
 
 Giao diện quản trị hiện tại **dùng được ở mức MVP nội bộ trên desktop**, có phạm vi nghiệp vụ tương đối đầy đủ, nhưng **chưa đạt tiêu chuẩn của một hệ thống quản trị hiện đại, chuyên nghiệp và có khả năng mở rộng**.
 
@@ -151,6 +166,11 @@ Do đó, báo cáo có độ tin cậy cao đối với **cấu trúc giao diệ
 ---
 
 ## 3. Bảng điểm tổng thể
+
+> 🕓 **Bảng điểm BASELINE 26/07 (trước khi sửa) — để đối chiếu.** Các điểm thấp bên dưới (điều hướng
+> 4,0 · design system 4,5 · mobile 3,0 · accessibility 2,5 · tổng 4,8) phản ánh trạng thái **trước**
+> đợt đóng P0/P1/P2. Sau khi đã đóng (xem §0, §9), các hạng mục này đều được nâng đáng kể; tổng cập
+> nhật tự chấm **~8,5/10**.
 
 | Hạng mục | Điểm | Đánh giá |
 |---|---:|---|
@@ -804,6 +824,14 @@ Cách triển khai này giảm việc sửa lặp và giúp toàn bộ giao di�
 ---
 
 ## 12. Quyết định cuối cùng
+
+> ✅ **CẬP NHẬT 28/07 (thay thế kết luận cũ).** Sáu ưu tiên nêu dưới (Dashboard · Navigation ·
+> Responsive · Accessibility · Design system · Công cụ dữ liệu) **đã được triển khai và đóng** ở đợt
+> 28/07; **P0 10/10 · P1 12/12 · P2 11 xong · 1 một phần** (đã kiểm tra độc lập lại xác nhận
+> checklist). Trạng thái hiện tại **đủ điều kiện nghiệm thu chức năng/UI của sprint**, với ngoại lệ:
+> (a) visual-regression cần **merge baseline vào `main`** rồi đặt job `visual` là *required check*;
+> (b) vẫn nên chạy **UAT chính thức** bằng dữ liệu/tài khoản thật trước khi ký nghiệm thu cuối. Đoạn
+> "chưa đạt" bên dưới là **kết luận gốc 26/07**, giữ để đối chiếu — **không còn hiệu lực**.
 
 Giao diện admin của Luật POIP có **nền móng chức năng khá tốt**, nhưng hiện vẫn giống một tập hợp các màn CRUD được phát triển riêng lẻ hơn là một sản phẩm quản trị có design system thống nhất.
 
