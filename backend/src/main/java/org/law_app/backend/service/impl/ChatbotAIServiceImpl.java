@@ -6,8 +6,8 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.law_app.backend.common.SenderType;
-import org.law_app.backend.entity.ChildrenServices;
 import org.law_app.backend.entity.ChatMessage;
+import org.law_app.backend.entity.ChildrenServices;
 import org.law_app.backend.entity.Company;
 import org.law_app.backend.entity.Location;
 import org.law_app.backend.entity.News;
@@ -73,6 +73,7 @@ public class ChatbotAIServiceImpl implements ChatbotAIService {
     factory.setReadTimeout(30000); // 30s chờ AI trả lời
     return new RestTemplate(factory);
   }
+
   private final ChatMessageRepository chatMessageRepository;
   private final NewsRepository newsRepository;
   private final ServiceRepository serviceRepository;
@@ -122,8 +123,7 @@ public class ChatbotAIServiceImpl implements ChatbotAIService {
           + "- Neu khach hoi lai thong tin da co trong lich su, hay nhac lai dung thong tin do\n"
           + "- Khong noi rang ban khong the nho neu thong tin dang co trong lich su hoi thoai duoc cung cap\n"
           + "- Khong tu nhan luu tru dai han; chi dung ngu canh hoi thoai hien tai\n\n"
-          +
-          "CÁCH TRẢ LỜI:\n"
+          + "CÁCH TRẢ LỜI:\n"
           + "- Trả lời ngắn gọn, rõ ràng (tối đa 3-4 câu)\n"
           + "- Thân thiện và chuyên nghiệp, viết như đang nhắn tin cho khách, giọng người thật\n"
           + "- Sử dụng tiếng Việt có dấu\n"
@@ -268,8 +268,7 @@ public class ChatbotAIServiceImpl implements ChatbotAIService {
           }
         }
       } catch (Exception e) {
-        log.warn(
-            "Could not load persisted chat history for guest {}: {}", guestId, e.getMessage());
+        log.warn("Could not load persisted chat history for guest {}: {}", guestId, e.getMessage());
       }
     }
 

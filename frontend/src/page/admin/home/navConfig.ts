@@ -11,6 +11,7 @@ import {
   SlidersHorizontal,
   Puzzle,
   Image,
+  ScrollText,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -73,6 +74,7 @@ export const SYSTEM_GROUPS: NavGroup[] = [
     items: [
       { label: 'Người đăng ký', path: `${SYS_BASE}/subscribers`, icon: Mail },
       { label: 'Cấu hình CRM', path: `${SYS_BASE}/crm-config`, icon: SlidersHorizontal },
+      { label: 'Nhật ký kiểm toán', path: `${SYS_BASE}/audit-logs`, icon: ScrollText },
     ],
   },
 ];

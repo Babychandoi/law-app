@@ -17,6 +17,7 @@ public class ChildrenServiceRequest {
   String icon;
   String image;
   String descriptionHome;
+
   /** id của Services cha (nhóm dịch vụ) */
   String parentServiceId;
 }

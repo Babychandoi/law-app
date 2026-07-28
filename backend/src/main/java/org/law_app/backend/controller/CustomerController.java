@@ -69,10 +69,12 @@ public class CustomerController {
       @RequestParam(required = false) String q,
       @RequestParam(required = false) Status status,
       @RequestParam(required = false) String serviceId,
-      @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(
+      @RequestParam(required = false)
+          @org.springframework.format.annotation.DateTimeFormat(
               iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE)
           java.time.LocalDate from,
-      @RequestParam(required = false) @org.springframework.format.annotation.DateTimeFormat(
+      @RequestParam(required = false)
+          @org.springframework.format.annotation.DateTimeFormat(
               iso = org.springframework.format.annotation.DateTimeFormat.ISO.DATE)
           java.time.LocalDate to,
       @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC)

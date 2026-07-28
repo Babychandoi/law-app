@@ -14,16 +14,16 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * Makes a whitelist of PUBLIC, user-independent GET endpoints edge-cacheable so Cloudflare can serve
- * repeat requests from its edge instead of crossing the tunnel back to this machine (~400ms saved
- * per cache HIT).
+ * Makes a whitelist of PUBLIC, user-independent GET endpoints edge-cacheable so Cloudflare can
+ * serve repeat requests from its edge instead of crossing the tunnel back to this machine (~400ms
+ * saved per cache HIT).
  *
  * <p>Two things are needed for Cloudflare to actually cache:
  *
  * <ol>
  *   <li>{@code Cache-Control: s-maxage} on the response (added here).
- *   <li>NO {@code Set-Cookie} on the response — Cloudflare BYPASSES cache for any response carrying a
- *       cookie. Spring Security's CSRF support sets an XSRF-TOKEN cookie on every request, so for
+ *   <li>NO {@code Set-Cookie} on the response — Cloudflare BYPASSES cache for any response carrying
+ *       a cookie. Spring Security's CSRF support sets an XSRF-TOKEN cookie on every request, so for
  *       these public GETs we suppress it via a response wrapper.
  * </ol>
  *

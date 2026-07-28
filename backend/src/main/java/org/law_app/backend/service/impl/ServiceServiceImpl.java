@@ -32,6 +32,7 @@ public class ServiceServiceImpl implements ServiceService {
   SocialRepository socialRepository;
   PhoneContactRepository phoneContactRepository;
   ImportantRepository importantRepository;
+  org.law_app.backend.service.AuditService auditService;
 
   @Override
   @Transactional(readOnly = true)
@@ -74,6 +75,12 @@ public class ServiceServiceImpl implements ServiceService {
           childrenServiceRepository.save(childrenService);
         }
       }
+      auditService.record(
+          "SERVICE_CREATED",
+          "SERVICE",
+          service.getId(),
+          "Tạo dịch vụ: " + service.getTitle(),
+          null);
       return true;
 
     } catch (Exception e) {

@@ -34,6 +34,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
   UserRepository userRepository;
   UserMapper userMapper;
   TokenService tokenService;
+  org.law_app.backend.service.AuditService auditService;
 
   // Refresh token TTL (giây) — khớp với thời hạn JWT refresh để không lệch nhau.
   @lombok.experimental.NonFinal
@@ -258,8 +259,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
           userRepository
               .findById(id)
               .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+      Role oldRole = user.getRole();
       user.setRole(role);
       userRepository.save(user);
+      auditService.record(
+          "USER_ROLE_CHANGED",
+          "USER",
+          id,
+          String.format("Đổi vai trò %s: %s → %s", user.getUsername(), oldRole, role),
+          org.law_app.backend.service.AuditService.diff("role", oldRole, role));
       return true;
     } catch (Exception e) {
       log.error("Error when change role", e);
@@ -275,8 +283,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
           userRepository
               .findById(id)
               .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+      Active oldActive = user.getActive();
       user.setActive(active);
       userRepository.save(user);
+      auditService.record(
+          "USER_ACTIVE_CHANGED",
+          "USER",
+          id,
+          String.format("Đổi trạng thái %s: %s → %s", user.getUsername(), oldActive, active),
+          org.law_app.backend.service.AuditService.diff("active", oldActive, active));
       return true;
     } catch (Exception e) {
       log.error("Error when change active status", e);

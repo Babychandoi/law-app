@@ -278,3 +278,28 @@ export const markAllRead = async (): Promise<ApiResponse<boolean>> => {
   const response = await axiosClient.put<ApiResponse<boolean>>(`/notifications/read`);
   return response.data;
 };
+
+export interface AuditLog {
+  id: string;
+  actorId?: string | null;
+  actorUsername?: string | null;
+  actorRole?: string | null;
+  action: string;
+  targetType?: string | null;
+  targetId?: string | null;
+  summary?: string | null;
+  detail?: string | null;
+  createdAt: string;
+}
+export interface AuditQuery {
+  page?: number;
+  size?: number;
+  targetType?: string;
+  action?: string;
+  q?: string;
+  sort?: string;
+}
+export const getAuditLogs = async (params?: AuditQuery): Promise<ApiResponse<AuditLog[]>> => {
+  const response = await axiosClient.get<ApiResponse<AuditLog[]>>(`/audit-logs`, { params });
+  return response.data;
+};

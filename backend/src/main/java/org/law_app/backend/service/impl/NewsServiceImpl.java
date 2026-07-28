@@ -35,6 +35,7 @@ public class NewsServiceImpl implements NewsService {
   NewsMapper newsMapper;
   MinioService minioService;
   MinioConfig minioConfig;
+  org.law_app.backend.service.AuditService auditService;
 
   @Override
   @Transactional
@@ -60,6 +61,8 @@ public class NewsServiceImpl implements NewsService {
 
       // Save the news with fullContent
       news = newsRepository.save(news);
+      auditService.record(
+          "NEWS_CREATED", "NEWS", news.getId(), "Tạo bài viết: " + news.getTitle(), null);
 
       NewsResponse newsResponse = newsMapper.toNewsResponse(news);
 
@@ -176,6 +179,8 @@ public class NewsServiceImpl implements NewsService {
 
       // Update news from request
       newsMapper.updateNewsFromRequest(existingNews, newsRequest);
+      auditService.record(
+          "NEWS_UPDATED", "NEWS", id, "Sửa bài viết: " + existingNews.getTitle(), null);
 
       NewsResponse newsResponse = newsMapper.toNewsResponse(existingNews);
 
@@ -203,6 +208,7 @@ public class NewsServiceImpl implements NewsService {
               .findById(id)
               .orElseThrow(() -> new RuntimeException("News not found with id: " + id));
       newsRepository.delete(news);
+      auditService.record("NEWS_DELETED", "NEWS", id, "Xóa bài viết: " + news.getTitle(), null);
       return true;
     } catch (Exception e) {
       log.error("Error deleting news: {}", e.getMessage());
@@ -480,6 +486,7 @@ public class NewsServiceImpl implements NewsService {
   public Boolean deleteSubscriber(String id) {
     customerSubscribeRepository.deleteById(id);
     log.info("Subscriber deleted: {}", id);
+    auditService.record("SUBSCRIBER_DELETED", "SUBSCRIBER", id, "Xóa người đăng ký", null);
     return true;
   }
 }

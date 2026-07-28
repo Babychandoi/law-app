@@ -20,6 +20,7 @@ const TITLES: Record<string, string> = {
   '/2025/luatpoip/he-thong/applications': 'Ứng viên',
   '/2025/luatpoip/he-thong/subscribers': 'Người đăng ký',
   '/2025/luatpoip/he-thong/crm-config': 'Cấu hình CRM',
+  '/2025/luatpoip/he-thong/audit-logs': 'Nhật ký kiểm toán',
 };
 
 const SystemHome: React.FC = () => {

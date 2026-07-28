@@ -14,8 +14,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 /**
- * Fixed-window rate limiting (Redis) for sensitive public endpoints — brute force on login and
- * spam on lead/subscribe/apply/upload. Keyed by the real client IP (behind Cloudflare tunnel).
+ * Fixed-window rate limiting (Redis) for sensitive public endpoints — brute force on login and spam
+ * on lead/subscribe/apply/upload. Keyed by the real client IP (behind Cloudflare tunnel).
  *
  * <p>Fail-open: if Redis is unavailable the request is allowed, so a Redis blip never takes the
  * site down. Chat/AI abuse is throttled separately per-guest in the WebSocket handler.

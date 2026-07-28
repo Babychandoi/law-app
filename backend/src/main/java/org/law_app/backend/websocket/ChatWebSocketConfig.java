@@ -87,8 +87,7 @@ public class ChatWebSocketConfig implements WebSocketMessageBrokerConfigurer {
   /** Admin iff Spring Security authenticated the session with ROLE_ADMIN. */
   private boolean isAdmin(Principal user) {
     if (user instanceof Authentication auth) {
-      return auth.getAuthorities().stream()
-          .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
+      return auth.getAuthorities().stream().anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
     }
     return false;
   }

@@ -99,7 +99,8 @@ public class ChildrenServiceImpl implements ChildrenService {
       return process.stream()
           .map(
               proc -> {
-                List<ProcessDetail> processDetails = processDetailRepository.findByProcessOrderBySortOrderAsc(proc);
+                List<ProcessDetail> processDetails =
+                    processDetailRepository.findByProcessOrderBySortOrderAsc(proc);
                 return childrenMapper.toProcessResponse(proc, processDetails);
               })
           .toList();
@@ -491,7 +492,10 @@ public class ChildrenServiceImpl implements ChildrenService {
 
     List<ProcessResponse> process =
         processRepository.findByServiceOrderBySortOrderAsc(child).stream()
-            .map(p -> childrenMapper.toProcessResponse(p, processDetailRepository.findByProcessOrderBySortOrderAsc(p)))
+            .map(
+                p ->
+                    childrenMapper.toProcessResponse(
+                        p, processDetailRepository.findByProcessOrderBySortOrderAsc(p)))
             .toList();
 
     List<org.law_app.backend.dto.response.PricingResponse> pricing =

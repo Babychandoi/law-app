@@ -22,7 +22,8 @@ public class CaseEventPublisher {
       rabbitTemplate.convertAndSend(RabbitConfig.EXCHANGE, routingKey, event);
     } catch (Exception e) {
       // CRM sync is best-effort; a missed event is reconciled by backfill, never breaks the case.
-      log.error("Failed to publish {} for case {}: {}", routingKey, event.getCaseId(), e.getMessage());
+      log.error(
+          "Failed to publish {} for case {}: {}", routingKey, event.getCaseId(), e.getMessage());
     }
   }
 }

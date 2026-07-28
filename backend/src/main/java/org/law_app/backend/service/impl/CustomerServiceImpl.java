@@ -39,6 +39,7 @@ public class CustomerServiceImpl implements CustomerServices {
   NotificationService notificationService;
   CaseEventPublisher caseEventPublisher;
   EmailService emailService;
+  org.law_app.backend.service.AuditService auditService;
 
   @Value("${app.notification-email}")
   @lombok.experimental.NonFinal
@@ -153,6 +154,7 @@ public class CustomerServiceImpl implements CustomerServices {
               .findById(id)
               .orElseThrow(
                   () -> new IllegalArgumentException("Customer service not found with ID: " + id));
+      Status oldStatus = customerService.getStatus();
       customerService.setStatus(status);
       switch (status) {
         case COMPLETED:
@@ -175,6 +177,12 @@ public class CustomerServiceImpl implements CustomerServices {
               .completedAt(customerService.getCompletedAt())
               .canceledAt(customerService.getCanceledAt())
               .build());
+      auditService.record(
+          "CUSTOMER_STATUS_CHANGED",
+          "CUSTOMER",
+          id,
+          String.format("Đổi trạng thái hồ sơ: %s → %s", oldStatus, status),
+          org.law_app.backend.service.AuditService.diff("status", oldStatus, status));
       return true; // Return true if update is successful
     } catch (Exception e) {
       log.error("Error updating status of customer service: {}", e.getMessage());
