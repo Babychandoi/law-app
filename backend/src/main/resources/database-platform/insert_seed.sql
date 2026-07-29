@@ -31,7 +31,7 @@ VALUES
 
 INSERT INTO location (id, type, address, color, company_id)
 VALUES
-  ('52111111-1111-1111-1111-111111111111', 'headquarter', 'Số 1, Hà Nội, Việt Nam', 0, '51111111-1111-1111-1111-111111111111'),
+  ('52111111-1111-1111-1111-111111111111', 'Trụ sở chính', '70 Ngách 6, Ngõ 10 Tả Thanh Oai, Xã Đại Thanh, TP Hà Nội', 0, '51111111-1111-1111-1111-111111111111'),
   ('52222222-2222-2222-2222-222222222222', 'branch', 'Số 2, TP. Hồ Chí Minh, Việt Nam', 1, '51111111-1111-1111-1111-111111111111');
 
 INSERT INTO important (id, text, href, icon, color, company_id)

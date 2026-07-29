@@ -30,7 +30,7 @@ const fallbackCompany: TotoCompany = {
     {
       id: 'hn',
       type: 'Văn phòng',
-      address: '70 Ngách 6 Ngõ 10 Tả Thanh Oai, Đại Thanh, Hà Nội, Việt Nam',
+      address: '70 Ngách 6, Ngõ 10 Tả Thanh Oai, Xã Đại Thanh, TP Hà Nội',
       color: 'gold',
     },
   ],
