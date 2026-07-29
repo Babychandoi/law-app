@@ -7,6 +7,8 @@ import {
   Phone,
   Send,
   ShieldCheck,
+  Building2,
+  UserCheck,
 } from 'lucide-react';
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -18,9 +20,9 @@ import { TotoCompany } from '../../../types/company';
 const fallbackCompany: TotoCompany = {
   company: {
     id: 'fallback',
-    name: 'Luật Poip Legal',
-    representative: '',
-    taxCode: '',
+    name: 'CÔNG TY TNHH POIP LEGAL',
+    representative: 'Ls. Trần Thị Kiều Oanh',
+    taxCode: '0111585280',
     websiteName: 'luatpoip.com',
     email: contactInfo.email,
   },
@@ -126,6 +128,18 @@ export default function Footer() {
                 </span>
               </a>
             ))}
+            {company.company.representative && (
+              <div className="flex items-center gap-3">
+                <UserCheck className="shrink-0 text-brand-gold" size={18} />
+                <span>Người đại diện: {company.company.representative}</span>
+              </div>
+            )}
+            {company.company.taxCode && (
+              <div className="flex items-center gap-3">
+                <Building2 className="shrink-0 text-brand-gold" size={18} />
+                <span>MST: {company.company.taxCode}</span>
+              </div>
+            )}
           </div>
         </section>
 
