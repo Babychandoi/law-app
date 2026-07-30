@@ -53,6 +53,15 @@ export interface DocumentTemplate {
   revision?: number;
 }
 
+export interface DocumentStats {
+  templatesTotal: number;
+  templatesByStatus: Record<string, number>;
+  generatedTotal: number;
+  generatedByStatus: Record<string, number>;
+  generatedLast30Days: number;
+  bundlesActive: number;
+}
+
 export interface TemplatePreview {
   id: string;
   name: string;

@@ -7,6 +7,7 @@ import {
   DocumentTemplateVersion,
   DocumentTemplateStatus,
   DocumentAuditEntry,
+  DocumentStats,
   GeneratedDocumentListQuery,
   GenerateDocumentContext,
   GeneratedDocument,
@@ -20,6 +21,11 @@ import {
 } from '../types/documentTemplate';
 
 const documentTemplateService = {
+  getStats: async (): Promise<DocumentStats> => {
+    const res = await gatewayClient.get<ApiResponse<DocumentStats>>('/documents/stats');
+    return res.data.data;
+  },
+
   listTemplates: async (status?: DocumentTemplateStatus | 'ALL'): Promise<DocumentTemplate[]> => {
     const res = await gatewayClient.get<ApiResponse<DocumentTemplate[]>>('/documents/templates', {
       params: status ? { status } : undefined,

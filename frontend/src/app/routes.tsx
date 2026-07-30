@@ -39,6 +39,7 @@ const TemplateUpload = lazy(() => import('../page/documents/TemplateUpload'));
 const TemplateFieldEditor = lazy(() => import('../page/documents/TemplateFieldEditor'));
 const GenerateDocument = lazy(() => import('../page/documents/GenerateDocument'));
 const GeneratedDocumentList = lazy(() => import('../page/documents/GeneratedDocumentList'));
+const DocumentDashboard = lazy(() => import('../page/documents/DocumentDashboard'));
 
 function RouteFallback() {
   return (
@@ -111,6 +112,7 @@ export const documentRoutes: RouteObject[] = [
     element: withSuspense(<DocumentLayout />),
     children: [
       { index: true, element: withSuspense(<TemplateList />) },
+      { path: 'dashboard', element: withSuspense(<DocumentDashboard />) },
       { path: 'templates/new', element: withSuspense(<TemplateUpload />) },
       { path: 'templates/:id/edit', element: withSuspense(<TemplateFieldEditor />) },
       { path: 'generate/:templateId', element: withSuspense(<GenerateDocument />) },

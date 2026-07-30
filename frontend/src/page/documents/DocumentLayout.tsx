@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { FileText, Files, PlusCircle, Settings } from 'lucide-react';
+import { FileText, Files, LayoutDashboard, PlusCircle, Settings } from 'lucide-react';
 import { getMe, MeResponse } from '../../service/auth';
 import { tryRefreshToken } from '../../service/axiosClient';
 import Sidebar from '../admin/home/sections/Sidebar';
@@ -38,15 +38,17 @@ export default function DocumentLayout() {
   }, [navigate]);
 
   useEffect(() => {
-    const title = location.pathname.includes('/generated')
-      ? 'Tài liệu đã tạo'
-      : location.pathname.includes('/templates/new')
-        ? 'Tải mẫu mới'
-        : location.pathname.includes('/edit')
-          ? 'Cấu hình biểu mẫu'
-          : location.pathname.includes('/generate')
-            ? 'Tạo tài liệu'
-            : 'Tài liệu & biểu mẫu';
+    const title = location.pathname.includes('/dashboard')
+      ? 'Tổng quan tài liệu'
+      : location.pathname.includes('/generated')
+        ? 'Tài liệu đã tạo'
+        : location.pathname.includes('/templates/new')
+          ? 'Tải mẫu mới'
+          : location.pathname.includes('/edit')
+            ? 'Cấu hình biểu mẫu'
+            : location.pathname.includes('/generate')
+              ? 'Tạo tài liệu'
+              : 'Tài liệu & biểu mẫu';
     document.title = `${title} - Luật Poip Legal`;
   }, [location.pathname]);
 
@@ -91,6 +93,12 @@ export default function DocumentLayout() {
               <h1 className="text-lg font-semibold text-gray-900">Tài liệu & biểu mẫu</h1>
             </div>
             <nav aria-label="Điều hướng tài liệu" className="flex flex-wrap gap-2">
+              <DocLink
+                to={`${DOCUMENT_BASE}/dashboard`}
+                icon={<LayoutDashboard size={16} aria-hidden="true" />}
+              >
+                Tổng quan
+              </DocLink>
               <DocLink to={DOCUMENT_BASE} end icon={<FileText size={16} aria-hidden="true" />}>
                 Biểu mẫu
               </DocLink>
