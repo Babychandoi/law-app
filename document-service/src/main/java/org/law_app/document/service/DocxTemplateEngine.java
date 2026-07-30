@@ -4,10 +4,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -20,6 +23,7 @@ import org.docx4j.TraversalUtil;
 import org.docx4j.XmlUtils;
 import org.docx4j.convert.out.HTMLSettings;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.wml.Document;
 import org.docx4j.wml.P;
 import org.docx4j.wml.Tbl;
 import org.docx4j.wml.Text;
@@ -50,6 +54,10 @@ public class DocxTemplateEngine {
 
   private static final Pattern PLACEHOLDER =
       Pattern.compile("\\$\\{([A-Za-z][A-Za-z0-9_]{0,63})\\}");
+  // Đánh dấu đoạn điều kiện: ${if_KEY} ... ${endif_KEY} (mỗi marker trên một dòng riêng ở thân văn
+  // bản).
+  private static final Pattern CONDITION =
+      Pattern.compile("\\$\\{(if|endif)_([A-Za-z][A-Za-z0-9_]{0,57})\\}");
   private static final Pattern PLACEHOLDER_LIKE = Pattern.compile("\\$\\{[^}]*\\}");
   private static final Pattern EXTERNAL_RELATIONSHIP =
       Pattern.compile("(?i)TargetMode\\s*=\\s*[\"']External[\"']");
@@ -82,6 +90,7 @@ public class DocxTemplateEngine {
   public byte[] render(InputStream docx, Map<String, String> values) {
     try {
       WordprocessingMLPackage pkg = loadSafe(docx);
+      applyConditionals(pkg, values == null ? Map.of() : values);
       renderOnPackage(pkg, values);
       return save(pkg);
     } catch (ResponseStatusException e) {
@@ -106,6 +115,7 @@ public class DocxTemplateEngine {
       InputStream docx, Map<String, String> scalar, Map<String, List<Map<String, String>>> lists) {
     try {
       WordprocessingMLPackage pkg = loadSafe(docx);
+      applyConditionals(pkg, scalar == null ? Map.of() : scalar);
       expandListRows(pkg, lists == null ? Map.of() : lists);
       renderOnPackage(pkg, scalar == null ? Map.of() : scalar);
       return save(pkg);
@@ -351,6 +361,64 @@ public class DocxTemplateEngine {
       if (text.getValue() != null) value.append(text.getValue());
     }
     return value.toString();
+  }
+
+  /* ===== Điều kiện (hiện/ẩn đoạn văn) ===== */
+
+  /**
+   * Xử lý đánh dấu điều kiện ở thân văn bản: các đoạn nằm giữa {@code ${if_KEY}} và {@code
+   * ${endif_KEY}} chỉ được giữ khi giá trị của {@code KEY} là "đúng" (khác rỗng và khác
+   * false/0/no/không/off). Marker phải nằm trên dòng riêng; hỗ trợ lồng nhau. Đoạn marker luôn bị
+   * gỡ khỏi tài liệu kết quả.
+   */
+  private void applyConditionals(WordprocessingMLPackage pkg, Map<String, String> values) {
+    Object root = XmlUtils.unwrap(pkg.getMainDocumentPart().getJaxbElement());
+    if (!(root instanceof Document document) || document.getBody() == null) return;
+    processConditionalContent(document.getBody().getContent(), values);
+  }
+
+  private void processConditionalContent(List<Object> content, Map<String, String> values) {
+    List<Object> rebuilt = new ArrayList<>();
+    Deque<Boolean> keepStack = new ArrayDeque<>();
+    for (Object item : content) {
+      Object node = XmlUtils.unwrap(item);
+      String markerText = node instanceof P paragraph ? conditionMarkerText(paragraph) : null;
+      if (markerText != null) {
+        Matcher matcher = CONDITION.matcher(markerText);
+        matcher.find();
+        String kind = matcher.group(1);
+        String base = matcher.group(2);
+        if ("if".equals(kind)) {
+          boolean parentKeep = keepStack.stream().allMatch(Boolean::booleanValue);
+          keepStack.push(parentKeep && truthy(values.get(base)));
+        } else if (!keepStack.isEmpty()) {
+          keepStack.pop();
+        }
+        continue; // Đoạn marker không xuất hiện trong tài liệu kết quả.
+      }
+      if (keepStack.stream().allMatch(Boolean::booleanValue)) rebuilt.add(item);
+    }
+    content.clear();
+    content.addAll(rebuilt);
+  }
+
+  /** Trả về text của đoạn nếu đoạn chứa marker điều kiện, ngược lại null. */
+  private String conditionMarkerText(P paragraph) {
+    String text = combinedText(textNodesWithin(paragraph));
+    return CONDITION.matcher(text).find() ? text : null;
+  }
+
+  private static boolean truthy(String value) {
+    if (value == null) return false;
+    String s = value.trim().toLowerCase(Locale.ROOT);
+    return !(s.isEmpty()
+        || s.equals("false")
+        || s.equals("0")
+        || s.equals("no")
+        || s.equals("n")
+        || s.equals("off")
+        || s.equals("không")
+        || s.equals("khong"));
   }
 
   /* ===== Trường lặp (nhân dòng bảng) ===== */

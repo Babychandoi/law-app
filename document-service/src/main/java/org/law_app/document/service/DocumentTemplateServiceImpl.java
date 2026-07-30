@@ -644,9 +644,15 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
         counts.keySet().stream()
             .filter(DocumentTemplateServiceImpl::isListChildKey)
             .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
+    // Marker điều kiện ${if_KEY}/${endif_KEY}: không phải field; KEY phải là field đã khai báo và
+    // được coi là "đã dùng" (một field chỉ điều khiển đoạn điều kiện, không in ra, vẫn hợp lệ).
+    Set<String> conditionalBases = conditionalBaseKeys(counts.keySet());
+    validateConditionalMarkers(counts.keySet(), schemaKeys);
     Set<String> placeholderKeys = new LinkedHashSet<>(counts.keySet());
     placeholderKeys.removeAll(allowedDerived);
     placeholderKeys.removeAll(listChildKeys);
+    placeholderKeys.removeIf(DocumentTemplateServiceImpl::isConditionalMarker);
+    placeholderKeys.addAll(conditionalBases);
     if (!placeholderKeys.equals(schemaKeys)) {
       Set<String> missingSchema = new LinkedHashSet<>(placeholderKeys);
       missingSchema.removeAll(schemaKeys);
@@ -705,6 +711,8 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     Set<String> effectivePlaceholders = new LinkedHashSet<>(placeholders);
     effectivePlaceholders.removeAll(DocumentDerivedValues.allowedDerivedKeys(fields));
     effectivePlaceholders.removeIf(DocumentTemplateServiceImpl::isListChildKey);
+    effectivePlaceholders.removeIf(DocumentTemplateServiceImpl::isConditionalMarker);
+    effectivePlaceholders.addAll(conditionalBaseKeys(placeholders));
     if (!submitted.equals(effectivePlaceholders)) {
       throw badRequest("Danh sách key phải khớp chính xác với placeholder trong file mẫu");
     }
@@ -727,6 +735,47 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
           .add(key.substring(sep + 2));
     }
     return specs;
+  }
+
+  /** Marker điều kiện có tiền tố {@code if_} hoặc {@code endif_}. */
+  private static boolean isConditionalMarker(String key) {
+    return (key.startsWith("if_") && key.length() > 3)
+        || (key.startsWith("endif_") && key.length() > 6);
+  }
+
+  private static String conditionalBaseKey(String markerKey) {
+    if (markerKey.startsWith("if_")) return markerKey.substring(3);
+    if (markerKey.startsWith("endif_")) return markerKey.substring(6);
+    return null;
+  }
+
+  /** Tập KEY được tham chiếu bởi các marker điều kiện trong danh sách placeholder. */
+  private static Set<String> conditionalBaseKeys(Set<String> placeholderKeys) {
+    Set<String> bases = new LinkedHashSet<>();
+    for (String key : placeholderKeys) {
+      if (isConditionalMarker(key)) bases.add(conditionalBaseKey(key));
+    }
+    return bases;
+  }
+
+  /** Mỗi ${if_KEY} phải có ${endif_KEY} và KEY phải là field đã khai báo. */
+  private void validateConditionalMarkers(Set<String> placeholderKeys, Set<String> schemaKeys) {
+    Set<String> ifs = new LinkedHashSet<>();
+    Set<String> endifs = new LinkedHashSet<>();
+    for (String key : placeholderKeys) {
+      if (key.startsWith("if_") && key.length() > 3) ifs.add(key.substring(3));
+      else if (key.startsWith("endif_") && key.length() > 6) endifs.add(key.substring(6));
+    }
+    Set<String> bases = new LinkedHashSet<>(ifs);
+    bases.addAll(endifs);
+    for (String base : bases) {
+      if (!schemaKeys.contains(base)) {
+        throw badRequest("Điều kiện ${if_" + base + "} phải tham chiếu một field đã khai báo");
+      }
+    }
+    if (!ifs.equals(endifs)) {
+      throw badRequest("Mỗi ${if_KEY} phải có ${endif_KEY} tương ứng");
+    }
   }
 
   private DocumentTemplateField toField(TemplateFieldRequest field) {

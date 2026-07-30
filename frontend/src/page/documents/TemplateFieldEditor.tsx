@@ -819,6 +819,15 @@ function FieldCard({
             tự điền ngày dạng "ngày DD tháng MM năm YYYY".
           </p>
         )}
+        {field.fieldKey && (
+          <p className="mt-1 text-xs text-brand-muted">
+            Điều kiện: đặt{' '}
+            <code className="rounded bg-brand-surface px-1">{`\${if_${field.fieldKey}}`}</code> và{' '}
+            <code className="rounded bg-brand-surface px-1">{`\${endif_${field.fieldKey}}`}</code>{' '}
+            trên hai dòng riêng để chỉ giữ đoạn ở giữa khi trường này có giá trị (khác
+            rỗng/0/không).
+          </p>
+        )}
         <FieldLabel label="Gợi ý cho người nhập" inputId={fieldInputId(index, 'helpText')}>
           <input
             id={fieldInputId(index, 'helpText')}
