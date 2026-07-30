@@ -53,6 +53,52 @@ export interface DocumentTemplate {
   revision?: number;
 }
 
+export interface BundleItem {
+  templateId: string;
+  sortOrder: number;
+  required: boolean;
+}
+
+export interface DocumentBundle {
+  id: string;
+  name: string;
+  description?: string;
+  status: DocumentTemplateStatus;
+  serviceId?: string;
+  serviceName?: string;
+  tags?: string[];
+  items: BundleItem[];
+  createdByUserId?: string;
+  updatedByUserId?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  revision?: number;
+}
+
+export interface DocumentBundleRequest {
+  name: string;
+  description?: string;
+  serviceId?: string;
+  serviceName?: string;
+  tags?: string[];
+  items: Array<{ templateId: string; sortOrder: number; required: boolean }>;
+  expectedRevision?: number;
+}
+
+export interface BundleGenerationResult {
+  templateId: string;
+  document: GeneratedDocument | null;
+  error: string | null;
+}
+
+export interface GenerateBundleResponse {
+  bundleId: string;
+  total: number;
+  succeeded: number;
+  failed: number;
+  results: BundleGenerationResult[];
+}
+
 export interface DocumentStats {
   templatesTotal: number;
   templatesByStatus: Record<string, number>;

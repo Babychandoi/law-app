@@ -18,7 +18,7 @@
 2. ✅ Gắn tài liệu với KH + CRM case (`LegalDocumentContext`).
 3. ✅ Tự điền dữ liệu KH/DN (`buildCrmPrefill`).
 4. ⚠️ Chỉ hỏi dữ liệu còn thiếu (prefill xong; chưa ẩn hẳn trường đã đủ).
-5. ⚠️ Tạo nhiều tài liệu một lần (bộ mẫu) — **backend xong**: `DocumentBundle` + CRUD + `/documents/bundles/{id}/generate` (trộn dữ liệu chung+riêng, đúng thứ tự, lỗi 1 mẫu không chặn bộ). Còn UI bộ mẫu (iteration sau).
+5. ✅ Tạo nhiều tài liệu một lần (bộ mẫu) — backend (`DocumentBundle` + CRUD + generate cả bộ) **+ UI**: trang Bộ mẫu (danh sách/tạo/sửa/lưu trữ, chọn mẫu có thứ tự) + trang Tạo hồ sơ (dữ liệu dùng chung = hợp field các mẫu → sinh cả bộ, kết quả per-item + tải).
 6. ✅ Trường lặp (`${list__child}` + `renderWithLists` + form thêm/bớt dòng).
 7. ✅ Điều kiện — hiện/ẩn đoạn theo dữ liệu (`${if_KEY}..${endif_KEY}`, lồng nhau; publish validate).
 8. ✅ Định dạng ngày VN + số tiền bằng chữ (`VietnameseDate` `_vi`, `VietnameseNumberWords` `_bangchu`).

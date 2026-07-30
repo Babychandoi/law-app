@@ -1,6 +1,6 @@
 import { ReactNode, useEffect, useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { FileText, Files, LayoutDashboard, PlusCircle, Settings } from 'lucide-react';
+import { FileText, Files, Layers, LayoutDashboard, PlusCircle, Settings } from 'lucide-react';
 import { getMe, MeResponse } from '../../service/auth';
 import { tryRefreshToken } from '../../service/axiosClient';
 import Sidebar from '../admin/home/sections/Sidebar';
@@ -40,15 +40,17 @@ export default function DocumentLayout() {
   useEffect(() => {
     const title = location.pathname.includes('/dashboard')
       ? 'Tổng quan tài liệu'
-      : location.pathname.includes('/generated')
-        ? 'Tài liệu đã tạo'
-        : location.pathname.includes('/templates/new')
-          ? 'Tải mẫu mới'
-          : location.pathname.includes('/edit')
-            ? 'Cấu hình biểu mẫu'
-            : location.pathname.includes('/generate')
-              ? 'Tạo tài liệu'
-              : 'Tài liệu & biểu mẫu';
+      : location.pathname.includes('/bundles')
+        ? 'Bộ mẫu'
+        : location.pathname.includes('/generated')
+          ? 'Tài liệu đã tạo'
+          : location.pathname.includes('/templates/new')
+            ? 'Tải mẫu mới'
+            : location.pathname.includes('/edit')
+              ? 'Cấu hình biểu mẫu'
+              : location.pathname.includes('/generate')
+                ? 'Tạo tài liệu'
+                : 'Tài liệu & biểu mẫu';
     document.title = `${title} - Luật Poip Legal`;
   }, [location.pathname]);
 
@@ -101,6 +103,12 @@ export default function DocumentLayout() {
               </DocLink>
               <DocLink to={DOCUMENT_BASE} end icon={<FileText size={16} aria-hidden="true" />}>
                 Biểu mẫu
+              </DocLink>
+              <DocLink
+                to={`${DOCUMENT_BASE}/bundles`}
+                icon={<Layers size={16} aria-hidden="true" />}
+              >
+                Bộ mẫu
               </DocLink>
               <DocLink
                 to={`${DOCUMENT_BASE}/generated`}

@@ -7,7 +7,10 @@ import {
   DocumentTemplateVersion,
   DocumentTemplateStatus,
   DocumentAuditEntry,
+  DocumentBundle,
+  DocumentBundleRequest,
   DocumentStats,
+  GenerateBundleResponse,
   GeneratedDocumentListQuery,
   GenerateDocumentContext,
   GeneratedDocument,
@@ -23,6 +26,54 @@ import {
 const documentTemplateService = {
   getStats: async (): Promise<DocumentStats> => {
     const res = await gatewayClient.get<ApiResponse<DocumentStats>>('/documents/stats');
+    return res.data.data;
+  },
+
+  listBundles: async (): Promise<DocumentBundle[]> => {
+    const res = await gatewayClient.get<ApiResponse<DocumentBundle[]>>('/documents/bundles');
+    return res.data.data ?? [];
+  },
+
+  getBundle: async (id: string): Promise<DocumentBundle> => {
+    const res = await gatewayClient.get<ApiResponse<DocumentBundle>>(`/documents/bundles/${id}`);
+    return res.data.data;
+  },
+
+  createBundle: async (request: DocumentBundleRequest): Promise<DocumentBundle> => {
+    const res = await gatewayClient.post<ApiResponse<DocumentBundle>>(
+      '/documents/bundles',
+      request
+    );
+    return res.data.data;
+  },
+
+  updateBundle: async (id: string, request: DocumentBundleRequest): Promise<DocumentBundle> => {
+    const res = await gatewayClient.put<ApiResponse<DocumentBundle>>(
+      `/documents/bundles/${id}`,
+      request
+    );
+    return res.data.data;
+  },
+
+  archiveBundle: async (id: string): Promise<DocumentBundle> => {
+    const res = await gatewayClient.delete<ApiResponse<DocumentBundle>>(`/documents/bundles/${id}`);
+    return res.data.data;
+  },
+
+  generateBundle: async (
+    id: string,
+    sharedValues: Record<string, string>,
+    context: GenerateDocumentContext = {},
+    idempotencyKey?: string
+  ): Promise<GenerateBundleResponse> => {
+    const res = await gatewayClient.post<ApiResponse<GenerateBundleResponse>>(
+      `/documents/bundles/${id}/generate`,
+      { sharedValues, context },
+      {
+        timeout: 120000,
+        headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
+      }
+    );
     return res.data.data;
   },
 
