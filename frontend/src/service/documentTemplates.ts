@@ -131,11 +131,12 @@ const documentTemplateService = {
     templateId: string,
     values: Record<string, string>,
     context: GenerateDocumentContext = {},
-    idempotencyKey?: string
+    idempotencyKey?: string,
+    lists?: Record<string, Array<Record<string, string>>>
   ): Promise<GeneratedDocument> => {
     const res = await gatewayClient.post<ApiResponse<GeneratedDocument>>(
       `/documents/templates/${templateId}/generate`,
-      { values, context },
+      { values, lists, context },
       {
         timeout: 60000,
         headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,

@@ -6,8 +6,10 @@ import {
   Download,
   Edit3,
   FileCheck2,
+  Plus,
   RefreshCw,
   ShieldCheck,
+  Trash2,
   Wand2,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -29,6 +31,9 @@ export default function GenerateDocument() {
   const [template, setTemplate] = useState<DocumentTemplate | null>(null);
   const [values, setValues] = useState<Record<string, string>>({});
   const [initialValues, setInitialValues] = useState<Record<string, string>>({});
+  type ListRows = Record<string, Array<Record<string, string>>>;
+  const [lists, setLists] = useState<ListRows>({});
+  const [initialLists, setInitialLists] = useState<ListRows>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [generated, setGenerated] = useState<GeneratedDocument | null>(null);
   const [mode, setMode] = useState<'form' | 'review'>('form');
@@ -63,7 +68,10 @@ export default function GenerateDocument() {
   }, [contextQuery]);
 
   const isDirty =
-    !generated && !!template && JSON.stringify(values) !== JSON.stringify(initialValues);
+    !generated &&
+    !!template &&
+    (JSON.stringify(values) !== JSON.stringify(initialValues) ||
+      JSON.stringify(lists) !== JSON.stringify(initialLists));
   useUnsavedChangesWarning(isDirty);
 
   const load = async () => {
@@ -115,10 +123,16 @@ export default function GenerateDocument() {
           setSourceWarning('Đã nạp thông tin hồ sơ nhưng chưa nạp được dữ liệu các bên liên quan.');
         }
       }
+      const listDefaults: ListRows = {};
+      Object.entries(data.lists ?? {}).forEach(([listKey, children]) => {
+        listDefaults[listKey] = [emptyRow(children)];
+      });
       setTemplate(loadedTemplate);
       setResolvedContext(nextContext);
       setValues(defaults);
       setInitialValues(defaults);
+      setLists(listDefaults);
+      setInitialLists(listDefaults);
     } catch (error: any) {
       setLoadError(error?.response?.data?.message || 'Không tải được biểu mẫu.');
     } finally {
@@ -168,14 +182,17 @@ export default function GenerateDocument() {
     if (!idempotencyKeyRef.current) idempotencyKeyRef.current = createIdempotencyKey();
     setSubmitting(true);
     try {
+      const payloadLists = buildListsPayload(lists);
       const document = await documentTemplateService.generate(
         templateId,
         values,
         resolvedContext,
-        idempotencyKeyRef.current
+        idempotencyKeyRef.current,
+        payloadLists
       );
       setGenerated(document);
       setInitialValues(values);
+      setInitialLists(lists);
       toast.success('Đã tạo tài liệu');
     } catch (error: any) {
       toast.error(error?.response?.data?.message || 'Không tạo được tài liệu.');
@@ -211,6 +228,37 @@ export default function GenerateDocument() {
     idempotencyKeyRef.current = '';
   };
 
+  const markListChanged = () => {
+    setGenerated(null);
+    idempotencyKeyRef.current = '';
+  };
+
+  const setListCell = (listKey: string, index: number, childKey: string, value: string) => {
+    setLists((current) => {
+      const rows = current[listKey] ? [...current[listKey]] : [];
+      rows[index] = { ...rows[index], [childKey]: value };
+      return { ...current, [listKey]: rows };
+    });
+    markListChanged();
+  };
+
+  const addListRow = (listKey: string) => {
+    const children = template?.lists?.[listKey] ?? [];
+    setLists((current) => ({
+      ...current,
+      [listKey]: [...(current[listKey] ?? []), emptyRow(children)],
+    }));
+    markListChanged();
+  };
+
+  const removeListRow = (listKey: string, index: number) => {
+    setLists((current) => ({
+      ...current,
+      [listKey]: (current[listKey] ?? []).filter((_, i) => i !== index),
+    }));
+    markListChanged();
+  };
+
   if (loading) {
     return (
       <div className="rounded-2xl border border-gray-200 bg-white">
@@ -237,6 +285,7 @@ export default function GenerateDocument() {
     (field) => field.required && values[field.fieldKey]?.trim()
   ).length;
   const requiredCount = template.fields.filter((field) => field.required).length;
+  const listKeys = Object.keys(template.lists ?? {});
 
   return (
     <div className="mx-auto max-w-4xl space-y-5">
@@ -331,7 +380,18 @@ export default function GenerateDocument() {
               />
             ))}
           </div>
-          {template.fields.length === 0 && (
+          {listKeys.map((listKey) => (
+            <ListRepeater
+              key={listKey}
+              listKey={listKey}
+              childKeys={template.lists?.[listKey] ?? []}
+              rows={lists[listKey] ?? []}
+              onAdd={() => addListRow(listKey)}
+              onRemove={(index) => removeListRow(listKey, index)}
+              onChange={(index, childKey, value) => setListCell(listKey, index, childKey, value)}
+            />
+          ))}
+          {template.fields.length === 0 && listKeys.length === 0 && (
             <p role="alert" className="mt-5 rounded-lg bg-amber-50 p-4 text-amber-900">
               Biểu mẫu chưa có trường dữ liệu và không thể tạo tài liệu.
             </p>
@@ -339,7 +399,7 @@ export default function GenerateDocument() {
           <button
             type="button"
             onClick={review}
-            disabled={template.fields.length === 0}
+            disabled={template.fields.length === 0 && listKeys.length === 0}
             className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-goldDark px-4 py-3 font-semibold text-white hover:bg-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <FileCheck2 size={18} aria-hidden="true" /> Kiểm tra dữ liệu
@@ -380,6 +440,32 @@ export default function GenerateDocument() {
               </div>
             ))}
           </dl>
+          {listKeys.map((listKey) => {
+            const rows = buildListsPayload(lists)[listKey] ?? [];
+            return (
+              <div key={listKey} className="mt-4">
+                <p className="text-sm font-medium text-gray-600">
+                  {listKey} · {rows.length} dòng
+                </p>
+                {rows.length === 0 ? (
+                  <p className="mt-1 text-sm italic text-gray-400">Không có dòng nào</p>
+                ) : (
+                  <ol className="mt-1 space-y-1">
+                    {rows.map((row, index) => (
+                      <li
+                        key={index}
+                        className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-900"
+                      >
+                        {Object.entries(row)
+                          .map(([key, value]) => `${key}: ${value}`)
+                          .join(' · ')}
+                      </li>
+                    ))}
+                  </ol>
+                )}
+              </div>
+            );
+          })}
           <button
             type="button"
             onClick={submit}
@@ -534,6 +620,92 @@ function DocumentValueField({
         </p>
       )}
     </div>
+  );
+}
+
+function emptyRow(childKeys: string[]): Record<string, string> {
+  return Object.fromEntries(childKeys.map((key) => [key, '']));
+}
+
+/** Bỏ các dòng trống hoàn toàn; chỉ giữ list còn dòng để gửi backend. */
+function buildListsPayload(
+  lists: Record<string, Array<Record<string, string>>>
+): Record<string, Array<Record<string, string>>> {
+  const out: Record<string, Array<Record<string, string>>> = {};
+  Object.entries(lists).forEach(([listKey, rows]) => {
+    const kept = rows.filter((row) => Object.values(row).some((value) => value.trim()));
+    if (kept.length) out[listKey] = kept;
+  });
+  return out;
+}
+
+function ListRepeater({
+  listKey,
+  childKeys,
+  rows,
+  onAdd,
+  onRemove,
+  onChange,
+}: {
+  listKey: string;
+  childKeys: string[];
+  rows: Array<Record<string, string>>;
+  onAdd: () => void;
+  onRemove: (index: number) => void;
+  onChange: (index: number, childKey: string, value: string) => void;
+}) {
+  return (
+    <fieldset className="mt-6 rounded-xl border border-gray-200 p-4">
+      <legend className="px-1 text-sm font-semibold text-gray-800">Danh sách lặp: {listKey}</legend>
+      <p className="text-xs text-gray-500">
+        Mỗi dòng sẽ nhân thành một hàng trong bảng của tài liệu. Bỏ trống dòng để không thêm.
+      </p>
+      <div className="mt-3 space-y-3">
+        {rows.length === 0 && (
+          <p className="text-sm italic text-gray-400">Chưa có dòng nào. Bấm “Thêm dòng”.</p>
+        )}
+        {rows.map((row, index) => (
+          <div
+            key={index}
+            className="rounded-lg border border-gray-200 bg-gray-50 p-3 sm:flex sm:items-end sm:gap-3"
+          >
+            <div className="grid flex-1 gap-3 sm:grid-cols-2">
+              {childKeys.map((childKey) => {
+                const id = `list-${listKey}-${index}-${childKey}`;
+                return (
+                  <div key={childKey}>
+                    <label htmlFor={id} className="text-xs font-medium text-gray-700">
+                      {childKey}
+                    </label>
+                    <input
+                      id={id}
+                      type="text"
+                      value={row[childKey] || ''}
+                      onChange={(event) => onChange(index, childKey, event.target.value)}
+                      className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-brand-goldDark focus:ring-2 focus:ring-brand-goldDark/20"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+            <button
+              type="button"
+              onClick={() => onRemove(index)}
+              className="mt-2 inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-400 sm:mt-0"
+            >
+              <Trash2 size={16} aria-hidden="true" /> Xóa
+            </button>
+          </div>
+        ))}
+      </div>
+      <button
+        type="button"
+        onClick={onAdd}
+        className="mt-3 inline-flex items-center gap-2 rounded-lg border border-brand-goldDark px-3 py-2 text-sm font-medium text-brand-goldDark hover:bg-brand-goldDark/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+      >
+        <Plus size={16} aria-hidden="true" /> Thêm dòng
+      </button>
+    </fieldset>
   );
 }
 

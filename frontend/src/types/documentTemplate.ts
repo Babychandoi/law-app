@@ -35,6 +35,8 @@ export interface DocumentTemplate {
   fileSize: number;
   contentSha256?: string;
   fields: DocumentTemplateField[];
+  /** Trường lặp suy ra từ placeholder ${list__child}: listKey -> danh sách childKey. */
+  lists?: Record<string, string[]>;
   createdByUserId?: string;
   updatedByUserId?: string;
   publishedByUserId?: string;

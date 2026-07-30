@@ -792,17 +792,39 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
   }
 
   private DocumentTemplateResponse toResponseForViewer(DocumentTemplate template) {
-    if (CurrentUser.isAdmin() || template.getActiveVersionId() == null) return toResponse(template);
+    if (CurrentUser.isAdmin() || template.getActiveVersionId() == null) {
+      return toResponse(
+          template,
+          null,
+          listSpecsFor(template.getTemplateBucket(), template.getTemplateObjectName()));
+    }
     DocumentTemplateVersion active = versionManager.activeVersion(template);
-    return toResponse(template, active);
+    return toResponse(
+        template, active, listSpecsFor(active.getTemplateBucket(), active.getTemplateObjectName()));
   }
 
   DocumentTemplateResponse toResponse(DocumentTemplate template) {
-    return toResponse(template, null);
+    return toResponse(template, null, Map.of());
+  }
+
+  /** Đọc placeholder từ file DOCX hiện hành để suy ra cấu trúc trường lặp cho form frontend. */
+  private Map<String, List<String>> listSpecsFor(String bucket, String objectName) {
+    if (bucket == null || objectName == null) return Map.of();
+    try (InputStream stream = storage.getObject(bucket, objectName)) {
+      Map<String, java.util.LinkedHashSet<String>> specs =
+          listSpecs(docxTemplateEngine.countPlaceholders(stream).keySet());
+      Map<String, List<String>> out = new LinkedHashMap<>();
+      specs.forEach((key, children) -> out.put(key, List.copyOf(children)));
+      return out;
+    } catch (IOException | RuntimeException e) {
+      return Map.of();
+    }
   }
 
   private DocumentTemplateResponse toResponse(
-      DocumentTemplate template, DocumentTemplateVersion contentOverride) {
+      DocumentTemplate template,
+      DocumentTemplateVersion contentOverride,
+      Map<String, List<String>> lists) {
     List<DocumentTemplateField> fields =
         contentOverride == null ? template.getFields() : contentOverride.getFields();
     List<TemplateFieldResponse> fieldResponses =
@@ -825,6 +847,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
         contentOverride == null ? template.getFileSize() : contentOverride.getFileSize(),
         contentOverride == null ? template.getContentSha256() : contentOverride.getContentSha256(),
         fieldResponses,
+        lists == null ? Map.of() : lists,
         contentOverride == null ? template.getServiceId() : contentOverride.getServiceId(),
         contentOverride == null ? template.getServiceName() : contentOverride.getServiceName(),
         contentOverride == null ? template.getTags() : contentOverride.getTags(),

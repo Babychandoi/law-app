@@ -146,6 +146,8 @@ public final class Dtos {
       long fileSize,
       String contentSha256,
       List<TemplateFieldResponse> fields,
+      // Trường lặp suy ra từ placeholder ${list__child}: listKey -> danh sách childKey theo thứ tự.
+      Map<String, List<String>> lists,
       String serviceId,
       String serviceName,
       List<String> tags,
