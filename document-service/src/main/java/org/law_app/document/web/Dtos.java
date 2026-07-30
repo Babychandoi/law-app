@@ -118,6 +118,15 @@ public final class Dtos {
               lists,
       @Valid LegalContextRequest context) {}
 
+  /** Thống kê khối lượng tài liệu cho dashboard. */
+  public record DocumentStatsResponse(
+      long templatesTotal,
+      Map<String, Long> templatesByStatus,
+      long generatedTotal,
+      Map<String, Long> generatedByStatus,
+      long generatedLast30Days,
+      long bundlesActive) {}
+
   /* ===== Bộ mẫu (document bundle) ===== */
 
   public record BundleItemRequest(

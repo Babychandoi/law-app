@@ -32,10 +32,10 @@
 2. 🚫 Ký số. 3. ⬜ Gửi email. 4. ⬜ Chia sẻ bảo mật cho KH.
 5. ⬜ Thư viện điều khoản. 6. ⬜ Rule engine.
 7. ⚠️ So sánh phiên bản (có version; chưa có diff UI). 8. ✅ Khôi phục phiên bản (`RestoreVersionRequest`).
-9. ⬜ Full-text search. 10. ⚠️ Folder/tag (tag có; folder chưa).
+9. ✅ Search metadata (mẫu: name/description/serviceName/tags; tài liệu: theo trạng thái/case/customer/service) — regex substring, hợp tiếng Việt; values mã hóa nên không search nội dung (đúng thiết kế bảo mật). 10. ⚠️ Folder/tag (tag có; folder chưa).
 11. ⬜ Retention policy. 12. 🚫 Background queue (đồng bộ hiện đủ tải nội bộ).
 13. ✅ Antivirus (ICAP scanner, fail-closed cấu hình được). 14. 🚫 Observability. 15. 🚫 Backup/restore.
-16. ⬜ Dashboard khối lượng tài liệu. 17. ⬜ SLA + cảnh báo job lỗi.
+16. ⚠️ Dashboard khối lượng tài liệu — **backend `GET /documents/stats`** (mẫu/tài liệu theo trạng thái, sinh 30 ngày, bộ mẫu active); còn UI dashboard. 17. ⬜ SLA + cảnh báo job lỗi.
 
 ## Thứ tự loop dự kiến (mục code khả thi, giá trị cao trước)
 1. P1.7 Điều kiện hiện/ẩn đoạn ← đang làm.
