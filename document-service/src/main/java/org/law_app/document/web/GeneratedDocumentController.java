@@ -33,6 +33,7 @@ public class GeneratedDocumentController {
 
   private final GeneratedDocumentService service;
   private final DocumentAuditService auditService;
+  private final org.law_app.document.service.PdfConversionService pdfConversionService;
 
   @PostMapping("/templates/{templateId}/generate")
   public ApiResponse<GeneratedDocumentResponse> generate(
@@ -109,5 +110,26 @@ public class GeneratedDocumentController {
                 .toString())
         .header("X-Content-Type-Options", "nosniff")
         .body(new InputStreamResource(stream));
+  }
+
+  @GetMapping("/generated/{id}/pdf")
+  public ResponseEntity<byte[]> downloadPdf(@PathVariable String id) throws java.io.IOException {
+    GeneratedDocumentService.DownloadFile file = service.download(id);
+    byte[] docx;
+    try (InputStream stream = file.stream()) {
+      docx = stream.readAllBytes();
+    }
+    byte[] pdf = pdfConversionService.toPdf(docx, file.fileName());
+    String pdfName = org.law_app.document.service.PdfConversionService.pdfFileName(file.fileName());
+    return ResponseEntity.ok()
+        .contentType(MediaType.APPLICATION_PDF)
+        .header(
+            HttpHeaders.CONTENT_DISPOSITION,
+            ContentDisposition.attachment()
+                .filename(pdfName, java.nio.charset.StandardCharsets.UTF_8)
+                .build()
+                .toString())
+        .header("X-Content-Type-Options", "nosniff")
+        .body(pdf);
   }
 }

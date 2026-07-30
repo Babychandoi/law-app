@@ -28,7 +28,7 @@
 12. ✅ Tích hợp app shell admin — `DocumentLayout` dùng chung `Sidebar`/`Navbar`/`CommandPalette` (OPERATIONS_GROUPS) của admin; sidebar có mục "Tài liệu & biểu mẫu" → `/2025/luatpoip/tai-lieu` (navConfig).
 
 ## P2 — Sản phẩm chuyên nghiệp
-1. ⬜ Sinh PDF (cần thư viện chuyển đổi).
+1. ⚠️ Sinh PDF — **code xong, flag OFF**: `GET /documents/generated/{id}/pdf` qua Gotenberg (LibreOffice headless HTTP, không bloat image); nút "Tải PDF" ở form tạo tài liệu. Bật: chạy service `gotenberg` (đã thêm vào compose) + `DOCUMENT_PDF_ENABLED=true`.
 2. 🚫 Ký số. 3. ⬜ Gửi email. 4. ⬜ Chia sẻ bảo mật cho KH.
 5. ⬜ Thư viện điều khoản. 6. ⬜ Rule engine.
 7. ⚠️ So sánh phiên bản (có version; chưa có diff UI). 8. ✅ Khôi phục phiên bản (`RestoreVersionRequest`).

@@ -295,6 +295,27 @@ const documentTemplateService = {
     link.remove();
     window.setTimeout(() => window.URL.revokeObjectURL(url), 0);
   },
+
+  downloadPdf: async (id: string, fallbackFileName: string): Promise<void> => {
+    const res = await gatewayClient.get(`/documents/generated/${id}/pdf`, {
+      responseType: 'blob',
+      timeout: 120000,
+    });
+    const disposition = res.headers['content-disposition'] as string | undefined;
+    const base = (extractFileName(disposition) || fallbackFileName || 'document.docx').replace(
+      /\.docx$/i,
+      ''
+    );
+    const fileName = safeDownloadFileName(`${base}.pdf`);
+    const url = window.URL.createObjectURL(new Blob([res.data], { type: 'application/pdf' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = fileName;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => window.URL.revokeObjectURL(url), 0);
+  },
 };
 
 function cleanParams<T extends object>(params: T): Partial<T> {

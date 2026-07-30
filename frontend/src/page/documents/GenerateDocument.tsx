@@ -222,6 +222,24 @@ export default function GenerateDocument() {
     }
   };
 
+  const downloadPdf = async () => {
+    if (!generated) return;
+    setDownloading(true);
+    setDownloadError('');
+    try {
+      await documentTemplateService.downloadPdf(generated.id, generated.fileName);
+    } catch (error: any) {
+      const message =
+        (await readBlobMessage(error?.response?.data)) ||
+        error?.response?.data?.message ||
+        'Không tải được PDF.';
+      setDownloadError(message);
+      toast.error(message);
+    } finally {
+      setDownloading(false);
+    }
+  };
+
   const setFieldValue = (fieldKey: string, value: string) => {
     setValues((current) => ({ ...current, [fieldKey]: value }));
     setErrors((current) => {
@@ -552,6 +570,14 @@ export default function GenerateDocument() {
                   )}
                   Tải file
                 </button>
+                <button
+                  type="button"
+                  onClick={downloadPdf}
+                  disabled={downloading}
+                  className="inline-flex items-center gap-2 rounded-lg border border-green-300 bg-white px-4 py-2 text-sm font-medium text-green-800 hover:bg-green-100 disabled:opacity-60"
+                >
+                  <Download size={16} aria-hidden="true" /> Tải PDF
+                </button>
                 <Link
                   to="/2025/luatpoip/tai-lieu/generated"
                   className="inline-flex items-center rounded-lg border border-green-300 px-4 py-2 text-sm font-medium hover:bg-green-100"
@@ -664,6 +690,17 @@ function DocumentValueField({
       )}
     </div>
   );
+}
+
+// Với responseType 'blob', body lỗi là Blob JSON — đọc để lấy message hiển thị.
+async function readBlobMessage(data: unknown): Promise<string | undefined> {
+  if (!(data instanceof Blob)) return undefined;
+  try {
+    const parsed = JSON.parse(await data.text());
+    return parsed?.message;
+  } catch {
+    return undefined;
+  }
 }
 
 function emptyRow(childKeys: string[]): Record<string, string> {

@@ -49,6 +49,10 @@ document:
     port: ${DOCUMENT_ANTIVIRUS_PORT:3310}
     connect-timeout-ms: ${DOCUMENT_ANTIVIRUS_CONNECT_TIMEOUT_MS:3000}
     read-timeout-ms: ${DOCUMENT_ANTIVIRUS_READ_TIMEOUT_MS:30000}
+  pdf:
+    # Xuất PDF qua Gotenberg (LibreOffice headless sau HTTP). Tắt mặc định; bật khi đã chạy Gotenberg.
+    enabled: ${DOCUMENT_PDF_ENABLED:false}
+    gotenberg-url: ${DOCUMENT_PDF_GOTENBERG_URL:http://gotenberg:3000}
   reconciliation:
     # Dọn file rác trên MinIO không còn metadata tham chiếu (do lỗi ghi sau upload).
     enabled: ${DOCUMENT_RECONCILIATION_ENABLED:true}
