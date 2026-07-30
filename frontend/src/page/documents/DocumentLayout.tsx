@@ -1,80 +1,122 @@
 import { ReactNode, useEffect, useState } from 'react';
-import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { FileText, Files, LogOut, PlusCircle } from 'lucide-react';
-import { getMe, logout, MeResponse } from '../../service/auth';
+import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
+import { FileText, Files, PlusCircle, Settings } from 'lucide-react';
+import { getMe, MeResponse } from '../../service/auth';
 import { tryRefreshToken } from '../../service/axiosClient';
+import Sidebar from '../admin/home/sections/Sidebar';
+import Navbar from '../admin/home/sections/Navbar';
+import { OPERATIONS_GROUPS, SYSTEM_GROUPS, SYS_BASE } from '../admin/home/navConfig';
+import CommandPalette from '../../component/common/CommandPalette';
+import Spinner from '../../component/common/ui/Spinner';
 
 const PROACTIVE_REFRESH_MS = 10 * 60 * 1000;
+const DOCUMENT_BASE = '/2025/luatpoip/tai-lieu';
 
 export default function DocumentLayout() {
   const [me, setMe] = useState<MeResponse | null>(null);
   const [ready, setReady] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    getMe(true).then((user) => {
-      if (!user) navigate('/2025/luatpoip/admin/login');
-      else setMe(user);
-      setReady(true);
-    });
+    let active = true;
+    getMe(true)
+      .then((user) => {
+        if (!active) return;
+        if (!user) navigate('/2025/luatpoip/admin/login', { replace: true });
+        else setMe(user);
+      })
+      .finally(() => {
+        if (active) setReady(true);
+      });
     const timer = setInterval(() => tryRefreshToken(), PROACTIVE_REFRESH_MS);
-    return () => clearInterval(timer);
+    return () => {
+      active = false;
+      clearInterval(timer);
+    };
   }, [navigate]);
 
-  const handleLogout = async () => {
-    await logout();
-    navigate('/2025/luatpoip/admin/login');
-  };
+  useEffect(() => {
+    const title = location.pathname.includes('/generated')
+      ? 'Tài liệu đã tạo'
+      : location.pathname.includes('/templates/new')
+        ? 'Tải mẫu mới'
+        : location.pathname.includes('/edit')
+          ? 'Cấu hình biểu mẫu'
+          : location.pathname.includes('/generate')
+            ? 'Tạo tài liệu'
+            : 'Tài liệu & biểu mẫu';
+    document.title = `${title} - Luật Poip Legal`;
+  }, [location.pathname]);
 
   const isAdmin = me?.role === 'ADMIN';
 
   if (!ready) {
     return (
-      <div className="min-h-screen bg-brand-surface p-8 text-brand-muted">
-        Đang kiểm tra phiên đăng nhập...
+      <div className="flex min-h-screen items-center justify-center bg-gray-100">
+        <Spinner label="Đang kiểm tra phiên đăng nhập" />
+      </div>
+    );
+  }
+  if (!me) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gray-100">
+        <Spinner label="Đang chuyển đến trang đăng nhập" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-brand-surface text-brand-ink">
-      <header className="sticky top-0 z-20 border-b border-brand-line bg-white/90 backdrop-blur">
-        <div className="mx-auto max-w-7xl px-4 py-4 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <p className="text-xs uppercase tracking-[0.25em] text-brand-goldDark">
-              Poip Legal Law
-            </p>
-            <h1 className="text-2xl font-semibold">Hồ sơ theo mẫu</h1>
-          </div>
-          <div className="flex items-center gap-2 text-sm">
-            <span className="hidden sm:inline text-brand-muted">
-              {me?.fullName || me?.username || 'Nhân viên'} · {me?.role}
-            </span>
-            <button
-              onClick={handleLogout}
-              className="inline-flex items-center gap-2 rounded-lg border border-brand-line px-3 py-2 hover:bg-brand-surface"
-            >
-              <LogOut size={16} /> Đăng xuất
-            </button>
+    <div className="flex h-screen bg-gray-100 text-brand-ink">
+      <CommandPalette
+        groups={isAdmin ? [...OPERATIONS_GROUPS, ...SYSTEM_GROUPS] : OPERATIONS_GROUPS}
+      />
+      <Sidebar
+        groups={OPERATIONS_GROUPS}
+        workspaceTitle="Vận hành"
+        footer={isAdmin ? { label: 'Quản trị hệ thống', to: SYS_BASE, icon: Settings } : undefined}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+      />
+
+      <div id="admin-content-region" className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <Navbar onOpenSidebar={() => setSidebarOpen(true)} />
+        <div className="border-b border-gray-200 bg-white px-4 py-3 sm:px-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-goldDark">
+                Hồ sơ pháp lý
+              </p>
+              <h1 className="text-lg font-semibold text-gray-900">Tài liệu & biểu mẫu</h1>
+            </div>
+            <nav aria-label="Điều hướng tài liệu" className="flex flex-wrap gap-2">
+              <DocLink to={DOCUMENT_BASE} end icon={<FileText size={16} aria-hidden="true" />}>
+                Biểu mẫu
+              </DocLink>
+              <DocLink
+                to={`${DOCUMENT_BASE}/generated`}
+                icon={<Files size={16} aria-hidden="true" />}
+              >
+                Tài liệu đã tạo
+              </DocLink>
+              {isAdmin && (
+                <DocLink
+                  to={`${DOCUMENT_BASE}/templates/new`}
+                  icon={<PlusCircle size={16} aria-hidden="true" />}
+                >
+                  Tải mẫu mới
+                </DocLink>
+              )}
+            </nav>
           </div>
         </div>
-        <nav className="mx-auto max-w-7xl px-4 pb-3 flex flex-wrap gap-2">
-          <DocLink to="/2025/luatpoip/tai-lieu" end icon={<FileText size={16} />}>
-            Mẫu tài liệu
-          </DocLink>
-          <DocLink to="/2025/luatpoip/tai-lieu/generated" icon={<Files size={16} />}>
-            Đã tạo
-          </DocLink>
-          {isAdmin && (
-            <DocLink to="/2025/luatpoip/tai-lieu/templates/new" icon={<PlusCircle size={16} />}>
-              Tải mẫu mới
-            </DocLink>
-          )}
-        </nav>
-      </header>
-      <main className="mx-auto max-w-7xl px-4 py-6">
-        <Outlet context={{ me, isAdmin }} />
-      </main>
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6">
+          <div className="mx-auto max-w-7xl">
+            <Outlet context={{ me, isAdmin }} />
+          </div>
+        </main>
+      </div>
     </div>
   );
 }

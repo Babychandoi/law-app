@@ -4,7 +4,9 @@ import {
   CareLog,
   CareResult,
   CareStatus,
+  CaseDetail,
   CaseRow,
+  MatterParty,
   PageMeta,
   StaffUser,
   Tag,
@@ -73,6 +75,14 @@ const crmService = {
     const res = await gatewayClient.get<ApiResponse<CaseRow[]>>('/crm/cases', { params: f });
     return { rows: res.data.data ?? [], meta: res.data.meta };
   },
+  caseDetail: async (caseId: string): Promise<CaseDetail> =>
+    (await gatewayClient.get<ApiResponse<CaseDetail>>(`/crm/cases/${caseId}`)).data.data,
+  matterParties: async (caseId: string): Promise<MatterParty[]> =>
+    (
+      await gatewayClient.get<ApiResponse<MatterParty[]>>(`/crm/cases/${caseId}/parties`, {
+        params: { includeArchived: false, page: 0, size: 100 },
+      })
+    ).data.data ?? [],
   assign: async (caseId: string, userId: string | null): Promise<CaseRow> =>
     (await gatewayClient.put<ApiResponse<CaseRow>>(`/crm/cases/${caseId}/assign`, { userId })).data
       .data,

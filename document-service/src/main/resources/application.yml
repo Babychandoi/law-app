@@ -29,11 +29,26 @@ auth:
 
 minio:
   url: ${MINIO_URL}
-  access-key: ${MINIO_ACCESS_KEY}
-  secret-key: ${MINIO_SECRET_KEY}
+  access-key: ${MINIO_DOCUMENT_ACCESS_KEY:${MINIO_ACCESS_KEY}}
+  secret-key: ${MINIO_DOCUMENT_SECRET_KEY:${MINIO_SECRET_KEY}}
   bucket:
     templates: ${MINIO_BUCKET_DOCUMENT_TEMPLATES:document-templates}
     generated: ${MINIO_BUCKET_GENERATED_DOCUMENTS:generated-documents}
+
+document:
+  encryption:
+    # Base64-encoded 32-byte key. New document writes fail closed when this is missing/invalid.
+    key: ${DOCUMENT_DATA_ENCRYPTION_KEY:}
+    key-id: ${DOCUMENT_DATA_ENCRYPTION_KEY_ID:local-v1}
+    # Comma-separated keyId:base64 entries retained only for decrypting historical rows.
+    previous-keys: ${DOCUMENT_DATA_ENCRYPTION_PREVIOUS_KEYS:}
+  antivirus:
+    enabled: ${DOCUMENT_ANTIVIRUS_ENABLED:false}
+    fail-closed: ${DOCUMENT_ANTIVIRUS_FAIL_CLOSED:true}
+    host: ${DOCUMENT_ANTIVIRUS_HOST:clamav}
+    port: ${DOCUMENT_ANTIVIRUS_PORT:3310}
+    connect-timeout-ms: ${DOCUMENT_ANTIVIRUS_CONNECT_TIMEOUT_MS:3000}
+    read-timeout-ms: ${DOCUMENT_ANTIVIRUS_READ_TIMEOUT_MS:30000}
 
 logging:
   pattern:

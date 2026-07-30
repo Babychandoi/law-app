@@ -13,6 +13,7 @@ import {
   Image,
   ScrollText,
   BarChart3,
+  FolderKanban,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -49,6 +50,16 @@ export const OPERATIONS_GROUPS: NavGroup[] = [
     items: [
       { label: 'Chat khách', path: `${ADMIN_BASE}/chats`, icon: MessageSquare },
       { label: 'Chat nội bộ', path: `${ADMIN_BASE}/team-chat`, icon: MessagesSquare },
+    ],
+  },
+  {
+    title: 'Hồ sơ pháp lý',
+    items: [
+      {
+        label: 'Tài liệu & biểu mẫu',
+        path: '/2025/luatpoip/tai-lieu',
+        icon: FolderKanban,
+      },
     ],
   },
 ];

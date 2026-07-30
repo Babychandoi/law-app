@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { FileText } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Modal from '../../../../../component/common/Modal';
 import { Button } from '../../../../../component/common/ui';
@@ -9,6 +11,7 @@ import {
   CareLog,
   CareResult,
   CareStatus,
+  CaseDetail,
   CaseRow,
   Tag,
 } from '../../../../../types/crm';
@@ -42,11 +45,19 @@ export default function CarePopup({
   const [note, setNote] = useState('');
   const [addTagIds, setAddTagIds] = useState<number[]>([]);
   const [saving, setSaving] = useState(false);
+  const [caseDetail, setCaseDetail] = useState<CaseDetail | null>(null);
 
   useEffect(() => {
     crmService
       .careLogs(caseRow.id)
       .then(setLogs)
+      .catch(() => undefined);
+  }, [caseRow.id]);
+
+  useEffect(() => {
+    crmService
+      .caseDetail(caseRow.id)
+      .then(setCaseDetail)
       .catch(() => undefined);
   }, [caseRow.id]);
 
@@ -87,6 +98,13 @@ export default function CarePopup({
   const statusName = (id: number | null) => statuses.find((s) => s.id === id)?.name ?? '—';
   const actionName = (id: number | null) => actions.find((a) => a.id === id)?.name ?? '—';
   const resultName = (id: number | null) => results.find((r) => r.id === id)?.name ?? '—';
+  const documentContext = new URLSearchParams({
+    crmCaseId: caseRow.id,
+    matterReference: caseRow.id,
+  });
+  if (caseRow.serviceName) documentContext.set('serviceName', caseRow.serviceName);
+  if (caseDetail?.serviceId) documentContext.set('serviceId', caseDetail.serviceId);
+  if (caseDetail?.customerId) documentContext.set('customerId', caseDetail.customerId);
 
   return (
     <Modal title={`Chăm sóc — ${caseRow.serviceName ?? caseRow.name}`} onClose={onClose} size="lg">
@@ -225,6 +243,12 @@ export default function CarePopup({
         </div>
 
         <div className="p-4 border-t flex justify-end gap-3">
+          <Link
+            to={`/2025/luatpoip/tai-lieu?${documentContext.toString()}`}
+            className="inline-flex items-center justify-center gap-2 rounded-control border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+          >
+            <FileText size={16} aria-hidden="true" /> Tạo tài liệu
+          </Link>
           <Button variant="secondary" onClick={onClose} disabled={saving}>
             Hủy
           </Button>

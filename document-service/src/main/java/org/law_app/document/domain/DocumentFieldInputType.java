@@ -4,5 +4,13 @@ public enum DocumentFieldInputType {
   TEXT,
   TEXTAREA,
   DATE,
-  NUMBER
+  NUMBER,
+  EMAIL,
+  PHONE,
+  TAX_ID,
+  NATIONAL_ID,
+  CURRENCY,
+  PERCENT,
+  SELECT,
+  MULTISELECT
 }

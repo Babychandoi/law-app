@@ -1,24 +1,39 @@
 package org.law_app.document.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import lombok.extern.slf4j.Slf4j;
 import org.docx4j.Docx4J;
 import org.docx4j.TraversalUtil;
 import org.docx4j.XmlUtils;
 import org.docx4j.convert.out.HTMLSettings;
-import org.docx4j.model.datastorage.migration.VariablePrepare;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.wml.P;
 import org.docx4j.wml.Text;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Safe, deterministic DOCX placeholder engine.
+ *
+ * <p>Text is handled per Word paragraph across multiple runs. This preserves the formatting of the
+ * first matched run while supporting placeholders/sample text that Word split because of fonts,
+ * spelling, bookmarks or bold/italic formatting. Mapping ambiguous text is rejected instead of
+ * silently replacing every occurrence.
+ */
 @Slf4j
 @Service
 public class DocxTemplateEngine {
@@ -26,144 +41,255 @@ public class DocxTemplateEngine {
   public static final String DOCX_CONTENT_TYPE =
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 
+  private static final int MAX_COMPRESSED_BYTES = 30 * 1024 * 1024;
+  private static final long MAX_UNCOMPRESSED_BYTES = 100L * 1024 * 1024;
+  private static final int MAX_ZIP_ENTRIES = 2_048;
+  private static final long MAX_SINGLE_ENTRY_BYTES = 50L * 1024 * 1024;
+
   private static final Pattern PLACEHOLDER =
       Pattern.compile("\\$\\{([A-Za-z][A-Za-z0-9_]{0,63})\\}");
-  private static final Pattern MALFORMED_PLACEHOLDER = Pattern.compile("\\$\\{([^}]*)\\}");
+  private static final Pattern PLACEHOLDER_LIKE = Pattern.compile("\\$\\{[^}]*\\}");
+  private static final Pattern EXTERNAL_RELATIONSHIP =
+      Pattern.compile("(?i)TargetMode\\s*=\\s*[\"']External[\"']");
+
+  public record TextMapping(String sampleText, String fieldKey, int expectedOccurrences) {}
 
   public Set<String> extractPlaceholders(InputStream docx) {
+    return countPlaceholders(docx).keySet();
+  }
+
+  public Map<String, Integer> countPlaceholders(InputStream docx) {
     try {
-      WordprocessingMLPackage pkg = WordprocessingMLPackage.load(docx);
-      VariablePrepare.prepare(pkg);
-      Set<String> keys = new LinkedHashSet<>();
-      for (Text text : findTextNodes(pkg)) {
-        String value = text.getValue();
-        if (value == null) continue;
-        validateMalformedPlaceholders(value);
+      WordprocessingMLPackage pkg = loadSafe(docx);
+      Map<String, Integer> counts = new java.util.LinkedHashMap<>();
+      for (List<Text> block : findTextBlocks(pkg)) {
+        String value = combinedText(block);
+        validatePlaceholderSyntax(value);
         Matcher matcher = PLACEHOLDER.matcher(value);
-        while (matcher.find()) {
-          keys.add(matcher.group(1));
-        }
+        while (matcher.find()) counts.merge(matcher.group(1), 1, Integer::sum);
       }
-      return keys;
+      return java.util.Collections.unmodifiableMap(counts);
     } catch (ResponseStatusException e) {
       throw e;
     } catch (Exception e) {
-      log.error("DOCX placeholder extraction failed: {}", e.getMessage(), e);
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Không đọc được file Word mẫu");
+      log.warn("DOCX placeholder extraction failed: {}", e.getClass().getSimpleName());
+      throw badRequest("Không đọc được file Word mẫu");
     }
   }
 
   public byte[] render(InputStream docx, Map<String, String> values) {
     try {
-      WordprocessingMLPackage pkg = WordprocessingMLPackage.load(docx);
-      VariablePrepare.prepare(pkg);
-      for (Text text : findTextNodes(pkg)) {
-        String current = text.getValue();
-        if (current == null || !current.contains("${")) continue;
-        validateMalformedPlaceholders(current);
-        String replaced = replacePlaceholders(current, values);
-        text.setValue(replaced);
+      WordprocessingMLPackage pkg = loadSafe(docx);
+      for (List<Text> block : findTextBlocks(pkg)) {
+        String current = combinedText(block);
+        validatePlaceholderSyntax(current);
+        List<PlaceholderMatch> matches = new ArrayList<>();
+        Matcher matcher = PLACEHOLDER.matcher(current);
+        while (matcher.find()) {
+          String key = matcher.group(1);
+          if (!values.containsKey(key)) {
+            throw badRequest("Thiếu giá trị cho key: " + key);
+          }
+          matches.add(
+              new PlaceholderMatch(matcher.start(), matcher.end(), values.getOrDefault(key, "")));
+        }
+        matches.stream()
+            .sorted(Comparator.comparingInt(PlaceholderMatch::start).reversed())
+            .forEach(match -> replaceRange(block, match.start(), match.end(), match.value()));
       }
       ensureNoUnresolvedPlaceholders(pkg);
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      pkg.save(out);
-      return out.toByteArray();
+      return save(pkg);
     } catch (ResponseStatusException e) {
       throw e;
     } catch (Exception e) {
-      log.error("DOCX render failed: {}", e.getMessage(), e);
+      log.error("DOCX render failed: {}", e.getClass().getSimpleName(), e);
       throw new ResponseStatusException(
           HttpStatus.INTERNAL_SERVER_ERROR, "Không tạo được file Word");
     }
   }
 
-  /** Render the .docx to standalone HTML so the admin can preview it before mapping keys. */
+  /** Render the DOCX to HTML after applying the same package-safety checks as generation. */
   public String toHtml(InputStream docx) {
     try {
-      WordprocessingMLPackage pkg = WordprocessingMLPackage.load(docx);
+      WordprocessingMLPackage pkg = loadSafe(docx);
       HTMLSettings settings = Docx4J.createHTMLSettings();
       settings.setWmlPackage(pkg);
       settings.setImageDirPath(null);
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       Docx4J.toHTML(settings, out, Docx4J.FLAG_EXPORT_PREFER_XSL);
-      return out.toString(java.nio.charset.StandardCharsets.UTF_8);
+      return out.toString(StandardCharsets.UTF_8);
+    } catch (ResponseStatusException e) {
+      throw e;
     } catch (Exception e) {
-      log.error("DOCX to HTML failed: {}", e.getMessage(), e);
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Không xem trước được file Word");
+      log.warn("DOCX to HTML failed: {}", e.getClass().getSimpleName());
+      throw badRequest("Không xem trước được file Word");
     }
   }
 
   /**
-   * Replace literal sample text occurrences with {@code ${key}} placeholders, keeping the run that
-   * holds the text (so font/size/style is preserved). Returns the new .docx bytes. Each mapping
-   * maps the exact sample text the admin typed to a placeholder key. A key whose sample text is not
-   * found inside a single run is reported so the admin can adjust it.
+   * Backward-compatible mapping API. Each literal must occur exactly once, which prevents the old
+   * behavior from silently changing multiple legally-distinct clauses.
    */
   public byte[] applyMappings(InputStream docx, Map<String, String> textToKey) {
+    List<TextMapping> mappings =
+        textToKey.entrySet().stream()
+            .map(entry -> new TextMapping(entry.getKey(), entry.getValue(), 1))
+            .toList();
+    return applyMappings(docx, mappings);
+  }
+
+  public byte[] applyMappings(InputStream docx, List<TextMapping> mappings) {
     try {
-      WordprocessingMLPackage pkg = WordprocessingMLPackage.load(docx);
-      Set<String> matched = new LinkedHashSet<>();
-      for (Text text : findTextNodes(pkg)) {
-        String value = text.getValue();
-        if (value == null || value.isEmpty()) continue;
-        boolean changed = false;
-        for (Map.Entry<String, String> entry : textToKey.entrySet()) {
-          String sample = entry.getKey();
-          if (sample == null || sample.isEmpty()) continue;
-          if (value.contains(sample)) {
-            value = value.replace(sample, "${" + entry.getValue() + "}");
-            matched.add(entry.getValue());
-            changed = true;
+      WordprocessingMLPackage pkg = loadSafe(docx);
+      validateMappings(mappings);
+      List<List<Text>> blocks = findTextBlocks(pkg);
+
+      // Validate every selection against the original package before changing any runs.
+      for (TextMapping mapping : mappings) {
+        int actual = countOccurrences(blocks, mapping.sampleText());
+        if (actual != mapping.expectedOccurrences()) {
+          throw badRequest(
+              "Đoạn text cho key "
+                  + mapping.fieldKey()
+                  + " xuất hiện "
+                  + actual
+                  + " lần; yêu cầu "
+                  + mapping.expectedOccurrences()
+                  + " lần");
+        }
+      }
+
+      for (TextMapping mapping : mappings) {
+        String placeholder = "${" + mapping.fieldKey() + "}";
+        int replaced = 0;
+        for (List<Text> block : blocks) {
+          String current = combinedText(block);
+          List<Integer> positions = literalPositions(current, mapping.sampleText());
+          for (int i = positions.size() - 1; i >= 0; i--) {
+            int start = positions.get(i);
+            replaceRange(block, start, start + mapping.sampleText().length(), placeholder);
+            replaced++;
           }
         }
-        if (changed) {
-          text.setValue(value);
-          text.setSpace("preserve");
+        if (replaced != mapping.expectedOccurrences()) {
+          // Can only happen for overlapping admin selections. Fail rather than produce corruption.
+          throw badRequest("Các đoạn text mapping bị chồng lấn tại key: " + mapping.fieldKey());
         }
       }
-      Set<String> notFound = new LinkedHashSet<>();
-      for (String key : textToKey.values()) {
-        if (!matched.contains(key)) notFound.add(key);
-      }
-      if (!notFound.isEmpty()) {
-        throw new ResponseStatusException(
-            HttpStatus.BAD_REQUEST,
-            "Không tìm thấy đoạn text cho key: "
-                + String.join(", ", notFound)
-                + " (đoạn text phải nằm liền trong file, sao chép đúng từ bản xem trước)");
-      }
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      pkg.save(out);
-      return out.toByteArray();
+      return save(pkg);
     } catch (ResponseStatusException e) {
       throw e;
     } catch (Exception e) {
-      log.error("Apply mappings failed: {}", e.getMessage(), e);
-      throw new ResponseStatusException(
-          HttpStatus.BAD_REQUEST, "Không gán được placeholder vào file");
+      log.warn("Apply mappings failed: {}", e.getClass().getSimpleName());
+      throw badRequest("Không gán được placeholder vào file");
     }
   }
 
-  private Set<Text> findTextNodes(WordprocessingMLPackage pkg) throws Exception {
-    Set<Text> result = new LinkedHashSet<>();
-    for (var part : pkg.getParts().getParts().values()) {
-      Object jaxbElement = null;
-      try {
-        if (part instanceof org.docx4j.openpackaging.parts.JaxbXmlPart<?> jaxbPart) {
-          jaxbElement = jaxbPart.getJaxbElement();
+  /**
+   * Performs an inexpensive package validation without retaining the parsed document. Useful at
+   * upload/publish boundaries.
+   */
+  public void validatePackage(InputStream docx) {
+    try {
+      loadSafe(docx);
+    } catch (ResponseStatusException e) {
+      throw e;
+    } catch (Exception e) {
+      throw badRequest("File .docx không hợp lệ");
+    }
+  }
+
+  private WordprocessingMLPackage loadSafe(InputStream input) throws Exception {
+    byte[] bytes;
+    try (input) {
+      bytes = input.readNBytes(MAX_COMPRESSED_BYTES + 1);
+    }
+    if (bytes.length > MAX_COMPRESSED_BYTES) {
+      throw badRequest("Gói DOCX vượt quá giới hạn xử lý an toàn");
+    }
+    inspectZip(bytes);
+    return WordprocessingMLPackage.load(new ByteArrayInputStream(bytes));
+  }
+
+  private void inspectZip(byte[] archive) throws Exception {
+    int entries = 0;
+    long total = 0;
+    boolean contentTypesFound = false;
+    byte[] buffer = new byte[16 * 1024];
+    try (ZipInputStream zip = new ZipInputStream(new ByteArrayInputStream(archive))) {
+      ZipEntry entry;
+      while ((entry = zip.getNextEntry()) != null) {
+        entries++;
+        if (entries > MAX_ZIP_ENTRIES) throw badRequest("File DOCX chứa quá nhiều thành phần");
+        String name = entry.getName().replace('\\', '/');
+        String lowerName = name.toLowerCase(java.util.Locale.ROOT);
+        if (name.startsWith("/") || name.contains("../")) {
+          throw badRequest("Đường dẫn không an toàn trong file DOCX");
         }
-      } catch (Exception e) {
+        if ("[content_types].xml".equals(lowerName)) contentTypesFound = true;
+        if (lowerName.endsWith("vbaproject.bin")
+            || lowerName.startsWith("word/embeddings/")
+            || lowerName.startsWith("word/activex/")) {
+          throw badRequest("File DOCX chứa macro hoặc đối tượng nhúng không được phép");
+        }
+
+        long entryBytes = 0;
+        ByteArrayOutputStream relationship =
+            lowerName.endsWith(".rels") ? new ByteArrayOutputStream() : null;
+        int read;
+        while ((read = zip.read(buffer)) != -1) {
+          entryBytes += read;
+          total += read;
+          if (entryBytes > MAX_SINGLE_ENTRY_BYTES || total > MAX_UNCOMPRESSED_BYTES) {
+            throw badRequest("File DOCX có dấu hiệu zip bomb");
+          }
+          if (relationship != null && entryBytes > 2L * 1024 * 1024) {
+            throw badRequest("File quan hệ DOCX vượt quá giới hạn an toàn");
+          }
+          if (relationship != null && relationship.size() <= 2 * 1024 * 1024) {
+            relationship.write(buffer, 0, read);
+          }
+        }
+        long compressed = entry.getCompressedSize();
+        if (compressed > 0 && entryBytes > 10L * 1024 * 1024 && entryBytes / compressed > 100) {
+          throw badRequest("File DOCX có tỷ lệ nén không an toàn");
+        }
+        if (relationship != null
+            && EXTERNAL_RELATIONSHIP
+                .matcher(relationship.toString(StandardCharsets.UTF_8))
+                .find()) {
+          throw badRequest("File DOCX chứa liên kết external không được phép");
+        }
+        zip.closeEntry();
+      }
+    }
+    if (!contentTypesFound || entries == 0) throw badRequest("File .docx không hợp lệ");
+    if (archive.length > 0 && total > 10L * 1024 * 1024 && total / archive.length > 100) {
+      throw badRequest("File DOCX có tỷ lệ nén không an toàn");
+    }
+  }
+
+  private List<List<Text>> findTextBlocks(WordprocessingMLPackage pkg) throws Exception {
+    List<List<Text>> result = new ArrayList<>();
+    Set<P> paragraphs = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+    for (var part : pkg.getParts().getParts().values()) {
+      Object root;
+      try {
+        if (!(part instanceof org.docx4j.openpackaging.parts.JaxbXmlPart<?> jaxbPart)) continue;
+        root = jaxbPart.getJaxbElement();
+      } catch (Exception ignored) {
         continue;
       }
-      if (jaxbElement == null) continue;
+      if (root == null) continue;
       new TraversalUtil(
-          XmlUtils.unwrap(jaxbElement),
+          XmlUtils.unwrap(root),
           new TraversalUtil.CallbackImpl() {
             @Override
-            public java.util.List<Object> apply(Object o) {
-              Object unwrapped = XmlUtils.unwrap(o);
-              if (unwrapped instanceof Text text) {
-                result.add(text);
+            public List<Object> apply(Object object) {
+              Object unwrapped = XmlUtils.unwrap(object);
+              if (unwrapped instanceof P paragraph && paragraphs.add(paragraph)) {
+                List<Text> texts = textNodesWithin(paragraph);
+                if (!texts.isEmpty()) result.add(texts);
               }
               return null;
             }
@@ -172,38 +298,163 @@ public class DocxTemplateEngine {
     return result;
   }
 
-  private void validateMalformedPlaceholders(String value) {
-    Matcher malformed = MALFORMED_PLACEHOLDER.matcher(value);
-    while (malformed.find()) {
-      String key = malformed.group(1);
-      if (!key.matches("[A-Za-z][A-Za-z0-9_]{0,63}")) {
-        throw new ResponseStatusException(
-            HttpStatus.BAD_REQUEST, "Placeholder không hợp lệ: ${" + key + "}");
+  private List<Text> textNodesWithin(P paragraph) {
+    List<Text> texts = new ArrayList<>();
+    new TraversalUtil(
+        paragraph,
+        new TraversalUtil.CallbackImpl() {
+          @Override
+          public List<Object> apply(Object object) {
+            Object unwrapped = XmlUtils.unwrap(object);
+            if (unwrapped instanceof Text text) texts.add(text);
+            return null;
+          }
+        });
+    return texts;
+  }
+
+  private String combinedText(List<Text> block) {
+    StringBuilder value = new StringBuilder();
+    for (Text text : block) {
+      if (text.getValue() != null) value.append(text.getValue());
+    }
+    return value.toString();
+  }
+
+  private void validatePlaceholderSyntax(String value) {
+    if (value == null || !value.contains("${")) return;
+    Matcher like = PLACEHOLDER_LIKE.matcher(value);
+    int cursor = 0;
+    while (like.find()) {
+      int marker = value.indexOf("${", cursor);
+      if (marker >= 0 && marker != like.start()) {
+        throw badRequest("Placeholder không hợp lệ trong file mẫu");
+      }
+      if (!PLACEHOLDER.matcher(like.group()).matches()) {
+        throw badRequest("Placeholder không hợp lệ: " + like.group());
+      }
+      cursor = like.end();
+    }
+    if (value.indexOf("${", cursor) >= 0) {
+      throw badRequest("Placeholder chưa đóng hoặc không hợp lệ trong file mẫu");
+    }
+  }
+
+  private void validateMappings(List<TextMapping> mappings) {
+    if (mappings == null || mappings.isEmpty()) throw badRequest("Danh sách mapping là bắt buộc");
+    Set<String> keys = new LinkedHashSet<>();
+    Set<String> samples = new LinkedHashSet<>();
+    for (TextMapping mapping : mappings) {
+      if (mapping.sampleText() == null || mapping.sampleText().isBlank()) {
+        throw badRequest("Đoạn text mapping không được để trống");
+      }
+      if (mapping.sampleText().contains("${")) {
+        throw badRequest("Không thể mapping một placeholder đã tồn tại");
+      }
+      if (mapping.fieldKey() == null || !mapping.fieldKey().matches("[A-Za-z][A-Za-z0-9_]{0,63}")) {
+        throw badRequest("Key không hợp lệ: " + mapping.fieldKey());
+      }
+      if (mapping.expectedOccurrences() < 1 || mapping.expectedOccurrences() > 100) {
+        throw badRequest("Số lần xuất hiện không hợp lệ cho key: " + mapping.fieldKey());
+      }
+      if (!keys.add(mapping.fieldKey())) throw badRequest("Key bị trùng: " + mapping.fieldKey());
+      if (!samples.add(mapping.sampleText())) {
+        throw badRequest("Đoạn text mapping bị trùng tại key: " + mapping.fieldKey());
+      }
+    }
+    List<String> sampleList = new ArrayList<>(samples);
+    for (int i = 0; i < sampleList.size(); i++) {
+      for (int j = i + 1; j < sampleList.size(); j++) {
+        if (sampleList.get(i).contains(sampleList.get(j))
+            || sampleList.get(j).contains(sampleList.get(i))) {
+          throw badRequest("Các đoạn text mapping không được chứa/chồng lấn nhau");
+        }
       }
     }
   }
 
-  private String replacePlaceholders(String current, Map<String, String> values) {
-    Matcher matcher = PLACEHOLDER.matcher(current);
-    StringBuffer buffer = new StringBuffer();
-    while (matcher.find()) {
-      String key = matcher.group(1);
-      if (!values.containsKey(key)) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Thiếu giá trị cho key: " + key);
-      }
-      matcher.appendReplacement(buffer, Matcher.quoteReplacement(values.getOrDefault(key, "")));
+  private int countOccurrences(List<List<Text>> blocks, String literal) {
+    return blocks.stream()
+        .mapToInt(block -> literalPositions(combinedText(block), literal).size())
+        .sum();
+  }
+
+  private List<Integer> literalPositions(String value, String literal) {
+    List<Integer> result = new ArrayList<>();
+    int from = 0;
+    while (from <= value.length() - literal.length()) {
+      int index = value.indexOf(literal, from);
+      if (index < 0) break;
+      result.add(index);
+      from = index + literal.length();
     }
-    matcher.appendTail(buffer);
-    return buffer.toString();
+    return result;
+  }
+
+  private void replaceRange(List<Text> texts, int start, int end, String replacement) {
+    if (start < 0 || end <= start) return;
+    int cursor = 0;
+    int first = -1;
+    int last = -1;
+    int firstOffset = 0;
+    int lastOffset = 0;
+    for (int i = 0; i < texts.size(); i++) {
+      String value = texts.get(i).getValue() == null ? "" : texts.get(i).getValue();
+      int next = cursor + value.length();
+      if (first < 0 && start < next) {
+        first = i;
+        firstOffset = start - cursor;
+      }
+      if (first >= 0 && end <= next) {
+        last = i;
+        lastOffset = end - cursor;
+        break;
+      }
+      cursor = next;
+    }
+    if (first < 0 || last < 0) {
+      throw new IllegalStateException("Text range is outside the paragraph");
+    }
+
+    Text firstText = texts.get(first);
+    String firstValue = firstText.getValue() == null ? "" : firstText.getValue();
+    if (first == last) {
+      firstText.setValue(
+          firstValue.substring(0, firstOffset) + replacement + firstValue.substring(lastOffset));
+      firstText.setSpace("preserve");
+      return;
+    }
+
+    firstText.setValue(firstValue.substring(0, firstOffset) + replacement);
+    firstText.setSpace("preserve");
+    for (int i = first + 1; i < last; i++) {
+      texts.get(i).setValue("");
+    }
+    Text lastText = texts.get(last);
+    String lastValue = lastText.getValue() == null ? "" : lastText.getValue();
+    lastText.setValue(lastValue.substring(lastOffset));
+    lastText.setSpace("preserve");
   }
 
   private void ensureNoUnresolvedPlaceholders(WordprocessingMLPackage pkg) throws Exception {
-    for (Text text : findTextNodes(pkg)) {
-      String value = text.getValue();
-      if (value != null && value.contains("${")) {
-        throw new ResponseStatusException(
-            HttpStatus.BAD_REQUEST, "File sau khi tạo vẫn còn placeholder chưa được thay");
+    for (List<Text> block : findTextBlocks(pkg)) {
+      String value = combinedText(block);
+      validatePlaceholderSyntax(value);
+      if (value.contains("${")) {
+        throw badRequest("File sau khi tạo vẫn còn placeholder chưa được thay");
       }
     }
   }
+
+  private byte[] save(WordprocessingMLPackage pkg) throws Exception {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    pkg.save(out);
+    return out.toByteArray();
+  }
+
+  private ResponseStatusException badRequest(String reason) {
+    return new ResponseStatusException(HttpStatus.BAD_REQUEST, reason);
+  }
+
+  private record PlaceholderMatch(int start, int end, String value) {}
 }

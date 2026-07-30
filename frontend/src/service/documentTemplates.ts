@@ -4,9 +4,19 @@ import {
   ApplyMappingItem,
   DocumentTemplate,
   DocumentTemplateField,
+  DocumentTemplateVersion,
   DocumentTemplateStatus,
+  DocumentAuditEntry,
+  GeneratedDocumentListQuery,
+  GenerateDocumentContext,
   GeneratedDocument,
+  PageResponse,
+  PublishTemplateRequest,
+  RestoreTemplateVersionRequest,
+  TemplateListQuery,
   TemplatePreview,
+  UpdateTemplateFieldsOptions,
+  WorkflowTransitionRequest,
 } from '../types/documentTemplate';
 
 const documentTemplateService = {
@@ -15,6 +25,17 @@ const documentTemplateService = {
       params: status ? { status } : undefined,
     });
     return res.data.data ?? [];
+  },
+
+  listTemplatesPage: async (
+    query: TemplateListQuery = {}
+  ): Promise<PageResponse<DocumentTemplate>> => {
+    const res = await gatewayClient.get<
+      ApiResponse<PageResponse<DocumentTemplate> | DocumentTemplate[]>
+    >('/documents/templates/page', {
+      params: cleanParams(query),
+    });
+    return normalizePage(res.data.data, query.page, query.size);
   },
 
   getTemplate: async (id: string): Promise<DocumentTemplate> => {
@@ -72,17 +93,22 @@ const documentTemplateService = {
     return res.data.data;
   },
 
-  updateFields: async (id: string, fields: DocumentTemplateField[]): Promise<DocumentTemplate> => {
+  updateFields: async (
+    id: string,
+    fields: DocumentTemplateField[],
+    options: UpdateTemplateFieldsOptions = {}
+  ): Promise<DocumentTemplate> => {
     const res = await gatewayClient.put<ApiResponse<DocumentTemplate>>(
       `/documents/templates/${id}/fields`,
-      { fields }
+      { fields, ...options }
     );
     return res.data.data;
   },
 
-  publish: async (id: string): Promise<DocumentTemplate> => {
+  publish: async (id: string, request?: PublishTemplateRequest): Promise<DocumentTemplate> => {
     const res = await gatewayClient.put<ApiResponse<DocumentTemplate>>(
-      `/documents/templates/${id}/publish`
+      `/documents/templates/${id}/publish`,
+      request
     );
     return res.data.data;
   },
@@ -94,14 +120,26 @@ const documentTemplateService = {
     return res.data.data;
   },
 
+  restore: async (id: string): Promise<DocumentTemplate> => {
+    const res = await gatewayClient.put<ApiResponse<DocumentTemplate>>(
+      `/documents/templates/${id}/restore`
+    );
+    return res.data.data;
+  },
+
   generate: async (
     templateId: string,
-    values: Record<string, string>
+    values: Record<string, string>,
+    context: GenerateDocumentContext = {},
+    idempotencyKey?: string
   ): Promise<GeneratedDocument> => {
     const res = await gatewayClient.post<ApiResponse<GeneratedDocument>>(
       `/documents/templates/${templateId}/generate`,
-      { values },
-      { timeout: 60000 }
+      { values, context },
+      {
+        timeout: 60000,
+        headers: idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : undefined,
+      }
     );
     return res.data.data;
   },
@@ -111,13 +149,85 @@ const documentTemplateService = {
     return res.data.data ?? [];
   },
 
+  listGeneratedPage: async (
+    query: GeneratedDocumentListQuery = {}
+  ): Promise<PageResponse<GeneratedDocument>> => {
+    const res = await gatewayClient.get<
+      ApiResponse<PageResponse<GeneratedDocument> | GeneratedDocument[]>
+    >('/documents/generated/page', {
+      params: cleanParams(query),
+    });
+    return normalizePage(res.data.data, query.page, query.size);
+  },
+
+  listTemplateVersions: async (
+    id: string,
+    page = 0,
+    size = 20
+  ): Promise<PageResponse<DocumentTemplateVersion>> => {
+    const res = await gatewayClient.get<ApiResponse<PageResponse<DocumentTemplateVersion>>>(
+      `/documents/templates/${id}/versions`,
+      { params: { page, size } }
+    );
+    return normalizePage(res.data.data, page, size);
+  },
+
+  restoreTemplateVersion: async (
+    templateId: string,
+    versionId: string,
+    request: RestoreTemplateVersionRequest
+  ): Promise<DocumentTemplate> => {
+    const res = await gatewayClient.post<ApiResponse<DocumentTemplate>>(
+      `/documents/templates/${templateId}/versions/${versionId}/restore`,
+      request
+    );
+    return res.data.data;
+  },
+
+  listTemplateAudit: async (
+    id: string,
+    page = 0,
+    size = 20
+  ): Promise<PageResponse<DocumentAuditEntry>> => {
+    const res = await gatewayClient.get<ApiResponse<PageResponse<DocumentAuditEntry>>>(
+      `/documents/templates/${id}/audit`,
+      { params: { page, size } }
+    );
+    return normalizePage(res.data.data, page, size);
+  },
+
+  listGeneratedAudit: async (
+    id: string,
+    page = 0,
+    size = 20
+  ): Promise<PageResponse<DocumentAuditEntry>> => {
+    const res = await gatewayClient.get<ApiResponse<PageResponse<DocumentAuditEntry>>>(
+      `/documents/generated/${id}/audit`,
+      { params: { page, size } }
+    );
+    return normalizePage(res.data.data, page, size);
+  },
+
+  transitionWorkflow: async (
+    id: string,
+    request: WorkflowTransitionRequest
+  ): Promise<GeneratedDocument> => {
+    const res = await gatewayClient.put<ApiResponse<GeneratedDocument>>(
+      `/documents/generated/${id}/workflow`,
+      request
+    );
+    return res.data.data;
+  },
+
   download: async (id: string, fallbackFileName: string): Promise<void> => {
     const res = await gatewayClient.get(`/documents/generated/${id}/download`, {
       responseType: 'blob',
       timeout: 60000,
     });
     const disposition = res.headers['content-disposition'] as string | undefined;
-    const fileName = extractFileName(disposition) || fallbackFileName || 'document.docx';
+    const fileName = safeDownloadFileName(
+      extractFileName(disposition) || fallbackFileName || 'document.docx'
+    );
     const url = window.URL.createObjectURL(new Blob([res.data]));
     const link = document.createElement('a');
     link.href = url;
@@ -125,16 +235,66 @@ const documentTemplateService = {
     document.body.appendChild(link);
     link.click();
     link.remove();
-    window.URL.revokeObjectURL(url);
+    window.setTimeout(() => window.URL.revokeObjectURL(url), 0);
   },
 };
+
+function cleanParams<T extends object>(params: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(params).filter(
+      ([, value]) => value !== undefined && value !== '' && value !== 'ALL'
+    )
+  ) as Partial<T>;
+}
+
+export function normalizePage<T>(
+  data: PageResponse<T> | T[] | null | undefined,
+  requestedPage = 0,
+  requestedSize = 20
+): PageResponse<T> {
+  if (Array.isArray(data)) {
+    return {
+      content: data,
+      page: requestedPage,
+      size: requestedSize,
+      totalElements: data.length,
+      totalPages: data.length === 0 ? 0 : 1,
+      first: true,
+      last: true,
+    };
+  }
+  return {
+    content: data?.content ?? [],
+    page: data?.page ?? requestedPage,
+    size: data?.size ?? requestedSize,
+    totalElements: data?.totalElements ?? 0,
+    totalPages: data?.totalPages ?? 0,
+    first: data?.first ?? true,
+    last: data?.last ?? true,
+  };
+}
 
 function extractFileName(disposition?: string): string | null {
   if (!disposition) return null;
   const utf8 = disposition.match(/filename\*=UTF-8''([^;]+)/i);
-  if (utf8?.[1]) return decodeURIComponent(utf8[1]);
+  if (utf8?.[1]) {
+    try {
+      return decodeURIComponent(utf8[1]);
+    } catch {
+      return utf8[1];
+    }
+  }
   const ascii = disposition.match(/filename="?([^";]+)"?/i);
   return ascii?.[1] ?? null;
+}
+
+function safeDownloadFileName(value: string): string {
+  const sanitized = value
+    // eslint-disable-next-line no-control-regex -- loai ky tu dieu khien khoi ten file tai ve
+    .replace(/[/\\:*?"<>|\u0000-\u001f]/g, '_')
+    .replace(/\.+$/g, '')
+    .trim();
+  return sanitized || 'document.docx';
 }
 
 export default documentTemplateService;

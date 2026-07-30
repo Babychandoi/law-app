@@ -6,6 +6,7 @@ import io.minio.GetObjectResponse;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,21 @@ public class MinioDocumentStorageService {
     } catch (Exception e) {
       log.error("Document download from MinIO failed: {}", e.getMessage(), e);
       throw new ResponseStatusException(HttpStatus.NOT_FOUND, "File not found");
+    }
+  }
+
+  /** Compensation hook for objects created by a metadata operation that subsequently failed. */
+  public void deleteObject(String bucket, String objectName) {
+    try {
+      minioClient.removeObject(
+          RemoveObjectArgs.builder().bucket(bucket).object(objectName).build());
+    } catch (Exception e) {
+      // Do not mask the original metadata failure; operators can reconcile by immutable prefix.
+      log.warn(
+          "Could not compensate document object upload bucket={} object={}: {}",
+          bucket,
+          objectName,
+          e.getClass().getSimpleName());
     }
   }
 
