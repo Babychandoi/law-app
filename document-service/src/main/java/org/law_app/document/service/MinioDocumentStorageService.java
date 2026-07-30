@@ -3,12 +3,18 @@ package org.law_app.document.service;
 import io.minio.BucketExistsArgs;
 import io.minio.GetObjectArgs;
 import io.minio.GetObjectResponse;
+import io.minio.ListObjectsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import io.minio.RemoveObjectArgs;
+import io.minio.Result;
+import io.minio.messages.Item;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -75,6 +81,29 @@ public class MinioDocumentStorageService {
           objectName,
           e.getClass().getSimpleName());
     }
+  }
+
+  /** Một object trong bucket cùng thời điểm sửa gần nhất, phục vụ đối soát file rác. */
+  public record StoredObject(String objectName, Instant lastModified) {}
+
+  /** Liệt kê đệ quy các object trong bucket (dùng cho job đối soát/dọn file rác). */
+  public List<StoredObject> listObjects(String bucket) {
+    List<StoredObject> objects = new ArrayList<>();
+    try {
+      ensureBucket(bucket);
+      Iterable<Result<Item>> results =
+          minioClient.listObjects(ListObjectsArgs.builder().bucket(bucket).recursive(true).build());
+      for (Result<Item> result : results) {
+        Item item = result.get();
+        if (item.isDir()) continue;
+        Instant modified = item.lastModified() == null ? null : item.lastModified().toInstant();
+        objects.add(new StoredObject(item.objectName(), modified));
+      }
+    } catch (Exception e) {
+      log.error("Listing MinIO bucket {} failed: {}", bucket, e.getClass().getSimpleName());
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "List failed");
+    }
+    return objects;
   }
 
   private void ensureBucket(String bucket) throws Exception {

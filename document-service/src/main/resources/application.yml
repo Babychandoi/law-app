@@ -49,6 +49,13 @@ document:
     port: ${DOCUMENT_ANTIVIRUS_PORT:3310}
     connect-timeout-ms: ${DOCUMENT_ANTIVIRUS_CONNECT_TIMEOUT_MS:3000}
     read-timeout-ms: ${DOCUMENT_ANTIVIRUS_READ_TIMEOUT_MS:30000}
+  reconciliation:
+    # Dọn file rác trên MinIO không còn metadata tham chiếu (do lỗi ghi sau upload).
+    enabled: ${DOCUMENT_RECONCILIATION_ENABLED:true}
+    # Chỉ xóa object cũ hơn số giờ này để không đụng upload đang diễn ra.
+    grace-hours: ${DOCUMENT_RECONCILIATION_GRACE_HOURS:24}
+    # Lịch chạy (mặc định 03:00 hằng ngày).
+    cron: ${DOCUMENT_RECONCILIATION_CRON:0 0 3 * * *}
 
 logging:
   pattern:

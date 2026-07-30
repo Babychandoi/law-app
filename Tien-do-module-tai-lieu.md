@@ -11,7 +11,7 @@
 - ✅ 8.4 Placeholder đáng tin cậy (cross-run, đếm số lần, không replace-all mù; **header/footer đã được duyệt qua `findTextBlocks` mọi part**).
 - ✅ 8.5 Test tài liệu thực tế (bảng, split-run, unicode VN, list; `DocxTemplateEngineTest`/`...ListTest`).
 - ✅ 8.6 Bảo vệ dữ liệu & tài nguyên (phân trang; encrypt PII `SensitiveValueEncryptionService`; malware scanner ICAP; **zip-bomb ratio + chặn external relationship** trong `validatePackage`; compensation xóa file rác khi lỗi).
-  - ⬜ Job dọn file rác định kỳ (hiện chỉ compensation inline khi lỗi ghi) — ứng viên iteration.
+  - ✅ Job dọn file rác định kỳ (`DocumentStorageReconciliationService` @Scheduled: xóa orphan cũ hơn ân hạn, giữ file tham chiếu + orphan mới; cấu hình `document.reconciliation.*`).
 
 ## P1 — Tự động hóa tài liệu dịch vụ
 1. ✅ Gắn mẫu với dịch vụ (`serviceId`/`serviceName`).
@@ -20,7 +20,7 @@
 4. ⚠️ Chỉ hỏi dữ liệu còn thiếu (prefill xong; chưa ẩn hẳn trường đã đủ).
 5. ⬜ Tạo nhiều tài liệu một lần (bộ mẫu / document bundle).
 6. ✅ Trường lặp (`${list__child}` + `renderWithLists` + form thêm/bớt dòng).
-7. ⬜ **Điều kiện — hiện/ẩn đoạn theo dữ liệu** ← ĐANG LÀM.
+7. ✅ Điều kiện — hiện/ẩn đoạn theo dữ liệu (`${if_KEY}..${endif_KEY}`, lồng nhau; publish validate).
 8. ✅ Định dạng ngày VN + số tiền bằng chữ (`VietnameseDate` `_vi`, `VietnameseNumberWords` `_bangchu`).
 9. ✅ Validation nghiệp vụ (EMAIL/PHONE/TAX_ID/NATIONAL_ID/SELECT/MULTISELECT/PERCENT/CURRENCY/DATE/NUMBER).
 10. ✅ Quy trình Draft/Review/Approve/Final (`DocumentWorkflowStatus`).
