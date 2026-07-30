@@ -21,7 +21,9 @@ import org.docx4j.XmlUtils;
 import org.docx4j.convert.out.HTMLSettings;
 import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
 import org.docx4j.wml.P;
+import org.docx4j.wml.Tbl;
 import org.docx4j.wml.Text;
+import org.docx4j.wml.Tr;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
@@ -80,24 +82,7 @@ public class DocxTemplateEngine {
   public byte[] render(InputStream docx, Map<String, String> values) {
     try {
       WordprocessingMLPackage pkg = loadSafe(docx);
-      for (List<Text> block : findTextBlocks(pkg)) {
-        String current = combinedText(block);
-        validatePlaceholderSyntax(current);
-        List<PlaceholderMatch> matches = new ArrayList<>();
-        Matcher matcher = PLACEHOLDER.matcher(current);
-        while (matcher.find()) {
-          String key = matcher.group(1);
-          if (!values.containsKey(key)) {
-            throw badRequest("Thiếu giá trị cho key: " + key);
-          }
-          matches.add(
-              new PlaceholderMatch(matcher.start(), matcher.end(), values.getOrDefault(key, "")));
-        }
-        matches.stream()
-            .sorted(Comparator.comparingInt(PlaceholderMatch::start).reversed())
-            .forEach(match -> replaceRange(block, match.start(), match.end(), match.value()));
-      }
-      ensureNoUnresolvedPlaceholders(pkg);
+      renderOnPackage(pkg, values);
       return save(pkg);
     } catch (ResponseStatusException e) {
       throw e;
@@ -106,6 +91,53 @@ public class DocxTemplateEngine {
       throw new ResponseStatusException(
           HttpStatus.INTERNAL_SERVER_ERROR, "Không tạo được file Word");
     }
+  }
+
+  /**
+   * Render có hỗ trợ TRƯỜNG LẶP (bảng): mỗi list được nhân thành nhiều dòng bảng. Dòng mẫu trong
+   * DOCX dùng placeholder {@code ${listKey__childKey}} (hai gạch dưới ngăn cách list và trường
+   * con); engine nhân dòng theo số phần tử rồi điền từng dòng. Sau đó điền các placeholder scalar
+   * còn lại.
+   *
+   * @param scalar giá trị cho placeholder thường {@code ${key}}
+   * @param lists listKey -> danh sách phần tử; mỗi phần tử là map childKey -> giá trị
+   */
+  public byte[] renderWithLists(
+      InputStream docx, Map<String, String> scalar, Map<String, List<Map<String, String>>> lists) {
+    try {
+      WordprocessingMLPackage pkg = loadSafe(docx);
+      expandListRows(pkg, lists == null ? Map.of() : lists);
+      renderOnPackage(pkg, scalar == null ? Map.of() : scalar);
+      return save(pkg);
+    } catch (ResponseStatusException e) {
+      throw e;
+    } catch (Exception e) {
+      log.error("DOCX render (lists) failed: {}", e.getClass().getSimpleName(), e);
+      throw new ResponseStatusException(
+          HttpStatus.INTERNAL_SERVER_ERROR, "Không tạo được file Word");
+    }
+  }
+
+  private void renderOnPackage(WordprocessingMLPackage pkg, Map<String, String> values)
+      throws Exception {
+    for (List<Text> block : findTextBlocks(pkg)) {
+      String current = combinedText(block);
+      validatePlaceholderSyntax(current);
+      List<PlaceholderMatch> matches = new ArrayList<>();
+      Matcher matcher = PLACEHOLDER.matcher(current);
+      while (matcher.find()) {
+        String key = matcher.group(1);
+        if (!values.containsKey(key)) {
+          throw badRequest("Thiếu giá trị cho key: " + key);
+        }
+        matches.add(
+            new PlaceholderMatch(matcher.start(), matcher.end(), values.getOrDefault(key, "")));
+      }
+      matches.stream()
+          .sorted(Comparator.comparingInt(PlaceholderMatch::start).reversed())
+          .forEach(match -> replaceRange(block, match.start(), match.end(), match.value()));
+    }
+    ensureNoUnresolvedPlaceholders(pkg);
   }
 
   /** Render the DOCX to HTML after applying the same package-safety checks as generation. */
@@ -319,6 +351,106 @@ public class DocxTemplateEngine {
       if (text.getValue() != null) value.append(text.getValue());
     }
     return value.toString();
+  }
+
+  /* ===== Trường lặp (nhân dòng bảng) ===== */
+
+  /**
+   * Nhân dòng bảng cho các list: mỗi dòng chứa placeholder {@code ${listKey__child}} được coi là
+   * DÒNG MẪU của list đó; nhân thành N dòng theo số phần tử rồi điền từng dòng. List rỗng -> bỏ
+   * dòng mẫu.
+   */
+  private void expandListRows(
+      WordprocessingMLPackage pkg, Map<String, List<Map<String, String>>> lists) throws Exception {
+    if (lists.isEmpty()) return;
+    List<Tbl> tables = new ArrayList<>();
+    Object root = pkg.getMainDocumentPart().getJaxbElement();
+    new TraversalUtil(
+        XmlUtils.unwrap(root),
+        new TraversalUtil.CallbackImpl() {
+          @Override
+          public List<Object> apply(Object object) {
+            Object unwrapped = XmlUtils.unwrap(object);
+            if (unwrapped instanceof Tbl table) tables.add(table);
+            return null;
+          }
+        });
+    for (Tbl tbl : tables) {
+      List<Object> content = tbl.getContent();
+      List<Object> rebuilt = new ArrayList<>();
+      for (Object rowObj : content) {
+        Object row = XmlUtils.unwrap(rowObj);
+        String listKey = row instanceof Tr tr ? listKeyOfRow(tr) : null;
+        if (listKey == null || !lists.containsKey(listKey)) {
+          rebuilt.add(rowObj);
+          continue;
+        }
+        for (Map<String, String> item : lists.get(listKey)) {
+          Object clone = XmlUtils.deepCopy(rowObj);
+          for (List<Text> block : paragraphBlocksWithin(XmlUtils.unwrap(clone))) {
+            fillListRow(block, listKey, item == null ? Map.of() : item);
+          }
+          rebuilt.add(clone);
+        }
+        // List rỗng -> không thêm gì (dòng mẫu bị loại).
+      }
+      content.clear();
+      content.addAll(rebuilt);
+    }
+  }
+
+  /**
+   * Key list mà một dòng bảng tham chiếu (prefix trước "__" của placeholder đầu tiên), hoặc null.
+   */
+  private String listKeyOfRow(Tr row) {
+    for (List<Text> block : paragraphBlocksWithin(row)) {
+      Matcher matcher = PLACEHOLDER.matcher(combinedText(block));
+      while (matcher.find()) {
+        int sep = matcher.group(1).indexOf("__");
+        if (sep > 0) return matcher.group(1).substring(0, sep);
+      }
+    }
+    return null;
+  }
+
+  /** Các block text (theo paragraph) nằm trong một node bất kỳ (vd một dòng bảng đã clone). */
+  private List<List<Text>> paragraphBlocksWithin(Object node) {
+    List<List<Text>> result = new ArrayList<>();
+    Set<P> seen = java.util.Collections.newSetFromMap(new java.util.IdentityHashMap<>());
+    new TraversalUtil(
+        node,
+        new TraversalUtil.CallbackImpl() {
+          @Override
+          public List<Object> apply(Object object) {
+            Object unwrapped = XmlUtils.unwrap(object);
+            if (unwrapped instanceof P paragraph && seen.add(paragraph)) {
+              List<Text> texts = textNodesWithin(paragraph);
+              if (!texts.isEmpty()) result.add(texts);
+            }
+            return null;
+          }
+        });
+    return result;
+  }
+
+  /** Điền mọi placeholder {@code ${listKey__child}} trong block bằng giá trị của phần tử list. */
+  private void fillListRow(List<Text> block, String listKey, Map<String, String> item) {
+    String current = combinedText(block);
+    if (!current.contains("${")) return;
+    String prefix = listKey + "__";
+    List<PlaceholderMatch> matches = new ArrayList<>();
+    Matcher matcher = PLACEHOLDER.matcher(current);
+    while (matcher.find()) {
+      String key = matcher.group(1);
+      if (key.startsWith(prefix)) {
+        String child = key.substring(prefix.length());
+        matches.add(
+            new PlaceholderMatch(matcher.start(), matcher.end(), item.getOrDefault(child, "")));
+      }
+    }
+    matches.stream()
+        .sorted(Comparator.comparingInt(PlaceholderMatch::start).reversed())
+        .forEach(match -> replaceRange(block, match.start(), match.end(), match.value()));
   }
 
   private void validatePlaceholderSyntax(String value) {
