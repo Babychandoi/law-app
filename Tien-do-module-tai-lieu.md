@@ -17,7 +17,7 @@
 1. ✅ Gắn mẫu với dịch vụ (`serviceId`/`serviceName`).
 2. ✅ Gắn tài liệu với KH + CRM case (`LegalDocumentContext`).
 3. ✅ Tự điền dữ liệu KH/DN (`buildCrmPrefill`).
-4. ⚠️ Chỉ hỏi dữ liệu còn thiếu (prefill xong; chưa ẩn hẳn trường đã đủ).
+4. ✅ Chỉ hỏi dữ liệu còn thiếu — form tạo tài liệu chỉ hiện trường còn trống; trường đã tự-điền (prefill/mặc định) gom vào mục "Đã tự điền N trường" có thể mở để sửa; tự mở khi có lỗi ở nhóm đó.
 5. ✅ Tạo nhiều tài liệu một lần (bộ mẫu) — backend (`DocumentBundle` + CRUD + generate cả bộ) **+ UI**: trang Bộ mẫu (danh sách/tạo/sửa/lưu trữ, chọn mẫu có thứ tự) + trang Tạo hồ sơ (dữ liệu dùng chung = hợp field các mẫu → sinh cả bộ, kết quả per-item + tải).
 6. ✅ Trường lặp (`${list__child}` + `renderWithLists` + form thêm/bớt dòng).
 7. ✅ Điều kiện — hiện/ẩn đoạn theo dữ liệu (`${if_KEY}..${endif_KEY}`, lồng nhau; publish validate).

@@ -3,6 +3,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import {
   ArrowLeft,
   CheckCircle2,
+  ChevronDown,
   Download,
   Edit3,
   FileCheck2,
@@ -37,6 +38,7 @@ export default function GenerateDocument() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [generated, setGenerated] = useState<GeneratedDocument | null>(null);
   const [mode, setMode] = useState<'form' | 'review'>('form');
+  const [showFilled, setShowFilled] = useState(false);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -162,6 +164,10 @@ export default function GenerateDocument() {
     setErrors(nextErrors);
     if (Object.keys(nextErrors).length) {
       setMode('form');
+      // Nếu trường lỗi nằm trong nhóm "đã tự điền" đang thu gọn thì mở ra để người dùng thấy.
+      if (Object.keys(nextErrors).some((key) => initialValues[key]?.trim())) {
+        setShowFilled(true);
+      }
       window.setTimeout(() => {
         document.getElementById(`generate-${Object.keys(nextErrors)[0]}`)?.focus();
       });
@@ -286,6 +292,9 @@ export default function GenerateDocument() {
   ).length;
   const requiredCount = template.fields.filter((field) => field.required).length;
   const listKeys = Object.keys(template.lists ?? {});
+  const isPrefilled = (key: string) => !!initialValues[key]?.trim();
+  const pendingFields = template.fields.filter((field) => !isPrefilled(field.fieldKey));
+  const filledFields = template.fields.filter((field) => isPrefilled(field.fieldKey));
 
   return (
     <div className="mx-auto max-w-4xl space-y-5">
@@ -367,19 +376,53 @@ export default function GenerateDocument() {
             Dữ liệu tài liệu
           </h3>
           <p className="mt-1 text-sm text-gray-600">
-            Kiểm tra kỹ thông tin pháp lý. Dấu * là trường bắt buộc.
+            {pendingFields.length > 0
+              ? 'Chỉ cần điền các trường còn thiếu bên dưới. Dấu * là trường bắt buộc.'
+              : 'Mọi trường đã được tự điền — kiểm tra rồi tạo tài liệu.'}
           </p>
-          <div className="mt-6 grid gap-5 md:grid-cols-2">
-            {template.fields.map((field) => (
-              <DocumentValueField
-                key={field.fieldKey}
-                field={field}
-                value={values[field.fieldKey] || ''}
-                error={errors[field.fieldKey]}
-                onChange={(value) => setFieldValue(field.fieldKey, value)}
-              />
-            ))}
-          </div>
+          {pendingFields.length > 0 && (
+            <div className="mt-6 grid gap-5 md:grid-cols-2">
+              {pendingFields.map((field) => (
+                <DocumentValueField
+                  key={field.fieldKey}
+                  field={field}
+                  value={values[field.fieldKey] || ''}
+                  error={errors[field.fieldKey]}
+                  onChange={(value) => setFieldValue(field.fieldKey, value)}
+                />
+              ))}
+            </div>
+          )}
+          {filledFields.length > 0 && (
+            <div className="mt-6 rounded-xl border border-gray-200">
+              <button
+                type="button"
+                onClick={() => setShowFilled((v) => !v)}
+                aria-expanded={showFilled}
+                className="flex w-full items-center justify-between gap-2 px-4 py-3 text-left text-sm font-medium text-gray-700 hover:bg-gray-50"
+              >
+                <span>Đã tự điền {filledFields.length} trường — bấm để xem/sửa</span>
+                <ChevronDown
+                  size={18}
+                  aria-hidden="true"
+                  className={`transition-transform ${showFilled ? 'rotate-180' : ''}`}
+                />
+              </button>
+              {showFilled && (
+                <div className="grid gap-5 border-t border-gray-100 p-4 md:grid-cols-2">
+                  {filledFields.map((field) => (
+                    <DocumentValueField
+                      key={field.fieldKey}
+                      field={field}
+                      value={values[field.fieldKey] || ''}
+                      error={errors[field.fieldKey]}
+                      onChange={(value) => setFieldValue(field.fieldKey, value)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           {listKeys.map((listKey) => (
             <ListRepeater
               key={listKey}
