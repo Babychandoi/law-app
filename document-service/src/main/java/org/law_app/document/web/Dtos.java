@@ -118,6 +118,64 @@ public final class Dtos {
               lists,
       @Valid LegalContextRequest context) {}
 
+  /* ===== Bộ mẫu (document bundle) ===== */
+
+  public record BundleItemRequest(
+      @NotBlank @Size(max = 100) String templateId,
+      @Min(0) @Max(10_000) int sortOrder,
+      boolean required) {}
+
+  public record DocumentBundleRequest(
+      @NotBlank @Size(max = 200) String name,
+      @Size(max = 2000) String description,
+      @Size(max = 100) String serviceId,
+      @Size(max = 200) String serviceName,
+      @Size(max = 100) List<@NotBlank @Size(max = 100) String> tags,
+      @Valid @NotEmpty @Size(max = 50) List<BundleItemRequest> items,
+      Long expectedRevision) {}
+
+  public record BundleItemResponse(String templateId, int sortOrder, boolean required) {}
+
+  public record DocumentBundleResponse(
+      String id,
+      String name,
+      String description,
+      DocumentTemplateStatus status,
+      String serviceId,
+      String serviceName,
+      List<String> tags,
+      List<BundleItemResponse> items,
+      String createdByUserId,
+      String updatedByUserId,
+      Instant createdAt,
+      Instant updatedAt,
+      Long revision) {}
+
+  /** Một mục dữ liệu riêng cho từng mẫu khi sinh cả bộ; giá trị riêng ghi đè dữ liệu dùng chung. */
+  public record GenerateBundleItemRequest(
+      @NotBlank @Size(max = 100) String templateId,
+      @Size(max = 500) Map<@NotBlank String, @Size(max = 100_000) String> values,
+      @Size(max = 50)
+          Map<
+                  @NotBlank String,
+                  @Size(max = 500) List<Map<@NotBlank String, @Size(max = 100_000) String>>>
+              lists) {}
+
+  public record GenerateBundleRequest(
+      @Size(max = 500) Map<@NotBlank String, @Size(max = 100_000) String> sharedValues,
+      @Valid @Size(max = 50) List<GenerateBundleItemRequest> items,
+      @Valid LegalContextRequest context) {}
+
+  public record BundleGenerationResult(
+      String templateId, GeneratedDocumentResponse document, String error) {}
+
+  public record GenerateBundleResponse(
+      String bundleId,
+      int total,
+      int succeeded,
+      int failed,
+      List<BundleGenerationResult> results) {}
+
   public record TemplateFieldResponse(
       String fieldKey,
       String label,
