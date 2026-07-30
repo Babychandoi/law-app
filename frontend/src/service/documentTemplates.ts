@@ -11,6 +11,7 @@ import {
   DocumentBundleRequest,
   DocumentStats,
   GenerateBundleResponse,
+  ShareLink,
   GeneratedDocumentListQuery,
   GenerateDocumentContext,
   GeneratedDocument,
@@ -294,6 +295,23 @@ const documentTemplateService = {
     link.click();
     link.remove();
     window.setTimeout(() => window.URL.revokeObjectURL(url), 0);
+  },
+
+  createShareLink: async (
+    id: string,
+    options: { expiresInHours?: number; maxDownloads?: number } = {}
+  ): Promise<ShareLink> => {
+    const res = await gatewayClient.post<ApiResponse<ShareLink>>(
+      `/documents/generated/${id}/share`,
+      options
+    );
+    return res.data.data;
+  },
+
+  shareLinkUrl: (path: string | null): string => {
+    if (!path) return '';
+    const base = (process.env.REACT_APP_GATEWAY_URL || '').replace(/\/$/, '');
+    return `${base}${path}`;
   },
 
   downloadPdf: async (id: string, fallbackFileName: string): Promise<void> => {

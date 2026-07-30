@@ -4,9 +4,11 @@ import {
   ArrowLeft,
   CheckCircle2,
   ChevronDown,
+  Copy,
   Download,
   Edit3,
   FileCheck2,
+  Share2,
   Plus,
   RefreshCw,
   ShieldCheck,
@@ -44,6 +46,8 @@ export default function GenerateDocument() {
   const [submitting, setSubmitting] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [downloadError, setDownloadError] = useState('');
+  const [sharing, setSharing] = useState(false);
+  const [shareUrl, setShareUrl] = useState('');
   const [resolvedContext, setResolvedContext] = useState<GenerateDocumentContext>({});
   const [prefilledCount, setPrefilledCount] = useState(0);
   const [sourceWarning, setSourceWarning] = useState('');
@@ -197,6 +201,7 @@ export default function GenerateDocument() {
         payloadLists
       );
       setGenerated(document);
+      setShareUrl('');
       setInitialValues(values);
       setInitialLists(lists);
       toast.success('Đã tạo tài liệu');
@@ -219,6 +224,32 @@ export default function GenerateDocument() {
       toast.error(message);
     } finally {
       setDownloading(false);
+    }
+  };
+
+  const createShare = async () => {
+    if (!generated) return;
+    setSharing(true);
+    try {
+      const link = await documentTemplateService.createShareLink(generated.id, {
+        expiresInHours: 72,
+      });
+      setShareUrl(documentTemplateService.shareLinkUrl(link.path));
+      toast.success('Đã tạo link chia sẻ (hết hạn sau 72 giờ)');
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Không tạo được link chia sẻ.');
+    } finally {
+      setSharing(false);
+    }
+  };
+
+  const copyShare = async () => {
+    if (!shareUrl) return;
+    try {
+      await navigator.clipboard.writeText(shareUrl);
+      toast.success('Đã sao chép link');
+    } catch {
+      toast.info('Hãy sao chép link thủ công.');
     }
   };
 
@@ -578,6 +609,14 @@ export default function GenerateDocument() {
                 >
                   <Download size={16} aria-hidden="true" /> Tải PDF
                 </button>
+                <button
+                  type="button"
+                  onClick={createShare}
+                  disabled={sharing}
+                  className="inline-flex items-center gap-2 rounded-lg border border-green-300 bg-white px-4 py-2 text-sm font-medium text-green-800 hover:bg-green-100 disabled:opacity-60"
+                >
+                  <Share2 size={16} aria-hidden="true" /> Tạo link chia sẻ
+                </button>
                 <Link
                   to="/2025/luatpoip/tai-lieu/generated"
                   className="inline-flex items-center rounded-lg border border-green-300 px-4 py-2 text-sm font-medium hover:bg-green-100"
@@ -585,6 +624,29 @@ export default function GenerateDocument() {
                   Xem lịch sử
                 </Link>
               </div>
+              {shareUrl && (
+                <div className="mt-3 rounded-lg border border-green-300 bg-white p-3">
+                  <p className="text-xs font-medium text-gray-600">
+                    Link chia sẻ (hết hạn sau 72 giờ) — gửi cho khách:
+                  </p>
+                  <div className="mt-1 flex gap-2">
+                    <input
+                      readOnly
+                      value={shareUrl}
+                      aria-label="Link chia sẻ"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                      onFocus={(e) => e.target.select()}
+                    />
+                    <button
+                      type="button"
+                      onClick={copyShare}
+                      className="inline-flex shrink-0 items-center gap-1 rounded-lg bg-green-700 px-3 py-2 text-sm font-medium text-white hover:bg-green-800"
+                    >
+                      <Copy size={14} aria-hidden="true" /> Sao chép
+                    </button>
+                  </div>
+                </div>
+              )}
               {downloadError && (
                 <p role="alert" className="mt-2 text-sm text-red-700">
                   {downloadError}

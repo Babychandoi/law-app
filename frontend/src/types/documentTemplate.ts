@@ -99,6 +99,18 @@ export interface GenerateBundleResponse {
   results: BundleGenerationResult[];
 }
 
+export interface ShareLink {
+  id: string;
+  token: string | null;
+  path: string | null;
+  expiresAt?: string;
+  maxDownloads?: number | null;
+  downloadCount: number;
+  revoked: boolean;
+  active: boolean;
+  createdAt?: string;
+}
+
 export interface DocumentStats {
   templatesTotal: number;
   templatesByStatus: Record<string, number>;

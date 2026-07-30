@@ -118,6 +118,22 @@ public final class Dtos {
               lists,
       @Valid LegalContextRequest context) {}
 
+  /* ===== Chia sẻ bảo mật ===== */
+
+  public record CreateShareRequest(
+      @Min(1) @Max(8760) Integer expiresInHours, @Min(1) @Max(100_000) Integer maxDownloads) {}
+
+  public record ShareLinkResponse(
+      String id,
+      String token,
+      String path,
+      Instant expiresAt,
+      Integer maxDownloads,
+      int downloadCount,
+      boolean revoked,
+      boolean active,
+      Instant createdAt) {}
+
   /** Thống kê khối lượng tài liệu cho dashboard. */
   public record DocumentStatsResponse(
       long templatesTotal,
