@@ -22,13 +22,16 @@ public final class DocumentDerivedValues {
     return t == DocumentFieldInputType.NUMBER || t == DocumentFieldInputType.CURRENCY;
   }
 
-  /** Tập key dẫn xuất được phép ({key}_bangchu) dựa trên các field NUMBER/CURRENCY. */
+  /** Tập key dẫn xuất được phép: {key}_bangchu cho NUMBER/CURRENCY, {key}_vi cho DATE. */
   public static Set<String> allowedDerivedKeys(List<DocumentTemplateField> fields) {
     Set<String> out = new LinkedHashSet<>();
     if (fields == null) return out;
     for (DocumentTemplateField f : fields) {
-      if (f != null && isNumeric(f.getInputType()) && f.getFieldKey() != null) {
+      if (f == null || f.getFieldKey() == null) continue;
+      if (isNumeric(f.getInputType())) {
         out.add(VietnameseNumberWords.derivedKey(f.getFieldKey()));
+      } else if (f.getInputType() == DocumentFieldInputType.DATE) {
+        out.add(VietnameseDate.derivedKey(f.getFieldKey()));
       }
     }
     return out;
@@ -40,11 +43,17 @@ public final class DocumentDerivedValues {
     Map<String, String> out = new LinkedHashMap<>(values == null ? Map.of() : values);
     if (fields == null) return out;
     for (DocumentTemplateField f : fields) {
-      if (f == null || !isNumeric(f.getInputType()) || f.getFieldKey() == null) continue;
-      // Luôn thêm key dẫn xuất để placeholder {key}_bangchu luôn resolve được (rỗng nếu chưa nhập).
-      out.put(
-          VietnameseNumberWords.derivedKey(f.getFieldKey()),
-          VietnameseNumberWords.toWords(out.get(f.getFieldKey())));
+      if (f == null || f.getFieldKey() == null) continue;
+      // Luôn thêm key dẫn xuất để placeholder luôn resolve được (rỗng nếu chưa nhập).
+      if (isNumeric(f.getInputType())) {
+        out.put(
+            VietnameseNumberWords.derivedKey(f.getFieldKey()),
+            VietnameseNumberWords.toWords(out.get(f.getFieldKey())));
+      } else if (f.getInputType() == DocumentFieldInputType.DATE) {
+        out.put(
+            VietnameseDate.derivedKey(f.getFieldKey()),
+            VietnameseDate.format(out.get(f.getFieldKey())));
+      }
     }
     return out;
   }

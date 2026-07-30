@@ -45,4 +45,13 @@ class DocumentDerivedValuesTest {
     Map<String, String> out = DocumentDerivedValues.augment(fields, Map.of());
     assertThat(out).containsEntry("fee_bangchu", "");
   }
+
+  @Test
+  void augmentAddsVietnameseDateForDateFields() {
+    List<DocumentTemplateField> fields = List.of(field("signDate", DocumentFieldInputType.DATE));
+    assertThat(DocumentDerivedValues.allowedDerivedKeys(fields)).containsExactly("signDate_vi");
+    Map<String, String> out =
+        DocumentDerivedValues.augment(fields, Map.of("signDate", "2026-07-05"));
+    assertThat(out).containsEntry("signDate_vi", "ngày 05 tháng 07 năm 2026");
+  }
 }

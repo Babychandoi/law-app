@@ -812,6 +812,13 @@ function FieldCard({
             để tự điền số tiền bằng chữ.
           </p>
         )}
+        {field.inputType === 'DATE' && field.fieldKey && (
+          <p className="mt-1 text-xs text-brand-muted">
+            Mẹo: trong file Word có thể dùng{' '}
+            <code className="rounded bg-brand-surface px-1">{`\${${field.fieldKey}_vi}`}</code> để
+            tự điền ngày dạng "ngày DD tháng MM năm YYYY".
+          </p>
+        )}
         <FieldLabel label="Gợi ý cho người nhập" inputId={fieldInputId(index, 'helpText')}>
           <input
             id={fieldInputId(index, 'helpText')}
