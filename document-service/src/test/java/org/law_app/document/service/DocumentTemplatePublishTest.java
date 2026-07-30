@@ -82,7 +82,7 @@ class DocumentTemplatePublishTest {
     when(docxTemplateEngine.extractPlaceholders(any()))
         .thenReturn(java.util.Set.of("customerName"));
     when(docxTemplateEngine.countPlaceholders(any())).thenReturn(Map.of("customerName", 1));
-    when(docxTemplateEngine.render(any(), any())).thenReturn(new byte[] {1, 2, 3});
+    when(docxTemplateEngine.renderWithLists(any(), any(), any())).thenReturn(new byte[] {1, 2, 3});
     when(repository.save(template)).thenReturn(template);
 
     TemplateFieldRequest submittedField =

@@ -110,6 +110,12 @@ public final class Dtos {
 
   public record GenerateDocumentRequest(
       @NotNull @Size(max = 500) Map<@NotBlank String, @Size(max = 100_000) String> values,
+      // Trường lặp: listKey -> danh sách dòng; mỗi dòng là map childKey -> giá trị.
+      @Size(max = 50)
+          Map<
+                  @NotBlank String,
+                  @Size(max = 500) List<Map<@NotBlank String, @Size(max = 100_000) String>>>
+              lists,
       @Valid LegalContextRequest context) {}
 
   public record TemplateFieldResponse(

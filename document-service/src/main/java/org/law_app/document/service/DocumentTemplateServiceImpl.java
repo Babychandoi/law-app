@@ -637,8 +637,16 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
             .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
     // Placeholder dẫn xuất "số tiền bằng chữ" ({key}_bangchu) hợp lệ, không cần là field cấu hình.
     Set<String> allowedDerived = DocumentDerivedValues.allowedDerivedKeys(version.getFields());
+    // Placeholder TRƯỜNG LẶP ${list__child}: list được suy ra từ chính placeholder, không cần
+    // field.
+    Map<String, java.util.LinkedHashSet<String>> listSpecs = listSpecs(counts.keySet());
+    Set<String> listChildKeys =
+        counts.keySet().stream()
+            .filter(DocumentTemplateServiceImpl::isListChildKey)
+            .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
     Set<String> placeholderKeys = new LinkedHashSet<>(counts.keySet());
     placeholderKeys.removeAll(allowedDerived);
+    placeholderKeys.removeAll(listChildKeys);
     if (!placeholderKeys.equals(schemaKeys)) {
       Set<String> missingSchema = new LinkedHashSet<>(placeholderKeys);
       missingSchema.removeAll(schemaKeys);
@@ -664,10 +672,19 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
                     field.getDefaultValue() == null
                         ? "[[" + field.getFieldKey() + "]]"
                         : field.getDefaultValue()));
+    // Mỗi list dựng 1 dòng mẫu để trial render kiểm tra file vẫn hợp lệ.
+    Map<String, List<Map<String, String>>> trialLists = new LinkedHashMap<>();
+    listSpecs.forEach(
+        (listKey, children) -> {
+          Map<String, String> row = new LinkedHashMap<>();
+          children.forEach(child -> row.put(child, "[[" + listKey + "." + child + "]]"));
+          trialLists.put(listKey, List.of(row));
+        });
     byte[] trial =
-        docxTemplateEngine.render(
+        docxTemplateEngine.renderWithLists(
             storage.getObject(version.getTemplateBucket(), version.getTemplateObjectName()),
-            DocumentDerivedValues.augment(version.getFields(), trialValues));
+            DocumentDerivedValues.augment(version.getFields(), trialValues),
+            trialLists);
     docxTemplateEngine.validatePackage(new ByteArrayInputStream(trial));
   }
 
@@ -683,12 +700,33 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
         fields.stream()
             .map(DocumentTemplateField::getFieldKey)
             .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
-    // Placeholder dẫn xuất {key}_bangchu không cần khai báo field — bỏ ra trước khi so khớp.
+    // Placeholder dẫn xuất {key}_bangchu và placeholder trường lặp ${list__child} không cần khai
+    // báo field — bỏ ra trước khi so khớp.
     Set<String> effectivePlaceholders = new LinkedHashSet<>(placeholders);
     effectivePlaceholders.removeAll(DocumentDerivedValues.allowedDerivedKeys(fields));
+    effectivePlaceholders.removeIf(DocumentTemplateServiceImpl::isListChildKey);
     if (!submitted.equals(effectivePlaceholders)) {
       throw badRequest("Danh sách key phải khớp chính xác với placeholder trong file mẫu");
     }
+  }
+
+  /** Placeholder trường lặp có dạng {@code list__child} (chứa "__"). */
+  private static boolean isListChildKey(String key) {
+    int sep = key.indexOf("__");
+    return sep > 0 && sep + 2 < key.length();
+  }
+
+  /** Suy ra cấu trúc list từ placeholder {@code ${list__child}}: listKey -> tập childKey. */
+  static Map<String, java.util.LinkedHashSet<String>> listSpecs(Set<String> placeholderKeys) {
+    Map<String, java.util.LinkedHashSet<String>> specs = new LinkedHashMap<>();
+    for (String key : placeholderKeys) {
+      if (!isListChildKey(key)) continue;
+      int sep = key.indexOf("__");
+      specs
+          .computeIfAbsent(key.substring(0, sep), k -> new java.util.LinkedHashSet<>())
+          .add(key.substring(sep + 2));
+    }
+    return specs;
   }
 
   private DocumentTemplateField toField(TemplateFieldRequest field) {

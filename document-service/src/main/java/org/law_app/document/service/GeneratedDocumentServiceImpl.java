@@ -77,27 +77,33 @@ public class GeneratedDocumentServiceImpl implements GeneratedDocumentService {
     DocumentTemplateVersion version = versionManager.activeVersion(template);
     Map<String, String> values =
         valueValidator.normalizeAndValidate(version.getFields(), request.values());
+    // Trường lặp: dữ liệu dòng bảng (không nằm trong schema field). Giới hạn tổng kích thước.
+    Map<String, List<Map<String, String>>> lists = safeLists(request.lists());
+    guardListSize(lists);
     LegalDocumentContext context = normalizeContext(request.context(), version);
+    // Fingerprint + lưu trữ + mã hóa dùng bản PHẲNG (scalar + giá trị list dạng list[i].child).
+    Map<String, String> storedValues = flattenWithLists(values, lists);
     String scope = idempotencyScope(idempotencyKey);
-    String fingerprint = fingerprint(version, values, context);
+    String fingerprint = fingerprint(version, storedValues, context);
 
     if (scope != null) {
       GeneratedDocument existing = generatedRepository.findByIdempotencyScope(scope).orElse(null);
       if (existing != null) return idempotentResult(existing, fingerprint);
     }
 
-    // Bổ sung placeholder dẫn xuất "số tiền bằng chữ" ({key}_bangchu) cho field NUMBER/CURRENCY.
+    // Scalar + placeholder dẫn xuất; danh sách nhân dòng bảng qua renderWithLists.
     Map<String, String> renderValues = DocumentDerivedValues.augment(version.getFields(), values);
     byte[] rendered =
-        docxTemplateEngine.render(
+        docxTemplateEngine.renderWithLists(
             storage.getObject(version.getTemplateBucket(), version.getTemplateObjectName()),
-            renderValues);
+            renderValues,
+            lists);
     // Ensure the output can be parsed after replacement before it is persisted.
     docxTemplateEngine.validatePackage(new java.io.ByteArrayInputStream(rendered));
 
     String id = UUID.randomUUID().toString();
     SensitiveValueEncryptionService.EncryptedValues encryptedValues =
-        encryptionService.encrypt(values, id, version.getId());
+        encryptionService.encrypt(storedValues, id, version.getId());
     String fileName = buildGeneratedFileName(version);
     String objectName =
         "generated/" + template.getId() + "/" + version.getId() + "/" + id + "/" + fileName;
@@ -556,6 +562,45 @@ public class GeneratedDocumentServiceImpl implements GeneratedDocumentService {
 
   private void putIfPresent(Map<String, String> target, String key, String value) {
     if (value != null && !value.isBlank()) target.put(key, value);
+  }
+
+  /* ===== Trường lặp (list) ===== */
+
+  private static Map<String, List<Map<String, String>>> safeLists(
+      Map<String, List<Map<String, String>>> lists) {
+    return lists == null ? Map.of() : lists;
+  }
+
+  /** Chặn dữ liệu trường lặp quá lớn (tổng độ dài giá trị). */
+  private void guardListSize(Map<String, List<Map<String, String>>> lists) {
+    long total = 0;
+    for (List<Map<String, String>> rows : lists.values()) {
+      if (rows == null) continue;
+      for (Map<String, String> row : rows) {
+        if (row == null) continue;
+        for (String v : row.values()) if (v != null) total += v.length();
+      }
+    }
+    if (total > 1_000_000) throw badRequest("Dữ liệu trường lặp quá lớn");
+  }
+
+  /** Phẳng hóa list thành key {@code listKey[i].child} để lưu/mã hóa/fingerprint cùng scalar. */
+  private static Map<String, String> flattenWithLists(
+      Map<String, String> scalar, Map<String, List<Map<String, String>>> lists) {
+    Map<String, String> out = new java.util.LinkedHashMap<>(scalar);
+    lists.forEach(
+        (listKey, rows) -> {
+          if (rows == null) return;
+          for (int i = 0; i < rows.size(); i++) {
+            Map<String, String> row = rows.get(i);
+            if (row == null) continue;
+            int idx = i;
+            row.forEach(
+                (child, value) ->
+                    out.put(listKey + "[" + idx + "]." + child, value == null ? "" : value));
+          }
+        });
+    return out;
   }
 
   private DocumentWorkflowStatus effectiveStatus(GeneratedDocument document) {
