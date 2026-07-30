@@ -25,7 +25,7 @@
 9. ✅ Validation nghiệp vụ (EMAIL/PHONE/TAX_ID/NATIONAL_ID/SELECT/MULTISELECT/PERCENT/CURRENCY/DATE/NUMBER).
 10. ✅ Quy trình Draft/Review/Approve/Final (`DocumentWorkflowStatus`).
 11. ✅ Audit log (`DocumentAuditService`).
-12. ⚠️ Tích hợp app shell admin (khu `/2025/luatpoip/tai-lieu` riêng; có thể thêm lối vào sidebar).
+12. ✅ Tích hợp app shell admin — `DocumentLayout` dùng chung `Sidebar`/`Navbar`/`CommandPalette` (OPERATIONS_GROUPS) của admin; sidebar có mục "Tài liệu & biểu mẫu" → `/2025/luatpoip/tai-lieu` (navConfig).
 
 ## P2 — Sản phẩm chuyên nghiệp
 1. ⬜ Sinh PDF (cần thư viện chuyển đổi).
