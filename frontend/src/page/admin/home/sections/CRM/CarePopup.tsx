@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FileText } from 'lucide-react';
+import { FileText, Layers } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Modal from '../../../../../component/common/Modal';
 import { Button } from '../../../../../component/common/ui';
@@ -248,6 +248,12 @@ export default function CarePopup({
             className="inline-flex items-center justify-center gap-2 rounded-control border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
           >
             <FileText size={16} aria-hidden="true" /> Tạo tài liệu
+          </Link>
+          <Link
+            to={`/2025/luatpoip/tai-lieu/bundles?${documentContext.toString()}`}
+            className="inline-flex items-center justify-center gap-2 rounded-control border border-brand-goldDark px-4 py-2 text-sm font-medium text-brand-goldDark transition-colors hover:bg-brand-goldDark/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+          >
+            <Layers size={16} aria-hidden="true" /> Tạo hồ sơ
           </Link>
           <Button variant="secondary" onClick={onClose} disabled={saving}>
             Hủy

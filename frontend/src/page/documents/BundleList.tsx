@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Link, useOutletContext } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useOutletContext, useSearchParams } from 'react-router-dom';
 import {
   Archive,
   Layers,
@@ -19,17 +19,32 @@ const DOCUMENT_BASE = '/2025/luatpoip/tai-lieu';
 
 export default function BundleList() {
   const { isAdmin } = useOutletContext<{ isAdmin: boolean }>();
+  const [searchParams] = useSearchParams();
   const [bundles, setBundles] = useState<DocumentBundle[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [archiving, setArchiving] = useState<DocumentBundle | null>(null);
   const [busy, setBusy] = useState(false);
 
+  const contextQuery = searchParams.toString();
+  // Ngữ cảnh CRM truyền qua để chuyển tiếp sang màn tạo hồ sơ (tự điền); serviceId để lọc bộ mẫu.
+  const serviceId = searchParams.get('serviceId') || undefined;
+  const serviceName = searchParams.get('serviceName') || undefined;
+  const generateQuery = useMemo(() => {
+    const params = new URLSearchParams();
+    ['crmCaseId', 'customerId', 'serviceId', 'serviceName', 'matterReference'].forEach((k) => {
+      const v = searchParams.get(k);
+      if (v) params.set(k, v);
+    });
+    const s = params.toString();
+    return s ? `?${s}` : '';
+  }, [searchParams]);
+
   const load = async () => {
     setLoading(true);
     setError('');
     try {
-      setBundles(await documentTemplateService.listBundles());
+      setBundles(await documentTemplateService.listBundles(serviceId));
     } catch (e: any) {
       setError(e?.response?.data?.message || 'Không tải được danh sách bộ mẫu.');
     } finally {
@@ -39,7 +54,8 @@ export default function BundleList() {
 
   useEffect(() => {
     load();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [contextQuery]);
 
   const confirmArchive = async () => {
     if (!archiving) return;
@@ -80,6 +96,12 @@ export default function BundleList() {
 
   return (
     <div className="space-y-5">
+      {(serviceId || searchParams.get('crmCaseId')) && (
+        <div className="rounded-xl border border-blue-200 bg-blue-50 px-4 py-2 text-sm text-blue-900">
+          Đang lọc bộ mẫu{serviceName ? ` cho dịch vụ "${serviceName}"` : ''}
+          {searchParams.get('crmCaseId') ? ' · dữ liệu CRM sẽ tự điền khi tạo hồ sơ' : ''}.
+        </div>
+      )}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-xl font-semibold text-gray-900">Bộ mẫu tài liệu</h2>
@@ -125,7 +147,7 @@ export default function BundleList() {
               <div className="mt-4 flex flex-wrap gap-2 border-t border-gray-100 pt-4">
                 {bundle.status === 'ACTIVE' && (
                   <Link
-                    to={`${DOCUMENT_BASE}/bundles/${bundle.id}/generate`}
+                    to={`${DOCUMENT_BASE}/bundles/${bundle.id}/generate${generateQuery}`}
                     className="inline-flex items-center gap-1 rounded-lg bg-brand-goldDark px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-gold"
                   >
                     <PlayCircle size={14} aria-hidden="true" /> Tạo hồ sơ

@@ -60,8 +60,10 @@ const documentTemplateService = {
     return res.data.data;
   },
 
-  listBundles: async (): Promise<DocumentBundle[]> => {
-    const res = await gatewayClient.get<ApiResponse<DocumentBundle[]>>('/documents/bundles');
+  listBundles: async (serviceId?: string): Promise<DocumentBundle[]> => {
+    const res = await gatewayClient.get<ApiResponse<DocumentBundle[]>>('/documents/bundles', {
+      params: serviceId ? { serviceId } : undefined,
+    });
     return res.data.data ?? [];
   },
 

@@ -77,12 +77,16 @@ public class DocumentBundleServiceImpl implements DocumentBundleService {
 
   @Override
   @PreAuthorize("hasAnyRole('ADMIN','USER')")
-  public List<DocumentBundleResponse> list() {
+  public List<DocumentBundleResponse> list(String serviceId) {
     List<DocumentBundle> bundles =
         CurrentUser.isAdmin()
             ? bundleRepository.findAllByOrderByUpdatedAtDesc()
             : bundleRepository.findByStatusOrderByUpdatedAtDesc(DocumentTemplateStatus.ACTIVE);
-    return bundles.stream().map(this::toResponse).toList();
+    String filter = serviceId == null ? "" : serviceId.trim();
+    return bundles.stream()
+        .filter(bundle -> filter.isEmpty() || filter.equals(bundle.getServiceId()))
+        .map(this::toResponse)
+        .toList();
   }
 
   @Override

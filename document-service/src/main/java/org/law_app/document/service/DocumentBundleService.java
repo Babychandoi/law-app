@@ -11,7 +11,7 @@ public interface DocumentBundleService {
 
   DocumentBundleResponse update(String id, DocumentBundleRequest request);
 
-  List<DocumentBundleResponse> list();
+  List<DocumentBundleResponse> list(String serviceId);
 
   DocumentBundleResponse get(String id);
 

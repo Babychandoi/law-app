@@ -26,8 +26,10 @@ public class DocumentBundleController {
   private final DocumentBundleService service;
 
   @GetMapping
-  public ApiResponse<List<DocumentBundleResponse>> list() {
-    return ApiResponse.ok(service.list());
+  public ApiResponse<List<DocumentBundleResponse>> list(
+      @org.springframework.web.bind.annotation.RequestParam(value = "serviceId", required = false)
+          String serviceId) {
+    return ApiResponse.ok(service.list(serviceId));
   }
 
   @GetMapping("/{id}")

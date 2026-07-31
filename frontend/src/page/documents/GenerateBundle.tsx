@@ -1,21 +1,32 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Download, RefreshCw, Wand2, XCircle } from 'lucide-react';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import {
+  ArrowLeft,
+  CheckCircle2,
+  Download,
+  RefreshCw,
+  ShieldCheck,
+  Wand2,
+  XCircle,
+} from 'lucide-react';
 import { toast } from 'react-toastify';
 import documentTemplateService from '../../service/documentTemplates';
+import crmService from '../../service/crm';
 import {
   DocumentBundle,
   DocumentTemplate,
   DocumentTemplateField,
   GenerateBundleResponse,
+  GenerateDocumentContext,
 } from '../../types/documentTemplate';
 import Spinner from '../../component/common/ui/Spinner';
-import { createIdempotencyKey } from './documentUi';
+import { buildCrmPrefill, createIdempotencyKey } from './documentUi';
 
 const DOCUMENT_BASE = '/2025/luatpoip/tai-lieu';
 
 export default function GenerateBundle() {
   const { id = '' } = useParams();
+  const [searchParams] = useSearchParams();
   const [bundle, setBundle] = useState<DocumentBundle | null>(null);
   const [templates, setTemplates] = useState<DocumentTemplate[]>([]);
   const [values, setValues] = useState<Record<string, string>>({});
@@ -23,11 +34,26 @@ export default function GenerateBundle() {
   const [loadError, setLoadError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [result, setResult] = useState<GenerateBundleResponse | null>(null);
+  const [resolvedContext, setResolvedContext] = useState<GenerateDocumentContext>({});
+  const [prefilledCount, setPrefilledCount] = useState(0);
   const idempotencyRef = useRef('');
+
+  const contextQuery = searchParams.toString();
+  const context = useMemo<GenerateDocumentContext>(() => {
+    const params = new URLSearchParams(contextQuery);
+    return {
+      crmCaseId: params.get('crmCaseId') || undefined,
+      customerId: params.get('customerId') || undefined,
+      serviceId: params.get('serviceId') || undefined,
+      serviceName: params.get('serviceName') || undefined,
+      matterReference: params.get('matterReference') || undefined,
+    };
+  }, [contextQuery]);
 
   const load = async () => {
     setLoading(true);
     setLoadError('');
+    setPrefilledCount(0);
     try {
       const loaded = await documentTemplateService.getBundle(id);
       const details = await Promise.all(
@@ -36,9 +62,43 @@ export default function GenerateBundle() {
           .sort((a, b) => a.sortOrder - b.sortOrder)
           .map((item) => documentTemplateService.getTemplate(item.templateId).catch(() => null))
       );
+      const loadedTemplates = details.filter((t): t is DocumentTemplate => !!t);
+      // Hợp field theo fieldKey để tự điền dữ liệu dùng chung từ CRM (nếu có case).
+      const fieldKeys = new Set<string>();
+      loadedTemplates.forEach((t) => t.fields.forEach((f) => fieldKeys.add(f.fieldKey)));
+
+      let nextContext = context;
+      const defaults: Record<string, string> = {};
+      if (context.crmCaseId) {
+        const [caseResult, partiesResult] = await Promise.allSettled([
+          crmService.caseDetail(context.crmCaseId),
+          crmService.matterParties(context.crmCaseId),
+        ]);
+        const caseDetail = caseResult.status === 'fulfilled' ? caseResult.value : undefined;
+        const parties = partiesResult.status === 'fulfilled' ? partiesResult.value : [];
+        const prefill = buildCrmPrefill(caseDetail, parties);
+        let count = 0;
+        fieldKeys.forEach((key) => {
+          const suggested = prefill[key.toLocaleLowerCase()];
+          if (suggested !== undefined && !defaults[key]) {
+            defaults[key] = suggested;
+            count += 1;
+          }
+        });
+        setPrefilledCount(count);
+        nextContext = {
+          ...context,
+          customerId: context.customerId || caseDetail?.customerId || undefined,
+          serviceId: context.serviceId || caseDetail?.serviceId || undefined,
+          serviceName: context.serviceName || caseDetail?.serviceName || undefined,
+          matterReference: context.matterReference || caseDetail?.id || undefined,
+        };
+      }
+
       setBundle(loaded);
-      setTemplates(details.filter((t): t is DocumentTemplate => !!t));
-      setValues({});
+      setTemplates(loadedTemplates);
+      setResolvedContext(nextContext);
+      setValues(defaults);
     } catch (e: any) {
       setLoadError(e?.response?.data?.message || 'Không tải được bộ mẫu.');
     } finally {
@@ -49,7 +109,7 @@ export default function GenerateBundle() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
+  }, [id, contextQuery]);
 
   // Dữ liệu dùng chung = hợp các field theo fieldKey (giữ định nghĩa đầu tiên gặp).
   const sharedFields = useMemo(() => {
@@ -77,7 +137,7 @@ export default function GenerateBundle() {
       const response = await documentTemplateService.generateBundle(
         id,
         values,
-        {},
+        resolvedContext,
         idempotencyRef.current
       );
       setResult(response);
@@ -135,6 +195,36 @@ export default function GenerateBundle() {
           {templates.length} biểu mẫu · điền dữ liệu dùng chung rồi tạo cả bộ.
         </p>
       </div>
+
+      {(resolvedContext.crmCaseId || resolvedContext.customerId) && (
+        <section className="rounded-xl border border-blue-200 bg-blue-50 p-4">
+          <div className="flex items-start gap-3">
+            <ShieldCheck className="mt-0.5 shrink-0 text-blue-700" size={20} aria-hidden="true" />
+            <div className="text-sm text-blue-900">
+              <p className="font-semibold">Đã liên kết CRM</p>
+              <dl className="mt-1 grid gap-x-6 gap-y-0.5 sm:grid-cols-2">
+                {resolvedContext.crmCaseId && (
+                  <div className="flex gap-1">
+                    <dt className="font-medium">CRM case:</dt>
+                    <dd className="truncate">{resolvedContext.crmCaseId}</dd>
+                  </div>
+                )}
+                {resolvedContext.customerId && (
+                  <div className="flex gap-1">
+                    <dt className="font-medium">Khách hàng:</dt>
+                    <dd className="truncate">{resolvedContext.customerId}</dd>
+                  </div>
+                )}
+              </dl>
+              {prefilledCount > 0 && (
+                <p className="mt-1 font-medium">
+                  Đã tự điền {prefilledCount} trường từ dữ liệu CRM.
+                </p>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
         <h3 className="font-semibold text-gray-900">Dữ liệu dùng chung</h3>
