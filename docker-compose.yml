@@ -238,8 +238,7 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
-      clamav:
-        condition: service_healthy
+      # ClamAV là opt-in (profile "antivirus"), fail-open — KHÔNG để depends_on chặn document-service.
     networks:
       law-app-network:
         aliases:
@@ -271,6 +270,10 @@ services:
   clamav:
     image: clamav/clamav:1.5.2_base
     container_name: law-app-clamav
+    # Opt-in: chỉ chạy khi bật rõ ràng (docker compose --profile antivirus up -d clamav) trên host
+    # đủ RAM. Mặc định KHÔNG chạy để tránh ngốn 4GB làm treo Docker; scanner fail-open nên upload vẫn
+    # hoạt động khi không có ClamAV.
+    profiles: ["antivirus"]
     mem_limit: 4g
     expose:
       - "3310"
