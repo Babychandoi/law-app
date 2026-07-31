@@ -36,7 +36,7 @@
 7. ✅ So sánh phiên bản — diff UI trong editor (chọn 2 phiên bản → trường thêm/bớt/đổi + metadata). 8. ✅ Khôi phục phiên bản (`RestoreVersionRequest`).
 9. ✅ Search metadata (mẫu: name/description/serviceName/tags; tài liệu: theo trạng thái/case/customer/service) — regex substring, hợp tiếng Việt; values mã hóa nên không search nội dung (đúng thiết kế bảo mật). 10. ✅ Folder/tag — tag có; **folder**: `DocumentFolder` CRUD + `folderId` trên template + lọc `?folderId`; UI lọc/tạo/xóa thư mục ở danh sách mẫu + chọn thư mục trong editor.
 11. ✅ Retention policy — **ẩn mềm** tài liệu quá hạn (mặc định 365 ngày, giữ file+metadata, admin khôi phục); job @Scheduled + `DocumentRetentionService`; list ẩn mặc định + toggle "hiện quá hạn" + nút Khôi phục. Cấu hình `document.retention.*`. LIVE. 12. 🚫 Background queue (đồng bộ hiện đủ tải nội bộ).
-13. ✅ Antivirus (ICAP scanner, fail-closed cấu hình được). 14. 🚫 Observability. 15. 🚫 Backup/restore.
+13. ✅ Antivirus (ICAP scanner, fail-closed cấu hình được). 14. 🚫 Observability. 15. ⚠️ Backup/restore — `scripts/backup.sh` (MySQL+Mongo+MinIO, **đã thêm `law-app-documents`**) đã chạy thật + verify gzip/nội dung; `scripts/restore.sh` + runbook `scripts/README-backup.md` (kiểm thử restore trên stack staging, không chạy prod). Còn: chạy backup định kỳ + offsite + kiểm thử restore trên staging.
 16. ✅ Dashboard khối lượng tài liệu — backend `GET /documents/stats` + **trang Tổng quan** (KPI + phân bố trạng thái mẫu/tài liệu + quick links) tại `/tai-lieu/dashboard`. 17. ⬜ SLA + cảnh báo job lỗi.
 
 ## Thứ tự loop dự kiến (mục code khả thi, giá trị cao trước)

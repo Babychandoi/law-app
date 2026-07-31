@@ -25,7 +25,7 @@ MONGO_CT="${MONGO_CT:-law-app-mongodb}"
 MINIO_CT="${MINIO_CT:-law-app-minio}"
 
 MYSQL_DBS=(law_app law_app_crm)
-MONGO_DBS=(law-app-staff-chat law_app_chat)
+MONGO_DBS=(law-app-staff-chat law_app_chat law-app-documents)
 MINIO_BUCKETS=(images cvs document-templates generated-documents staff-files)
 
 KEEP="${BACKUP_KEEP:-7}" # số bản backup giữ lại
