@@ -796,13 +796,25 @@ function DocumentValueField({
         <input
           id={id}
           type={
-            field.inputType === 'DATE' ? 'date' : field.inputType === 'NUMBER' ? 'number' : 'text'
+            field.inputType === 'DATE'
+              ? 'date'
+              : field.inputType === 'NUMBER' || field.inputType === 'CURRENCY'
+                ? 'number'
+                : 'text'
           }
           value={value}
           required={field.required}
           maxLength={field.inputType === 'TEXT' ? field.maxLength : undefined}
-          min={field.inputType === 'NUMBER' ? field.minimum : undefined}
-          max={field.inputType === 'NUMBER' ? field.maximum : undefined}
+          min={
+            field.inputType === 'NUMBER' || field.inputType === 'CURRENCY'
+              ? field.minimum
+              : undefined
+          }
+          max={
+            field.inputType === 'NUMBER' || field.inputType === 'CURRENCY'
+              ? field.maximum
+              : undefined
+          }
           autoComplete={isSensitive(field) ? 'off' : undefined}
           onChange={(event) => onChange(event.target.value)}
           aria-invalid={!!error}

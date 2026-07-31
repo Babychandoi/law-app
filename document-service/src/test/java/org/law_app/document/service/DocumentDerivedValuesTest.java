@@ -22,7 +22,32 @@ class DocumentDerivedValuesTest {
             field("totalAmount", DocumentFieldInputType.CURRENCY),
             field("quantity", DocumentFieldInputType.NUMBER));
     assertThat(DocumentDerivedValues.allowedDerivedKeys(fields))
-        .containsExactlyInAnyOrder("totalAmount_bangchu", "quantity_bangchu");
+        .containsExactlyInAnyOrder(
+            "totalAmount_bangchu",
+            "totalAmount_vat",
+            "totalAmount_total",
+            "totalAmount_total_bangchu",
+            "totalAmount_vatrate",
+            "quantity_bangchu");
+  }
+
+  @Test
+  void augmentComputesVatAndTotalForCurrency() {
+    List<DocumentTemplateField> fields = List.of(field("phi", DocumentFieldInputType.CURRENCY));
+    Map<String, String> out = DocumentDerivedValues.augment(fields, Map.of("phi", "1.000.000"));
+    assertThat(out).containsEntry("phi_vatrate", "10");
+    assertThat(out).containsEntry("phi_vat", "100.000");
+    assertThat(out).containsEntry("phi_total", "1.100.000");
+    assertThat(out).containsEntry("phi_total_bangchu", "một triệu một trăm nghìn");
+  }
+
+  @Test
+  void augmentHonoursCustomVatRate() {
+    List<DocumentTemplateField> fields = List.of(field("phi", DocumentFieldInputType.CURRENCY));
+    Map<String, String> out =
+        DocumentDerivedValues.augment(fields, Map.of("phi", "1.000.000", "phi_vatrate", "8"));
+    assertThat(out).containsEntry("phi_vat", "80.000");
+    assertThat(out).containsEntry("phi_total", "1.080.000");
   }
 
   @Test

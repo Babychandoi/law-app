@@ -258,7 +258,7 @@ export default function GenerateBundle() {
                   type={
                     field.inputType === 'DATE'
                       ? 'date'
-                      : field.inputType === 'NUMBER'
+                      : field.inputType === 'NUMBER' || field.inputType === 'CURRENCY'
                         ? 'number'
                         : 'text'
                   }

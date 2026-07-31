@@ -21,7 +21,7 @@
 5. ✅ Tạo nhiều tài liệu một lần (bộ mẫu) — backend (`DocumentBundle` + CRUD + generate cả bộ) **+ UI**: trang Bộ mẫu (danh sách/tạo/sửa/lưu trữ, chọn mẫu có thứ tự) + trang Tạo hồ sơ (dữ liệu dùng chung = hợp field các mẫu → sinh cả bộ, kết quả per-item + tải).
 6. ✅ Trường lặp (`${list__child}` + `renderWithLists` + form thêm/bớt dòng).
 7. ✅ Điều kiện — hiện/ẩn đoạn theo dữ liệu (`${if_KEY}..${endif_KEY}`, lồng nhau; publish validate).
-8. ✅ Định dạng ngày VN + số tiền bằng chữ (`VietnameseDate` `_vi`, `VietnameseNumberWords` `_bangchu`).
+8. ✅ Định dạng ngày VN + số tiền bằng chữ (`VietnameseDate` `_vi`, `VietnameseNumberWords` `_bangchu`) + **tự tính phí/VAT/tổng** cho field CURRENCY (`{key}_vat`, `{key}_total`, `{key}_total_bangchu`, `{key}_vatrate` mặc định 10%).
 9. ✅ Validation nghiệp vụ (EMAIL/PHONE/TAX_ID/NATIONAL_ID/SELECT/MULTISELECT/PERCENT/CURRENCY/DATE/NUMBER).
 10. ✅ Quy trình Draft/Review/Approve/Final (`DocumentWorkflowStatus`).
 11. ✅ Audit log (`DocumentAuditService`).

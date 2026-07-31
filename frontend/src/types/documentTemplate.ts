@@ -1,5 +1,5 @@
 export type DocumentTemplateStatus = 'DRAFT' | 'ACTIVE' | 'ARCHIVED';
-export type DocumentFieldInputType = 'TEXT' | 'TEXTAREA' | 'DATE' | 'NUMBER';
+export type DocumentFieldInputType = 'TEXT' | 'TEXTAREA' | 'DATE' | 'NUMBER' | 'CURRENCY';
 export type DocumentDataClassification = 'PUBLIC' | 'INTERNAL' | 'CONFIDENTIAL' | 'RESTRICTED';
 export type GeneratedDocumentStatus =
   | 'DRAFT'

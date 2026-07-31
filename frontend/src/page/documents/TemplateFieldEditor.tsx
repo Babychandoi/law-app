@@ -32,6 +32,7 @@ const INPUT_TYPES: Array<{ value: DocumentFieldInputType; label: string }> = [
   { value: 'TEXTAREA', label: 'Văn bản dài' },
   { value: 'DATE', label: 'Ngày' },
   { value: 'NUMBER', label: 'Số' },
+  { value: 'CURRENCY', label: 'Số tiền (VND)' },
 ];
 const CLASSIFICATIONS: Array<{ value: DocumentDataClassification; label: string }> = [
   { value: 'PUBLIC', label: 'Công khai' },
@@ -805,11 +806,24 @@ function FieldCard({
             ))}
           </select>
         </FieldLabel>
-        {field.inputType === 'NUMBER' && field.fieldKey && (
+        {(field.inputType === 'NUMBER' || field.inputType === 'CURRENCY') && field.fieldKey && (
           <p className="mt-1 text-xs text-brand-muted">
             Mẹo: trong file Word có thể dùng{' '}
             <code className="rounded bg-brand-surface px-1">{`\${${field.fieldKey}_bangchu}`}</code>{' '}
             để tự điền số tiền bằng chữ.
+          </p>
+        )}
+        {field.inputType === 'CURRENCY' && field.fieldKey && (
+          <p className="mt-1 text-xs text-brand-muted">
+            Tự tính:{' '}
+            <code className="rounded bg-brand-surface px-1">{`\${${field.fieldKey}_vat}`}</code>{' '}
+            (VAT),{' '}
+            <code className="rounded bg-brand-surface px-1">{`\${${field.fieldKey}_total}`}</code>{' '}
+            (tổng),{' '}
+            <code className="rounded bg-brand-surface px-1">{`\${${field.fieldKey}_total_bangchu}`}</code>{' '}
+            (tổng bằng chữ). VAT mặc định 10% — đổi bằng cách nhập{' '}
+            <code className="rounded bg-brand-surface px-1">{`\${${field.fieldKey}_vatrate}`}</code>
+            .
           </p>
         )}
         {field.inputType === 'DATE' && field.fieldKey && (
