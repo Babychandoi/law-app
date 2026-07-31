@@ -46,6 +46,7 @@ public class DocumentTemplate {
   @Indexed private String serviceId;
   private String serviceName;
   @Builder.Default private List<String> tags = new ArrayList<>();
+  @Indexed private String folderId;
 
   @Indexed private String createdByUserId;
   private String updatedByUserId;

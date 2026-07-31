@@ -149,6 +149,20 @@ public final class Dtos {
       long generatedLast30Days,
       long bundlesActive) {}
 
+  /* ===== Thư mục ===== */
+
+  public record FolderRequest(@NotBlank @Size(max = 200) String name, Long expectedRevision) {}
+
+  public record FolderResponse(
+      String id,
+      String name,
+      String createdByUserId,
+      Instant createdAt,
+      Instant updatedAt,
+      Long revision) {}
+
+  public record SetFolderRequest(@Size(max = 100) String folderId) {}
+
   /* ===== Thư viện điều khoản ===== */
 
   public record ClauseRequest(
@@ -262,6 +276,7 @@ public final class Dtos {
       String serviceId,
       String serviceName,
       List<String> tags,
+      String folderId,
       String createdByUserId,
       String updatedByUserId,
       String publishedByUserId,

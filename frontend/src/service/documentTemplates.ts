@@ -11,6 +11,7 @@ import {
   DocumentBundleRequest,
   DocumentStats,
   DocumentClause,
+  DocumentFolder,
   ClauseRequest,
   GenerateBundleResponse,
   ShareLink,
@@ -29,6 +30,45 @@ import {
 const documentTemplateService = {
   getStats: async (): Promise<DocumentStats> => {
     const res = await gatewayClient.get<ApiResponse<DocumentStats>>('/documents/stats');
+    return res.data.data;
+  },
+
+  listFolders: async (): Promise<DocumentFolder[]> => {
+    const res = await gatewayClient.get<ApiResponse<DocumentFolder[]>>('/documents/folders');
+    return res.data.data ?? [];
+  },
+
+  createFolder: async (name: string): Promise<DocumentFolder> => {
+    const res = await gatewayClient.post<ApiResponse<DocumentFolder>>('/documents/folders', {
+      name,
+    });
+    return res.data.data;
+  },
+
+  renameFolder: async (
+    id: string,
+    name: string,
+    expectedRevision?: number
+  ): Promise<DocumentFolder> => {
+    const res = await gatewayClient.put<ApiResponse<DocumentFolder>>(`/documents/folders/${id}`, {
+      name,
+      expectedRevision,
+    });
+    return res.data.data;
+  },
+
+  deleteFolder: async (id: string): Promise<void> => {
+    await gatewayClient.delete(`/documents/folders/${id}`);
+  },
+
+  setTemplateFolder: async (
+    templateId: string,
+    folderId: string | null
+  ): Promise<DocumentTemplate> => {
+    const res = await gatewayClient.put<ApiResponse<DocumentTemplate>>(
+      `/documents/templates/${templateId}/folder`,
+      { folderId }
+    );
     return res.data.data;
   },
 

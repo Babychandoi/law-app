@@ -50,6 +50,7 @@ export interface DocumentTemplate {
   serviceId?: string;
   serviceName?: string;
   tags?: string[];
+  folderId?: string;
   revision?: number;
 }
 
@@ -244,10 +245,20 @@ export interface TemplateListQuery {
   q?: string;
   status?: DocumentTemplateStatus | 'ALL';
   serviceId?: string;
+  folderId?: string;
   page?: number;
   size?: number;
   sort?: string;
   direction?: 'asc' | 'desc';
+}
+
+export interface DocumentFolder {
+  id: string;
+  name: string;
+  createdByUserId?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  revision?: number;
 }
 
 export interface GeneratedDocumentListQuery {

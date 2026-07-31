@@ -3,7 +3,7 @@ import { Link, useOutletContext, useSearchParams } from 'react-router-dom';
 import { Archive, Edit, FileText, Plus, RefreshCw, RotateCcw, Search, Wand2 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import documentTemplateService from '../../service/documentTemplates';
-import { DocumentTemplate } from '../../types/documentTemplate';
+import { DocumentFolder, DocumentTemplate } from '../../types/documentTemplate';
 import EmptyState from '../../component/common/ui/EmptyState';
 import Spinner from '../../component/common/ui/Spinner';
 import useConfirm from '../../component/common/ui/useConfirm';
@@ -28,6 +28,10 @@ export default function TemplateList() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [archivingId, setArchivingId] = useState<string | null>(null);
+  const [folders, setFolders] = useState<DocumentFolder[]>([]);
+  const [folderId, setFolderId] = useState('');
+  const [showNewFolder, setShowNewFolder] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
   const { confirm, confirmDialog } = useConfirm();
   const generationContextQuery = buildGenerationContextQuery(searchParams);
   const linkedServiceId = searchParams.get('serviceId') || '';
@@ -39,7 +43,50 @@ export default function TemplateList() {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedQuery, status, sort, pageSize]);
+  }, [debouncedQuery, status, sort, pageSize, folderId]);
+
+  const loadFolders = useCallback(async () => {
+    try {
+      setFolders(await documentTemplateService.listFolders());
+    } catch {
+      setFolders([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadFolders();
+  }, [loadFolders]);
+
+  const createFolder = async () => {
+    const name = newFolderName.trim();
+    if (!name) return;
+    try {
+      const created = await documentTemplateService.createFolder(name);
+      setNewFolderName('');
+      setShowNewFolder(false);
+      await loadFolders();
+      setFolderId(created.id);
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Không tạo được thư mục.');
+    }
+  };
+
+  const deleteFolder = async () => {
+    if (!folderId || folderId === 'none') return;
+    const ok = await confirm({
+      title: 'Xóa thư mục',
+      message: 'Xóa thư mục này? Các biểu mẫu bên trong sẽ được gỡ khỏi thư mục (không bị xóa).',
+      confirmText: 'Xóa',
+    });
+    if (!ok) return;
+    try {
+      await documentTemplateService.deleteFolder(folderId);
+      setFolderId('');
+      await loadFolders();
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Không xóa được thư mục.');
+    }
+  };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -50,6 +97,7 @@ export default function TemplateList() {
         q: debouncedQuery || undefined,
         status: isAdmin ? status : 'ACTIVE',
         serviceId: linkedServiceId || undefined,
+        folderId: folderId || undefined,
         page: page - 1,
         size: pageSize,
         sort: sortField,
@@ -77,6 +125,13 @@ export default function TemplateList() {
         const normalizedQuery = searchText(debouncedQuery);
         const filtered = all
           .filter((template) => !linkedServiceId || template.serviceId === linkedServiceId)
+          .filter((template) =>
+            !folderId
+              ? true
+              : folderId === 'none'
+                ? !template.folderId
+                : template.folderId === folderId
+          )
           .filter((template) =>
             normalizedQuery
               ? searchText(
@@ -113,7 +168,7 @@ export default function TemplateList() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedQuery, isAdmin, linkedServiceId, page, pageSize, sort, status]);
+  }, [debouncedQuery, isAdmin, linkedServiceId, folderId, page, pageSize, sort, status]);
 
   useEffect(() => {
     load();
@@ -258,6 +313,72 @@ export default function TemplateList() {
             <option value="version,desc">Phiên bản mới nhất</option>
           </select>
         </label>
+        <div className="flex flex-wrap items-center gap-2 sm:col-span-2 lg:col-span-3">
+          <label className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">Thư mục</span>
+            <select
+              value={folderId}
+              onChange={(event) => setFolderId(event.target.value)}
+              className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+            >
+              <option value="">Tất cả</option>
+              <option value="none">Chưa phân thư mục</option>
+              {folders.map((folder) => (
+                <option key={folder.id} value={folder.id}>
+                  {folder.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          {isAdmin && !showNewFolder && (
+            <button
+              type="button"
+              onClick={() => setShowNewFolder(true)}
+              className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50"
+            >
+              <Plus size={14} aria-hidden="true" /> Thư mục mới
+            </button>
+          )}
+          {isAdmin && showNewFolder && (
+            <span className="inline-flex items-center gap-1">
+              <input
+                value={newFolderName}
+                onChange={(event) => setNewFolderName(event.target.value)}
+                onKeyDown={(event) => event.key === 'Enter' && createFolder()}
+                placeholder="Tên thư mục"
+                aria-label="Tên thư mục mới"
+                className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={createFolder}
+                className="rounded-lg bg-brand-goldDark px-3 py-2 text-sm font-medium text-white hover:bg-brand-gold"
+              >
+                Lưu
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowNewFolder(false);
+                  setNewFolderName('');
+                }}
+                className="rounded-lg border border-gray-300 px-3 py-2 text-sm hover:bg-gray-50"
+              >
+                Hủy
+              </button>
+            </span>
+          )}
+          {isAdmin && folderId && folderId !== 'none' && (
+            <button
+              type="button"
+              onClick={deleteFolder}
+              className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-50"
+            >
+              <Archive size={14} aria-hidden="true" /> Xóa thư mục
+            </button>
+          )}
+        </div>
       </section>
 
       {error && (

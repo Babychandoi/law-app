@@ -16,6 +16,7 @@ import documentTemplateService from '../../service/documentTemplates';
 import {
   DocumentDataClassification,
   DocumentFieldInputType,
+  DocumentFolder,
   DocumentTemplate,
   DocumentTemplateField,
   DocumentTemplateVersion,
@@ -77,6 +78,9 @@ export default function TemplateFieldEditor() {
   const [versions, setVersions] = useState<DocumentTemplateVersion[]>([]);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyUnavailable, setHistoryUnavailable] = useState(false);
+  const [folders, setFolders] = useState<DocumentFolder[]>([]);
+  const [compareA, setCompareA] = useState('');
+  const [compareB, setCompareB] = useState('');
   const [restoreVersion, setRestoreVersion] = useState<DocumentTemplateVersion | null>(null);
   const [restoreReason, setRestoreReason] = useState('');
   const [restoreError, setRestoreError] = useState('');
@@ -119,6 +123,24 @@ export default function TemplateFieldEditor() {
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    documentTemplateService
+      .listFolders()
+      .then(setFolders)
+      .catch(() => setFolders([]));
+  }, []);
+
+  const changeFolder = async (value: string) => {
+    if (!template) return;
+    try {
+      const updated = await documentTemplateService.setTemplateFolder(id, value || null);
+      setTemplate((current) => (current ? { ...current, folderId: updated.folderId } : current));
+      toast.success('Đã cập nhật thư mục');
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Không cập nhật được thư mục.');
+    }
+  };
 
   const updateField = (index: number, patch: Partial<DocumentTemplateField>) => {
     setFields((previous) =>
@@ -259,6 +281,11 @@ export default function TemplateFieldEditor() {
     try {
       const page = await documentTemplateService.listTemplateVersions(id, 0, 20);
       setVersions(page.content);
+      // Mặc định so sánh phiên bản trước với mới nhất.
+      if (page.content.length >= 2) {
+        setCompareB(page.content[0].id);
+        setCompareA(page.content[1].id);
+      }
     } catch (error: any) {
       if ([404, 405].includes(error?.response?.status)) {
         setHistoryUnavailable(true);
@@ -486,6 +513,25 @@ export default function TemplateFieldEditor() {
                 />
               </label>
               <label
+                htmlFor="template-editor-folder"
+                className="block text-sm font-medium text-gray-700"
+              >
+                Thư mục
+                <select
+                  id="template-editor-folder"
+                  value={template.folderId || ''}
+                  onChange={(event) => changeFolder(event.target.value)}
+                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+                >
+                  <option value="">— Không thuộc thư mục —</option>
+                  {folders.map((folder) => (
+                    <option key={folder.id} value={folder.id}>
+                      {folder.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label
                 htmlFor="template-editor-service-name"
                 className="block text-sm font-medium text-gray-700"
               >
@@ -605,55 +651,66 @@ export default function TemplateFieldEditor() {
             ) : versions.length === 0 ? (
               <p className="text-sm text-gray-600">Chưa có phiên bản nào được ghi nhận.</p>
             ) : (
-              <ol className="grid gap-3 md:grid-cols-2">
-                {versions.map((version) => (
-                  <li key={version.id} className="rounded-xl border border-gray-200 p-4">
-                    <div className="flex flex-wrap items-center justify-between gap-2">
-                      <span className="font-semibold">Phiên bản {version.versionNumber}</span>
-                      <div className="flex gap-1.5">
-                        {version.active && (
-                          <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">
-                            Đang dùng
-                          </span>
-                        )}
-                        {version.latest && (
-                          <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700">
-                            Mới nhất
-                          </span>
-                        )}
+              <>
+                {versions.length >= 2 && (
+                  <VersionCompare
+                    versions={versions}
+                    aId={compareA}
+                    bId={compareB}
+                    onChangeA={setCompareA}
+                    onChangeB={setCompareB}
+                  />
+                )}
+                <ol className="grid gap-3 md:grid-cols-2">
+                  {versions.map((version) => (
+                    <li key={version.id} className="rounded-xl border border-gray-200 p-4">
+                      <div className="flex flex-wrap items-center justify-between gap-2">
+                        <span className="font-semibold">Phiên bản {version.versionNumber}</span>
+                        <div className="flex gap-1.5">
+                          {version.active && (
+                            <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs text-green-700">
+                              Đang dùng
+                            </span>
+                          )}
+                          {version.latest && (
+                            <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700">
+                              Mới nhất
+                            </span>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                    <p className="mt-2 text-sm text-gray-700">
-                      {version.changeReason || 'Không ghi lý do thay đổi'}
-                    </p>
-                    <p className="mt-2 flex items-center gap-1.5 text-xs text-gray-500">
-                      <Clock3 size={14} aria-hidden="true" />
-                      {version.createdAt
-                        ? new Date(version.createdAt).toLocaleString('vi-VN')
-                        : 'Không rõ thời gian'}
-                    </p>
-                    {!version.latest && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setRestoreVersion(version);
-                          setRestoreError('');
-                          setRestoreReason('');
-                        }}
-                        disabled={isDirty}
-                        title={
-                          isDirty
-                            ? 'Hãy lưu hoặc bỏ các thay đổi hiện tại trước khi khôi phục.'
-                            : undefined
-                        }
-                        className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        <RotateCcw size={14} aria-hidden="true" /> Tạo bản nháp từ phiên bản này
-                      </button>
-                    )}
-                  </li>
-                ))}
-              </ol>
+                      <p className="mt-2 text-sm text-gray-700">
+                        {version.changeReason || 'Không ghi lý do thay đổi'}
+                      </p>
+                      <p className="mt-2 flex items-center gap-1.5 text-xs text-gray-500">
+                        <Clock3 size={14} aria-hidden="true" />
+                        {version.createdAt
+                          ? new Date(version.createdAt).toLocaleString('vi-VN')
+                          : 'Không rõ thời gian'}
+                      </p>
+                      {!version.latest && (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setRestoreVersion(version);
+                            setRestoreError('');
+                            setRestoreReason('');
+                          }}
+                          disabled={isDirty}
+                          title={
+                            isDirty
+                              ? 'Hãy lưu hoặc bỏ các thay đổi hiện tại trước khi khôi phục.'
+                              : undefined
+                          }
+                          className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <RotateCcw size={14} aria-hidden="true" /> Tạo bản nháp từ phiên bản này
+                        </button>
+                      )}
+                    </li>
+                  ))}
+                </ol>
+              </>
             )}
           </div>
         )}
@@ -1148,4 +1205,142 @@ function parseTags(value: string): string[] {
     )
   ).slice(0, 100);
   return tags;
+}
+
+const FIELD_TYPE_LABEL: Record<string, string> = {
+  TEXT: 'Văn bản ngắn',
+  TEXTAREA: 'Văn bản dài',
+  DATE: 'Ngày',
+  NUMBER: 'Số',
+  CURRENCY: 'Số tiền',
+};
+
+function fieldSummary(field: DocumentTemplateField): string {
+  const parts = [FIELD_TYPE_LABEL[field.inputType] || field.inputType];
+  if (field.required) parts.push('bắt buộc');
+  if (field.label) parts.push(`nhãn "${field.label}"`);
+  return parts.join(' · ');
+}
+
+function VersionCompare({
+  versions,
+  aId,
+  bId,
+  onChangeA,
+  onChangeB,
+}: {
+  versions: DocumentTemplateVersion[];
+  aId: string;
+  bId: string;
+  onChangeA: (id: string) => void;
+  onChangeB: (id: string) => void;
+}) {
+  const a = versions.find((v) => v.id === aId);
+  const b = versions.find((v) => v.id === bId);
+
+  const diff = useMemo(() => {
+    if (!a || !b) return null;
+    const aFields = new Map((a.fields || []).map((f) => [f.fieldKey, f]));
+    const bFields = new Map((b.fields || []).map((f) => [f.fieldKey, f]));
+    const keys = Array.from(
+      new Set(Array.from(aFields.keys()).concat(Array.from(bFields.keys())))
+    ).sort();
+    const added: string[] = [];
+    const removed: string[] = [];
+    const changed: Array<{ key: string; from: string; to: string }> = [];
+    keys.forEach((key) => {
+      const fa = aFields.get(key);
+      const fb = bFields.get(key);
+      if (fa && !fb) removed.push(key);
+      else if (!fa && fb) added.push(key);
+      else if (fa && fb) {
+        const sa = fieldSummary(fa);
+        const sb = fieldSummary(fb);
+        if (sa !== sb) changed.push({ key, from: sa, to: sb });
+      }
+    });
+    const meta: Array<{ label: string; from: string; to: string }> = [];
+    const pushMeta = (label: string, x?: string, y?: string) => {
+      if ((x || '') !== (y || '')) meta.push({ label, from: x || '—', to: y || '—' });
+    };
+    pushMeta('Tên', a.name, b.name);
+    pushMeta('Mô tả', a.description, b.description);
+    return { added, removed, changed, meta };
+  }, [a, b]);
+
+  return (
+    <div className="mb-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
+      <div className="flex flex-wrap items-end gap-3">
+        <div>
+          <label htmlFor="compare-a" className="text-xs font-medium text-gray-600">
+            Phiên bản gốc
+          </label>
+          <select
+            id="compare-a"
+            value={aId}
+            onChange={(e) => onChangeA(e.target.value)}
+            className="mt-1 block rounded-lg border border-gray-300 px-3 py-2 text-sm"
+          >
+            {versions.map((v) => (
+              <option key={v.id} value={v.id}>
+                Phiên bản {v.versionNumber}
+              </option>
+            ))}
+          </select>
+        </div>
+        <span className="pb-2 text-gray-400">→</span>
+        <div>
+          <label htmlFor="compare-b" className="text-xs font-medium text-gray-600">
+            So với
+          </label>
+          <select
+            id="compare-b"
+            value={bId}
+            onChange={(e) => onChangeB(e.target.value)}
+            className="mt-1 block rounded-lg border border-gray-300 px-3 py-2 text-sm"
+          >
+            {versions.map((v) => (
+              <option key={v.id} value={v.id}>
+                Phiên bản {v.versionNumber}
+              </option>
+            ))}
+          </select>
+        </div>
+      </div>
+
+      {diff && (
+        <div className="mt-4 space-y-2 text-sm">
+          {diff.meta.length === 0 &&
+          diff.added.length === 0 &&
+          diff.removed.length === 0 &&
+          diff.changed.length === 0 ? (
+            <p className="italic text-gray-500">Hai phiên bản giống nhau về trường và metadata.</p>
+          ) : (
+            <>
+              {diff.meta.map((m) => (
+                <p key={m.label} className="text-amber-800">
+                  <strong>{m.label}:</strong> "{m.from}" → "{m.to}"
+                </p>
+              ))}
+              {diff.added.map((k) => (
+                <p key={`a-${k}`} className="text-green-700">
+                  + Thêm trường <code className="rounded bg-white px-1">{k}</code>
+                </p>
+              ))}
+              {diff.removed.map((k) => (
+                <p key={`r-${k}`} className="text-red-700">
+                  − Bỏ trường <code className="rounded bg-white px-1">{k}</code>
+                </p>
+              ))}
+              {diff.changed.map((c) => (
+                <p key={`c-${c.key}`} className="text-amber-800">
+                  ~ <code className="rounded bg-white px-1">{c.key}</code>: {c.from} → {c.to}
+                </p>
+              ))}
+            </>
+          )}
+        </div>
+      )}
+    </div>
+  );
 }

@@ -287,7 +287,8 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
   @Override
   @PreAuthorize("hasAnyRole('ADMIN','USER')")
   public List<DocumentTemplateResponse> listTemplates(String status) {
-    return pageTemplates(null, status, null, 0, LEGACY_LIST_LIMIT, "updatedAt", "desc").content();
+    return pageTemplates(null, status, null, null, 0, LEGACY_LIST_LIMIT, "updatedAt", "desc")
+        .content();
   }
 
   @Override
@@ -296,6 +297,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
       String query,
       String status,
       String serviceId,
+      String folderId,
       int page,
       int size,
       String sort,
@@ -305,7 +307,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     String sortField = TEMPLATE_SORT_FIELDS.contains(sort) ? sort : "updatedAt";
     Sort.Direction sortDirection =
         "asc".equalsIgnoreCase(direction) ? Sort.Direction.ASC : Sort.Direction.DESC;
-    Criteria criteria = templateCriteria(query, status, serviceId);
+    Criteria criteria = templateCriteria(query, status, serviceId, folderId);
     Query countQuery = Query.query(criteria);
     long total = mongoTemplate.count(countQuery, DocumentTemplate.class);
     Query dataQuery =
@@ -334,6 +336,15 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
       throw notFound();
     }
     return toResponseForViewer(template);
+  }
+
+  @Override
+  @PreAuthorize("hasRole('ADMIN')")
+  public DocumentTemplateResponse setFolder(String id, String folderId) {
+    DocumentTemplate template = findTemplate(id);
+    template.setFolderId(folderId == null || folderId.isBlank() ? null : folderId.trim());
+    template.setUpdatedByUserId(CurrentUser.id());
+    return toResponse(repository.save(template));
   }
 
   @Override
@@ -560,7 +571,8 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     return versionManager.prepareAggregate(template);
   }
 
-  private Criteria templateCriteria(String query, String status, String serviceId) {
+  private Criteria templateCriteria(
+      String query, String status, String serviceId, String folderId) {
     List<Criteria> criteria = new ArrayList<>();
     if (!CurrentUser.isAdmin()) {
       criteria.add(Criteria.where("status").is(DocumentTemplateStatus.ACTIVE));
@@ -569,6 +581,12 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     }
     if (serviceId != null && !serviceId.isBlank()) {
       criteria.add(Criteria.where("serviceId").is(serviceId.trim()));
+    }
+    if (folderId != null && !folderId.isBlank()) {
+      criteria.add(
+          "none".equalsIgnoreCase(folderId.trim())
+              ? Criteria.where("folderId").is(null)
+              : Criteria.where("folderId").is(folderId.trim()));
     }
     if (query != null && !query.isBlank()) {
       Pattern search = Pattern.compile(Pattern.quote(query.trim()), Pattern.CASE_INSENSITIVE);
@@ -900,6 +918,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
         contentOverride == null ? template.getServiceId() : contentOverride.getServiceId(),
         contentOverride == null ? template.getServiceName() : contentOverride.getServiceName(),
         contentOverride == null ? template.getTags() : contentOverride.getTags(),
+        template.getFolderId(),
         template.getCreatedByUserId(),
         template.getUpdatedByUserId(),
         template.getPublishedByUserId(),

@@ -33,12 +33,15 @@ public interface DocumentTemplateService {
       String query,
       String status,
       String serviceId,
+      String folderId,
       int page,
       int size,
       String sort,
       String direction);
 
   DocumentTemplateResponse getTemplate(String id);
+
+  DocumentTemplateResponse setFolder(String id, String folderId);
 
   DocumentTemplateResponse updateFields(String id, UpdateFieldsRequest request);
 

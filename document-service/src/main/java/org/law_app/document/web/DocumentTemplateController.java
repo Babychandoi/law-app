@@ -82,17 +82,25 @@ public class DocumentTemplateController {
       @RequestParam(value = "q", required = false) String query,
       @RequestParam(value = "status", required = false) String status,
       @RequestParam(value = "serviceId", required = false) String serviceId,
+      @RequestParam(value = "folderId", required = false) String folderId,
       @RequestParam(value = "page", defaultValue = "0") int page,
       @RequestParam(value = "size", defaultValue = "20") int size,
       @RequestParam(value = "sort", defaultValue = "updatedAt") String sort,
       @RequestParam(value = "direction", defaultValue = "desc") String direction) {
     return ApiResponse.ok(
-        service.pageTemplates(query, status, serviceId, page, size, sort, direction));
+        service.pageTemplates(query, status, serviceId, folderId, page, size, sort, direction));
   }
 
   @GetMapping("/{id}")
   public ApiResponse<DocumentTemplateResponse> detail(@PathVariable String id) {
     return ApiResponse.ok(service.getTemplate(id));
+  }
+
+  @PutMapping("/{id}/folder")
+  public ApiResponse<DocumentTemplateResponse> setFolder(
+      @PathVariable String id,
+      @Valid @RequestBody org.law_app.document.web.Dtos.SetFolderRequest request) {
+    return ApiResponse.ok(service.setFolder(id, request.folderId()), "Đã cập nhật thư mục");
   }
 
   @PutMapping("/{id}/fields")
