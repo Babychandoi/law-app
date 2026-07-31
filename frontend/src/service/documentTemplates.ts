@@ -275,6 +275,13 @@ const documentTemplateService = {
     return res.data.data;
   },
 
+  restoreRetention: async (id: string): Promise<GeneratedDocument> => {
+    const res = await gatewayClient.put<ApiResponse<GeneratedDocument>>(
+      `/documents/generated/${id}/retention/restore`
+    );
+    return res.data.data;
+  },
+
   listGenerated: async (): Promise<GeneratedDocument[]> => {
     const res = await gatewayClient.get<ApiResponse<GeneratedDocument[]>>('/documents/generated');
     return res.data.data ?? [];

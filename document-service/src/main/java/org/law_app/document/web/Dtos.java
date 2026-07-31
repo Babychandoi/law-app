@@ -317,7 +317,8 @@ public final class Dtos {
       Instant finalizedAt,
       Instant createdAt,
       Instant updatedAt,
-      Long revision) {}
+      Long revision,
+      boolean hiddenByRetention) {}
 
   public record WorkflowTransitionRequest(
       @NotNull DocumentWorkflowStatus targetStatus,

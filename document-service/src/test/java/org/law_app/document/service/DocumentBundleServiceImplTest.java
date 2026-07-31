@@ -54,7 +54,7 @@ class DocumentBundleServiceImplTest {
     GeneratedDocumentResponse docA =
         new GeneratedDocumentResponse(
             "gen-A", "tA", null, null, 0, null, null, "a.docx", null, null, null, null, null, null,
-            null, null, null, null, null, null, null, null);
+            null, null, null, null, null, null, null, null, false);
     when(generatedDocumentService.generate(eq("tA"), any(), any())).thenReturn(docA);
     when(generatedDocumentService.generate(eq("tB"), any(), any()))
         .thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST, "Thiếu giá trị"));

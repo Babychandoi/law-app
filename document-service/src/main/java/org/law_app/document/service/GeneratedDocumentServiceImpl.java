@@ -165,8 +165,24 @@ public class GeneratedDocumentServiceImpl implements GeneratedDocumentService {
   @PreAuthorize("hasAnyRole('ADMIN','USER')")
   public List<GeneratedDocumentResponse> listGenerated() {
     return pageGenerated(
-            null, null, null, null, null, null, 0, LEGACY_LIST_LIMIT, "createdAt", "desc")
+            null, null, null, null, null, null, false, 0, LEGACY_LIST_LIMIT, "createdAt", "desc")
         .content();
+  }
+
+  @Override
+  @PreAuthorize("hasRole('ADMIN')")
+  public GeneratedDocumentResponse restoreFromRetention(String id) {
+    GeneratedDocument document =
+        generatedRepository
+            .findById(id)
+            .orElseThrow(
+                () -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy tài liệu"));
+    document.setHiddenByRetention(false);
+    document.setRetentionHiddenAt(null);
+    GeneratedDocument saved = generatedRepository.save(document);
+    auditService.record(
+        DocumentAuditService.GENERATED_DOCUMENT, id, "RETENTION_RESTORED", null, null, null);
+    return toResponse(saved);
   }
 
   @Override
@@ -178,6 +194,7 @@ public class GeneratedDocumentServiceImpl implements GeneratedDocumentService {
       String customerId,
       String serviceId,
       String templateId,
+      boolean includeExpired,
       int page,
       int size,
       String sort,
@@ -188,7 +205,8 @@ public class GeneratedDocumentServiceImpl implements GeneratedDocumentService {
     Sort.Direction sortDirection =
         "asc".equalsIgnoreCase(direction) ? Sort.Direction.ASC : Sort.Direction.DESC;
     Criteria criteria =
-        generatedCriteria(query, status, crmCaseId, customerId, serviceId, templateId);
+        generatedCriteria(
+            query, status, crmCaseId, customerId, serviceId, templateId, includeExpired);
     long total = mongoTemplate.count(Query.query(criteria), GeneratedDocument.class);
     List<GeneratedDocumentResponse> content =
         mongoTemplate
@@ -316,8 +334,13 @@ public class GeneratedDocumentServiceImpl implements GeneratedDocumentService {
       String crmCaseId,
       String customerId,
       String serviceId,
-      String templateId) {
+      String templateId,
+      boolean includeExpired) {
     List<Criteria> all = new ArrayList<>();
+    // Mặc định ẩn tài liệu đã quá hạn lưu trữ; chỉ admin và khi yêu cầu mới thấy.
+    if (!includeExpired || !CurrentUser.isAdmin()) {
+      all.add(Criteria.where("hiddenByRetention").ne(true));
+    }
     if (!CurrentUser.isAdmin()) {
       all.add(
           new Criteria()
@@ -639,7 +662,8 @@ public class GeneratedDocumentServiceImpl implements GeneratedDocumentService {
         document.getFinalizedAt(),
         document.getCreatedAt(),
         document.getUpdatedAt(),
-        document.getRevision());
+        document.getRevision(),
+        document.isHiddenByRetention());
   }
 
   private DocumentWorkflowStatus parseWorkflowStatus(String status) {

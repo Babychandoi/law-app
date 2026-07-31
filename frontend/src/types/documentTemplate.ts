@@ -198,6 +198,7 @@ export interface GeneratedDocument {
   matterReference?: string;
   sourceReferences?: string[];
   revision?: number;
+  hiddenByRetention?: boolean;
 }
 
 export interface DocumentTemplateVersion {
@@ -269,6 +270,7 @@ export interface GeneratedDocumentListQuery {
   customerId?: string;
   serviceId?: string;
   dossierId?: string;
+  includeExpired?: boolean;
   page?: number;
   size?: number;
   sort?: string;

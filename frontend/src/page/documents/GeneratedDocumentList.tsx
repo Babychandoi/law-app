@@ -5,6 +5,7 @@ import {
   Eye,
   FileText,
   RefreshCw,
+  RotateCcw,
   Search,
   Send,
   ShieldX,
@@ -52,6 +53,8 @@ export default function GeneratedDocumentList() {
   const [downloadingId, setDownloadingId] = useState<string | null>(null);
   const [workflowModal, setWorkflowModal] = useState<WorkflowModalState | null>(null);
   const [auditDocument, setAuditDocument] = useState<GeneratedDocument | null>(null);
+  const [includeExpired, setIncludeExpired] = useState(false);
+  const [restoringId, setRestoringId] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = window.setTimeout(() => setDebouncedQuery(query.trim()), 300);
@@ -60,7 +63,7 @@ export default function GeneratedDocumentList() {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedQuery, pageSize, sort, status]);
+  }, [debouncedQuery, pageSize, sort, status, includeExpired]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -70,6 +73,7 @@ export default function GeneratedDocumentList() {
       const result = await documentTemplateService.listGeneratedPage({
         q: debouncedQuery || undefined,
         status,
+        includeExpired: includeExpired || undefined,
         page: page - 1,
         size: pageSize,
         sort: sortField === 'fileName' ? 'generatedFileName' : sortField,
@@ -132,11 +136,24 @@ export default function GeneratedDocumentList() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedQuery, page, pageSize, sort, status]);
+  }, [debouncedQuery, includeExpired, page, pageSize, sort, status]);
 
   useEffect(() => {
     load();
   }, [load]);
+
+  const restore = async (document: GeneratedDocument) => {
+    setRestoringId(document.id);
+    try {
+      await documentTemplateService.restoreRetention(document.id);
+      toast.success('Đã khôi phục tài liệu');
+      load();
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Không khôi phục được.');
+    } finally {
+      setRestoringId(null);
+    }
+  };
 
   useEffect(() => {
     if (!loading && totalPages > 0 && page > totalPages) setPage(totalPages);
@@ -209,6 +226,16 @@ export default function GeneratedDocumentList() {
             <option value="fileName,desc">Tên Z–A</option>
           </select>
         </label>
+        {isAdmin && (
+          <label className="flex items-center gap-2 text-sm text-gray-700">
+            <input
+              type="checkbox"
+              checked={includeExpired}
+              onChange={(event) => setIncludeExpired(event.target.checked)}
+            />
+            Hiện cả tài liệu đã ẩn do quá hạn
+          </label>
+        )}
       </section>
 
       {error && (
@@ -306,9 +333,11 @@ export default function GeneratedDocumentList() {
                         me={me}
                         isAdmin={isAdmin}
                         downloading={downloadingId === document.id}
+                        restoring={restoringId === document.id}
                         onDownload={() => download(document)}
                         onAudit={() => setAuditDocument(document)}
                         onWorkflow={(targetStatus) => setWorkflowModal({ document, targetStatus })}
+                        onRestore={() => restore(document)}
                       />
                     </td>
                   </tr>
@@ -355,9 +384,11 @@ export default function GeneratedDocumentList() {
                     me={me}
                     isAdmin={isAdmin}
                     downloading={downloadingId === document.id}
+                    restoring={restoringId === document.id}
                     onDownload={() => download(document)}
                     onAudit={() => setAuditDocument(document)}
                     onWorkflow={(targetStatus) => setWorkflowModal({ document, targetStatus })}
+                    onRestore={() => restore(document)}
                   />
                 </div>
               </article>
@@ -402,21 +433,40 @@ function DocumentActions({
   me,
   isAdmin,
   downloading,
+  restoring,
   onDownload,
   onAudit,
   onWorkflow,
+  onRestore,
 }: {
   document: GeneratedDocument;
   me: MeResponse | null;
   isAdmin: boolean;
   downloading: boolean;
+  restoring: boolean;
   onDownload: () => void;
   onAudit: () => void;
   onWorkflow: (targetStatus: GeneratedDocumentStatus) => void;
+  onRestore: () => void;
 }) {
   const transitions = availableTransitions(document, me, isAdmin);
   return (
     <div className="flex flex-wrap justify-end gap-2">
+      {document.hiddenByRetention && (
+        <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800">
+          Đã ẩn (quá hạn)
+        </span>
+      )}
+      {document.hiddenByRetention && isAdmin && (
+        <button
+          type="button"
+          onClick={onRestore}
+          disabled={restoring}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-amber-300 px-3 py-2 text-xs font-medium text-amber-800 hover:bg-amber-50 disabled:opacity-50"
+        >
+          <RotateCcw size={14} aria-hidden="true" /> Khôi phục
+        </button>
+      )}
       <button
         type="button"
         onClick={onDownload}

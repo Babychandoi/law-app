@@ -56,6 +56,10 @@ public class GeneratedDocument {
   private Instant encryptedAt;
   @Builder.Default private LegalDocumentContext context = new LegalDocumentContext();
 
+  // Retention: ẩn mềm khi quá hạn lưu trữ (giữ file + metadata; admin khôi phục được).
+  @Indexed @Builder.Default private boolean hiddenByRetention = false;
+  private Instant retentionHiddenAt;
+
   @Builder.Default private DocumentWorkflowStatus status = DocumentWorkflowStatus.DRAFT;
   private String reviewerUserId;
   private String approvedByUserId;

@@ -33,7 +33,7 @@
 5. ✅ Thư viện điều khoản (MVP) — kho đoạn văn tái dùng (tiêu đề/nội dung/nhóm/tag), CRUD + tìm kiếm + copy nội dung; trang `/tai-lieu/clauses`; kết hợp `${if_KEY}` để bật/tắt. 6. ⚠️ Rule engine — chưa làm engine luật đầy đủ (điều kiện `${if_}` + thư viện điều khoản đã phủ nhu cầu cơ bản).
 7. ✅ So sánh phiên bản — diff UI trong editor (chọn 2 phiên bản → trường thêm/bớt/đổi + metadata). 8. ✅ Khôi phục phiên bản (`RestoreVersionRequest`).
 9. ✅ Search metadata (mẫu: name/description/serviceName/tags; tài liệu: theo trạng thái/case/customer/service) — regex substring, hợp tiếng Việt; values mã hóa nên không search nội dung (đúng thiết kế bảo mật). 10. ✅ Folder/tag — tag có; **folder**: `DocumentFolder` CRUD + `folderId` trên template + lọc `?folderId`; UI lọc/tạo/xóa thư mục ở danh sách mẫu + chọn thư mục trong editor.
-11. ⬜ Retention policy. 12. 🚫 Background queue (đồng bộ hiện đủ tải nội bộ).
+11. ✅ Retention policy — **ẩn mềm** tài liệu quá hạn (mặc định 365 ngày, giữ file+metadata, admin khôi phục); job @Scheduled + `DocumentRetentionService`; list ẩn mặc định + toggle "hiện quá hạn" + nút Khôi phục. Cấu hình `document.retention.*`. LIVE. 12. 🚫 Background queue (đồng bộ hiện đủ tải nội bộ).
 13. ✅ Antivirus (ICAP scanner, fail-closed cấu hình được). 14. 🚫 Observability. 15. 🚫 Backup/restore.
 16. ✅ Dashboard khối lượng tài liệu — backend `GET /documents/stats` + **trang Tổng quan** (KPI + phân bố trạng thái mẫu/tài liệu + quick links) tại `/tai-lieu/dashboard`. 17. ⬜ SLA + cảnh báo job lỗi.
 

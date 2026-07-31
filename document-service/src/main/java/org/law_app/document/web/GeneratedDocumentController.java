@@ -57,6 +57,7 @@ public class GeneratedDocumentController {
       @RequestParam(value = "customerId", required = false) String customerId,
       @RequestParam(value = "serviceId", required = false) String serviceId,
       @RequestParam(value = "templateId", required = false) String templateId,
+      @RequestParam(value = "includeExpired", defaultValue = "false") boolean includeExpired,
       @RequestParam(value = "page", defaultValue = "0") int page,
       @RequestParam(value = "size", defaultValue = "20") int size,
       @RequestParam(value = "sort", defaultValue = "createdAt") String sort,
@@ -69,6 +70,7 @@ public class GeneratedDocumentController {
             customerId,
             serviceId,
             templateId,
+            includeExpired,
             page,
             size,
             sort,
@@ -78,6 +80,11 @@ public class GeneratedDocumentController {
   @GetMapping("/generated/{id}")
   public ApiResponse<GeneratedDocumentResponse> detail(@PathVariable String id) {
     return ApiResponse.ok(service.get(id));
+  }
+
+  @PutMapping("/generated/{id}/retention/restore")
+  public ApiResponse<GeneratedDocumentResponse> restoreRetention(@PathVariable String id) {
+    return ApiResponse.ok(service.restoreFromRetention(id), "Đã khôi phục tài liệu");
   }
 
   @PutMapping("/generated/{id}/workflow")

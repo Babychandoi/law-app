@@ -23,6 +23,7 @@ public interface GeneratedDocumentService {
       String customerId,
       String serviceId,
       String templateId,
+      boolean includeExpired,
       int page,
       int size,
       String sort,
@@ -31,6 +32,9 @@ public interface GeneratedDocumentService {
   GeneratedDocumentResponse get(String id);
 
   GeneratedDocumentResponse transition(String id, WorkflowTransitionRequest request);
+
+  /** Bỏ ẩn tài liệu bị ẩn do quá hạn lưu trữ (admin). */
+  GeneratedDocumentResponse restoreFromRetention(String id);
 
   DownloadFile download(String id);
 

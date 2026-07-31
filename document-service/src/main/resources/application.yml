@@ -71,6 +71,11 @@ document:
   share:
     # URL công khai gốc để dựng link chia sẻ trong email (vd https://gateway.luatpoip.com).
     public-base-url: ${DOCUMENT_SHARE_PUBLIC_BASE_URL:}
+  retention:
+    # Quá hạn thì ẨN MỀM tài liệu đã tạo (giữ file+metadata, admin khôi phục được). Không xóa.
+    enabled: ${DOCUMENT_RETENTION_ENABLED:true}
+    days: ${DOCUMENT_RETENTION_DAYS:365}
+    cron: ${DOCUMENT_RETENTION_CRON:0 30 3 * * *}
   reconciliation:
     # Dọn file rác trên MinIO không còn metadata tham chiếu (do lỗi ghi sau upload).
     enabled: ${DOCUMENT_RECONCILIATION_ENABLED:true}
