@@ -4,8 +4,10 @@ import jakarta.validation.Valid;
 import java.io.InputStream;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.law_app.document.service.DocumentEmailService;
 import org.law_app.document.service.DocumentShareService;
 import org.law_app.document.web.Dtos.CreateShareRequest;
+import org.law_app.document.web.Dtos.SendDocumentEmailRequest;
 import org.law_app.document.web.Dtos.ShareLinkResponse;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ContentDisposition;
@@ -26,6 +28,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class DocumentShareController {
 
   private final DocumentShareService service;
+  private final DocumentEmailService emailService;
+
+  @PostMapping("/generated/{id}/email")
+  public ApiResponse<Void> email(
+      @PathVariable String id, @Valid @RequestBody SendDocumentEmailRequest request) {
+    emailService.sendShareLink(
+        id, request.to(), request.message(), request.expiresInHours(), request.maxDownloads());
+    return ApiResponse.ok(null, "Đã gửi email");
+  }
 
   @PostMapping("/generated/{id}/share")
   public ApiResponse<ShareLinkResponse> create(

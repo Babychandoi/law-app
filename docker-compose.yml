@@ -213,6 +213,14 @@ services:
       # Xuất PDF qua Gotenberg. Tắt mặc định; bật bằng DOCUMENT_PDF_ENABLED=true (cần chạy gotenberg).
       DOCUMENT_PDF_ENABLED: ${DOCUMENT_PDF_ENABLED:-false}
       DOCUMENT_PDF_GOTENBERG_URL: http://gotenberg:3000
+      # Gửi email (link chia sẻ bảo mật). Tắt mặc định; bật khi đã cấu hình SMTP + URL công khai.
+      DOCUMENT_MAIL_ENABLED: ${DOCUMENT_MAIL_ENABLED:-false}
+      DOCUMENT_MAIL_FROM: ${DOCUMENT_MAIL_FROM:-no-reply@luatpoip.com}
+      DOCUMENT_SHARE_PUBLIC_BASE_URL: ${DOCUMENT_SHARE_PUBLIC_BASE_URL:-}
+      MAIL_HOST: ${MAIL_HOST:-}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
     read_only: true
     tmpfs:
       - /tmp:size=256m,mode=1777

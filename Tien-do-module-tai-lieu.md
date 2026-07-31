@@ -29,7 +29,7 @@
 
 ## P2 — Sản phẩm chuyên nghiệp
 1. ⚠️ Sinh PDF — **code xong, flag OFF**: `GET /documents/generated/{id}/pdf` qua Gotenberg (LibreOffice headless HTTP, không bloat image); nút "Tải PDF" ở form tạo tài liệu. Bật: chạy service `gotenberg` (đã thêm vào compose) + `DOCUMENT_PDF_ENABLED=true`.
-2. 🚫 Ký số. 3. ⬜ Gửi email (cần SMTP). 4. ✅ Chia sẻ bảo mật cho KH — link token băm (SHA-256), hạn dùng + giới hạn lượt tải + thu hồi; endpoint công khai `GET /documents/shared/{token}` (permitAll); nút "Tạo link chia sẻ" ở màn tạo tài liệu.
+2. 🚫 Ký số. 3. ⚠️ Gửi email — **code xong, flag OFF**: `POST /documents/generated/{id}/email` gửi LINK chia sẻ bảo mật (không đính kèm file nhạy cảm) qua SMTP; nút "Gửi email" ở màn tạo tài liệu. Bật: `DOCUMENT_MAIL_ENABLED=true` + `MAIL_*` (SMTP) + `DOCUMENT_SHARE_PUBLIC_BASE_URL`. 4. ✅ Chia sẻ bảo mật cho KH — link token băm (SHA-256), hạn dùng + giới hạn lượt tải + thu hồi; endpoint công khai `GET /documents/shared/{token}` (permitAll); nút "Tạo link chia sẻ" ở màn tạo tài liệu.
 5. ⬜ Thư viện điều khoản. 6. ⬜ Rule engine.
 7. ⚠️ So sánh phiên bản (có version; chưa có diff UI). 8. ✅ Khôi phục phiên bản (`RestoreVersionRequest`).
 9. ✅ Search metadata (mẫu: name/description/serviceName/tags; tài liệu: theo trạng thái/case/customer/service) — regex substring, hợp tiếng Việt; values mã hóa nên không search nội dung (đúng thiết kế bảo mật). 10. ⚠️ Folder/tag (tag có; folder chưa).

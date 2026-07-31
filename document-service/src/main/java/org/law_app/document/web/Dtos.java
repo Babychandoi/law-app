@@ -123,6 +123,12 @@ public final class Dtos {
   public record CreateShareRequest(
       @Min(1) @Max(8760) Integer expiresInHours, @Min(1) @Max(100_000) Integer maxDownloads) {}
 
+  public record SendDocumentEmailRequest(
+      @jakarta.validation.constraints.Email @NotBlank @Size(max = 254) String to,
+      @Size(max = 2000) String message,
+      @Min(1) @Max(8760) Integer expiresInHours,
+      @Min(1) @Max(100_000) Integer maxDownloads) {}
+
   public record ShareLinkResponse(
       String id,
       String token,

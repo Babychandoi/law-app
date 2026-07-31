@@ -8,6 +8,7 @@ import {
   Download,
   Edit3,
   FileCheck2,
+  Mail,
   Share2,
   Plus,
   RefreshCw,
@@ -48,6 +49,10 @@ export default function GenerateDocument() {
   const [downloadError, setDownloadError] = useState('');
   const [sharing, setSharing] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
+  const [showEmail, setShowEmail] = useState(false);
+  const [emailTo, setEmailTo] = useState('');
+  const [emailMessage, setEmailMessage] = useState('');
+  const [emailSending, setEmailSending] = useState(false);
   const [resolvedContext, setResolvedContext] = useState<GenerateDocumentContext>({});
   const [prefilledCount, setPrefilledCount] = useState(0);
   const [sourceWarning, setSourceWarning] = useState('');
@@ -240,6 +245,25 @@ export default function GenerateDocument() {
       toast.error(error?.response?.data?.message || 'Không tạo được link chia sẻ.');
     } finally {
       setSharing(false);
+    }
+  };
+
+  const sendEmail = async () => {
+    if (!generated || !emailTo.trim()) return;
+    setEmailSending(true);
+    try {
+      await documentTemplateService.emailDocument(generated.id, {
+        to: emailTo.trim(),
+        message: emailMessage.trim() || undefined,
+      });
+      toast.success('Đã gửi email cho khách');
+      setShowEmail(false);
+      setEmailTo('');
+      setEmailMessage('');
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Không gửi được email.');
+    } finally {
+      setEmailSending(false);
     }
   };
 
@@ -617,6 +641,14 @@ export default function GenerateDocument() {
                 >
                   <Share2 size={16} aria-hidden="true" /> Tạo link chia sẻ
                 </button>
+                <button
+                  type="button"
+                  onClick={() => setShowEmail((v) => !v)}
+                  aria-expanded={showEmail}
+                  className="inline-flex items-center gap-2 rounded-lg border border-green-300 bg-white px-4 py-2 text-sm font-medium text-green-800 hover:bg-green-100"
+                >
+                  <Mail size={16} aria-hidden="true" /> Gửi email
+                </button>
                 <Link
                   to="/2025/luatpoip/tai-lieu/generated"
                   className="inline-flex items-center rounded-lg border border-green-300 px-4 py-2 text-sm font-medium hover:bg-green-100"
@@ -624,6 +656,44 @@ export default function GenerateDocument() {
                   Xem lịch sử
                 </Link>
               </div>
+              {showEmail && (
+                <div className="mt-3 rounded-lg border border-green-300 bg-white p-3">
+                  <p className="text-xs font-medium text-gray-600">
+                    Gửi link tải bảo mật tới email khách (link hết hạn sau 72 giờ):
+                  </p>
+                  <div className="mt-2 space-y-2">
+                    <input
+                      type="email"
+                      value={emailTo}
+                      onChange={(e) => setEmailTo(e.target.value)}
+                      placeholder="email@khachhang.com"
+                      aria-label="Email người nhận"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                    />
+                    <textarea
+                      value={emailMessage}
+                      onChange={(e) => setEmailMessage(e.target.value)}
+                      rows={2}
+                      placeholder="Lời nhắn (không bắt buộc)"
+                      aria-label="Lời nhắn"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                    />
+                    <button
+                      type="button"
+                      onClick={sendEmail}
+                      disabled={emailSending || !emailTo.trim()}
+                      className="inline-flex items-center gap-2 rounded-lg bg-green-700 px-4 py-2 text-sm font-medium text-white hover:bg-green-800 disabled:opacity-60"
+                    >
+                      {emailSending ? (
+                        <Spinner size={16} className="text-white" label="Đang gửi" />
+                      ) : (
+                        <Mail size={16} aria-hidden="true" />
+                      )}
+                      Gửi
+                    </button>
+                  </div>
+                </div>
+              )}
               {shareUrl && (
                 <div className="mt-3 rounded-lg border border-green-300 bg-white p-3">
                   <p className="text-xs font-medium text-gray-600">

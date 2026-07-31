@@ -308,6 +308,13 @@ const documentTemplateService = {
     return res.data.data;
   },
 
+  emailDocument: async (
+    id: string,
+    request: { to: string; message?: string; expiresInHours?: number; maxDownloads?: number }
+  ): Promise<void> => {
+    await gatewayClient.post(`/documents/generated/${id}/email`, request);
+  },
+
   shareLinkUrl: (path: string | null): string => {
     if (!path) return '';
     const base = (process.env.REACT_APP_GATEWAY_URL || '').replace(/\/$/, '');
