@@ -170,7 +170,9 @@ function DocLink({
       end={end}
       className={({ isActive }) =>
         `inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
-          isActive ? 'bg-brand-gold text-white' : 'bg-white text-brand-ink hover:bg-brand-line/40'
+          isActive
+            ? 'bg-brand-goldDark text-white'
+            : 'bg-white text-brand-ink hover:bg-brand-line/40'
         }`
       }
     >

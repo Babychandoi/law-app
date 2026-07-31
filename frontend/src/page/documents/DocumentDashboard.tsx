@@ -137,7 +137,7 @@ function KpiCard({
       <div className="flex items-center gap-2 text-brand-goldDark">{icon}</div>
       <p className="mt-3 text-3xl font-semibold text-gray-900">{value.toLocaleString('vi-VN')}</p>
       <p className="mt-1 text-sm text-gray-600">{label}</p>
-      {hint && <p className="mt-0.5 text-xs text-gray-400">{hint}</p>}
+      {hint && <p className="mt-0.5 text-xs text-gray-500">{hint}</p>}
     </div>
   );
 }
@@ -157,7 +157,7 @@ function StatusBreakdown({
     <section className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
       <h2 className="font-semibold text-gray-900">{title}</h2>
       {entries.length === 0 ? (
-        <p className="mt-3 text-sm italic text-gray-400">Chưa có dữ liệu.</p>
+        <p className="mt-3 text-sm italic text-gray-500">Chưa có dữ liệu.</p>
       ) : (
         <ul className="mt-4 space-y-3">
           {entries.map(([status, count]) => (
