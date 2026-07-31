@@ -211,7 +211,9 @@ services:
       MINIO_CHAT_ACCESS_KEY: ""
       MINIO_CHAT_SECRET_KEY: ""
       DOCUMENT_ANTIVIRUS_ENABLED: ${DOCUMENT_ANTIVIRUS_ENABLED:-true}
-      DOCUMENT_ANTIVIRUS_FAIL_CLOSED: ${DOCUMENT_ANTIVIRUS_FAIL_CLOSED:-true}
+      # Fail-OPEN: vẫn quét khi ClamAV sẵn sàng, nhưng KHÔNG chặn upload khi scanner không có
+      # (host này không đủ RAM chạy ClamAV 4GB). Đổi về true nếu chạy được ClamAV ổn định.
+      DOCUMENT_ANTIVIRUS_FAIL_CLOSED: ${DOCUMENT_ANTIVIRUS_FAIL_CLOSED:-false}
       DOCUMENT_ANTIVIRUS_HOST: clamav
       DOCUMENT_ANTIVIRUS_PORT: 3310
       # Xuất PDF qua Gotenberg. Tắt mặc định; bật bằng DOCUMENT_PDF_ENABLED=true (cần chạy gotenberg).
