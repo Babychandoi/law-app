@@ -21,10 +21,11 @@ spring:
       max-request-size: ${DOCUMENT_MAX_REQUEST_SIZE:30MB}
 
   mail:
-    host: ${MAIL_HOST:}
+    # Dùng lại SMTP sẵn có của monolith (EMAIL_USERNAME/EMAIL_PASSWORD trong .env) — mặc định Gmail.
+    host: ${MAIL_HOST:smtp.gmail.com}
     port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME:}
-    password: ${MAIL_PASSWORD:}
+    username: ${MAIL_USERNAME:${EMAIL_USERNAME:}}
+    password: ${MAIL_PASSWORD:${EMAIL_PASSWORD:}}
     properties:
       mail.smtp.auth: ${MAIL_SMTP_AUTH:true}
       mail.smtp.starttls.enable: ${MAIL_SMTP_STARTTLS:true}
@@ -65,7 +66,8 @@ document:
   mail:
     # Gửi tài liệu (link chia sẻ bảo mật) qua email. Tắt mặc định; bật khi đã cấu hình SMTP.
     enabled: ${DOCUMENT_MAIL_ENABLED:false}
-    from: ${DOCUMENT_MAIL_FROM:no-reply@luatpoip.com}
+    # Gmail yêu cầu "from" trùng tài khoản đăng nhập → mặc định = EMAIL_USERNAME.
+    from: ${DOCUMENT_MAIL_FROM:${EMAIL_USERNAME:no-reply@luatpoip.com}}
   share:
     # URL công khai gốc để dựng link chia sẻ trong email (vd https://gateway.luatpoip.com).
     public-base-url: ${DOCUMENT_SHARE_PUBLIC_BASE_URL:}
