@@ -1,9 +1,20 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useOutletContext, useSearchParams } from 'react-router-dom';
-import { Archive, Edit, FileText, Plus, RefreshCw, RotateCcw, Search, Wand2 } from 'lucide-react';
+import { Link, useNavigate, useOutletContext, useSearchParams } from 'react-router-dom';
+import {
+  Archive,
+  Copy,
+  Edit,
+  FileText,
+  Plus,
+  RefreshCw,
+  RotateCcw,
+  Search,
+  Wand2,
+} from 'lucide-react';
 import { toast } from 'react-toastify';
 import documentTemplateService from '../../service/documentTemplates';
 import { DocumentFolder, DocumentTemplate } from '../../types/documentTemplate';
+import { MeResponse } from '../../service/auth';
 import EmptyState from '../../component/common/ui/EmptyState';
 import Spinner from '../../component/common/ui/Spinner';
 import useConfirm from '../../component/common/ui/useConfirm';
@@ -14,7 +25,8 @@ type StatusFilter = DocumentTemplate['status'] | 'ALL';
 type SortValue = 'updatedAt,desc' | 'name,asc' | 'name,desc' | 'version,desc';
 
 export default function TemplateList() {
-  const { isAdmin } = useOutletContext<{ isAdmin: boolean }>();
+  const { me, isAdmin } = useOutletContext<{ me: MeResponse | null; isAdmin: boolean }>();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [templates, setTemplates] = useState<DocumentTemplate[]>([]);
   const [query, setQuery] = useState('');
@@ -32,6 +44,8 @@ export default function TemplateList() {
   const [folderId, setFolderId] = useState('');
   const [showNewFolder, setShowNewFolder] = useState(false);
   const [newFolderName, setNewFolderName] = useState('');
+  const [mineOnly, setMineOnly] = useState(false);
+  const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
   const { confirm, confirmDialog } = useConfirm();
   const generationContextQuery = buildGenerationContextQuery(searchParams);
   const linkedServiceId = searchParams.get('serviceId') || '';
@@ -43,7 +57,7 @@ export default function TemplateList() {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedQuery, status, sort, pageSize, folderId]);
+  }, [debouncedQuery, status, sort, pageSize, folderId, mineOnly]);
 
   const loadFolders = useCallback(async () => {
     try {
@@ -88,6 +102,19 @@ export default function TemplateList() {
     }
   };
 
+  const duplicate = async (template: DocumentTemplate) => {
+    setDuplicatingId(template.id);
+    try {
+      const created = await documentTemplateService.duplicateTemplate(template.id);
+      toast.success('Đã nhân bản mẫu');
+      navigate(`/2025/luatpoip/tai-lieu/templates/${created.id}/edit`);
+    } catch (e: any) {
+      toast.error(e?.response?.data?.message || 'Không nhân bản được mẫu.');
+    } finally {
+      setDuplicatingId(null);
+    }
+  };
+
   const load = useCallback(async () => {
     setLoading(true);
     setError('');
@@ -98,6 +125,7 @@ export default function TemplateList() {
         status: isAdmin ? status : 'ACTIVE',
         serviceId: linkedServiceId || undefined,
         folderId: folderId || undefined,
+        createdBy: mineOnly && me?.id ? me.id : undefined,
         page: page - 1,
         size: pageSize,
         sort: sortField,
@@ -125,6 +153,7 @@ export default function TemplateList() {
         const normalizedQuery = searchText(debouncedQuery);
         const filtered = all
           .filter((template) => !linkedServiceId || template.serviceId === linkedServiceId)
+          .filter((template) => !mineOnly || !me?.id || template.createdByUserId === me.id)
           .filter((template) =>
             !folderId
               ? true
@@ -168,7 +197,18 @@ export default function TemplateList() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedQuery, isAdmin, linkedServiceId, folderId, page, pageSize, sort, status]);
+  }, [
+    debouncedQuery,
+    isAdmin,
+    linkedServiceId,
+    folderId,
+    mineOnly,
+    me?.id,
+    page,
+    pageSize,
+    sort,
+    status,
+  ]);
 
   useEffect(() => {
     load();
@@ -369,6 +409,16 @@ export default function TemplateList() {
               </button>
             </span>
           )}
+          {isAdmin && (
+            <label className="flex items-center gap-2 text-sm text-gray-700">
+              <input
+                type="checkbox"
+                checked={mineOnly}
+                onChange={(event) => setMineOnly(event.target.checked)}
+              />
+              Chỉ mẫu của tôi
+            </label>
+          )}
           {isAdmin && folderId && folderId !== 'none' && (
             <button
               type="button"
@@ -423,8 +473,10 @@ export default function TemplateList() {
               template={template}
               isAdmin={isAdmin}
               archiving={archivingId === template.id}
+              duplicating={duplicatingId === template.id}
               onArchive={() => archive(template)}
               onRestore={() => restore(template)}
+              onDuplicate={() => duplicate(template)}
               generationContextQuery={generationContextQuery}
             />
           ))}
@@ -452,15 +504,19 @@ function TemplateCard({
   template,
   isAdmin,
   archiving,
+  duplicating,
   onArchive,
   onRestore,
+  onDuplicate,
   generationContextQuery,
 }: {
   template: DocumentTemplate;
   isAdmin: boolean;
   archiving: boolean;
+  duplicating: boolean;
   onArchive: () => void;
   onRestore: () => void;
+  onDuplicate: () => void;
   generationContextQuery: string;
 }) {
   return (
@@ -523,6 +579,19 @@ function TemplateCard({
             >
               <Edit size={16} aria-hidden="true" /> Cấu hình
             </Link>
+            <button
+              type="button"
+              onClick={onDuplicate}
+              disabled={duplicating}
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:opacity-50"
+            >
+              {duplicating ? (
+                <Spinner size={16} label={`Đang nhân bản ${template.name}`} />
+              ) : (
+                <Copy size={16} aria-hidden="true" />
+              )}
+              Nhân bản
+            </button>
             {template.status !== 'ARCHIVED' && (
               <button
                 type="button"

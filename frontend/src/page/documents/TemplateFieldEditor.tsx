@@ -6,6 +6,7 @@ import {
   ChevronDown,
   Clock3,
   Eye,
+  FlaskConical,
   History,
   RotateCcw,
   Save,
@@ -79,6 +80,7 @@ export default function TemplateFieldEditor() {
   const [historyLoading, setHistoryLoading] = useState(false);
   const [historyUnavailable, setHistoryUnavailable] = useState(false);
   const [folders, setFolders] = useState<DocumentFolder[]>([]);
+  const [dryRunning, setDryRunning] = useState(false);
   const [compareA, setCompareA] = useState('');
   const [compareB, setCompareB] = useState('');
   const [restoreVersion, setRestoreVersion] = useState<DocumentTemplateVersion | null>(null);
@@ -156,6 +158,20 @@ export default function TemplateFieldEditor() {
       document.getElementById(fieldInputId(first.index, first.property)) ??
       document.getElementById(`document-field-${first.index}`);
     target?.focus();
+  };
+
+  const dryRun = async () => {
+    setDryRunning(true);
+    try {
+      const result = await documentTemplateService.dryRunTemplate(id);
+      toast.success(`Tạo thử thành công · file ${(result.outputSize / 1024).toFixed(1)} KB`);
+    } catch (error: any) {
+      toast.error(
+        error?.response?.data?.message || 'Tạo thử thất bại — kiểm tra placeholder/cấu hình mẫu.'
+      );
+    } finally {
+      setDryRunning(false);
+    }
   };
 
   const saveDraft = async (): Promise<DocumentTemplate | null> => {
@@ -375,6 +391,19 @@ export default function TemplateFieldEditor() {
                 <Eye size={16} aria-hidden="true" />
               )}
               {preview ? 'Đóng xem trước' : 'Xem trước'}
+            </button>
+            <button
+              type="button"
+              onClick={dryRun}
+              disabled={dryRunning}
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:opacity-50"
+            >
+              {dryRunning ? (
+                <Spinner size={16} label="Đang tạo thử" />
+              ) : (
+                <FlaskConical size={16} aria-hidden="true" />
+              )}
+              Tạo thử
             </button>
             <button
               type="button"

@@ -175,6 +175,22 @@ const documentTemplateService = {
     return res.data.data;
   },
 
+  dryRunTemplate: async (
+    id: string
+  ): Promise<{ valid: boolean; outputSize: number; outputSha256: string }> => {
+    const res = await gatewayClient.post<
+      ApiResponse<{ valid: boolean; outputSize: number; outputSha256: string }>
+    >(`/documents/templates/${id}/dry-run`, { values: {} });
+    return res.data.data;
+  },
+
+  duplicateTemplate: async (id: string): Promise<DocumentTemplate> => {
+    const res = await gatewayClient.post<ApiResponse<DocumentTemplate>>(
+      `/documents/templates/${id}/duplicate`
+    );
+    return res.data.data;
+  },
+
   uploadTemplate: async (
     file: File,
     name: string,

@@ -96,7 +96,13 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
               .build());
     }
     return createInitialTemplate(
-        bytes, file, name, description, fields, "Uploaded DOCX template", payload.scanStatus());
+        bytes,
+        file.getOriginalFilename(),
+        name,
+        description,
+        fields,
+        "Uploaded DOCX template",
+        payload.scanStatus());
   }
 
   @Override
@@ -108,20 +114,26 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     String html = docxTemplateEngine.toHtml(new ByteArrayInputStream(bytes));
     DocumentTemplateResponse response =
         createInitialTemplate(
-            bytes, file, name, description, List.of(), "Uploaded raw DOCX", payload.scanStatus());
+            bytes,
+            file.getOriginalFilename(),
+            name,
+            description,
+            List.of(),
+            "Uploaded raw DOCX",
+            payload.scanStatus());
     return new TemplatePreviewResponse(response.id(), response.name(), html);
   }
 
   private DocumentTemplateResponse createInitialTemplate(
       byte[] bytes,
-      MultipartFile file,
+      String originalFileName,
       String name,
       String description,
       List<DocumentTemplateField> fields,
       String changeReason,
       DocumentMalwareScanner.ScanStatus scanStatus) {
     String id = UUID.randomUUID().toString();
-    String original = safeOriginalName(file.getOriginalFilename());
+    String original = safeOriginalName(originalFileName);
     String objectName = immutableObjectName(id, 1, original);
     String bucket = minioConfig.getTemplatesBucket();
     String hash = DocumentHashing.sha256(bytes);
@@ -191,11 +203,8 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     DocumentTemplate template = findTemplate(id);
     DocumentTemplateVersion latest = versionManager.ensureLatestVersion(template);
     valueValidator.validateSchema(latest.getFields());
-    Map<String, String> values =
-        valueValidator.normalizeAndValidate(latest.getFields(), request.values());
-    byte[] rendered =
-        docxTemplateEngine.render(
-            storage.getObject(latest.getTemplateBucket(), latest.getTemplateObjectName()), values);
+    // "Tạo thử": render với dữ liệu MẪU (hỗ trợ derived/list/điều kiện) để kiểm tra file ra hợp lệ.
+    byte[] rendered = trialRender(latest);
     docxTemplateEngine.validatePackage(new ByteArrayInputStream(rendered));
     String hash = DocumentHashing.sha256(rendered);
     auditService.record(
@@ -287,7 +296,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
   @Override
   @PreAuthorize("hasAnyRole('ADMIN','USER')")
   public List<DocumentTemplateResponse> listTemplates(String status) {
-    return pageTemplates(null, status, null, null, 0, LEGACY_LIST_LIMIT, "updatedAt", "desc")
+    return pageTemplates(null, status, null, null, null, 0, LEGACY_LIST_LIMIT, "updatedAt", "desc")
         .content();
   }
 
@@ -298,6 +307,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
       String status,
       String serviceId,
       String folderId,
+      String createdBy,
       int page,
       int size,
       String sort,
@@ -307,7 +317,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     String sortField = TEMPLATE_SORT_FIELDS.contains(sort) ? sort : "updatedAt";
     Sort.Direction sortDirection =
         "asc".equalsIgnoreCase(direction) ? Sort.Direction.ASC : Sort.Direction.DESC;
-    Criteria criteria = templateCriteria(query, status, serviceId, folderId);
+    Criteria criteria = templateCriteria(query, status, serviceId, folderId, createdBy);
     Query countQuery = Query.query(criteria);
     long total = mongoTemplate.count(countQuery, DocumentTemplate.class);
     Query dataQuery =
@@ -336,6 +346,36 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
       throw notFound();
     }
     return toResponseForViewer(template);
+  }
+
+  @Override
+  @PreAuthorize("hasRole('ADMIN')")
+  public DocumentTemplateResponse duplicate(String id) {
+    DocumentTemplate source = findTemplate(id);
+    byte[] bytes;
+    try (InputStream stream =
+        storage.getObject(source.getTemplateBucket(), source.getTemplateObjectName())) {
+      bytes = stream.readAllBytes();
+    } catch (IOException e) {
+      throw new ResponseStatusException(
+          HttpStatus.INTERNAL_SERVER_ERROR, "Không đọc được file mẫu nguồn");
+    }
+    DocumentTemplateResponse created =
+        createInitialTemplate(
+            bytes,
+            source.getOriginalFileName(),
+            source.getName() + " (bản sao)",
+            source.getDescription(),
+            DocumentTemplateCopies.fields(source.getFields()),
+            "Nhân bản từ mẫu " + source.getId(),
+            DocumentMalwareScanner.ScanStatus.DISABLED);
+    // Sao chép cả metadata dịch vụ/thẻ/thư mục sang bản nháp mới.
+    DocumentTemplate copy = findTemplate(created.id());
+    copy.setServiceId(source.getServiceId());
+    copy.setServiceName(source.getServiceName());
+    copy.setTags(source.getTags() == null ? List.of() : List.copyOf(source.getTags()));
+    copy.setFolderId(source.getFolderId());
+    return toResponse(repository.save(copy));
   }
 
   @Override
@@ -572,7 +612,7 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
   }
 
   private Criteria templateCriteria(
-      String query, String status, String serviceId, String folderId) {
+      String query, String status, String serviceId, String folderId, String createdBy) {
     List<Criteria> criteria = new ArrayList<>();
     if (!CurrentUser.isAdmin()) {
       criteria.add(Criteria.where("status").is(DocumentTemplateStatus.ACTIVE));
@@ -587,6 +627,9 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
           "none".equalsIgnoreCase(folderId.trim())
               ? Criteria.where("folderId").is(null)
               : Criteria.where("folderId").is(folderId.trim()));
+    }
+    if (createdBy != null && !createdBy.isBlank()) {
+      criteria.add(Criteria.where("createdByUserId").is(createdBy.trim()));
     }
     if (query != null && !query.isBlank()) {
       Pattern search = Pattern.compile(Pattern.quote(query.trim()), Pattern.CASE_INSENSITIVE);
@@ -734,6 +777,40 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     if (!submitted.equals(effectivePlaceholders)) {
       throw badRequest("Danh sách key phải khớp chính xác với placeholder trong file mẫu");
     }
+  }
+
+  /**
+   * Trial render: dựng dữ liệu mẫu từ default/placeholder, 1 dòng cho mỗi list, có augment dẫn
+   * xuất; dùng chung cho publish-validate và "Tạo thử". Trả về DOCX kết quả.
+   */
+  private byte[] trialRender(DocumentTemplateVersion version) {
+    Map<String, String> trialValues = new LinkedHashMap<>();
+    version
+        .getFields()
+        .forEach(
+            field ->
+                trialValues.put(
+                    field.getFieldKey(),
+                    field.getDefaultValue() == null
+                        ? "[[" + field.getFieldKey() + "]]"
+                        : field.getDefaultValue()));
+    Map<String, java.util.LinkedHashSet<String>> listSpecs =
+        listSpecs(
+            docxTemplateEngine
+                .countPlaceholders(
+                    storage.getObject(version.getTemplateBucket(), version.getTemplateObjectName()))
+                .keySet());
+    Map<String, List<Map<String, String>>> trialLists = new LinkedHashMap<>();
+    listSpecs.forEach(
+        (listKey, children) -> {
+          Map<String, String> row = new LinkedHashMap<>();
+          children.forEach(child -> row.put(child, "[[" + listKey + "." + child + "]]"));
+          trialLists.put(listKey, List.of(row));
+        });
+    return docxTemplateEngine.renderWithLists(
+        storage.getObject(version.getTemplateBucket(), version.getTemplateObjectName()),
+        DocumentDerivedValues.augment(version.getFields(), trialValues),
+        trialLists);
   }
 
   /** Placeholder trường lặp có dạng {@code list__child} (chứa "__"). */

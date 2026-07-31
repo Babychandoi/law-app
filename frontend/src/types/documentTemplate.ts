@@ -247,6 +247,7 @@ export interface TemplateListQuery {
   status?: DocumentTemplateStatus | 'ALL';
   serviceId?: string;
   folderId?: string;
+  createdBy?: string;
   page?: number;
   size?: number;
   sort?: string;

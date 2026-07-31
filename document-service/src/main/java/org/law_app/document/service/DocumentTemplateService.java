@@ -34,12 +34,15 @@ public interface DocumentTemplateService {
       String status,
       String serviceId,
       String folderId,
+      String createdBy,
       int page,
       int size,
       String sort,
       String direction);
 
   DocumentTemplateResponse getTemplate(String id);
+
+  DocumentTemplateResponse duplicate(String id);
 
   DocumentTemplateResponse setFolder(String id, String folderId);
 
