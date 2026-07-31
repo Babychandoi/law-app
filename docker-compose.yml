@@ -196,6 +196,10 @@ services:
       DOCUMENT_MONGODB_HOST: law-app-mongodb
       DOCUMENT_MONGODB_PORT: 27017
       DOCUMENT_MONGODB_DATABASE: ${DOCUMENT_MONGODB_DATABASE:-law-app-documents}
+      # Đè tên DB Mongo của monolith rò rỉ qua .env (SPRING_DATA_MONGODB_DATABASE=law_app_chat) —
+      # nếu không, Spring dùng property `database` này đè lên DB trong URI → tài liệu ghi nhầm sang
+      # law_app_chat. Ép về DB riêng của document-service.
+      SPRING_DATA_MONGODB_DATABASE: ${DOCUMENT_MONGODB_DATABASE:-law-app-documents}
       # Use container-name DNS aliases (these resolve reliably on the running prod network).
       SPRING_DATA_REDIS_HOST: law-app-redis
       SPRING_DATA_REDIS_PORT: 6379
