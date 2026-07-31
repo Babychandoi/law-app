@@ -111,7 +111,17 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
     validateTemplateUpload(file, name, description);
     UploadPayload payload = readUpload(file);
     byte[] bytes = payload.bytes();
-    String html = docxTemplateEngine.toHtml(new ByteArrayInputStream(bytes));
+    // Xem trước là BEST-EFFORT: nếu docx4j không render được (font/nội dung đặc biệt) thì vẫn tạo
+    // mẫu, trả về ghi chú thay vì chặn upload.
+    String html;
+    try {
+      html = docxTemplateEngine.toHtml(new ByteArrayInputStream(bytes));
+    } catch (RuntimeException e) {
+      html =
+          "<p style=\"color:#a15c00\">Không tạo được bản xem trước cho file này"
+              + " (phông chữ/định dạng đặc biệt). Bạn vẫn có thể cấu hình trường và publish;"
+              + " hoặc dùng luồng “Tải mẫu” với placeholder ${key}.</p>";
+    }
     DocumentTemplateResponse response =
         createInitialTemplate(
             bytes,
