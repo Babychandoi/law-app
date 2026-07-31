@@ -149,6 +149,28 @@ public final class Dtos {
       long generatedLast30Days,
       long bundlesActive) {}
 
+  /* ===== Thư viện điều khoản ===== */
+
+  public record ClauseRequest(
+      @NotBlank @Size(max = 300) String title,
+      @NotBlank @Size(max = 50_000) String content,
+      @Size(max = 200) String category,
+      @Size(max = 50) List<@NotBlank @Size(max = 100) String> tags,
+      Long expectedRevision) {}
+
+  public record ClauseResponse(
+      String id,
+      String title,
+      String content,
+      String category,
+      List<String> tags,
+      DocumentTemplateStatus status,
+      String createdByUserId,
+      String updatedByUserId,
+      Instant createdAt,
+      Instant updatedAt,
+      Long revision) {}
+
   /* ===== Bộ mẫu (document bundle) ===== */
 
   public record BundleItemRequest(

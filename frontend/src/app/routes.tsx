@@ -43,6 +43,7 @@ const DocumentDashboard = lazy(() => import('../page/documents/DocumentDashboard
 const BundleList = lazy(() => import('../page/documents/BundleList'));
 const BundleEditor = lazy(() => import('../page/documents/BundleEditor'));
 const GenerateBundle = lazy(() => import('../page/documents/GenerateBundle'));
+const ClauseLibrary = lazy(() => import('../page/documents/ClauseLibrary'));
 
 function RouteFallback() {
   return (
@@ -124,6 +125,7 @@ export const documentRoutes: RouteObject[] = [
       { path: 'bundles/new', element: withSuspense(<BundleEditor />) },
       { path: 'bundles/:id/edit', element: withSuspense(<BundleEditor />) },
       { path: 'bundles/:id/generate', element: withSuspense(<GenerateBundle />) },
+      { path: 'clauses', element: withSuspense(<ClauseLibrary />) },
     ],
   },
 ];

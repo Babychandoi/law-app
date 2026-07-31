@@ -10,6 +10,8 @@ import {
   DocumentBundle,
   DocumentBundleRequest,
   DocumentStats,
+  DocumentClause,
+  ClauseRequest,
   GenerateBundleResponse,
   ShareLink,
   GeneratedDocumentListQuery,
@@ -27,6 +29,34 @@ import {
 const documentTemplateService = {
   getStats: async (): Promise<DocumentStats> => {
     const res = await gatewayClient.get<ApiResponse<DocumentStats>>('/documents/stats');
+    return res.data.data;
+  },
+
+  listClauses: async (query?: string, tag?: string): Promise<DocumentClause[]> => {
+    const res = await gatewayClient.get<ApiResponse<DocumentClause[]>>('/documents/clauses', {
+      params: cleanParams({ q: query, tag }),
+    });
+    return res.data.data ?? [];
+  },
+
+  createClause: async (request: ClauseRequest): Promise<DocumentClause> => {
+    const res = await gatewayClient.post<ApiResponse<DocumentClause>>(
+      '/documents/clauses',
+      request
+    );
+    return res.data.data;
+  },
+
+  updateClause: async (id: string, request: ClauseRequest): Promise<DocumentClause> => {
+    const res = await gatewayClient.put<ApiResponse<DocumentClause>>(
+      `/documents/clauses/${id}`,
+      request
+    );
+    return res.data.data;
+  },
+
+  archiveClause: async (id: string): Promise<DocumentClause> => {
+    const res = await gatewayClient.delete<ApiResponse<DocumentClause>>(`/documents/clauses/${id}`);
     return res.data.data;
   },
 

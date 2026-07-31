@@ -99,6 +99,28 @@ export interface GenerateBundleResponse {
   results: BundleGenerationResult[];
 }
 
+export interface DocumentClause {
+  id: string;
+  title: string;
+  content: string;
+  category?: string;
+  tags?: string[];
+  status: DocumentTemplateStatus;
+  createdByUserId?: string;
+  updatedByUserId?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  revision?: number;
+}
+
+export interface ClauseRequest {
+  title: string;
+  content: string;
+  category?: string;
+  tags?: string[];
+  expectedRevision?: number;
+}
+
 export interface ShareLink {
   id: string;
   token: string | null;
