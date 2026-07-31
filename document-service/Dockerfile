@@ -14,6 +14,11 @@ FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
+# Font cho docx4j render/xem trước DOCX->HTML (image alpine không có font -> Docx4JException).
+# Liberation Serif/Sans/Mono tương thích metric với Times New Roman/Arial/Courier; DejaVu phủ Unicode
+# (tiếng Việt). Thiếu font khiến "No physical font" + toHtml thất bại.
+RUN apk add --no-cache fontconfig ttf-liberation ttf-dejavu && fc-cache -f
+
 RUN addgroup -S spring && adduser -S spring -G spring
 
 COPY --from=build /app/target/*.jar app.jar
