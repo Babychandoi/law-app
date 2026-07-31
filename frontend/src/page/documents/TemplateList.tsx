@@ -5,10 +5,12 @@ import {
   Copy,
   Edit,
   FileText,
+  LayoutGrid,
   Plus,
   RefreshCw,
   RotateCcw,
   Search,
+  Table as TableIcon,
   Wand2,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -46,6 +48,9 @@ export default function TemplateList() {
   const [newFolderName, setNewFolderName] = useState('');
   const [mineOnly, setMineOnly] = useState(false);
   const [duplicatingId, setDuplicatingId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'card' | 'table'>(
+    () => (localStorage.getItem('doc-template-view') as 'card' | 'table') || 'card'
+  );
   const { confirm, confirmDialog } = useConfirm();
   const generationContextQuery = buildGenerationContextQuery(searchParams);
   const linkedServiceId = searchParams.get('serviceId') || '';
@@ -58,6 +63,10 @@ export default function TemplateList() {
   useEffect(() => {
     setPage(1);
   }, [debouncedQuery, status, sort, pageSize, folderId, mineOnly]);
+
+  useEffect(() => {
+    localStorage.setItem('doc-template-view', viewMode);
+  }, [viewMode]);
 
   const loadFolders = useCallback(async () => {
     try {
@@ -419,6 +428,24 @@ export default function TemplateList() {
               Chỉ mẫu của tôi
             </label>
           )}
+          <div className="ml-auto inline-flex overflow-hidden rounded-lg border border-gray-300">
+            <button
+              type="button"
+              onClick={() => setViewMode('card')}
+              aria-pressed={viewMode === 'card'}
+              className={`inline-flex items-center gap-1 px-3 py-2 text-sm ${viewMode === 'card' ? 'bg-brand-goldDark text-white' : 'bg-white hover:bg-gray-50'}`}
+            >
+              <LayoutGrid size={14} aria-hidden="true" /> Thẻ
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode('table')}
+              aria-pressed={viewMode === 'table'}
+              className={`inline-flex items-center gap-1 px-3 py-2 text-sm ${viewMode === 'table' ? 'bg-brand-goldDark text-white' : 'bg-white hover:bg-gray-50'}`}
+            >
+              <TableIcon size={14} aria-hidden="true" /> Bảng
+            </button>
+          </div>
           {isAdmin && folderId && folderId !== 'none' && (
             <button
               type="button"
@@ -465,6 +492,17 @@ export default function TemplateList() {
             }
           />
         </div>
+      ) : viewMode === 'table' ? (
+        <TemplateTable
+          templates={templates}
+          isAdmin={isAdmin}
+          archivingId={archivingId}
+          duplicatingId={duplicatingId}
+          onArchive={archive}
+          onRestore={restore}
+          onDuplicate={duplicate}
+          generationContextQuery={generationContextQuery}
+        />
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3" aria-busy={loading}>
           {templates.map((template) => (
@@ -496,6 +534,107 @@ export default function TemplateList() {
           }}
         />
       </div>
+    </div>
+  );
+}
+
+function TemplateTable({
+  templates,
+  isAdmin,
+  archivingId,
+  duplicatingId,
+  onArchive,
+  onRestore,
+  onDuplicate,
+  generationContextQuery,
+}: {
+  templates: DocumentTemplate[];
+  isAdmin: boolean;
+  archivingId: string | null;
+  duplicatingId: string | null;
+  onArchive: (t: DocumentTemplate) => void;
+  onRestore: (t: DocumentTemplate) => void;
+  onDuplicate: (t: DocumentTemplate) => void;
+  generationContextQuery: string;
+}) {
+  return (
+    <div className="overflow-x-auto rounded-xl border border-gray-200 bg-white">
+      <table className="w-full min-w-[640px] text-sm">
+        <thead className="bg-gray-50 text-left text-gray-600">
+          <tr>
+            <th className="px-4 py-3 font-medium">Tên</th>
+            <th className="px-4 py-3 font-medium">Trạng thái</th>
+            <th className="px-4 py-3 font-medium">Dịch vụ</th>
+            <th className="px-4 py-3 font-medium">Cập nhật</th>
+            <th className="px-4 py-3 text-right font-medium">Hành động</th>
+          </tr>
+        </thead>
+        <tbody>
+          {templates.map((template) => (
+            <tr key={template.id} className="border-t border-gray-100 hover:bg-gray-50">
+              <td className="px-4 py-3 font-medium text-gray-900">{template.name}</td>
+              <td className="px-4 py-3">
+                <StatusBadge status={template.status} />
+              </td>
+              <td className="px-4 py-3 text-gray-600">{template.serviceName || '—'}</td>
+              <td className="whitespace-nowrap px-4 py-3 text-gray-600">
+                {template.updatedAt
+                  ? new Date(template.updatedAt).toLocaleDateString('vi-VN')
+                  : '—'}
+              </td>
+              <td className="px-4 py-3">
+                <div className="flex flex-wrap justify-end gap-2">
+                  {template.status === 'ACTIVE' && (
+                    <Link
+                      to={`/2025/luatpoip/tai-lieu/generate/${template.id}${generationContextQuery}`}
+                      className="inline-flex items-center gap-1 rounded-lg bg-brand-goldDark px-2.5 py-1.5 text-xs font-medium text-white hover:bg-brand-gold"
+                    >
+                      <Wand2 size={13} aria-hidden="true" /> Tạo
+                    </Link>
+                  )}
+                  {isAdmin && (
+                    <>
+                      <Link
+                        to={`/2025/luatpoip/tai-lieu/templates/${template.id}/edit`}
+                        className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs font-medium hover:bg-gray-100"
+                      >
+                        <Edit size={13} aria-hidden="true" /> Sửa
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => onDuplicate(template)}
+                        disabled={duplicatingId === template.id}
+                        className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs font-medium hover:bg-gray-100 disabled:opacity-50"
+                      >
+                        <Copy size={13} aria-hidden="true" /> Nhân bản
+                      </button>
+                      {template.status !== 'ARCHIVED' ? (
+                        <button
+                          type="button"
+                          onClick={() => onArchive(template)}
+                          disabled={archivingId === template.id}
+                          className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-2.5 py-1.5 text-xs font-medium hover:bg-gray-100 disabled:opacity-50"
+                        >
+                          <Archive size={13} aria-hidden="true" /> Lưu trữ
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => onRestore(template)}
+                          disabled={archivingId === template.id}
+                          className="inline-flex items-center gap-1 rounded-lg border border-green-300 px-2.5 py-1.5 text-xs font-medium text-green-700 hover:bg-green-50 disabled:opacity-50"
+                        >
+                          <RotateCcw size={13} aria-hidden="true" /> Khôi phục
+                        </button>
+                      )}
+                    </>
+                  )}
+                </div>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

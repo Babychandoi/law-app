@@ -7,6 +7,7 @@ import {
   Copy,
   Download,
   Edit3,
+  Eye,
   FileCheck2,
   Mail,
   Share2,
@@ -49,6 +50,8 @@ export default function GenerateDocument() {
   const [downloadError, setDownloadError] = useState('');
   const [sharing, setSharing] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
+  const [previewHtml, setPreviewHtml] = useState('');
+  const [previewing, setPreviewing] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
   const [emailTo, setEmailTo] = useState('');
   const [emailMessage, setEmailMessage] = useState('');
@@ -185,9 +188,26 @@ export default function GenerateDocument() {
     return true;
   };
 
+  const loadPreview = async () => {
+    setPreviewing(true);
+    try {
+      const result = await documentTemplateService.previewFilled(
+        templateId,
+        values,
+        buildListsPayload(lists)
+      );
+      setPreviewHtml(result.html);
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || 'Không tạo được bản xem trước.');
+    } finally {
+      setPreviewing(false);
+    }
+  };
+
   const review = () => {
     if (!validate()) return;
     idempotencyKeyRef.current = createIdempotencyKey();
+    setPreviewHtml('');
     setMode('review');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -582,6 +602,31 @@ export default function GenerateDocument() {
               </div>
             );
           })}
+
+          <div className="mt-6">
+            <button
+              type="button"
+              onClick={loadPreview}
+              disabled={previewing}
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:opacity-60"
+            >
+              {previewing ? (
+                <Spinner size={16} label="Đang tạo bản xem trước" />
+              ) : (
+                <Eye size={16} aria-hidden="true" />
+              )}
+              Xem trước tài liệu
+            </button>
+            {previewHtml && (
+              <iframe
+                title="Xem trước tài liệu đã điền"
+                sandbox=""
+                srcDoc={previewHtml}
+                className="mt-3 h-[55vh] min-h-[360px] w-full rounded-xl border border-gray-200 bg-white"
+              />
+            )}
+          </div>
+
           <button
             type="button"
             onClick={submit}

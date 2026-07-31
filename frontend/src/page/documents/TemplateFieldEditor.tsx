@@ -81,6 +81,11 @@ export default function TemplateFieldEditor() {
   const [historyUnavailable, setHistoryUnavailable] = useState(false);
   const [folders, setFolders] = useState<DocumentFolder[]>([]);
   const [dryRunning, setDryRunning] = useState(false);
+  const previewFrameRef = useRef<HTMLIFrameElement>(null);
+
+  const highlightInPreview = (fieldKey: string) => {
+    previewFrameRef.current?.contentWindow?.postMessage({ type: 'hl', key: fieldKey }, '*');
+  };
   const [compareA, setCompareA] = useState('');
   const [compareB, setCompareB] = useState('');
   const [restoreVersion, setRestoreVersion] = useState<DocumentTemplateVersion | null>(null);
@@ -132,6 +137,20 @@ export default function TemplateFieldEditor() {
       .then(setFolders)
       .catch(() => setFolders([]));
   }, []);
+
+  useEffect(() => {
+    const handler = (event: MessageEvent) => {
+      if (event.data?.type !== 'docFieldClick') return;
+      const idx = fields.findIndex((f) => f.fieldKey === event.data.key);
+      if (idx < 0) return;
+      document
+        .getElementById(`document-field-${idx}`)
+        ?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      document.getElementById(fieldInputId(idx, 'label'))?.focus();
+    };
+    window.addEventListener('message', handler);
+    return () => window.removeEventListener('message', handler);
+  }, [fields]);
 
   const changeFolder = async (value: string) => {
     if (!template) return;
@@ -473,9 +492,13 @@ export default function TemplateFieldEditor() {
               </span>
             )}
           </div>
+          <p className="mb-2 text-xs text-brand-muted">
+            Mẹo: bấm vào ô vàng trong bản xem trước để nhảy tới trường tương ứng, và ngược lại.
+          </p>
           <iframe
+            ref={previewFrameRef}
             title={`Xem trước biểu mẫu ${metadata.name || template.name}`}
-            sandbox=""
+            sandbox="allow-scripts"
             srcDoc={previewDocument(preview.html)}
             className="h-[55vh] min-h-[360px] w-full rounded-xl border border-gray-200 bg-gray-100"
           />
@@ -495,13 +518,18 @@ export default function TemplateFieldEditor() {
           {fields.map((field, index) => {
             const fieldIssues = issues.filter((issue) => issue.index === index);
             return (
-              <FieldCard
+              <div
                 key={`${field.fieldKey}-${index}`}
-                field={field}
-                index={index}
-                issues={fieldIssues}
-                onChange={(patch) => updateField(index, patch)}
-              />
+                onFocusCapture={() => highlightInPreview(field.fieldKey)}
+                onMouseEnter={() => highlightInPreview(field.fieldKey)}
+              >
+                <FieldCard
+                  field={field}
+                  index={index}
+                  issues={fieldIssues}
+                  onChange={(patch) => updateField(index, patch)}
+                />
+              </div>
             );
           })}
         </div>
@@ -1202,16 +1230,35 @@ function serializeFields(fields: DocumentTemplateField[]): string {
 }
 
 function previewDocument(html: string): string {
+  // Bọc mỗi placeholder ${key} thành <mark> để highlight hai chiều với panel field.
+  const marked = html.replace(
+    /\$\{([A-Za-z][A-Za-z0-9_]{0,63})\}/g,
+    (_match, key) =>
+      '<mark class="phk" data-key="' + key + '">' + String.fromCharCode(36) + '{' + key + '}</mark>'
+  );
   return `<!doctype html><html lang="vi"><head><meta charset="utf-8">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data: blob:; style-src 'unsafe-inline'">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src data: blob:; style-src 'unsafe-inline'; script-src 'unsafe-inline'">
     <style>
     html,body{margin:0;background:#f3f4f6}body{padding:24px;display:flex;justify-content:center}
     .page{box-sizing:border-box;background:#fff;max-width:820px;width:100%;padding:48px 56px;
       box-shadow:0 1px 6px rgba(0,0,0,.12);font-family:"Times New Roman",serif;
       font-size:15px;line-height:1.55;color:#111}.page img{max-width:100%;height:auto}
     .page table{border-collapse:collapse;max-width:100%}.page td,.page th{padding:2px 6px}
+    mark.phk{background:#fef08a;color:#111;border-radius:2px;padding:0 1px;cursor:pointer}
+    mark.phk.on{background:#f59e0b;color:#fff;box-shadow:0 0 0 2px #f59e0b}
     @media(max-width:640px){body{padding:8px}.page{padding:24px 18px}}
-  </style></head><body><div class="page">${html}</div></body></html>`;
+  </style></head><body><div class="page">${marked}</div>
+  <script>(function(){
+    var marks=[].slice.call(document.querySelectorAll('mark.phk'));
+    marks.forEach(function(m){m.addEventListener('click',function(){
+      parent.postMessage({type:'docFieldClick',key:m.getAttribute('data-key')},'*');});});
+    window.addEventListener('message',function(e){
+      if(!e.data||e.data.type!=='hl')return;var first=null;
+      marks.forEach(function(m){var on=m.getAttribute('data-key')===e.data.key;
+        m.classList.toggle('on',on);if(on&&!first)first=m;});
+      if(first)first.scrollIntoView({block:'center',behavior:'smooth'});});
+  })();</script>
+  </body></html>`;
 }
 
 function metadataFromTemplate(template: DocumentTemplate): EditorMetadata {

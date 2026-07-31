@@ -184,6 +184,19 @@ const documentTemplateService = {
     return res.data.data;
   },
 
+  previewFilled: async (
+    id: string,
+    values: Record<string, string>,
+    lists?: Record<string, Array<Record<string, string>>>
+  ): Promise<TemplatePreview> => {
+    const res = await gatewayClient.post<ApiResponse<TemplatePreview>>(
+      `/documents/templates/${id}/preview-fill`,
+      { values, lists },
+      { timeout: 60000 }
+    );
+    return res.data.data;
+  },
+
   duplicateTemplate: async (id: string): Promise<DocumentTemplate> => {
     const res = await gatewayClient.post<ApiResponse<DocumentTemplate>>(
       `/documents/templates/${id}/duplicate`

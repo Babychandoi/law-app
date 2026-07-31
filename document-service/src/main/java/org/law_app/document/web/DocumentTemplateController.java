@@ -98,6 +98,13 @@ public class DocumentTemplateController {
     return ApiResponse.ok(service.duplicate(id), "Đã nhân bản mẫu");
   }
 
+  @PostMapping("/{id}/preview-fill")
+  public ApiResponse<org.law_app.document.web.Dtos.TemplatePreviewResponse> previewFill(
+      @PathVariable String id,
+      @Valid @RequestBody org.law_app.document.web.Dtos.GenerateDocumentRequest request) {
+    return ApiResponse.ok(service.previewFilled(id, request));
+  }
+
   @GetMapping("/{id}")
   public ApiResponse<DocumentTemplateResponse> detail(@PathVariable String id) {
     return ApiResponse.ok(service.getTemplate(id));

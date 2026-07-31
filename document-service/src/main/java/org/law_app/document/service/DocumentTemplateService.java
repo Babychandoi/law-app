@@ -44,6 +44,9 @@ public interface DocumentTemplateService {
 
   DocumentTemplateResponse duplicate(String id);
 
+  org.law_app.document.web.Dtos.TemplatePreviewResponse previewFilled(
+      String id, org.law_app.document.web.Dtos.GenerateDocumentRequest request);
+
   DocumentTemplateResponse setFolder(String id, String folderId);
 
   DocumentTemplateResponse updateFields(String id, UpdateFieldsRequest request);

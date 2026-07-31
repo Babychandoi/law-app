@@ -349,6 +349,30 @@ public class DocumentTemplateServiceImpl implements DocumentTemplateService {
   }
 
   @Override
+  @PreAuthorize("hasAnyRole('ADMIN','USER')")
+  public TemplatePreviewResponse previewFilled(String id, GenerateDocumentRequest request) {
+    DocumentTemplate template = findTemplate(id);
+    DocumentTemplateVersion version = versionManager.activeVersion(template);
+    // Lenient: điền theo giá trị đã nhập, trường thiếu để trống (xem trước không bắt buộc đủ).
+    Map<String, String> values = new LinkedHashMap<>();
+    Map<String, String> submitted = request.values() == null ? Map.of() : request.values();
+    version
+        .getFields()
+        .forEach(
+            field ->
+                values.put(field.getFieldKey(), submitted.getOrDefault(field.getFieldKey(), "")));
+    Map<String, List<Map<String, String>>> lists =
+        request.lists() == null ? Map.of() : request.lists();
+    byte[] rendered =
+        docxTemplateEngine.renderWithLists(
+            storage.getObject(version.getTemplateBucket(), version.getTemplateObjectName()),
+            DocumentDerivedValues.augment(version.getFields(), values),
+            lists);
+    String html = docxTemplateEngine.toHtml(new ByteArrayInputStream(rendered));
+    return new TemplatePreviewResponse(template.getId(), version.getName(), html);
+  }
+
+  @Override
   @PreAuthorize("hasRole('ADMIN')")
   public DocumentTemplateResponse duplicate(String id) {
     DocumentTemplate source = findTemplate(id);
