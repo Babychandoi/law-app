@@ -18,4 +18,6 @@ public interface JobApplicationService {
   JobApplicationResponse updateApplicationStatus(String id, String status, String notes);
 
   void deleteApplication(String id);
+
+  MinioService.DownloadFile downloadCv(String id);
 }
