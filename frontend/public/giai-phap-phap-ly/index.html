@@ -1,0 +1,891 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#171717" />
+    <meta
+      name="description"
+      content="Luật POIP tư vấn và triển khai dịch vụ sở hữu trí tuệ, giấy phép, thương mại điện tử, hợp đồng và pháp lý doanh nghiệp."
+    />
+    <meta
+      name="keywords"
+      content="đăng ký nhãn hiệu, đăng ký bản quyền, kiểu dáng công nghiệp, sáng chế, thông báo website thương mại điện tử, mã số mã vạch, soạn thảo hợp đồng, Luật POIP"
+    />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="vi_VN" />
+    <meta property="og:site_name" content="POIP LEGAL" />
+    <meta property="og:title" content="Giải pháp pháp lý toàn diện | POIP LEGAL" />
+    <meta
+      property="og:description"
+      content="Một đầu mối cho tài sản trí tuệ, giấy phép và pháp lý vận hành doanh nghiệp."
+    />
+    <meta property="og:image" content="https://luatpoip.com/assets/images/slide.webp" />
+    <meta property="og:url" content="https://luatpoip.com/giai-phap-phap-ly/" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Giải pháp pháp lý toàn diện | POIP LEGAL" />
+    <meta
+      name="twitter:description"
+      content="Một đầu mối cho tài sản trí tuệ, giấy phép và pháp lý vận hành doanh nghiệp."
+    />
+    <meta name="twitter:image" content="https://luatpoip.com/assets/images/slide.webp" />
+    <!-- Canonical phải là CHÍNH trang này. Trước đây trỏ về trang chủ nên Google coi đây là bản
+         sao của luatpoip.com/ và sẽ không bao giờ index landing. -->
+    <link rel="canonical" href="https://luatpoip.com/giai-phap-phap-ly/" />
+    <link rel="preload" href="assets/logo-poip.webp" as="image" type="image/webp" />
+
+    <!-- Font serif cho tiêu đề. BẮT BUỘC phải nạp font ngoài: Georgia và Times New Roman KHÔNG có
+         glyph cho khối Latin Extended Additional (U+1EA0–U+1EF9) — nơi chứa ầ, ố, ằ, ế, ề. Thiếu
+         glyph thì trình duyệt tự ghép chữ gốc với dấu rời và đặt lệch, ra "đâ`u mô´i" thay vì
+         "đầu mối". Lora có bộ tiếng Việt đầy đủ nên chữ hiện đúng trên mọi máy, không phụ thuộc
+         font sẵn có của thiết bị. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..600;1,400..500&display=swap"
+    />
+
+    <!-- ?v= để phá cache: nginx đặt Cache-Control immutable 1 năm cho .css/.js, mà hai file này
+         không có hash nội dung như bundle CRA. Sửa file thì phải tăng số này. -->
+    <link rel="stylesheet" href="styles.css?v=3" />
+    <title>Giải pháp pháp lý toàn diện | POIP LEGAL</title>
+
+    <!-- Google tag — tài khoản Google Ads đang dùng (thay AW-17438859267 đã ngừng).
+         data-cfasync="false" để Cloudflare Rocket Loader không viết lại type của script, nếu bị
+         viết lại thì Google dò không ra thẻ dù thẻ vẫn chạy trên trình duyệt. -->
+    <script
+      data-cfasync="false"
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=AW-18319389912"
+    ></script>
+    <script data-cfasync="false">
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'AW-18319389912');
+    </script>
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "LegalService",
+        "name": "CÔNG TY TNHH POIP LEGAL",
+        "alternateName": "POIP LEGAL",
+        "url": "https://luatpoip.com/",
+        "telephone": "+84947600064",
+        "email": "luatpoip@gmail.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Số 70 Ngách 6, Ngõ 10 Tả Thanh Oai",
+          "addressLocality": "xã Đại Thanh",
+          "addressRegion": "Hà Nội",
+          "addressCountry": "VN"
+        },
+        "areaServed": "VN",
+        "serviceType": [
+          "Sở hữu trí tuệ",
+          "Đăng ký quyền tác giả",
+          "Thông báo và đăng ký website thương mại điện tử",
+          "Giấy phép doanh nghiệp",
+          "Tư vấn hợp đồng"
+        ]
+      }
+    </script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main-content">Chuyển đến nội dung chính</a>
+
+    <div class="top-note">
+      <div class="shell top-note__inner">
+        <p>POIP LEGAL — Đồng hành bảo vệ và phát triển tài sản trí tuệ</p>
+        <a href="mailto:luatpoip@gmail.com">luatpoip@gmail.com</a>
+      </div>
+    </div>
+
+    <header class="site-header" id="top">
+      <div class="shell site-header__inner">
+        <a class="brand" href="#top" aria-label="POIP LEGAL — về đầu trang">
+          <img src="assets/logo-poip.webp" width="288" height="96" alt="POIP LEGAL" />
+        </a>
+
+        <button
+          class="nav-toggle"
+          type="button"
+          aria-expanded="false"
+          aria-controls="primary-nav"
+          aria-label="Mở menu"
+        >
+          <span></span><span></span><span></span>
+        </button>
+
+        <nav class="primary-nav" id="primary-nav" aria-label="Điều hướng chính">
+          <a href="#services">Dịch vụ</a>
+          <a href="#process">Quy trình</a>
+          <a href="#why-poip">Về POIP</a>
+          <a href="#faq">Câu hỏi thường gặp</a>
+        </nav>
+
+        <a class="header-phone" href="tel:0947600064" data-track="header-call">
+          <span class="header-phone__label">Hotline tư vấn</span>
+          <strong>0947 600 064</strong>
+        </a>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="hero__lines" aria-hidden="true"></div>
+        <div class="shell hero__grid">
+          <div class="hero__content reveal">
+            <p class="eyebrow"><span></span>Tư vấn pháp lý cho doanh nghiệp & người sáng tạo</p>
+            <h1 id="hero-title">
+              Một đầu mối pháp lý cho
+              <em>tài sản trí tuệ</em>
+              và hoạt động kinh doanh.
+            </h1>
+            <p class="hero__lead">
+              POIP LEGAL giúp bạn xác định đúng thủ tục, chuẩn bị hồ sơ và theo dõi tiến độ — từ
+              đăng ký nhãn hiệu, bản quyền đến giấy phép, thương mại điện tử và hợp đồng.
+            </p>
+
+            <div class="hero__actions">
+              <a class="button button--gold" href="#consultation">Nhận tư vấn ban đầu</a>
+              <a
+                class="button button--outline-light"
+                href="https://zalo.me/0947600064"
+                target="_blank"
+                rel="noreferrer"
+                data-track="hero-zalo"
+              >
+                Nhắn Zalo
+              </a>
+            </div>
+
+            <ul class="hero__checks" aria-label="Điểm nổi bật">
+              <li><span aria-hidden="true">✓</span> Xác định lộ trình trước khi triển khai</li>
+              <li><span aria-hidden="true">✓</span> Phạm vi công việc và chi phí rõ ràng</li>
+              <li><span aria-hidden="true">✓</span> Theo dõi hồ sơ tập trung</li>
+            </ul>
+          </div>
+
+          <aside
+            class="lead-card reveal reveal--delay"
+            id="consultation"
+            aria-labelledby="form-title"
+          >
+            <div class="lead-card__heading">
+              <p>Trao đổi trực tiếp</p>
+              <h2 id="form-title">Bạn đang cần hỗ trợ thủ tục nào?</h2>
+              <span>Để lại thông tin, đội ngũ POIP sẽ liên hệ để làm rõ nhu cầu.</span>
+            </div>
+
+            <form id="lead-form" novalidate>
+              <div class="field field--full">
+                <label for="service">Dịch vụ quan tâm <b aria-hidden="true">*</b></label>
+                <select id="service" name="service" required aria-describedby="service-error">
+                  <option value="">Chọn dịch vụ cần tư vấn</option>
+                  <option value="local:trademark" data-key="trademark">Đăng ký nhãn hiệu</option>
+                  <option value="local:renewal" data-key="renewal">
+                    Gia hạn / chuyển nhượng văn bằng
+                  </option>
+                  <option value="local:copyright" data-key="copyright">
+                    Đăng ký bản quyền tác giả
+                  </option>
+                  <option value="local:design" data-key="design">
+                    Bảo hộ kiểu dáng công nghiệp
+                  </option>
+                  <option value="local:patent" data-key="patent">
+                    Sáng chế / giải pháp hữu ích
+                  </option>
+                  <option value="local:infringement" data-key="infringement">
+                    Xử lý xâm phạm SHTT
+                  </option>
+                  <option value="local:ecommerce" data-key="ecommerce">
+                    Website / nền tảng thương mại điện tử
+                  </option>
+                  <option value="local:barcode" data-key="barcode">Đăng ký mã số mã vạch</option>
+                  <option value="local:social" data-key="social">Giấy phép mạng xã hội</option>
+                  <option value="local:science" data-key="science">
+                    Doanh nghiệp khoa học và công nghệ
+                  </option>
+                  <option value="local:business" data-key="business">
+                    Thành lập công ty / hộ kinh doanh
+                  </option>
+                  <option value="local:contract" data-key="contract">
+                    Tư vấn, soạn thảo hợp đồng
+                  </option>
+                  <option value="local:corporate" data-key="corporate">
+                    Tư vấn pháp lý doanh nghiệp
+                  </option>
+                </select>
+                <small class="field__error" id="service-error"></small>
+              </div>
+
+              <div class="field-grid">
+                <div class="field">
+                  <label for="full-name">Họ và tên <b aria-hidden="true">*</b></label>
+                  <input
+                    id="full-name"
+                    name="name"
+                    type="text"
+                    autocomplete="name"
+                    placeholder="Nguyễn Văn A"
+                    required
+                    aria-describedby="full-name-error"
+                  />
+                  <small class="field__error" id="full-name-error"></small>
+                </div>
+                <div class="field">
+                  <label for="phone">Số điện thoại <b aria-hidden="true">*</b></label>
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    inputmode="tel"
+                    autocomplete="tel"
+                    placeholder="09xx xxx xxx"
+                    required
+                    aria-describedby="phone-error"
+                  />
+                  <small class="field__error" id="phone-error"></small>
+                </div>
+              </div>
+
+              <div class="field-grid">
+                <div class="field">
+                  <label for="email">Email</label>
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    placeholder="email@congty.vn"
+                    aria-describedby="email-error"
+                  />
+                  <small class="field__error" id="email-error"></small>
+                </div>
+                <div class="field">
+                  <label for="customer-type">Bạn là</label>
+                  <select id="customer-type" name="customerType">
+                    <option value="Doanh nghiệp">Doanh nghiệp</option>
+                    <option value="Cá nhân">Cá nhân</option>
+                    <option value="Hộ kinh doanh">Hộ kinh doanh</option>
+                    <option value="Tổ chức khác">Tổ chức khác</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field field--full">
+                <label for="message">Nội dung cần trao đổi</label>
+                <textarea
+                  id="message"
+                  name="message"
+                  rows="3"
+                  placeholder="Mô tả ngắn tình trạng hồ sơ hoặc nhu cầu của bạn..."
+                ></textarea>
+              </div>
+
+              <label class="consent">
+                <input
+                  id="consent"
+                  name="consent"
+                  type="checkbox"
+                  required
+                  aria-describedby="consent-error"
+                />
+                <span>Tôi đồng ý để POIP LEGAL sử dụng thông tin trên nhằm liên hệ và tư vấn.</span>
+              </label>
+              <small class="field__error" id="consent-error"></small>
+
+              <button class="button button--submit" type="submit">
+                <span>Gửi yêu cầu tư vấn</span>
+                <span aria-hidden="true">→</span>
+              </button>
+              <p class="form-note">Thông tin chỉ được sử dụng để xử lý yêu cầu tư vấn của bạn.</p>
+              <div class="form-status" id="form-status" role="status" aria-live="polite"></div>
+            </form>
+          </aside>
+        </div>
+      </section>
+
+      <section class="credibility" aria-label="Năng lực chuyên môn">
+        <div class="shell credibility__grid">
+          <div class="credibility__item">
+            <span>01</span>
+            <p>
+              <strong>Đại diện sở hữu công nghiệp</strong
+              ><small>Được cơ quan có thẩm quyền cấp phép</small>
+            </p>
+          </div>
+          <div class="credibility__item">
+            <span>02</span>
+            <p>
+              <strong>Tư vấn quyền tác giả</strong><small>Hỗ trợ đa dạng loại hình tác phẩm</small>
+            </p>
+          </div>
+          <div class="credibility__item">
+            <span>03</span>
+            <p><strong>Pháp lý doanh nghiệp</strong><small>Từ hồ sơ đến vận hành thực tế</small></p>
+          </div>
+        </div>
+      </section>
+
+      <section class="services section" id="services" aria-labelledby="services-title">
+        <div class="shell">
+          <div class="section-heading reveal">
+            <div>
+              <p class="kicker">Toàn bộ phạm vi dịch vụ</p>
+              <h2 id="services-title">Một hệ thống. Ba nhóm nhu cầu.</h2>
+            </div>
+            <p>
+              Chọn dịch vụ gần nhất với nhu cầu hiện tại. Nếu chưa xác định được thủ tục, hãy chọn
+              “Tư vấn pháp lý doanh nghiệp” để POIP hỗ trợ phân loại.
+            </p>
+          </div>
+
+          <div class="service-filters" role="group" aria-label="Lọc nhóm dịch vụ">
+            <button class="filter is-active" type="button" data-filter="all" aria-pressed="true">
+              Tất cả <span>13</span>
+            </button>
+            <button class="filter" type="button" data-filter="ip" aria-pressed="false">
+              Sở hữu trí tuệ <span>6</span>
+            </button>
+            <button class="filter" type="button" data-filter="license" aria-pressed="false">
+              Giấy phép & thủ tục <span>5</span>
+            </button>
+            <button class="filter" type="button" data-filter="advisory" aria-pressed="false">
+              Tư vấn doanh nghiệp <span>2</span>
+            </button>
+          </div>
+
+          <div class="service-grid" id="service-grid">
+            <article class="service-card reveal" data-category="ip">
+              <span class="service-card__number">01</span
+              ><span class="service-card__tag">Sở hữu trí tuệ</span>
+              <h3>Đăng ký nhãn hiệu</h3>
+              <p>
+                Tra cứu khả năng bảo hộ, phân nhóm, soạn nộp đơn và theo dõi hồ sơ đến giai đoạn văn
+                bằng.
+              </p>
+              <button
+                type="button"
+                class="service-card__action choose-service"
+                data-service="trademark"
+              >
+                Chọn dịch vụ <span aria-hidden="true">↗</span>
+              </button>
+            </article>
+            <article class="service-card reveal" data-category="ip">
+              <span class="service-card__number">02</span
+              ><span class="service-card__tag">Sở hữu trí tuệ</span>
+              <h3>Gia hạn & chuyển nhượng văn bằng</h3>
+              <p>
+                Rà soát hiệu lực, chuẩn bị hồ sơ gia hạn, ghi nhận chuyển nhượng hoặc thay đổi chủ
+                văn bằng.
+              </p>
+              <button
+                type="button"
+                class="service-card__action choose-service"
+                data-service="renewal"
+              >
+                Chọn dịch vụ <span aria-hidden="true">↗</span>
+              </button>
+            </article>
+            <article class="service-card reveal" data-category="ip">
+              <span class="service-card__number">03</span
+              ><span class="service-card__tag">Sở hữu trí tuệ</span>
+              <h3>Đăng ký bản quyền tác giả</h3>
+              <p>
+                Phân loại tác phẩm, xác định tác giả/chủ sở hữu và chuẩn bị hồ sơ đăng ký quyền tác
+                giả.
+              </p>
+              <button
+                type="button"
+                class="service-card__action choose-service"
+                data-service="copyright"
+              >
+                Chọn dịch vụ <span aria-hidden="true">↗</span>
+              </button>
+            </article>
+            <article class="service-card reveal" data-category="ip">
+              <span class="service-card__number">04</span
+              ><span class="service-card__tag">Sở hữu trí tuệ</span>
+              <h3>Kiểu dáng công nghiệp</h3>
+              <p>
+                Đánh giá khả năng bảo hộ, chuẩn hóa bộ ảnh/bản vẽ và theo dõi thủ tục đăng ký kiểu
+                dáng.
+              </p>
+              <button
+                type="button"
+                class="service-card__action choose-service"
+                data-service="design"
+              >
+                Chọn dịch vụ <span aria-hidden="true">↗</span>
+              </button>
+            </article>
+            <article class="service-card reveal" data-category="ip">
+              <span class="service-card__number">05</span
+              ><span class="service-card__tag">Sở hữu trí tuệ</span>
+              <h3>Sáng chế & giải pháp hữu ích</h3>
+              <p>
+                Tra cứu, tư vấn phạm vi bảo hộ, xây dựng bản mô tả và triển khai hồ sơ giải pháp kỹ
+                thuật.
+              </p>
+              <button
+                type="button"
+                class="service-card__action choose-service"
+                data-service="patent"
+              >
+                Chọn dịch vụ <span aria-hidden="true">↗</span>
+              </button>
+            </article>
+            <article class="service-card reveal" data-category="ip">
+              <span class="service-card__number">06</span
+              ><span class="service-card__tag">Sở hữu trí tuệ</span>
+              <h3>Xử lý xâm phạm quyền</h3>
+              <p>
+                Đánh giá dấu hiệu vi phạm, thu thập tài liệu và đề xuất phương án bảo vệ quyền phù
+                hợp.
+              </p>
+              <button
+                type="button"
+                class="service-card__action choose-service"
+                data-service="infringement"
+              >
+                Chọn dịch vụ <span aria-hidden="true">↗</span>
+              </button>
+            </article>
+
+            <article class="service-card reveal" data-category="license">
+              <span class="service-card__number">07</span
+              ><span class="service-card__tag">Giấy phép & thủ tục</span>
+              <h3>Website / nền tảng thương mại điện tử</h3>
+              <p>
+                Rà soát mô hình, chính sách, chuẩn bị và theo dõi hồ sơ thông báo hoặc đăng ký với
+                cơ quan quản lý.
+              </p>
+              <button
+                type="button"
+                class="service-card__action choose-service"
+                data-service="ecommerce"
+              >
+                Chọn dịch vụ <span aria-hidden="true">↗</span>
+              </button>
+            </article>
+            <article class="service-card reveal" data-category="license">
+              <span class="service-card__number">08</span
+              ><span class="service-card__tag">Giấy phép & thủ tục</span>
+              <h3>Đăng ký mã số mã vạch</h3>
+              <p>
+                Tư vấn hồ sơ, số lượng mã phù hợp và thủ tục đăng ký phục vụ lưu thông sản phẩm.
+              </p>
+              <button
+                type="button"
+                class="service-card__action choose-service"
+                data-service="barcode"
+              >
+                Chọn dịch vụ <span aria-hidden="true">↗</span>
+              </button>
+            </article>
+            <article class="service-card reveal" data-category="license">
+              <span class="service-card__number">09</span
+              ><span class="service-card__tag">Giấy phép & thủ tục</span>
+              <h3>Giấy phép mạng xã hội</h3>
+              <p>
+                Đánh giá điều kiện, hoàn thiện đề án và chuẩn bị hồ sơ xin cấp phép thiết lập mạng
+                xã hội.
+              </p>
+              <button
+                type="button"
+                class="service-card__action choose-service"
+                data-service="social"
+              >
+                Chọn dịch vụ <span aria-hidden="true">↗</span>
+              </button>
+            </article>
+            <article class="service-card reveal" data-category="license">
+              <span class="service-card__number">10</span
+              ><span class="service-card__tag">Giấy phép & thủ tục</span>
+              <h3>Doanh nghiệp khoa học & công nghệ</h3>
+              <p>
+                Rà soát kết quả khoa học công nghệ, điều kiện hoạt động và hồ sơ đề nghị chứng nhận.
+              </p>
+              <button
+                type="button"
+                class="service-card__action choose-service"
+                data-service="science"
+              >
+                Chọn dịch vụ <span aria-hidden="true">↗</span>
+              </button>
+            </article>
+            <article class="service-card reveal" data-category="license">
+              <span class="service-card__number">11</span
+              ><span class="service-card__tag">Giấy phép & thủ tục</span>
+              <h3>Thành lập công ty / hộ kinh doanh</h3>
+              <p>
+                Tư vấn loại hình, ngành nghề, cơ cấu và chuẩn bị hồ sơ đăng ký hoạt động ban đầu.
+              </p>
+              <button
+                type="button"
+                class="service-card__action choose-service"
+                data-service="business"
+              >
+                Chọn dịch vụ <span aria-hidden="true">↗</span>
+              </button>
+            </article>
+
+            <article class="service-card reveal" data-category="advisory">
+              <span class="service-card__number">12</span
+              ><span class="service-card__tag">Tư vấn doanh nghiệp</span>
+              <h3>Tư vấn, soạn thảo hợp đồng</h3>
+              <p>
+                Rà soát giao dịch, phân bổ trách nhiệm và xây dựng điều khoản phù hợp với mục tiêu
+                kinh doanh.
+              </p>
+              <button
+                type="button"
+                class="service-card__action choose-service"
+                data-service="contract"
+              >
+                Chọn dịch vụ <span aria-hidden="true">↗</span>
+              </button>
+            </article>
+            <article class="service-card reveal" data-category="advisory">
+              <span class="service-card__number">13</span
+              ><span class="service-card__tag">Tư vấn doanh nghiệp</span>
+              <h3>Tư vấn pháp lý doanh nghiệp</h3>
+              <p>
+                Hỗ trợ nhận diện rủi ro và xây dựng hướng xử lý cho vấn đề pháp lý phát sinh trong
+                vận hành.
+              </p>
+              <button
+                type="button"
+                class="service-card__action choose-service"
+                data-service="corporate"
+              >
+                Chọn dịch vụ <span aria-hidden="true">↗</span>
+              </button>
+            </article>
+          </div>
+          <p class="filter-empty" id="filter-empty" hidden>Chưa có dịch vụ trong nhóm này.</p>
+        </div>
+      </section>
+
+      <section class="process section" id="process" aria-labelledby="process-title">
+        <div class="shell">
+          <div class="process__intro reveal">
+            <p class="kicker kicker--light">Cách POIP triển khai</p>
+            <h2 id="process-title">Rõ việc từ cuộc trao đổi đầu tiên.</h2>
+            <p>
+              Mỗi hồ sơ có yêu cầu riêng. Quy trình chung giúp bạn biết mình đang ở bước nào và cần
+              chuẩn bị điều gì tiếp theo.
+            </p>
+            <a href="#consultation" class="text-link text-link--light"
+              >Bắt đầu trao đổi <span aria-hidden="true">→</span></a
+            >
+          </div>
+
+          <ol class="process__steps">
+            <li class="reveal">
+              <span>01</span>
+              <div>
+                <h3>Tiếp nhận nhu cầu</h3>
+                <p>Làm rõ đối tượng, mục tiêu và tình trạng tài liệu hiện có.</p>
+              </div>
+            </li>
+            <li class="reveal">
+              <span>02</span>
+              <div>
+                <h3>Đề xuất phương án</h3>
+                <p>Xác định thủ tục, phạm vi công việc và tài liệu cần bổ sung.</p>
+              </div>
+            </li>
+            <li class="reveal">
+              <span>03</span>
+              <div>
+                <h3>Triển khai hồ sơ</h3>
+                <p>
+                  Soạn thảo, kiểm tra, nộp và xử lý yêu cầu phát sinh theo phạm vi đã thống nhất.
+                </p>
+              </div>
+            </li>
+            <li class="reveal">
+              <span>04</span>
+              <div>
+                <h3>Theo dõi & bàn giao</h3>
+                <p>Cập nhật tiến độ, lưu vết công việc và bàn giao kết quả tương ứng.</p>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="why section" id="why-poip" aria-labelledby="why-title">
+        <div class="shell why__grid">
+          <div class="why__visual reveal">
+            <img
+              src="assets/legal-services.webp"
+              width="696"
+              height="498"
+              loading="lazy"
+              alt="Không gian tư vấn dịch vụ pháp lý tại POIP LEGAL"
+            />
+            <div class="why__caption">
+              <strong>POIP LEGAL</strong>
+              <span>Đồng hành từ phương án đến hồ sơ</span>
+            </div>
+          </div>
+          <div class="why__content reveal reveal--delay">
+            <p class="kicker">Vì sao chọn POIP</p>
+            <h2 id="why-title">Pháp lý cần chính xác. Trải nghiệm cần dễ hiểu.</h2>
+            <p class="why__lead">
+              Chúng tôi chuyển một thủ tục nhiều bước thành lộ trình rõ ràng, giúp khách hàng nắm
+              được phạm vi, tài liệu và điểm cần quyết định trước khi triển khai.
+            </p>
+            <div class="why__list">
+              <article>
+                <span>01</span>
+                <div>
+                  <h3>Phân loại đúng nhu cầu</h3>
+                  <p>
+                    Không bắt đầu bằng biểu mẫu; bắt đầu bằng việc hiểu mục tiêu và rủi ro thực tế.
+                  </p>
+                </div>
+              </article>
+              <article>
+                <span>02</span>
+                <div>
+                  <h3>Thông tin minh bạch</h3>
+                  <p>
+                    Phạm vi công việc, chi phí và trách nhiệm được trao đổi trước khi thực hiện.
+                  </p>
+                </div>
+              </article>
+              <article>
+                <span>03</span>
+                <div>
+                  <h3>Theo dõi xuyên suốt</h3>
+                  <p>Mỗi hồ sơ được cập nhật theo tiến độ và xử lý khi có yêu cầu bổ sung.</p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="decision section" aria-labelledby="decision-title">
+        <div class="shell decision__inner reveal">
+          <div>
+            <p class="kicker kicker--light">Chưa chắc nên bắt đầu từ đâu?</p>
+            <h2 id="decision-title">
+              Gửi tình trạng hiện tại. POIP giúp bạn xác định bước tiếp theo.
+            </h2>
+          </div>
+          <div class="decision__actions">
+            <a class="button button--gold" href="#consultation">Để lại thông tin</a>
+            <a class="decision__phone" href="tel:0947600064" data-track="mid-call">
+              <small>Hoặc gọi trực tiếp</small><strong>0947 600 064</strong>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="faq section" id="faq" aria-labelledby="faq-title">
+        <div class="shell faq__grid">
+          <div class="faq__intro reveal">
+            <p class="kicker">Câu hỏi thường gặp</p>
+            <h2 id="faq-title">Thông tin cần biết trước khi gửi yêu cầu.</h2>
+            <p>
+              Mỗi thủ tục có thời hạn và thành phần hồ sơ khác nhau. Các nội dung dưới đây giúp bạn
+              chuẩn bị cho buổi trao đổi ban đầu.
+            </p>
+            <a class="text-link" href="mailto:luatpoip@gmail.com"
+              >Gửi câu hỏi qua email <span aria-hidden="true">→</span></a
+            >
+          </div>
+          <div class="accordion">
+            <article class="accordion__item is-open">
+              <h3>
+                <button type="button" aria-expanded="true" aria-controls="faq-a1" id="faq-q1">
+                  <span>Tôi chưa biết chính xác phải dùng dịch vụ nào thì sao?</span
+                  ><i aria-hidden="true"></i>
+                </button>
+              </h3>
+              <div class="accordion__panel" id="faq-a1" role="region" aria-labelledby="faq-q1">
+                <p>
+                  Bạn chỉ cần mô tả mục tiêu, đối tượng cần bảo hộ hoặc vấn đề đang gặp. POIP sẽ
+                  phân loại nhu cầu và đề xuất thủ tục phù hợp trước khi triển khai.
+                </p>
+              </div>
+            </article>
+            <article class="accordion__item">
+              <h3>
+                <button type="button" aria-expanded="false" aria-controls="faq-a2" id="faq-q2">
+                  <span>Chi phí dịch vụ được xác định như thế nào?</span><i aria-hidden="true"></i>
+                </button>
+              </h3>
+              <div
+                class="accordion__panel"
+                id="faq-a2"
+                role="region"
+                aria-labelledby="faq-q2"
+                hidden
+              >
+                <p>
+                  Chi phí phụ thuộc vào loại thủ tục, số lượng đối tượng, phạm vi công việc và lệ
+                  phí nhà nước tương ứng. POIP trao đổi và báo phí trước khi thực hiện.
+                </p>
+              </div>
+            </article>
+            <article class="accordion__item">
+              <h3>
+                <button type="button" aria-expanded="false" aria-controls="faq-a3" id="faq-q3">
+                  <span>Tôi có thể làm việc từ xa không?</span><i aria-hidden="true"></i>
+                </button>
+              </h3>
+              <div
+                class="accordion__panel"
+                id="faq-a3"
+                role="region"
+                aria-labelledby="faq-q3"
+                hidden
+              >
+                <p>
+                  Có. Phần lớn quá trình trao đổi, chuẩn bị tài liệu và cập nhật hồ sơ có thể thực
+                  hiện qua điện thoại, email hoặc Zalo; tài liệu cần ký sẽ được hướng dẫn riêng.
+                </p>
+              </div>
+            </article>
+            <article class="accordion__item">
+              <h3>
+                <button type="button" aria-expanded="false" aria-controls="faq-a4" id="faq-q4">
+                  <span>Thời gian giải quyết có giống nhau cho mọi thủ tục không?</span
+                  ><i aria-hidden="true"></i>
+                </button>
+              </h3>
+              <div
+                class="accordion__panel"
+                id="faq-a4"
+                role="region"
+                aria-labelledby="faq-q4"
+                hidden
+              >
+                <p>
+                  Không. Thời gian phụ thuộc vào từng thủ tục, tình trạng hồ sơ và tiến độ xử lý của
+                  cơ quan có thẩm quyền. POIP sẽ nêu mốc dự kiến sau khi đánh giá hồ sơ cụ thể.
+                </p>
+              </div>
+            </article>
+            <article class="accordion__item">
+              <h3>
+                <button type="button" aria-expanded="false" aria-controls="faq-a5" id="faq-q5">
+                  <span>Thông tin tôi cung cấp có được bảo mật không?</span
+                  ><i aria-hidden="true"></i>
+                </button>
+              </h3>
+              <div
+                class="accordion__panel"
+                id="faq-a5"
+                role="region"
+                aria-labelledby="faq-q5"
+                hidden
+              >
+                <p>
+                  Thông tin tại biểu mẫu được dùng để tiếp nhận và xử lý yêu cầu tư vấn. Bạn không
+                  nên gửi mật khẩu, mã OTP hoặc dữ liệu thanh toán qua biểu mẫu.
+                </p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="contact-final" aria-labelledby="contact-title">
+        <div class="shell contact-final__grid">
+          <div class="contact-final__copy reveal">
+            <p class="eyebrow eyebrow--dark"><span></span>POIP LEGAL</p>
+            <h2 id="contact-title">Bắt đầu bằng một cuộc trao đổi rõ ràng.</h2>
+            <p>
+              Gọi, nhắn Zalo hoặc để lại thông tin. Đội ngũ POIP sẽ tiếp nhận nhu cầu và hướng dẫn
+              bước chuẩn bị phù hợp.
+            </p>
+            <div class="contact-final__buttons">
+              <a class="button button--dark" href="tel:0947600064" data-track="final-call"
+                >Gọi 0947 600 064</a
+              >
+              <a
+                class="button button--outline-dark"
+                href="https://zalo.me/0947600064"
+                target="_blank"
+                rel="noreferrer"
+                data-track="final-zalo"
+                >Nhắn Zalo</a
+              >
+            </div>
+          </div>
+          <dl class="contact-list reveal reveal--delay">
+            <div>
+              <dt>Điện thoại</dt>
+              <dd>
+                <a href="tel:0947600064">0947 600 064</a><br /><a href="tel:0868193345"
+                  >0868 193 345</a
+                >
+              </dd>
+            </div>
+            <div>
+              <dt>Email</dt>
+              <dd><a href="mailto:luatpoip@gmail.com">luatpoip@gmail.com</a></dd>
+            </div>
+            <div>
+              <dt>Website</dt>
+              <dd><a href="https://luatpoip.com/">luatpoip.com</a></dd>
+            </div>
+            <div>
+              <dt>Địa chỉ</dt>
+              <dd>Số 70 Ngách 6, Ngõ 10 Tả Thanh Oai, xã Đại Thanh, thành phố Hà Nội, Việt Nam</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="shell site-footer__grid">
+        <div>
+          <img
+            src="assets/logo-poip.webp"
+            width="288"
+            height="96"
+            loading="lazy"
+            alt="POIP LEGAL"
+          />
+          <p>CÔNG TY TNHH POIP LEGAL</p>
+        </div>
+        <p class="site-footer__note">
+          Nội dung trên trang nhằm giới thiệu dịch vụ, không thay thế ý kiến tư vấn cho một vụ việc
+          cụ thể.
+        </p>
+        <p class="site-footer__copy">© <span id="current-year"></span> POIP LEGAL</p>
+      </div>
+    </footer>
+
+    <div class="mobile-actions" aria-label="Liên hệ nhanh">
+      <a href="tel:0947600064" data-track="mobile-call"
+        ><span>Gọi ngay</span><strong>0947 600 064</strong></a
+      >
+      <a href="https://zalo.me/0947600064" target="_blank" rel="noreferrer" data-track="mobile-zalo"
+        ><span>Nhắn tư vấn</span><strong>Zalo</strong></a
+      >
+    </div>
+
+    <button class="back-to-top" type="button" aria-label="Về đầu trang" title="Về đầu trang">
+      ↑
+    </button>
+
+    <script src="script.js?v=3" defer></script>
+  </body>
+</html>
