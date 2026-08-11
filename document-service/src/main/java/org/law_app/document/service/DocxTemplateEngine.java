@@ -32,14 +32,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-/**
- * Safe, deterministic DOCX placeholder engine.
- *
- * <p>Text is handled per Word paragraph across multiple runs. This preserves the formatting of the
- * first matched run while supporting placeholders/sample text that Word split because of fonts,
- * spelling, bookmarks or bold/italic formatting. Mapping ambiguous text is rejected instead of
- * silently replacing every occurrence.
- */
 @Slf4j
 @Service
 public class DocxTemplateEngine {
@@ -150,20 +142,35 @@ public class DocxTemplateEngine {
     ensureNoUnresolvedPlaceholders(pkg);
   }
 
+  private void stripEmbeddedFonts(WordprocessingMLPackage pkg) {
+    try {
+      var mdp = pkg.getMainDocumentPart();
+      if (mdp == null) return;
+      var fontTablePart = mdp.getFontTablePart();
+      if (fontTablePart != null) {
+        mdp.getRelationshipsPart().removePart(fontTablePart.getPartName());
+      }
+    } catch (Exception ignored) {
+      // Không sao — nếu không gỡ được, khối try của toHtml vẫn bắt lỗi và fallback.
+    }
+  }
+
   /** Render the DOCX to HTML after applying the same package-safety checks as generation. */
   public String toHtml(InputStream docx) {
     try {
       WordprocessingMLPackage pkg = loadSafe(docx);
+      stripEmbeddedFonts(pkg);
       HTMLSettings settings = Docx4J.createHTMLSettings();
       settings.setWmlPackage(pkg);
       settings.setImageDirPath(null);
       ByteArrayOutputStream out = new ByteArrayOutputStream();
-      Docx4J.toHTML(settings, out, Docx4J.FLAG_EXPORT_PREFER_XSL);
+      // Non-XSL exporter (SAX) bền hơn cho file có content control (SDT), không phụ thuộc Xalan.
+      Docx4J.toHTML(settings, out, Docx4J.FLAG_NONE);
       return out.toString(StandardCharsets.UTF_8);
     } catch (ResponseStatusException e) {
       throw e;
     } catch (Exception e) {
-      log.warn("DOCX to HTML failed: {}", e.getClass().getSimpleName());
+      log.warn("DOCX to HTML failed", e);
       throw badRequest("Không xem trước được file Word");
     }
   }
