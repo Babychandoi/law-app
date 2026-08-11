@@ -18,4 +18,6 @@ certbot/conf/accounts/
 
 # Build output (Maven / Java) — build ra, khong commit
 **/target/
-backups/**backups/
+# Backup dump DB/MinIO — chua du lieu ca nhan that (CV ung vien, SDT, email khach).
+# TUYET DOI khong commit.
+backups/
