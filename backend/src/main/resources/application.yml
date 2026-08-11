@@ -40,6 +40,10 @@ spring:
     port: ${RABBITMQ_AMQP_PORT:5672}
     username: ${RABBITMQ_USER:guest}
     password: ${RABBITMQ_PASS:guest}
+    publisher-confirm-type: correlated
+    publisher-returns: true
+    template:
+      mandatory: true
 
   # ================= FILE UPLOAD =================
   servlet:
@@ -94,8 +98,9 @@ auth:
 minio:
   url: ${MINIO_URL}
   public-url: ${MINIO_PUBLIC_URL}
-  access-key: ${MINIO_ACCESS_KEY}
-  secret-key: ${MINIO_SECRET_KEY}
+  # Prefer a least-privilege service account; root credentials remain a migration-only fallback.
+  access-key: ${MINIO_BACKEND_ACCESS_KEY:${MINIO_ACCESS_KEY}}
+  secret-key: ${MINIO_BACKEND_SECRET_KEY:${MINIO_SECRET_KEY}}
   bucket:
     images: ${MINIO_BUCKET_IMAGES}
     cvs: ${MINIO_BUCKET_CVS}
