@@ -15,6 +15,7 @@ import org.law_app.crm.repository.CareLogRepository;
 import org.law_app.crm.repository.CaseTagRepository;
 import org.law_app.crm.repository.CrmCaseRepository;
 import org.law_app.crm.web.CrmDtos.CareLogRequest;
+import org.law_app.crm.web.CrmDtos.CaseDetail;
 import org.law_app.crm.web.CrmDtos.CaseRow;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -112,6 +113,28 @@ public class CrmCaseService {
     return caseRepo
         .findById(id)
         .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Case not found"));
+  }
+
+  public CaseDetail detail(String id) {
+    CrmCase c = requireCase(id);
+    List<Long> tagIds =
+        caseTagRepo.findByCaseId(c.getId()).stream().map(CaseTag::getTagId).toList();
+    return new CaseDetail(
+        c.getId(),
+        c.getCustomerId(),
+        c.getCustomerEmail(),
+        c.getCustomerPhone(),
+        c.getServiceId(),
+        c.getServiceName(),
+        c.getName(),
+        c.getDescription(),
+        c.getStatus(),
+        c.getAssignedUserId(),
+        c.getCareStatusId(),
+        tagIds,
+        c.getCaseCreatedAt(),
+        c.getCaseUpdatedAt(),
+        c.getSyncedAt());
   }
 
   public CaseRow assign(String caseId, String userId) {
