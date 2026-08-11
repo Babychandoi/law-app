@@ -38,7 +38,9 @@ public class CustomerService {
   @JoinColumn(name = "service_id")
   ChildrenServices service; // Reference to the service associated with this customer service
 
+  @Column(columnDefinition = "TEXT")
   String description; // Additional description or notes about the customer service
+
   Status status; // Status of the customer service (e.g., active, inactive, pending)
   @CreationTimestamp Date createdAt; // Timestamp when the customer service was created
   @UpdateTimestamp Date updatedAt; // Timestamp when the customer service was last updated

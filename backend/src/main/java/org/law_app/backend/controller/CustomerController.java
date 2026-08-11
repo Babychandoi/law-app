@@ -1,5 +1,6 @@
 package org.law_app.backend.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class CustomerController {
   CustomerServices customerServices;
 
   @PostMapping
-  ApiResponse<Boolean> createCustomer(@RequestBody CustomerRequest request) {
+  ApiResponse<Boolean> createCustomer(@Valid @RequestBody CustomerRequest request) {
     return ApiResponse.<Boolean>builder()
         .message("Customer created successfully")
         .data(customerServices.createCustomerService(request))
