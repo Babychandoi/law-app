@@ -59,7 +59,7 @@ spring:
             - id: monolith
               uri: ${MONOLITH_URI:http://law-app-backend:8080}
               predicates:
-                - Path=/auth/**,/services/**,/service/**,/jobs/**,/news/**,/customer/**,/notifications/**,/upload,/chat/**
+                - Path=/auth/**,/services/**,/service/**,/landing/**,/jobs/**,/news/**,/customer/**,/notifications/**,/upload,/chat/**
 
           globalcors:
             cors-configurations:

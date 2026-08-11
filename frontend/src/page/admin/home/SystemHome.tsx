@@ -14,6 +14,7 @@ const PROACTIVE_REFRESH_MS = 10 * 60 * 1000;
 const TITLES: Record<string, string> = {
   '/2025/luatpoip/he-thong': 'Quản trị hệ thống',
   '/2025/luatpoip/he-thong/services': 'Dịch vụ',
+  '/2025/luatpoip/he-thong/landing': 'Landing page',
   '/2025/luatpoip/he-thong/posts': 'Bài viết',
   '/2025/luatpoip/he-thong/service-images': 'Ảnh dịch vụ',
   '/2025/luatpoip/he-thong/employees': 'Nhân viên',

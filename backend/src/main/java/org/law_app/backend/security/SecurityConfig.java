@@ -44,6 +44,8 @@ public class SecurityConfig {
         "/news/**",
         "/chat/{guestId}",
         "/chat/conversation",
+        // Chỉ trang landing đã xuất bản; bản nháp bị service lọc bỏ, không lộ ra ngoài.
+        "/landing/page",
         "/sitemap.xml",
         "/og/**"
       };
@@ -78,6 +80,8 @@ public class SecurityConfig {
                     // /news/** permitAll -> lộ công khai. Chặn về ADMIN trước khi mở public GET.
                     .requestMatchers(HttpMethod.GET, "/jobs/applications", "/jobs/*/applications")
                     .hasRole("ADMIN")
+                    .requestMatchers("/jobs/applications/**")
+                    .hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/news/subscribers", "/news/subscribers/**")
                     .hasRole("ADMIN")
                     // Ghi nội dung website (dịch vụ/bài viết) + tin tuyển dụng: chỉ ADMIN.
@@ -94,6 +98,10 @@ public class SecurityConfig {
                     .hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, AuthorizedUrlsPublic)
                     .permitAll()
+                    // Quản lý landing (kể cả xem danh sách bản nháp) chỉ dành cho ADMIN.
+                    // Đặt sau permitAll ở trên nên GET /landing/page vẫn public.
+                    .requestMatchers("/landing/**")
+                    .hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/chat/*")
                     .permitAll() // Allow guest to get their messages
                     .requestMatchers(HttpMethod.POST, "/chat/conversation")

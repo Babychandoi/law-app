@@ -11,6 +11,7 @@ import {
   SlidersHorizontal,
   Puzzle,
   Image,
+  Megaphone,
   ScrollText,
   BarChart3,
   FolderKanban,
@@ -70,6 +71,7 @@ export const SYSTEM_GROUPS: NavGroup[] = [
     title: 'Nội dung website',
     items: [
       { label: 'Dịch vụ', path: `${SYS_BASE}/services`, icon: Puzzle },
+      { label: 'Landing page', path: `${SYS_BASE}/landing`, icon: Megaphone },
       { label: 'Bài viết', path: `${SYS_BASE}/posts`, icon: Newspaper },
       { label: 'Ảnh dịch vụ', path: `${SYS_BASE}/service-images`, icon: Image },
     ],

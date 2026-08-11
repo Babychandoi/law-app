@@ -7,9 +7,20 @@ import { ServicePageData, ServiceSection } from '../../types/servicePage';
 
 /**
  * Phần thân trang dịch vụ (hero + sections + quy trình + bảng giá).
- * Dùng chung cho trang public (DynamicServicePage) và preview trong admin.
+ * Dùng chung cho trang public (DynamicServicePage), preview trong admin và landing page.
+ *
+ * `hideHero`: landing đã có hero riêng kèm form thu lead nên bỏ hero ở đây để không lặp.
+ * `hidePricing`: landing chạy ads không nêu giá — để khách liên hệ rồi báo phí theo từng hồ sơ.
  */
-export default function ServicePageView({ data }: { data: ServicePageData }) {
+export default function ServicePageView({
+  data,
+  hideHero = false,
+  hidePricing = false,
+}: {
+  data: ServicePageData;
+  hideHero?: boolean;
+  hidePricing?: boolean;
+}) {
   const hero = data.hero;
   const sections = data.sections ?? [];
   const process = data.process ?? [];
@@ -20,11 +31,13 @@ export default function ServicePageView({ data }: { data: ServicePageData }) {
 
   return (
     <div>
-      <HeroService
-        title={hero?.title || data.title}
-        subtitle={hero?.subtitle || 'Poip Legal Law'}
-        description={hero?.description || data.description}
-      />
+      {!hideHero && (
+        <HeroService
+          title={hero?.title || data.title}
+          subtitle={hero?.subtitle || 'Poip Legal Law'}
+          description={hero?.description || data.description}
+        />
+      )}
 
       {sections.map((section, index) => (
         <SectionRenderer key={section.id || index} section={section} index={index} />
@@ -34,7 +47,7 @@ export default function ServicePageView({ data }: { data: ServicePageData }) {
         <UniversalProcess title="Quy trình thực hiện" steps={process} layout={processLayout} />
       )}
 
-      {pricing.length > 0 && (
+      {!hidePricing && pricing.length > 0 && (
         <PricingComponent
           title="Bảng giá dịch vụ"
           plans={pricing}
