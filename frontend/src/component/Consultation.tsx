@@ -4,7 +4,9 @@ import PhoneInput from 'react-phone-input-2';
 import Swal from 'sweetalert2';
 import { toast } from 'react-toastify';
 import 'react-phone-input-2/lib/style.css';
+import { useNavigate } from 'react-router-dom';
 import { createCustomerService, getServiceHome } from '../service/service';
+import { newSubmissionId } from '../shared/analytics/submission';
 import { contactInfo } from '../shared/config/site';
 import { CustomerService, ServiceItem } from '../types/service';
 
@@ -32,6 +34,7 @@ interface ConsultationFormProps {
 export default function ConsultationForm({ sectionId = 'contact-form' }: ConsultationFormProps) {
   const [formData, setFormData] = useState<CustomerService>(initialForm);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const navigate = useNavigate();
   const [serviceOptions, setServiceOptions] = useState<ServiceItem[]>([]);
   const [errors, setErrors] = useState<Partial<CustomerService>>({});
 
@@ -102,25 +105,19 @@ export default function ConsultationForm({ sectionId = 'contact-form' }: Consult
     });
 
     try {
-      const response = await createCustomerService(formData);
-      await Swal.fire({
-        icon: 'success',
-        title: 'Đã nhận yêu cầu tư vấn',
-        text:
-          response.message ||
-          'Đội ngũ Luật Poip Legal sẽ liên hệ với bạn trong thời gian sớm nhất.',
-      });
+      await createCustomerService(formData);
+      Swal.close();
 
-      window.gtag?.('event', 'conversion', {
-        send_to: 'AW-17438859267/9CUZCKWNmoAbEIPAv_tA',
-        value: 1.0,
-        currency: 'VND',
-      });
-
+      const serviceTitle = serviceOptions.find((s) => s.id === formData.serviceId)?.title;
       setFormData({
         ...initialForm,
         phone: '+84',
         serviceId: serviceOptions[0]?.id || '',
+      });
+
+      // Sang trang cảm ơn; chuyển đổi bắn ở đó để chỉ có một chỗ duy nhất đo lường.
+      navigate('/cam-on', {
+        state: { source: 'consultation', submissionId: newSubmissionId(), serviceTitle },
       });
     } catch {
       await Swal.fire({

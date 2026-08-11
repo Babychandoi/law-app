@@ -7,6 +7,7 @@ const About = lazy(() => import('../page/aboutUs'));
 const PrivacyPolicy = lazy(() => import('../page/legal/PrivacyPolicy'));
 const AdminDashboard = lazy(() => import('../page/admin/home/sections/Dashboard'));
 const Contact = lazy(() => import('../page/contact'));
+const ThankYou = lazy(() => import('../pages/ThankYou'));
 const Home = lazy(() => import('../page/home/Home'));
 const Job = lazy(() => import('../page/recruitment/Job'));
 const Recruitment = lazy(() => import('../page/recruitment/recruitment'));
@@ -27,6 +28,7 @@ const LandingPage = lazy(() => import('../page/landing/LandingPage'));
 const DynamicServicePage = lazy(() => import('../page/service/DynamicServicePage'));
 const ServiceImages = lazy(() => import('../page/admin/home/sections/ServiceImages'));
 const ServiceManager = lazy(() => import('../page/admin/home/sections/Services'));
+const LandingManager = lazy(() => import('../page/admin/home/sections/Landing'));
 const CRM = lazy(() => import('../page/admin/home/sections/CRM'));
 const CrmConfig = lazy(() => import('../page/admin/home/sections/CRM/Config'));
 const TeamChat = lazy(() => import('../page/admin/home/sections/TeamChat'));
@@ -71,6 +73,8 @@ export const publicRoutes: RouteObject = {
     { path: 'tin-tuc', element: withSuspense(<News />) },
     { path: 'tin-tuc/:id', element: withSuspense(<NewsDetail />) },
     { path: 'chinh-sach-bao-mat', element: withSuspense(<PrivacyPolicy />) },
+    // Đặt TRƯỚC ':slug' — nếu để sau, trang dịch vụ động sẽ nuốt mất /cam-on.
+    { path: 'cam-on', element: withSuspense(<ThankYou />) },
     { path: ':slug', element: withSuspense(<DynamicServicePage />) },
   ],
 };
@@ -98,6 +102,7 @@ export const adminRoutes: RouteObject[] = [
     children: [
       { index: true, element: <Navigate to="services" replace /> },
       { path: 'services', element: withSuspense(<ServiceManager />) },
+      { path: 'landing', element: withSuspense(<LandingManager />) },
       { path: 'posts', element: withSuspense(<PostManagement />) },
       { path: 'service-images', element: withSuspense(<ServiceImages />) },
       { path: 'employees', element: withSuspense(<EmployeeManagement />) },
