@@ -21,3 +21,6 @@ certbot/conf/accounts/
 # Backup dump DB/MinIO — chua du lieu ca nhan that (CV ung vien, SDT, email khach).
 # TUYET DOI khong commit.
 backups/
+
+# Ho so tam cua Chrome khi chup san trang (frontend/scripts/prerender.js)
+frontend/.prerender-profile/
