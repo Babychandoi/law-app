@@ -138,7 +138,35 @@ public class SecurityConfig {
                 .csrfTokenRequestHandler(csrfHandler)
                 .ignoringRequestMatchers(CsrfIgnored));
 
+    // HSTS. Spring chỉ gửi header này khi request.isSecure() = true, nhưng ở đây TLS kết thúc tại
+    // Cloudflare và cloudflared gọi origin bằng HTTP thuần nên isSecure() = false — header bị bỏ
+    // qua, api.luatpoip.com không có HSTS.
+    //
+    // Chỉ gửi khi X-Forwarded-Proto = https. KHÔNG gửi vô điều kiện: chạy backend local qua
+    // http://localhost thì trình duyệt sẽ ghi nhớ và ép localhost sang HTTPS, hỏng môi trường dev.
+    http.headers(
+        headers ->
+            headers.httpStrictTransportSecurity(
+                hsts ->
+                    hsts.requestMatcher(
+                            request ->
+                                isForwardedHttps(
+                                    request.getHeader("X-Forwarded-Proto"),
+                                    request.getHeader("CF-Visitor")))
+                        .maxAgeInSeconds(31536000)
+                        .includeSubDomains(true)));
+
     return http.build();
+  }
+
+  /**
+   * Cloudflare gửi CF-Visitor, cloudflared gửi X-Forwarded-Proto — không có gì bảo đảm cả hai đều
+   * có mặt, nên nhận cả hai. Nếu chỉ dựa vào một cái mà cái đó vắng thì header HSTS âm thầm không
+   * bao giờ được gửi, đúng kiểu lỗi im lặng khó phát hiện.
+   */
+  static boolean isForwardedHttps(String forwardedProto, String cfVisitor) {
+    return "https".equalsIgnoreCase(forwardedProto)
+        || (cfVisitor != null && cfVisitor.contains("\"https\""));
   }
 
   @Bean

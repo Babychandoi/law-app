@@ -38,6 +38,10 @@
       content="Luật Poip Legal tư vấn sở hữu trí tuệ và pháp lý doanh nghiệp cho doanh nghiệp, nhà sáng lập và người sáng tạo."
     />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <!-- Tiêu đề mặc định. react-head ghi đè theo từng route khi JavaScript chạy, nhưng trình
+         quét không chạy JS (và Semrush) chỉ thấy HTML gốc — thiếu thẻ này thì mọi trang phục vụ
+         vỏ SPA đều bị báo lỗi "trang không có thẻ tiêu đề". -->
+    <title>Luật POIP Legal — Tư vấn sở hữu trí tuệ và pháp lý doanh nghiệp</title>
 
     <!-- Open Graph / Twitter TĨNH: bot Zalo/Facebook không chạy JS nên cần thẻ sẵn trong HTML.
          (react-head vẫn bổ sung OG per-page cho trình duyệt thật lúc runtime.) -->
