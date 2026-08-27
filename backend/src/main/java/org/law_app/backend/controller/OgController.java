@@ -1,9 +1,13 @@
 package org.law_app.backend.controller;
 
+import java.text.SimpleDateFormat;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.law_app.backend.dto.response.NewsResponse;
+import org.law_app.backend.repository.ChildrenServiceRepository;
+import org.law_app.backend.seo.CrawlerHtml;
 import org.law_app.backend.service.NewsService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,10 +16,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Trả HTML tối giản có thẻ Open Graph/Twitter ĐÚNG theo từng nội dung, dành cho BOT mạng xã hội
- * (Facebook/Zalo/… không chạy JS nên không đọc được OG do SPA set runtime). nginx của frontend phát
- * hiện user-agent bot và proxy `/tin-tuc/{slug}` sang đây; người dùng thật vẫn nhận SPA bình
- * thường.
+ * Trả HTML văn bản thuần cho TRÌNH QUÉT. nginx của frontend dò User-Agent bot rồi proxy sang đây;
+ * người dùng thật vẫn nhận SPA bình thường.
+ *
+ * <p>Trước đây chỉ trả vài thẻ Open Graph kèm tiêu đề và phụ đề. Vì danh sách bot trong nginx có cả
+ * Googlebot, hệ quả là Google index mọi bài viết dưới dạng mẩu cụt hai câu — đo được trên
+ * production: Googlebot nhận 3.571 byte và nội dung dừng ở phụ đề, KHÔNG có thân bài.
+ *
+ * <p>Nay trả đủ thân bài (rút thành văn bản thuần) cộng khối điều hướng, nên trình quét vừa đọc
+ * được nội dung vừa có đường đi tiếp sang trang khác.
  */
 @RestController
 @RequestMapping("/og")
@@ -24,91 +33,61 @@ import org.springframework.web.bind.annotation.RestController;
 public class OgController {
 
   NewsService newsService;
+  ChildrenServiceRepository childrenServiceRepository;
 
-  private static final String SITE = "https://luatpoip.com";
-  private static final String DEFAULT_IMAGE = SITE + "/assets/images/og-logo.png";
+  static final String DEFAULT_IMAGE = CrawlerHtml.SITE + "/assets/images/og-logo.png";
 
   @GetMapping(value = "/news/{slug}", produces = MediaType.TEXT_HTML_VALUE + ";charset=UTF-8")
   public String newsOg(@PathVariable String slug) {
-    String url = SITE + "/tin-tuc/" + slug;
+    String url = CrawlerHtml.SITE + "/tin-tuc/" + slug;
+    NewsResponse n;
     try {
-      NewsResponse n = newsService.getNewsById(slug);
-      String title = n.getTitle() != null ? n.getTitle() : "Luật Poip Legal";
-      String desc = n.getSubtitle() != null ? n.getSubtitle() : "";
-      String image = n.getImage() != null && !n.getImage().isBlank() ? n.getImage() : DEFAULT_IMAGE;
-      return html(title, desc, image, url, "article");
+      n = newsService.getNewsById(slug);
     } catch (Exception e) {
-      // Không tìm thấy bài / lỗi -> trả OG mặc định của site để bot vẫn có preview.
-      return html(
-          "Luật Poip Legal — Tư vấn sở hữu trí tuệ & pháp lý doanh nghiệp",
-          "Tư vấn và đăng ký nhãn hiệu, bản quyền, sáng chế, kiểu dáng, giấy phép doanh nghiệp.",
-          DEFAULT_IMAGE,
-          url,
-          "website");
+      // Không tìm thấy bài: vẫn trả trang hợp lệ có điều hướng để bot không đi vào ngõ cụt.
+      return CrawlerHtml.head(
+              "Luật POIP Legal — Tư vấn sở hữu trí tuệ & pháp lý doanh nghiệp",
+              "Tư vấn và đăng ký nhãn hiệu, bản quyền, kiểu dáng, giấy phép doanh nghiệp.",
+              DEFAULT_IMAGE,
+              url,
+              "website")
+          + CrawlerHtml.nav(serviceLinks())
+          + CrawlerHtml.footer();
     }
+
+    String title = n.getTitle() != null ? n.getTitle() : "Luật POIP Legal";
+    String desc = n.getSubtitle() != null ? n.getSubtitle() : "";
+    String image = n.getImage() != null && !n.getImage().isBlank() ? n.getImage() : DEFAULT_IMAGE;
+
+    StringBuilder body = new StringBuilder();
+    body.append("<article>\n<h1>").append(CrawlerHtml.esc(title)).append("</h1>\n");
+    if (!desc.isBlank()) {
+      body.append("<p>").append(CrawlerHtml.esc(desc)).append("</p>\n");
+    }
+    if (n.getAuthor() != null && !n.getAuthor().isBlank()) {
+      body.append("<p>Tác giả: ").append(CrawlerHtml.esc(n.getAuthor())).append("</p>\n");
+    }
+    if (n.getCreatedAt() != null) {
+      String d = new SimpleDateFormat("yyyy-MM-dd").format(n.getCreatedAt());
+      body.append("<p><time datetime=\"").append(d).append("\">").append(d).append("</time></p>\n");
+    }
+    // Thân bài: rút thành văn bản thuần rồi bọc lại từng đoạn.
+    for (String p : CrawlerHtml.htmlToParagraphs(n.getFullContent())) {
+      body.append("<p>").append(CrawlerHtml.esc(p)).append("</p>\n");
+    }
+    body.append("</article>\n");
+
+    return CrawlerHtml.head(title + " — Luật POIP Legal", desc, image, url, "article")
+        + body
+        + CrawlerHtml.nav(serviceLinks())
+        + CrawlerHtml.footer();
   }
 
-  /** Sinh HTML OG. Escape để không vỡ thuộc tính khi tiêu đề/mô tả có ký tự đặc biệt. */
-  private String html(String title, String desc, String image, String url, String ogType) {
-    String t = esc(title);
-    String d = esc(desc);
-    String img = esc(image);
-    String u = esc(url);
-    return "<!doctype html>\n"
-        + "<html lang=\"vi\"><head>\n"
-        + "<meta charset=\"utf-8\">\n"
-        + "<title>"
-        + t
-        + " — Luật Poip Legal</title>\n"
-        + "<meta name=\"description\" content=\""
-        + d
-        + "\">\n"
-        + "<link rel=\"canonical\" href=\""
-        + u
-        + "\">\n"
-        + "<meta property=\"og:type\" content=\""
-        + esc(ogType)
-        + "\">\n"
-        + "<meta property=\"og:site_name\" content=\"Luật Poip Legal\">\n"
-        + "<meta property=\"og:locale\" content=\"vi_VN\">\n"
-        + "<meta property=\"og:title\" content=\""
-        + t
-        + "\">\n"
-        + "<meta property=\"og:description\" content=\""
-        + d
-        + "\">\n"
-        + "<meta property=\"og:image\" content=\""
-        + img
-        + "\">\n"
-        + "<meta property=\"og:url\" content=\""
-        + u
-        + "\">\n"
-        + "<meta name=\"twitter:card\" content=\"summary_large_image\">\n"
-        + "<meta name=\"twitter:title\" content=\""
-        + t
-        + "\">\n"
-        + "<meta name=\"twitter:description\" content=\""
-        + d
-        + "\">\n"
-        + "<meta name=\"twitter:image\" content=\""
-        + img
-        + "\">\n"
-        + "</head><body>\n"
-        + "<h1>"
-        + t
-        + "</h1>\n<p>"
-        + d
-        + "</p>\n<a href=\""
-        + u
-        + "\">Xem bài viết trên luatpoip.com</a>\n"
-        + "</body></html>";
-  }
-
-  private static String esc(String s) {
-    if (s == null) return "";
-    return s.replace("&", "&amp;")
-        .replace("<", "&lt;")
-        .replace(">", "&gt;")
-        .replace("\"", "&quot;");
+  /** Danh sách dịch vụ cho khối điều hướng, lấy từ DB nên luôn khớp với sitemap và menu thật. */
+  private List<String[]> serviceLinks() {
+    return childrenServiceRepository.findAll().stream()
+        .filter(c -> c.getHref() != null && !c.getHref().isBlank())
+        .map(c -> new String[] {c.getHref(), c.getTitle() == null ? c.getHref() : c.getTitle()})
+        .toList();
   }
 }
