@@ -33,9 +33,10 @@
     contract: '/tu-van-soan-thao-hop-dong',
     ecommerce: '/thong-bao-nen-tang-thuong-mai-dien-tu',
     business: '/thanh-lap-doanh-nghiep-ho-kinh-doanh',
-    // renewal, patent, science, corporate: hiện CHƯA có dịch vụ tương ứng trong DB. Thẻ giới thiệu
-    // vẫn giữ để bán hàng, nhưng khi khách bấm "Chọn dịch vụ" thì không có option nào để chọn —
-    // xử lý bằng cách ghi nhu cầu vào ô nội dung (xem initServiceInteractions).
+    patent: '/dang-ky-sang-che',
+    renewal: '/gia-han-chuyen-nhuong-van-bang',
+    science: '/doanh-nghiep-khoa-hoc-cong-nghe',
+    corporate: '/tu-van-phap-ly-doanh-nghiep',
   };
 
   /** Nhãn hiển thị trong dropdown, dùng lại câu chữ marketing thay vì tên thô trong DB. */
@@ -49,15 +50,18 @@
     contract: 'Tư vấn, soạn thảo hợp đồng',
     ecommerce: 'Website / nền tảng thương mại điện tử',
     business: 'Thành lập công ty / hộ kinh doanh',
-  };
-
-  /** Nhu cầu chưa có dịch vụ riêng trong DB — ghi vào nội dung lead để đội tư vấn biết chính xác. */
-  const UNMAPPED_LABELS = {
-    renewal: 'Gia hạn / chuyển nhượng văn bằng',
     patent: 'Sáng chế / giải pháp hữu ích',
+    renewal: 'Gia hạn / chuyển nhượng văn bằng',
     science: 'Doanh nghiệp khoa học và công nghệ',
     corporate: 'Tư vấn pháp lý doanh nghiệp',
   };
+
+  /**
+   * Nhu cầu chưa có dịch vụ riêng trong DB — ghi vào ô nội dung để đội tư vấn biết chính xác.
+   * Hiện TRỐNG vì cả 13 thẻ dịch vụ đều đã có dịch vụ tương ứng. Giữ lại cơ chế làm lưới an
+   * toàn: thêm thẻ mới mà quên tạo dịch vụ thì lead vẫn về, không rơi vào mailto.
+   */
+  const UNMAPPED_LABELS = {};
 
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
