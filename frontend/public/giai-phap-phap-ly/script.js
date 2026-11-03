@@ -82,6 +82,12 @@
   }
 
   function trackLead(source) {
+    // Meta Pixel: chỉ tính Lead khi API đã nhận form thành công. Hàm này còn được gọi khi bấm
+    // hotline/Zalo (initContactTracking) — những lượt đó KHÔNG phải Lead với Meta. Không gửi tên,
+    // điện thoại, email hay nội dung tư vấn trong tham số sự kiện.
+    if (source === 'lead-form-success' && typeof window.fbq === 'function') {
+      window.fbq('track', 'Lead');
+    }
     if (typeof window.gtag !== 'function') return;
     // Chỉ bắn khi có nhãn thật. Gửi send_to rỗng là gọi vô nghĩa, còn giữ nhãn của tài khoản cũ
     // thì số liệu chảy sang tài khoản đã bỏ mà không ai phát hiện.
