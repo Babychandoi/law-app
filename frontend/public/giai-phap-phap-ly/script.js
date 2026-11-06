@@ -6,11 +6,15 @@
     servicesPath: '/services/home',
     leadPath: '/customer',
     // Nhãn hành động chuyển đổi Google Ads, dạng 'AW-18319389912/AbC-dEfGhIjK'.
-    // Lấy ở Google Ads > Mục tiêu > Chuyển đổi > Hành động chuyển đổi. ĐỂ TRỐNG thì không bắn
-    // chuyển đổi kiểu sự kiện — cố ý, vì trang cảm ơn /cam-on đã báo lượt tải trang cho Ads rồi,
-    // bật cả hai là một lead bị đếm hai lần.
+    // Lấy ở Google Ads > Mục tiêu > Chuyển đổi > Hành động chuyển đổi. Trống thì không bắn.
+    // LƯU Ý: gửi form xong trang này chuyển thẳng sang Zalo, KHÔNG qua /cam-on nữa, nên hành
+    // động chuyển đổi kiểu "Tải trang /cam-on" của Ads sẽ không còn nhận lead từ landing này.
+    // Muốn Ads đếm lead ở đây thì tạo hành động kiểu sự kiện rồi điền nhãn vào ô này.
     googleAdsConversion: '',
-    thankYouPath: '/cam-on',
+    // Gửi form thành công -> mở chat Zalo của POIP để khách nhắn tiếp ngay.
+    zaloUrl: 'https://zalo.me/0947600064',
+    // Chờ ngắn trước khi rời trang để request Lead (Meta) / generate_lead (Google) kịp gửi đi.
+    redirectDelayMs: 600,
     source: 'LP-tong-dich-vu-ads',
     phone: '0947600064',
     email: 'luatpoip@gmail.com',
@@ -65,15 +69,6 @@
 
   const $ = (selector, root = document) => root.querySelector(selector);
   const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
-
-  /**
-   * Mã một lần cho mỗi lần gửi form, gửi kèm sang trang cảm ơn qua ?sid=.
-   * Trang cảm ơn dùng mã này làm cờ trong sessionStorage để F5 không tính thêm chuyển đổi.
-   */
-  function newSubmissionId() {
-    if (window.crypto?.randomUUID) return window.crypto.randomUUID();
-    return `sub-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-  }
 
   function trackEvent(name, params = {}) {
     if (typeof window.gtag === 'function') {
@@ -483,6 +478,9 @@
       submitButton.textContent = 'Đang gửi yêu cầu...';
     }
     showFormStatus('success', 'Đang kết nối hệ thống tiếp nhận...');
+    // true khi đã gửi thành công và đang chờ chuyển sang Zalo: giữ nút khóa để khách không bấm
+    // gửi lần nữa trong lúc chờ, tránh tạo hồ sơ trùng.
+    let redirecting = false;
 
     try {
       if (data.serviceId.startsWith('local:')) {
@@ -515,26 +513,19 @@
         throw new Error(payload.message || 'API error');
 
       trackLead('lead-form-success');
-      showFormStatus('success', 'POIP đã nhận yêu cầu. Đang chuyển sang trang xác nhận...');
+      showFormStatus('success', 'POIP đã nhận yêu cầu. Đang mở Zalo để bạn nhắn trực tiếp...');
       form.reset();
       $$('[aria-invalid]', form).forEach((field) => field.setAttribute('aria-invalid', 'false'));
       $$('.field__error', form).forEach((error) => {
         error.textContent = '';
       });
 
-      // Sang trang cảm ơn dùng chung với website. Đây là điều hướng CỨNG (đổi document), nên thẻ
-      // Google trên /cam-on tự báo lượt tải trang cho Ads — khớp với hành động chuyển đổi kiểu
-      // "Tải trang" đang đặt điều kiện URL chứa /cam-on.
-      //
-      // sid: mã một lần, để trang cảm ơn biết đây là lần gửi form thật và chỉ tính đúng một lần dù
-      // khách F5. Truyền qua query vì tải cứng không giữ được state điều hướng của React Router.
-      const sid = newSubmissionId();
-      const params = new URLSearchParams({
-        sid,
-        src: CONFIG.source,
-        service: data.serviceName || '',
-      });
-      window.location.assign(`${CONFIG.thankYouPath}?${params.toString()}`);
+      // Hồ sơ đã lưu và Lead đã bắn ở trên -> chuyển thẳng sang Zalo, không qua /cam-on.
+      // Mở trong cùng tab: window.open sau một lệnh await bị trình duyệt chặn như popup.
+      // Trên điện thoại zalo.me mở app Zalo; trên máy tính mở trang Zalo web/QR.
+      redirecting = true;
+      if (submitButton) submitButton.textContent = 'Đang mở Zalo...';
+      window.setTimeout(() => window.location.assign(CONFIG.zaloUrl), CONFIG.redirectDelayMs);
     } catch {
       const fallback = buildFallbackEmail(data);
       showFormStatus(
@@ -544,7 +535,7 @@
       );
       trackEvent('exception', { description: 'lead_form_submit_failed', fatal: false });
     } finally {
-      if (submitButton) {
+      if (submitButton && !redirecting) {
         submitButton.disabled = false;
         submitButton.innerHTML = '<span>Gửi yêu cầu tư vấn</span><span aria-hidden="true">→</span>';
         if (originalText) submitButton.setAttribute('aria-label', originalText.trim());
