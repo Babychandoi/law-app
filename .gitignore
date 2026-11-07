@@ -32,3 +32,10 @@ website-lead-ad/
 # Claude Code: cau hinh/khoa ca nhan tren may, khong phai config chung cua repo
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
+
+# File ca nhan ro ngoai goc repo (tai lieu tham khao tai ve, bao cao, patch da ap) -
+# khong phai code/tai lieu cua du an, giu tren may khong commit.
+/*.pdf
+/checklist_seo_luatpoip.txt
+/Bao-cao-danh-gia-module-Quan-ly-tai-lieu-Luat-POIP.md
+/0001-*.patch
