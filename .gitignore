@@ -24,3 +24,11 @@ backups/
 
 # Ho so tam cua Chrome khi chup san trang (frontend/scripts/prerender.js)
 frontend/.prerender-profile/
+
+# Du an lam video/anh quang cao Facebook (Pixel, video, voice) - khong phai code
+# cua law-app. Co venv Python + file media nang, khong commit.
+website-lead-ad/
+
+# Claude Code: cau hinh/khoa ca nhan tren may, khong phai config chung cua repo
+.claude/settings.local.json
+.claude/scheduled_tasks.lock
