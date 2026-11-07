@@ -2,34 +2,34 @@
   /* ===== Màu: khớp CHÍNH XÁC frontend/tailwind.config.js để landing và website không lệch tông.
      Trước đây gold #c5963f / ink #171711 / muted #67675f — lệch nhẹ nhưng đặt cạnh nhau thấy rõ,
      nhất là màu vàng. ===== */
-  --ink: #171717;
-  --ink-soft: #262626;
-  --paper: #f8f6f1;
-  --paper-deep: #f0ece3;
+  --ink: #1b2a3a;
+  --ink-soft: #26384a;
+  --paper: #f1f8f6;
+  --paper-deep: #e4f0ec;
   --white: #ffffff;
-  --gold: #c7942c;
-  --gold-dark: #875f12;
-  --gold-pale: #ead5a8;
-  --line: #e8e1d3;
+  --gold: #f5b32d;
+  --gold-dark: #0f766e;
+  --gold-pale: #ffe3a1;
+  --line: #d8e6e1;
   --line-light: rgba(255, 255, 255, 0.17);
-  --muted: #5f6368;
+  --muted: #4b5b6b;
   --danger: #a72727;
   --success: #1f6b47;
 
   /* Lora ĐỨNG ĐẦU vì nó có bộ tiếng Việt đầy đủ. Georgia/Times chỉ là dự phòng khi font ngoài
      chưa tải xong hoặc bị chặn — lúc đó vài chữ hai dấu (ầ ố ằ ế ề) sẽ hiện lệch dấu, nhưng đó là
      trạng thái tạm vài trăm mili-giây, không phải trạng thái thường. */
-  --serif: 'Lora', Georgia, 'Times New Roman', Times, serif;
-  --sans: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --serif: 'Be Vietnam Pro', ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+  --sans: 'Be Vietnam Pro', ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
   --shell: 1180px;
 
   /* ===== Bo góc: theo borderRadius của dự án (control cho nút/ô nhập, card cho khối). Bản gốc
      dùng 2px cho mọi thứ nên trông gắt; 8/12px mềm hơn và khớp website. ===== */
-  --radius-control: 8px;
-  --radius-card: 12px;
+  --radius-control: 12px;
+  --radius-card: 16px;
 
   /* ===== Đổ bóng: theo boxShadow.soft / boxShadow.card của dự án ===== */
-  --shadow: 0 18px 45px rgba(23, 23, 23, 0.08);
+  --shadow: 0 18px 45px rgba(15, 118, 110, 0.12);
   --shadow-lift: 0 14px 30px rgba(23, 23, 23, 0.1);
 
   /* ===== Chuyển động: một thang duy nhất để mọi hiệu ứng cùng nhịp. Easing giảm tốc (bắt đầu
@@ -382,11 +382,11 @@ button {
 
 .button--gold {
   background: var(--gold);
-  color: #17120a;
+  color: #1b2a3a;
 }
 
 .button--gold:hover {
-  background: #ddb665;
+  background: #f8c75b;
 }
 
 .button--outline-light {

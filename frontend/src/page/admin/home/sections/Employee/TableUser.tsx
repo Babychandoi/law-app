@@ -49,7 +49,7 @@ const UserTable: React.FC<UserTableProps> = ({
           aria-label="Vai trò người dùng"
           value={user.role}
           onChange={(e) => onRoleChange(user.id, e.target.value as 'ADMIN' | 'USER')}
-          className="px-2 py-1 text-xs font-medium rounded-full border-0 cursor-pointer bg-brand-surface text-brand-goldDark"
+          className="px-2 py-1 text-xs font-medium rounded-full border-0 cursor-pointer bg-brand-surface text-brand-primary"
         >
           <option value="USER">Nhân viên</option>
           <option value="ADMIN">Quản trị viên</option>
@@ -87,7 +87,7 @@ const UserTable: React.FC<UserTableProps> = ({
         <div className="flex gap-2">
           <button
             onClick={() => onEdit(user)}
-            className="p-2 text-brand-goldDark hover:bg-brand-surface rounded-lg transition-colors"
+            className="p-2 text-brand-primary hover:bg-brand-surface rounded-lg transition-colors"
             title="Chỉnh sửa"
             aria-label="Chỉnh sửa"
           >

@@ -12,9 +12,9 @@ interface FooterLink {
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   [
     'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-gold',
+    'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-accent',
     isActive
-      ? 'bg-brand-gold/20 text-brand-gold'
+      ? 'bg-brand-accent/20 text-brand-accent'
       : 'text-white/70 hover:bg-white/10 hover:text-white',
   ].join(' ');
 
@@ -141,7 +141,7 @@ const Sidebar: React.FC<{
     <div className="flex h-16 shrink-0 items-center justify-between border-b border-white/10 px-5">
       <div className="flex items-center gap-2">
         <span className="text-lg font-bold text-white">Luật Poip</span>
-        <span className="rounded bg-brand-gold/20 px-1.5 py-0.5 text-[10px] font-semibold text-brand-gold">
+        <span className="rounded bg-brand-accent/20 px-1.5 py-0.5 text-[10px] font-semibold text-brand-accent">
           {workspaceTitle}
         </span>
       </div>

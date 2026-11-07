@@ -369,7 +369,7 @@ function DataTable<T>({
                 }}
                 placeholder={searchPlaceholder}
                 aria-label={searchPlaceholder}
-                className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-goldDark"
+                className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-brand-primary"
               />
             </div>
           )}
@@ -404,7 +404,7 @@ function DataTable<T>({
                             type="checkbox"
                             checked={!hidden.has(c.key)}
                             onChange={() => toggleColumn(c.key)}
-                            className="h-4 w-4 accent-brand-goldDark"
+                            className="h-4 w-4 accent-brand-primary"
                           />
                           {c.header}
                         </label>
@@ -457,7 +457,7 @@ function DataTable<T>({
                         }}
                         placeholder="Tên chế độ xem…"
                         aria-label="Tên chế độ xem để lưu"
-                        className="flex-1 rounded-lg border border-gray-300 px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-brand-goldDark"
+                        className="flex-1 rounded-lg border border-gray-300 px-2 py-1.5 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
                       />
                       <button
                         type="button"
@@ -467,7 +467,7 @@ function DataTable<T>({
                         }}
                         disabled={!viewName.trim()}
                         aria-label="Lưu chế độ xem hiện tại"
-                        className="rounded-lg p-2 text-brand-goldDark hover:bg-gray-50 disabled:opacity-40"
+                        className="rounded-lg p-2 text-brand-primary hover:bg-gray-50 disabled:opacity-40"
                       >
                         <Save size={16} />
                       </button>
@@ -482,7 +482,7 @@ function DataTable<T>({
 
       {selectable && selectedRows.length > 0 && (
         <div className="flex flex-wrap items-center gap-3 mb-3 rounded-lg bg-brand-surface px-4 py-2.5 text-sm">
-          <span className="font-medium text-brand-goldDark">Đã chọn {selectedRows.length}</span>
+          <span className="font-medium text-brand-primary">Đã chọn {selectedRows.length}</span>
           <button
             type="button"
             onClick={clearSelection}
@@ -512,7 +512,7 @@ function DataTable<T>({
                         aria-label="Chọn tất cả dòng trên trang"
                         checked={allOnPage}
                         onChange={toggleAllOnPage}
-                        className="h-4 w-4 accent-brand-goldDark cursor-pointer"
+                        className="h-4 w-4 accent-brand-primary cursor-pointer"
                       />
                     </th>
                   )}
@@ -529,7 +529,7 @@ function DataTable<T>({
                           <button
                             type="button"
                             onClick={() => toggleSort(col.key)}
-                            className="inline-flex items-center gap-1 hover:text-brand-goldDark"
+                            className="inline-flex items-center gap-1 hover:text-brand-primary"
                           >
                             {col.header}
                             {active ? (
@@ -566,7 +566,7 @@ function DataTable<T>({
                           aria-label="Chọn dòng"
                           checked={selected.has(rowKey(row))}
                           onChange={() => toggleOne(rowKey(row))}
-                          className="h-4 w-4 accent-brand-goldDark cursor-pointer"
+                          className="h-4 w-4 accent-brand-primary cursor-pointer"
                         />
                       </td>
                     )}
@@ -594,7 +594,7 @@ function DataTable<T>({
                 onClick={onRowClick ? () => onRowClick(row) : undefined}
                 className={`rounded-xl border p-4 bg-white ${
                   selected.has(rowKey(row))
-                    ? 'border-brand-gold bg-brand-surface/40'
+                    ? 'border-brand-accent bg-brand-surface/40'
                     : 'border-gray-200'
                 } ${onRowClick ? 'cursor-pointer active:bg-gray-50' : ''}`}
               >
@@ -608,7 +608,7 @@ function DataTable<T>({
                       aria-label="Chọn dòng"
                       checked={selected.has(rowKey(row))}
                       onChange={() => toggleOne(rowKey(row))}
-                      className="h-4 w-4 accent-brand-goldDark cursor-pointer"
+                      className="h-4 w-4 accent-brand-primary cursor-pointer"
                     />
                     Chọn
                   </label>

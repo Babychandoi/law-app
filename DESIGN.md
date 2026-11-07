@@ -1,77 +1,31 @@
 ---
 name: Luật Poip Legal
-description: Clear, credible legal guidance that turns uncertainty into consultation.
+description: Bright, friendly legal guidance that turns uncertainty into consultation.
 colors:
-  counsel-ink: "#171717"
-  counsel-muted: "#5f6368"
-  poip-gold: "#c7942c"
-  poip-gold-deep: "#875f12"
-  quiet-line: "#e8e1d3"
-  service-surface: "#f8f6f1"
+  ink: "#1b2a3a"
+  muted: "#4b5b6b"
+  primary: "#0f766e"
+  primary-dark: "#115e59"
+  accent: "#f5b32d"
+  accent-soft: "#fff1cc"
+  line: "#d8e6e1"
+  surface: "#f1f8f6"
   white: "#ffffff"
 typography:
-  display:
-    fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, sans-serif"
-    fontSize: "clamp(2.25rem, 5vw, 3.75rem)"
-    fontWeight: 600
-    lineHeight: 1.15
-    letterSpacing: "-0.02em"
-  headline:
-    fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, sans-serif"
-    fontSize: "clamp(1.875rem, 3vw, 2.25rem)"
-    fontWeight: 600
-    lineHeight: 1.2
-  title:
-    fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, sans-serif"
-    fontSize: "1.125rem"
-    fontWeight: 600
-    lineHeight: 1.5
-  body:
-    fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, sans-serif"
-    fontSize: "1rem"
-    fontWeight: 400
-    lineHeight: 1.75
-  label:
-    fontFamily: "-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica Neue, sans-serif"
-    fontSize: "0.875rem"
-    fontWeight: 600
-    lineHeight: 1.5
+  display: {fontFamily: "Be Vietnam Pro, system-ui, sans-serif", fontSize: "clamp(2.25rem, 5vw, 3.75rem)", fontWeight: 600, lineHeight: 1.15, letterSpacing: "-0.02em"}
+  headline: {fontFamily: "Be Vietnam Pro, system-ui, sans-serif", fontSize: "clamp(1.875rem, 3vw, 2.25rem)", fontWeight: 600, lineHeight: 1.2}
+  title: {fontFamily: "Be Vietnam Pro, system-ui, sans-serif", fontSize: "1.125rem", fontWeight: 600, lineHeight: 1.5}
+  body: {fontFamily: "Be Vietnam Pro, system-ui, sans-serif", fontSize: "1rem", fontWeight: 400, lineHeight: 1.75}
+  label: {fontFamily: "Be Vietnam Pro, system-ui, sans-serif", fontSize: "0.875rem", fontWeight: 600, lineHeight: 1.5}
 rounded:
-  md: "6px"
-  lg: "8px"
-  xl: "12px"
+  control: "12px"
+  card: "16px"
 spacing:
   xs: "8px"
   sm: "12px"
   md: "16px"
   lg: "24px"
   xl: "32px"
-components:
-  button-primary:
-    backgroundColor: "{colors.poip-gold-deep}"
-    textColor: "{colors.white}"
-    typography: "{typography.label}"
-    rounded: "{rounded.md}"
-    padding: "12px 20px"
-  button-primary-hover:
-    backgroundColor: "{colors.counsel-ink}"
-    textColor: "{colors.white}"
-  button-secondary:
-    backgroundColor: "{colors.white}"
-    textColor: "{colors.counsel-ink}"
-    typography: "{typography.label}"
-    rounded: "{rounded.md}"
-    padding: "12px 20px"
-  card-service:
-    backgroundColor: "{colors.white}"
-    textColor: "{colors.counsel-ink}"
-    rounded: "{rounded.lg}"
-    padding: "20px"
-  input-default:
-    backgroundColor: "{colors.white}"
-    textColor: "{colors.counsel-ink}"
-    rounded: "{rounded.xl}"
-    padding: "12px 16px"
 ---
 
 # Design System: Luật Poip Legal
@@ -80,7 +34,7 @@ components:
 
 **Creative North Star: "Clear Counsel"**
 
-Luật Poip Legal should feel like a focused consultation with a trusted legal expert: composed, direct, and easy to follow. The dominant public-site system uses deep near-black, restrained gold, white, and a quiet off-white surface to establish authority without making the experience severe or distant.
+Luật Poip Legal should feel like a focused consultation with a trusted legal expert: composed, direct, and easy to follow. The dominant public-site system uses deep near-black, teal and sunny yellow, white, and a quiet off-white surface to establish authority without making the experience severe or distant.
 
 Hierarchy and plain-language content do the persuasive work. Imagery demonstrates real legal and business contexts; color marks important actions and navigation states. The system explicitly rejects flashy gradients, excessive animations, generic corporate templates, and dense legal jargon.
 
@@ -98,20 +52,20 @@ The palette pairs professional near-black with a focused gold accent and quiet n
 
 ### Primary
 
-- **Poip Gold:** The sole brand accent for primary consultation actions, important icons, active navigation states, and high-value highlights.
-- **Poip Gold Deep:** The interaction and high-contrast companion to Poip Gold, used for hover states and gold text on light surfaces.
+- **Sunny Accent:** The sole brand accent for primary consultation actions, important icons, active navigation states, and high-value highlights.
+- **Primary Teal:** The interaction and high-contrast companion to Sunny Accent, used for hover states and gold text on light surfaces.
 
 ### Neutral
 
-- **Counsel Ink:** The primary dark surface and strongest text color.
+- **Ink:** The primary dark surface and strongest text color.
 - **Counsel Muted:** Supporting text that remains readable and subordinate.
-- **Service Surface:** A quiet off-white used to separate service and consultation sections from white.
-- **Quiet Line:** Borders and dividers that organize without adding visual noise.
+- **Mint Surface:** A quiet off-white used to separate service and consultation sections from white.
+- **Line:** Borders and dividers that organize without adding visual noise.
 - **White:** Primary content surfaces and text on dark or gold backgrounds.
 
 ### Named Rules
 
-**The One Gold Rule.** Poip Gold is the only decorative accent on the public brand surface; do not introduce unrelated blue, purple, orange, or red accents for ordinary content.
+**The One Accent Rule.** Sunny Accent is the only decorative accent (teal is the action color) on the public brand surface; do not introduce unrelated blue, purple, orange, or red accents for ordinary content.
 
 **The No Spectacle Rule.** Gradients are forbidden as text fills, generic section backgrounds, button fills, and decorative glow fields.
 
@@ -155,27 +109,27 @@ The system is flat by default and uses borders and surface contrast for structur
 ### Buttons
 
 - **Shape:** Gently curved rectangle (6px radius) with a compact, reachable target.
-- **Primary:** Poip Gold Deep with a white semibold label and 12px by 20px padding.
-- **Hover / Focus:** Shift to Counsel Ink; always show a visible keyboard focus ring with sufficient contrast.
-- **Secondary:** White or transparent with a full Quiet Line border and Counsel Ink label.
+- **Primary:** Primary Teal with a white semibold label and 12px by 20px padding.
+- **Hover / Focus:** Shift to Ink; always show a visible keyboard focus ring with sufficient contrast.
+- **Secondary:** White or transparent with a full Line border and Ink label.
 
 ### Cards / Containers
 
 - **Corner Style:** Gently curved (8px radius) for public service cards.
-- **Background:** White on Service Surface or white page backgrounds.
+- **Background:** White on Mint Surface or white page backgrounds.
 - **Shadow Strategy:** Flat at rest or Resting Card; Soft Lift only on hover or for focused conversion content.
-- **Border:** One-pixel Quiet Line border.
+- **Border:** One-pixel Line border.
 - **Internal Padding:** 20-24px.
 
 ### Inputs / Fields
 
 - **Style:** White field, full neutral border, readable text, and a 12px radius where existing consultation forms use the softer field style.
-- **Focus:** Strong border or ring using Poip Gold Deep; focus must never rely on color alone when an error is present.
+- **Focus:** Strong border or ring using Primary Teal; focus must never rely on color alone when an error is present.
 - **Error / Disabled:** Pair state color with concise text. Disabled controls retain readable labels.
 
 ### Navigation
 
-Public navigation uses compact semibold labels, a white surface, and restrained active-state tinting. Desktop submenus use a bordered white popup with Soft Lift; mobile navigation uses full-width targets and explicit submenu controls. Consultation actions use Poip Gold and remain visually distinct from ordinary links.
+Public navigation uses compact semibold labels, a white surface, and restrained active-state tinting. Desktop submenus use a bordered white popup with Soft Lift; mobile navigation uses full-width targets and explicit submenu controls. Consultation actions use Sunny Accent and remain visually distinct from ordinary links.
 
 ### Consultation Actions
 
@@ -185,7 +139,7 @@ Forms, call links, and Zalo contacts are primary conversion paths. Keep at least
 
 ### Do:
 
-- **Do** use Counsel Ink, Poip Gold, white, and Service Surface as the dominant public-site palette.
+- **Do** use Ink, Sunny Accent, white, and Mint Surface as the dominant public-site palette.
 - **Do** explain legal services in plain Vietnamese and make the next consultation step explicit.
 - **Do** use full borders, spacing, and tonal surfaces to organize content.
 - **Do** maintain WCAG 2.1 AA contrast, keyboard navigation, visible focus, and reduced-motion support.
@@ -197,5 +151,12 @@ Forms, call links, and Zalo contacts are primary conversion paths. Keep at least
 - **Don't** use excessive animations; movement must clarify state and include a reduced-motion alternative.
 - **Don't** build generic corporate templates made from endless identical icon cards.
 - **Don't** use dense legal jargon when plain Vietnamese can explain the same decision.
-- **Don't** introduce unrelated accent colors where Poip Gold or a neutral communicates the role.
+- **Don't** introduce unrelated accent colors where Sunny Accent or a neutral communicates the role.
 - **Don't** use colored side-stripe borders or glassmorphism as decorative defaults.
+
+## 7. Bright & friendly refresh
+
+- Primary action color is Primary Teal `#0f766e` (white text 5.5:1; hover Primary Dark `#115e59`, 7.6:1). Sunny Accent `#f5b32d` is for icons, rules and highlights, and for text on Ink; never put white text on it.
+- Typeface: Be Vietnam Pro (Google Fonts), system sans as fallback. Rounder corners: controls 12px, cards 16px.
+- Surfaces use the mint Surface `#f1f8f6`; borders use Line `#d8e6e1`.
+- Tailwind tokens: `brand-primary`, `brand-primaryDark`, `brand-accent`, `brand-accentSoft`, `brand-ink`, `brand-muted`, `brand-line`, `brand-surface`.

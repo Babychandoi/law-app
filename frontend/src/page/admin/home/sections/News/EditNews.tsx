@@ -218,10 +218,10 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
             className="flex w-full items-center justify-between gap-2 px-4 py-2.5 text-sm font-medium text-brand-ink hover:bg-brand-surface"
           >
             <span className="inline-flex items-center gap-2">
-              <History size={16} className="text-brand-goldDark" aria-hidden="true" />
+              <History size={16} className="text-brand-primary" aria-hidden="true" />
               Lịch sử phiên bản
               {versions.length > 0 && (
-                <span className="rounded-full bg-brand-surface px-2 text-xs text-brand-goldDark">
+                <span className="rounded-full bg-brand-surface px-2 text-xs text-brand-primary">
                   {versions.length}
                 </span>
               )}
@@ -262,7 +262,7 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
                           type="button"
                           disabled={restoring === v.id}
                           onClick={() => handleRestore(v)}
-                          className="inline-flex items-center gap-1 rounded-md bg-brand-goldDark px-2 py-1 text-xs font-medium text-white hover:bg-brand-gold disabled:opacity-50"
+                          className="inline-flex items-center gap-1 rounded-md bg-brand-primary px-2 py-1 text-xs font-medium text-white hover:bg-brand-primaryDark disabled:opacity-50"
                         >
                           <RotateCcw size={13} /> {restoring === v.id ? 'Đang…' : 'Khôi phục'}
                         </button>
@@ -317,7 +317,7 @@ const EditNews: React.FC<EditNewsProps> = ({ news, onSave, onCancel }) => {
               value={formData.subtitle}
               onChange={handleInputChange}
               rows={3}
-              className="w-full px-3 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-gold focus:border-brand-gold"
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-accent focus:border-brand-accent"
               required
             />
           </div>

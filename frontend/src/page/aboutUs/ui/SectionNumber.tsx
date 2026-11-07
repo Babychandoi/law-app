@@ -6,7 +6,7 @@ interface SectionNumberProps {
 }
 
 const SectionNumber: React.FC<SectionNumberProps> = ({ number }) => (
-  <div className="w-12 h-12 bg-brand-goldDark text-white rounded-full flex items-center justify-center text-xl font-bold mr-4">
+  <div className="w-12 h-12 bg-brand-primary text-white rounded-full flex items-center justify-center text-xl font-bold mr-4">
     {number}
   </div>
 );

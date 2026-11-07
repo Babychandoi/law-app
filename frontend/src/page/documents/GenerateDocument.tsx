@@ -394,13 +394,13 @@ export default function GenerateDocument() {
       <header>
         <Link
           to="/2025/luatpoip/tai-lieu"
-          className="inline-flex items-center gap-1 text-sm font-medium text-brand-goldDark hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+          className="inline-flex items-center gap-1 text-sm font-medium text-brand-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
         >
           <ArrowLeft size={16} aria-hidden="true" /> Biểu mẫu
         </Link>
         <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-brand-goldDark">
+            <p className="text-xs font-semibold uppercase tracking-wide text-brand-primary">
               {mode === 'form' ? 'Bước 1/2 · Nhập dữ liệu' : 'Bước 2/2 · Kiểm tra'}
             </p>
             <h2 className="text-2xl font-semibold">Tạo tài liệu: {template.name}</h2>
@@ -536,7 +536,7 @@ export default function GenerateDocument() {
             type="button"
             onClick={review}
             disabled={template.fields.length === 0 && listKeys.length === 0}
-            className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-goldDark px-4 py-3 font-semibold text-white hover:bg-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-3 font-semibold text-white hover:bg-brand-primaryDark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <FileCheck2 size={18} aria-hidden="true" /> Kiểm tra dữ liệu
           </button>
@@ -559,7 +559,7 @@ export default function GenerateDocument() {
               type="button"
               onClick={() => setMode('form')}
               disabled={submitting}
-              className="inline-flex items-center gap-2 self-start rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+              className="inline-flex items-center gap-2 self-start rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
             >
               <Edit3 size={16} aria-hidden="true" /> Chỉnh sửa
             </button>
@@ -608,7 +608,7 @@ export default function GenerateDocument() {
               type="button"
               onClick={loadPreview}
               disabled={previewing}
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:opacity-60"
             >
               {previewing ? (
                 <Spinner size={16} label="Đang tạo bản xem trước" />
@@ -631,7 +631,7 @@ export default function GenerateDocument() {
             type="button"
             onClick={submit}
             disabled={submitting}
-            className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-goldDark px-4 py-3 font-semibold text-white hover:bg-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-3 font-semibold text-white hover:bg-brand-primaryDark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {submitting ? (
               <Spinner size={18} className="text-white" label="Đang tạo tài liệu" />
@@ -793,7 +793,7 @@ function DocumentValueField({
   const className = `mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 ${
     error
       ? 'border-red-500 focus:border-red-600 focus:ring-red-200'
-      : 'border-gray-300 focus:border-brand-goldDark focus:ring-brand-goldDark/20'
+      : 'border-gray-300 focus:border-brand-primary focus:ring-brand-primary/20'
   }`;
 
   return (
@@ -951,7 +951,7 @@ function ListRepeater({
                       type="text"
                       value={row[childKey] || ''}
                       onChange={(event) => onChange(index, childKey, event.target.value)}
-                      className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-brand-goldDark focus:ring-2 focus:ring-brand-goldDark/20"
+                      className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
                     />
                   </div>
                 );
@@ -970,7 +970,7 @@ function ListRepeater({
       <button
         type="button"
         onClick={onAdd}
-        className="mt-3 inline-flex items-center gap-2 rounded-lg border border-brand-goldDark px-3 py-2 text-sm font-medium text-brand-goldDark hover:bg-brand-goldDark/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+        className="mt-3 inline-flex items-center gap-2 rounded-lg border border-brand-primary px-3 py-2 text-sm font-medium text-brand-primary hover:bg-brand-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
       >
         <Plus size={16} aria-hidden="true" /> Thêm dòng
       </button>

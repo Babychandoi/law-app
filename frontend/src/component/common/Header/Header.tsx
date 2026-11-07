@@ -8,14 +8,14 @@ import { ServiceResponse } from '../../../types/service';
 import { useOverflowMenu } from './useOverflowMenu';
 
 const focusClass =
-  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-goldDark';
+  'focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-primary';
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   [
     `inline-flex min-h-11 items-center gap-2 whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium transition-colors ${focusClass}`,
     isActive
-      ? 'bg-brand-surface text-brand-goldDark'
-      : 'text-gray-700 hover:bg-gray-50 hover:text-brand-goldDark',
+      ? 'bg-brand-surface text-brand-primary'
+      : 'text-gray-700 hover:bg-gray-50 hover:text-brand-primary',
   ].join(' ');
 
 // Sau khi chọn 1 mục trong dropdown, link vẫn giữ focus khiến group-focus-within
@@ -70,12 +70,12 @@ function DesktopMenuItem({ item }: { item: ServiceResponse }) {
                 [
                   `flex min-h-11 items-center gap-3 rounded-md px-3 py-3 text-sm transition-colors ${focusClass}`,
                   isActive
-                    ? 'bg-brand-surface text-brand-goldDark'
-                    : 'text-gray-700 hover:bg-gray-50 hover:text-brand-goldDark',
+                    ? 'bg-brand-surface text-brand-primary'
+                    : 'text-gray-700 hover:bg-gray-50 hover:text-brand-primary',
                 ].join(' ')
               }
             >
-              <span className="text-brand-goldDark">
+              <span className="text-brand-primary">
                 <MenuIcon id={child.id} size={16} />
               </span>
               <span>{child.title}</span>
@@ -94,8 +94,8 @@ function MoreMenuItem({ items }: { items: ServiceResponse[] }) {
     [
       `flex min-h-11 items-center gap-3 rounded-md px-3 py-3 text-sm transition-colors ${focusClass}`,
       isActive
-        ? 'bg-brand-surface text-brand-goldDark'
-        : 'text-gray-700 hover:bg-gray-50 hover:text-brand-goldDark',
+        ? 'bg-brand-surface text-brand-primary'
+        : 'text-gray-700 hover:bg-gray-50 hover:text-brand-primary',
     ].join(' ');
 
   return (
@@ -114,7 +114,7 @@ function MoreMenuItem({ items }: { items: ServiceResponse[] }) {
           {items.map((item) => (
             <div key={item.id}>
               <NavLink to={item.href} onClick={closeDropdownOnSelect} className={childLinkClass}>
-                <span className="text-brand-goldDark">
+                <span className="text-brand-primary">
                   <MenuIcon id={item.id} icon={item.icon} size={16} />
                 </span>
                 <span className="font-medium">{item.title}</span>
@@ -128,7 +128,7 @@ function MoreMenuItem({ items }: { items: ServiceResponse[] }) {
                       onClick={closeDropdownOnSelect}
                       className={childLinkClass}
                     >
-                      <span className="text-brand-goldDark">
+                      <span className="text-brand-primary">
                         <MenuIcon id={child.id} size={15} />
                       </span>
                       <span>{child.title}</span>
@@ -166,7 +166,7 @@ function MobileMenuItem({
           className={({ isActive }) =>
             [
               `flex min-h-11 flex-1 items-center gap-3 rounded-md px-3 py-3 text-sm font-medium ${focusClass}`,
-              isActive ? 'bg-brand-surface text-brand-goldDark' : 'text-gray-800',
+              isActive ? 'bg-brand-surface text-brand-primary' : 'text-gray-800',
             ].join(' ')
           }
         >
@@ -199,7 +199,7 @@ function MobileMenuItem({
               className={({ isActive }) =>
                 [
                   `flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-sm ${focusClass}`,
-                  isActive ? 'bg-brand-surface text-brand-goldDark' : 'text-gray-700',
+                  isActive ? 'bg-brand-surface text-brand-primary' : 'text-gray-700',
                 ].join(' ')
               }
             >
@@ -233,14 +233,14 @@ export default function Header() {
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-2 text-sm">
           <div className="flex items-center gap-5">
             <a
-              className="inline-flex items-center gap-2 hover:text-brand-gold"
+              className="inline-flex items-center gap-2 hover:text-brand-accent"
               href={contactInfo.phoneHref}
             >
               <Phone size={14} aria-hidden="true" />
               <span>Hotline: {contactInfo.hotline}</span>
             </a>
             <a
-              className="inline-flex items-center gap-2 hover:text-brand-gold"
+              className="inline-flex items-center gap-2 hover:text-brand-accent"
               href={contactInfo.emailHref}
             >
               <Mail size={14} aria-hidden="true" />
@@ -301,7 +301,7 @@ export default function Header() {
 
         <a
           href={contactInfo.phoneHref}
-          className={`hidden min-h-11 items-center rounded-md bg-brand-goldDark px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-black xl:inline-flex ${focusClass}`}
+          className={`hidden min-h-11 items-center rounded-md bg-brand-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-black xl:inline-flex ${focusClass}`}
         >
           Gọi tư vấn
         </a>
@@ -342,7 +342,7 @@ export default function Header() {
           <div className="mt-4 grid grid-cols-2 gap-2">
             <a
               href={contactInfo.phoneHref}
-              className="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-goldDark px-3 py-2 text-center text-sm font-semibold text-white"
+              className="inline-flex min-h-11 items-center justify-center rounded-md bg-brand-primary px-3 py-2 text-center text-sm font-semibold text-white"
             >
               Gọi ngay
             </a>

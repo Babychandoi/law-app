@@ -83,7 +83,7 @@ export default function ClauseLibrary() {
           <button
             type="button"
             onClick={() => setEditing({ mode: 'new' })}
-            className="inline-flex items-center gap-2 rounded-lg bg-brand-goldDark px-4 py-2 text-sm font-semibold text-white hover:bg-brand-gold"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-primaryDark"
           >
             <PlusCircle size={16} aria-hidden="true" /> Tạo điều khoản
           </button>
@@ -157,7 +157,7 @@ export default function ClauseLibrary() {
                   {clause.tags.map((tag) => (
                     <span
                       key={tag}
-                      className="rounded bg-brand-surface px-1.5 py-0.5 text-xs text-brand-goldDark"
+                      className="rounded bg-brand-surface px-1.5 py-0.5 text-xs text-brand-primary"
                     >
                       {tag}
                     </span>
@@ -168,7 +168,7 @@ export default function ClauseLibrary() {
                 <button
                   type="button"
                   onClick={() => copy(clause.content)}
-                  className="inline-flex items-center gap-1 rounded-lg bg-brand-goldDark px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-gold"
+                  className="inline-flex items-center gap-1 rounded-lg bg-brand-primary px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-primaryDark"
                 >
                   <Copy size={14} aria-hidden="true" /> Sao chép
                 </button>
@@ -283,7 +283,7 @@ function ClauseEditorModal({
             type="button"
             onClick={save}
             disabled={saving}
-            className="inline-flex items-center gap-2 rounded-lg bg-brand-goldDark px-4 py-2 text-sm font-semibold text-white hover:bg-brand-gold disabled:opacity-60"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-primaryDark disabled:opacity-60"
           >
             {saving && <Spinner size={16} className="text-white" label="Đang lưu" />}
             Lưu
@@ -347,4 +347,4 @@ function ClauseEditorModal({
 }
 
 const inputClass =
-  'mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-goldDark focus:ring-2 focus:ring-brand-goldDark/20';
+  'mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20';

@@ -163,7 +163,7 @@ export default function CommandPalette({ groups }: { groups: NavGroup[] }) {
                   i === active ? 'bg-brand-surface text-brand-ink' : 'text-gray-700'
                 }`}
               >
-                <Icon size={16} className="shrink-0 text-brand-goldDark" aria-hidden="true" />
+                <Icon size={16} className="shrink-0 text-brand-primary" aria-hidden="true" />
                 <span className="flex-1">{c.label}</span>
                 <span className="text-xs text-gray-400">{c.group}</span>
                 {i === active && (

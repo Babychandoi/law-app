@@ -253,7 +253,7 @@ export default function TemplateUpload() {
                 setUploadError('');
               }}
               aria-invalid={!!uploadError && !name.trim()}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-brand-goldDark focus:ring-2 focus:ring-brand-goldDark/20"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
               placeholder="Ví dụ: Hợp đồng dịch vụ"
             />
           </div>
@@ -265,16 +265,16 @@ export default function TemplateUpload() {
               id="template-description"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-brand-goldDark focus:ring-2 focus:ring-brand-goldDark/20"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20"
               rows={3}
               maxLength={2000}
             />
           </div>
           <label
             htmlFor="template-file"
-            className="block cursor-pointer rounded-xl border border-dashed border-gray-300 p-6 text-center hover:bg-gray-50 focus-within:ring-2 focus-within:ring-brand-goldDark"
+            className="block cursor-pointer rounded-xl border border-dashed border-gray-300 p-6 text-center hover:bg-gray-50 focus-within:ring-2 focus-within:ring-brand-primary"
           >
-            <Upload className="mx-auto mb-2 text-brand-goldDark" aria-hidden="true" />
+            <Upload className="mx-auto mb-2 text-brand-primary" aria-hidden="true" />
             <span className="block break-all text-sm font-medium">
               {file ? file.name : 'Chọn file .docx'}
             </span>
@@ -302,7 +302,7 @@ export default function TemplateUpload() {
             type="button"
             onClick={doUpload}
             disabled={uploading}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-goldDark px-4 py-3 font-semibold text-white hover:bg-brand-gold disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-3 font-semibold text-white hover:bg-brand-primaryDark disabled:cursor-not-allowed disabled:opacity-60"
           >
             {uploading && <Spinner size={18} className="text-white" label="Đang tải file mẫu" />}
             {uploading ? 'Đang tải...' : 'Tải lên & xem trước'}
@@ -320,7 +320,7 @@ export default function TemplateUpload() {
           type="button"
           onClick={() => setMobilePanel('preview')}
           className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium ${
-            mobilePanel === 'preview' ? 'bg-brand-goldDark text-white' : 'text-gray-700'
+            mobilePanel === 'preview' ? 'bg-brand-primary text-white' : 'text-gray-700'
           }`}
           aria-pressed={mobilePanel === 'preview'}
         >
@@ -330,7 +330,7 @@ export default function TemplateUpload() {
           type="button"
           onClick={() => setMobilePanel('fields')}
           className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium ${
-            mobilePanel === 'fields' ? 'bg-brand-goldDark text-white' : 'text-gray-700'
+            mobilePanel === 'fields' ? 'bg-brand-primary text-white' : 'text-gray-700'
           }`}
           aria-pressed={mobilePanel === 'fields'}
         >
@@ -355,7 +355,7 @@ export default function TemplateUpload() {
             <button
               type="button"
               onClick={captureSelection}
-              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
             >
               <ClipboardPaste size={16} aria-hidden="true" /> Dùng đoạn đã chọn
             </button>
@@ -383,7 +383,7 @@ export default function TemplateUpload() {
             <button
               type="button"
               onClick={addRow}
-              className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+              className="inline-flex items-center gap-1 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
             >
               <Plus size={15} aria-hidden="true" /> Thêm
             </button>
@@ -412,7 +412,7 @@ export default function TemplateUpload() {
             type="button"
             onClick={apply}
             disabled={applying}
-            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-goldDark px-6 py-3 font-semibold text-white hover:bg-brand-gold disabled:cursor-not-allowed disabled:opacity-60"
+            className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-primary px-6 py-3 font-semibold text-white hover:bg-brand-primaryDark disabled:cursor-not-allowed disabled:opacity-60"
           >
             {applying ? (
               <Spinner size={18} className="text-white" label="Đang gán key vào biểu mẫu" />
@@ -447,11 +447,11 @@ function MappingCard({
   onRemove: () => void;
 }) {
   const inputClass =
-    'mt-1 w-full rounded-lg border border-gray-300 px-2.5 py-2 text-sm outline-none focus:border-brand-goldDark focus:ring-2 focus:ring-brand-goldDark/20';
+    'mt-1 w-full rounded-lg border border-gray-300 px-2.5 py-2 text-sm outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20';
   return (
     <fieldset
       onFocus={onActivate}
-      className={`rounded-xl border p-3 ${active ? 'border-brand-goldDark ring-1 ring-brand-goldDark/20' : 'border-gray-200'}`}
+      className={`rounded-xl border p-3 ${active ? 'border-brand-primary ring-1 ring-brand-primary/20' : 'border-gray-200'}`}
     >
       <legend className="px-1 text-xs font-semibold text-gray-600">Trường {index + 1}</legend>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
@@ -527,7 +527,7 @@ function MappingCard({
               type="checkbox"
               checked={row.required}
               onChange={(event) => onChange({ required: event.target.checked })}
-              className="h-4 w-4 rounded border-gray-300 text-brand-goldDark focus:ring-brand-goldDark"
+              className="h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary"
             />
             Bắt buộc
           </label>
@@ -583,7 +583,7 @@ function MappingInput({
         className={`mt-1 w-full rounded-lg border px-2.5 py-2 text-sm outline-none focus:ring-2 ${
           error
             ? 'border-red-500 focus:border-red-600 focus:ring-red-200'
-            : 'border-gray-300 focus:border-brand-goldDark focus:ring-brand-goldDark/20'
+            : 'border-gray-300 focus:border-brand-primary focus:ring-brand-primary/20'
         } ${inputClassName}`}
       />
       {error && (

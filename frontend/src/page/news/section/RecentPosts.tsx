@@ -21,7 +21,7 @@ const RecentPosts = ({ posts, currentId }: RecentPostsProps) => {
     <aside className="lg:sticky lg:top-24" aria-label="Bài viết gần đây">
       <div className="rounded-xl border border-brand-line bg-white p-5 shadow-soft sm:p-6">
         <h2 className="flex items-center gap-2 text-lg font-semibold text-brand-ink">
-          <span className="h-5 w-1 rounded-full bg-brand-gold" aria-hidden="true" />
+          <span className="h-5 w-1 rounded-full bg-brand-accent" aria-hidden="true" />
           Bài viết gần đây
         </h2>
 
@@ -30,7 +30,7 @@ const RecentPosts = ({ posts, currentId }: RecentPostsProps) => {
             <li key={post.id}>
               <Link
                 to={`/tin-tuc/${post.id ?? ''}`}
-                className="group grid grid-cols-[72px_minmax(0,1fr)] gap-3 rounded-lg p-1.5 transition-colors hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/25"
+                className="group grid grid-cols-[72px_minmax(0,1fr)] gap-3 rounded-lg p-1.5 transition-colors hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-accent/25"
               >
                 <span className="overflow-hidden rounded-md bg-brand-surface">
                   {post.image ? (
@@ -48,7 +48,7 @@ const RecentPosts = ({ posts, currentId }: RecentPostsProps) => {
                   )}
                 </span>
                 <span className="min-w-0">
-                  <span className="line-clamp-2 text-sm font-medium leading-snug text-brand-ink transition-colors group-hover:text-brand-goldDark">
+                  <span className="line-clamp-2 text-sm font-medium leading-snug text-brand-ink transition-colors group-hover:text-brand-primary">
                     {post.title}
                   </span>
                   {post.createdAt && (
@@ -64,7 +64,7 @@ const RecentPosts = ({ posts, currentId }: RecentPostsProps) => {
 
         <Link
           to="/tin-tuc"
-          className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-brand-goldDark transition-colors hover:text-brand-gold"
+          className="mt-5 inline-flex items-center gap-1 text-sm font-semibold text-brand-primary transition-colors hover:text-brand-primaryDark"
         >
           Xem tất cả bài viết
           <span aria-hidden="true">→</span>
@@ -79,7 +79,7 @@ const RecentPosts = ({ posts, currentId }: RecentPostsProps) => {
         </p>
         <Link
           to="/lien-he"
-          className="mt-4 inline-flex min-h-10 items-center justify-center rounded-md bg-brand-goldDark px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-gold"
+          className="mt-4 inline-flex min-h-10 items-center justify-center rounded-md bg-brand-primary px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-brand-primaryDark"
         >
           Liên hệ ngay
         </Link>

@@ -161,7 +161,7 @@ const AuditLogPage: React.FC = () => {
         <div className="mb-4 flex flex-wrap gap-2">
           <select
             aria-label="Lọc theo loại đối tượng"
-            className="rounded-lg border border-brand-line bg-white px-3 py-2 text-sm outline-none focus:border-brand-gold"
+            className="rounded-lg border border-brand-line bg-white px-3 py-2 text-sm outline-none focus:border-brand-accent"
             value={targetType}
             onChange={(e) => {
               setTargetType(e.target.value);
@@ -177,7 +177,7 @@ const AuditLogPage: React.FC = () => {
           </select>
           <select
             aria-label="Lọc theo hành động"
-            className="rounded-lg border border-brand-line bg-white px-3 py-2 text-sm outline-none focus:border-brand-gold"
+            className="rounded-lg border border-brand-line bg-white px-3 py-2 text-sm outline-none focus:border-brand-accent"
             value={action}
             onChange={(e) => {
               setAction(e.target.value);

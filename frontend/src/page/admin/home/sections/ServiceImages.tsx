@@ -112,7 +112,7 @@ const ServiceImages: React.FC = () => {
                     className={`mt-3 inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-md px-4 py-2 text-sm font-semibold text-white transition-colors ${
                       uploading
                         ? 'cursor-not-allowed bg-gray-400'
-                        : 'bg-brand-goldDark hover:bg-brand-gold'
+                        : 'bg-brand-primary hover:bg-brand-primaryDark'
                     }`}
                   >
                     <Upload className="h-4 w-4" />

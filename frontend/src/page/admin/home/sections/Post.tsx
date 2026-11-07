@@ -283,7 +283,7 @@ const NewsManagement: React.FC = () => {
                   <div className="flex-1 p-6">
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-brand-goldDark transition-colors duration-200">
+                        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-brand-primary transition-colors duration-200">
                           {news.title}
                         </h3>
                         <p className="text-gray-600 line-clamp-2 mb-3">{news.subtitle}</p>
@@ -293,7 +293,7 @@ const NewsManagement: React.FC = () => {
                     {/* Meta Info */}
                     <div className="flex flex-wrap items-center gap-4 mb-4 text-sm">
                       <div className="flex items-center gap-2 px-3 py-1 bg-brand-surface rounded-lg">
-                        <User className="w-4 h-4 text-brand-goldDark" aria-hidden="true" />
+                        <User className="w-4 h-4 text-brand-primary" aria-hidden="true" />
                         <span className="text-gray-700 font-medium">{news.author}</span>
                       </div>
                       <div className="flex items-center gap-2 px-3 py-1 bg-green-50 rounded-lg">
@@ -312,7 +312,7 @@ const NewsManagement: React.FC = () => {
                         onClick={() => news.id && handleViewDetails(news.id)}
                         disabled={loading}
                         title="Xem chi tiết"
-                        className="flex items-center gap-2 px-4 py-2 bg-brand-goldDark hover:bg-brand-gold text-white rounded-lg font-medium shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 bg-brand-primary hover:bg-brand-primaryDark text-white rounded-lg font-medium shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Eye size={18} />
                         <span>Xem</span>
@@ -322,7 +322,7 @@ const NewsManagement: React.FC = () => {
                         onClick={() => handleEdit(news.id ?? '')}
                         disabled={loading}
                         title="Sửa"
-                        className="flex items-center gap-2 px-4 py-2 bg-brand-goldDark hover:bg-brand-gold text-white rounded-lg font-medium shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex items-center gap-2 px-4 py-2 bg-brand-primary hover:bg-brand-primaryDark text-white rounded-lg font-medium shadow-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Pencil size={18} />
                         <span>Sửa</span>
@@ -413,7 +413,7 @@ const NewsManagement: React.FC = () => {
                 {/* Meta Info */}
                 <div className="flex flex-wrap items-center gap-4 mb-8">
                   <div className="flex items-center gap-2 px-4 py-2 bg-brand-surface rounded-xl border border-brand-line">
-                    <User className="w-5 h-5 text-brand-goldDark" aria-hidden="true" />
+                    <User className="w-5 h-5 text-brand-primary" aria-hidden="true" />
                     <span className="text-gray-700 font-semibold">{selectedNews.author}</span>
                   </div>
                   <div className="flex items-center gap-2 px-4 py-2 bg-green-50 rounded-xl border border-green-200">
@@ -431,7 +431,7 @@ const NewsManagement: React.FC = () => {
               {selectedNews.fullContent && (
                 <div>
                   <div className="flex items-center gap-3 mb-6">
-                    <div className="h-1 w-12 bg-brand-gold rounded-full"></div>
+                    <div className="h-1 w-12 bg-brand-accent rounded-full"></div>
                     <h5 className="text-xl font-bold text-gray-800">Nội dung chi tiết</h5>
                     <div className="h-1 flex-1 bg-brand-line rounded-full"></div>
                   </div>
@@ -443,13 +443,13 @@ const NewsManagement: React.FC = () => {
                           prose-h2:text-xl prose-h2:mb-3 prose-h2:mt-5
                           prose-h3:text-lg prose-h3:mb-2 prose-h3:mt-4
                           prose-p:text-gray-700 prose-p:leading-relaxed prose-p:mb-3
-                          prose-a:text-brand-goldDark prose-a:no-underline hover:prose-a:text-brand-gold hover:prose-a:underline
+                          prose-a:text-brand-primary prose-a:no-underline hover:prose-a:text-brand-primaryDark hover:prose-a:underline
                           prose-strong:text-gray-900 prose-strong:font-semibold
                           prose-ul:list-disc prose-ul:pl-6 prose-ul:mb-3
                           prose-ol:list-decimal prose-ol:pl-6 prose-ol:mb-3
                           prose-li:text-gray-700 prose-li:mb-1
                           prose-img:rounded-xl prose-img:shadow-lg prose-img:my-4 prose-img:max-w-full
-                          prose-blockquote:border prose-blockquote:border-brand-gold prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600
+                          prose-blockquote:border prose-blockquote:border-brand-accent prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-gray-600
                           prose-code:bg-gray-100 prose-code:px-2 prose-code:py-1 prose-code:rounded prose-code:text-sm prose-code:text-gray-800
                         "
                       dangerouslySetInnerHTML={{ __html: sanitizeHtml(selectedNews.fullContent) }}

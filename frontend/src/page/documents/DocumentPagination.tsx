@@ -34,7 +34,7 @@ export default function DocumentPagination({
           id="document-page-size"
           value={pageSize}
           onChange={(event) => onPageSizeChange(Number(event.target.value))}
-          className="rounded-lg border border-gray-300 bg-white px-2 py-1.5 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+          className="rounded-lg border border-gray-300 bg-white px-2 py-1.5 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
         >
           {[6, 10, 20, 50].map((size) => (
             <option key={size} value={size}>
@@ -46,7 +46,7 @@ export default function DocumentPagination({
           type="button"
           onClick={() => onPageChange(page - 1)}
           disabled={page <= 1}
-          className="rounded-lg border border-gray-300 p-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:cursor-not-allowed disabled:opacity-40"
+          className="rounded-lg border border-gray-300 p-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:cursor-not-allowed disabled:opacity-40"
           aria-label="Trang trước"
         >
           <ChevronLeft size={16} aria-hidden="true" />
@@ -58,7 +58,7 @@ export default function DocumentPagination({
           type="button"
           onClick={() => onPageChange(page + 1)}
           disabled={page >= totalPages}
-          className="rounded-lg border border-gray-300 p-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:cursor-not-allowed disabled:opacity-40"
+          className="rounded-lg border border-gray-300 p-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:cursor-not-allowed disabled:opacity-40"
           aria-label="Trang sau"
         >
           <ChevronRight size={16} aria-hidden="true" />

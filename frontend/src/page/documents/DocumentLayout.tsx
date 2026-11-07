@@ -99,7 +99,7 @@ export default function DocumentLayout() {
         <div className="border-b border-gray-200 bg-white px-4 py-3 sm:px-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-goldDark">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-brand-primary">
                 Hồ sơ pháp lý
               </p>
               <h1 className="text-lg font-semibold text-gray-900">Tài liệu & biểu mẫu</h1>
@@ -171,7 +171,7 @@ function DocLink({
       className={({ isActive }) =>
         `inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition ${
           isActive
-            ? 'bg-brand-goldDark text-white'
+            ? 'bg-brand-primary text-white'
             : 'bg-white text-brand-ink hover:bg-brand-line/40'
         }`
       }

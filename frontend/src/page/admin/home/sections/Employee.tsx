@@ -277,7 +277,7 @@ const UserManagement: React.FC = () => {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-4 rounded-lg flex items-center gap-2">
             <svg
-              className="animate-spin h-5 w-5 text-brand-goldDark"
+              className="animate-spin h-5 w-5 text-brand-primary"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"

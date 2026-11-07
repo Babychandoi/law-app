@@ -8,7 +8,7 @@ export type ButtonSize = 'sm' | 'md' | 'lg';
 const base = `inline-flex items-center justify-center gap-2 rounded-control font-medium transition-colors ${FOCUS_RING} disabled:opacity-50 disabled:cursor-not-allowed`;
 
 const VARIANTS: Record<ButtonVariant, string> = {
-  primary: 'bg-brand-goldDark text-white hover:bg-brand-gold',
+  primary: 'bg-brand-primary text-white hover:bg-brand-primaryDark',
   secondary: 'border border-gray-300 text-gray-700 hover:bg-gray-50',
   ghost: 'text-gray-700 hover:bg-gray-100',
   danger: 'bg-red-600 text-white hover:bg-red-700',

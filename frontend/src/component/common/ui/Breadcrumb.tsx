@@ -23,7 +23,7 @@ const Breadcrumb: React.FC<BreadcrumbProps> = ({ items, className = '' }) => {
           return (
             <li key={i} className="flex items-center gap-1">
               {it.to && !last ? (
-                <Link to={it.to} className="hover:text-brand-goldDark">
+                <Link to={it.to} className="hover:text-brand-primary">
                   {it.label}
                 </Link>
               ) : (

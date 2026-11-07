@@ -195,7 +195,7 @@ export default function GeneratedDocumentList() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Tên file, hồ sơ, dịch vụ..."
-            className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+            className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
           />
         </label>
         <label>
@@ -203,7 +203,7 @@ export default function GeneratedDocumentList() {
           <select
             value={status}
             onChange={(event) => setStatus(event.target.value as StatusFilter)}
-            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
           >
             <option value="ALL">Mọi trạng thái</option>
             {WORKFLOW_STATUSES.map((item) => (
@@ -218,7 +218,7 @@ export default function GeneratedDocumentList() {
           <select
             value={sort}
             onChange={(event) => setSort(event.target.value as SortValue)}
-            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
           >
             <option value="createdAt,desc">Mới tạo gần đây</option>
             <option value="createdAt,asc">Cũ nhất trước</option>
@@ -306,7 +306,7 @@ export default function GeneratedDocumentList() {
                   >
                     <td className="max-w-[260px] px-4 py-3">
                       <div className="flex min-w-0 items-start gap-3">
-                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-gold/15 text-brand-goldDark">
+                        <span className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-brand-accent/15 text-brand-primary">
                           <FileText size={18} aria-hidden="true" />
                         </span>
                         <span className="break-words font-medium text-gray-900">
@@ -353,7 +353,7 @@ export default function GeneratedDocumentList() {
                 className="min-w-0 rounded-2xl border border-gray-200 bg-white p-4 shadow-sm"
               >
                 <div className="flex items-start gap-3">
-                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-gold/15 text-brand-goldDark">
+                  <span className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-brand-accent/15 text-brand-primary">
                     <FileText size={19} aria-hidden="true" />
                   </span>
                   <div className="min-w-0 flex-1">
@@ -471,7 +471,7 @@ function DocumentActions({
         type="button"
         onClick={onDownload}
         disabled={downloading}
-        className="inline-flex items-center gap-1.5 rounded-lg bg-brand-goldDark px-3 py-2 text-xs font-medium text-white hover:bg-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:opacity-50"
+        className="inline-flex items-center gap-1.5 rounded-lg bg-brand-primary px-3 py-2 text-xs font-medium text-white hover:bg-brand-primaryDark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:opacity-50"
       >
         {downloading ? (
           <Spinner size={14} className="text-white" label={`Đang tải ${document.fileName}`} />
@@ -483,7 +483,7 @@ function DocumentActions({
       <button
         type="button"
         onClick={onAudit}
-        className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+        className="inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
       >
         <Eye size={14} aria-hidden="true" /> Chi tiết
       </button>
@@ -627,7 +627,7 @@ function WorkflowDialog({
               aria-describedby={
                 requiresReviewer && !!error && !reviewerUserId.trim() ? 'workflow-error' : undefined
               }
-              className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+              className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
             >
               <option value="">Chọn người duyệt</option>
               {eligibleReviewers.map((reviewer) => (
@@ -650,7 +650,7 @@ function WorkflowDialog({
               aria-describedby={
                 requiresReviewer && !!error && !reviewerUserId.trim() ? 'workflow-error' : undefined
               }
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
             />
           )}
         </div>
@@ -670,7 +670,7 @@ function WorkflowDialog({
           maxLength={1000}
           aria-invalid={!!error}
           aria-describedby={error ? 'workflow-error' : undefined}
-          className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+          className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
         />
       </div>
       {error && (
@@ -738,7 +738,7 @@ function DocumentAuditDialog({
       ) : (
         <ol className="mt-3 space-y-3">
           {audit.map((entry) => (
-            <li key={entry.id} className="relative border-l-2 border-brand-gold/40 pl-4">
+            <li key={entry.id} className="relative border-l-2 border-brand-accent/40 pl-4">
               <p className="text-sm font-medium text-gray-900">{auditLabel(entry.action)}</p>
               {(entry.fromStatus || entry.toStatus) && (
                 <p className="text-xs text-gray-600">

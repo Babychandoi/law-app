@@ -9,7 +9,7 @@ export interface HeroSectionProps {
 const HeroSection: React.FC<HeroSectionProps> = ({ title, subtitle }) => (
   <section className="public-page-hero border-b border-white/10 bg-brand-ink py-16 text-white sm:py-20">
     <div className="mx-auto max-w-7xl px-4 sm:px-6">
-      <div className="mb-5 flex items-center gap-3 text-sm font-semibold text-brand-gold">
+      <div className="mb-5 flex items-center gap-3 text-sm font-semibold text-brand-accent">
         <span className="flex h-10 w-10 items-center justify-center rounded-md border border-white/15 bg-white/5">
           <Scale size={20} aria-hidden="true" />
         </span>

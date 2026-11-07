@@ -112,7 +112,7 @@ export default function BundleList() {
         {isAdmin && (
           <Link
             to={`${DOCUMENT_BASE}/bundles/new`}
-            className="inline-flex items-center gap-2 rounded-lg bg-brand-goldDark px-4 py-2 text-sm font-semibold text-white hover:bg-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-primaryDark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
           >
             <PlusCircle size={16} aria-hidden="true" /> Tạo bộ mẫu
           </Link>
@@ -148,7 +148,7 @@ export default function BundleList() {
                 {bundle.status === 'ACTIVE' && (
                   <Link
                     to={`${DOCUMENT_BASE}/bundles/${bundle.id}/generate${generateQuery}`}
-                    className="inline-flex items-center gap-1 rounded-lg bg-brand-goldDark px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-gold"
+                    className="inline-flex items-center gap-1 rounded-lg bg-brand-primary px-3 py-1.5 text-sm font-medium text-white hover:bg-brand-primaryDark"
                   >
                     <PlayCircle size={14} aria-hidden="true" /> Tạo hồ sơ
                   </Link>

@@ -72,7 +72,7 @@ export default function ThankYou() {
       />
 
       <section className="mx-auto flex min-h-[60vh] max-w-3xl flex-col items-center justify-center px-4 py-16 text-center sm:px-6">
-        <CheckCircle2 className="h-16 w-16 text-brand-goldDark" aria-hidden="true" />
+        <CheckCircle2 className="h-16 w-16 text-brand-primary" aria-hidden="true" />
 
         <h1 className="mt-6 text-3xl font-semibold leading-tight text-brand-ink md:text-4xl">
           Đã nhận yêu cầu tư vấn
@@ -92,7 +92,7 @@ export default function ThankYou() {
           <div className="mt-4 flex flex-wrap gap-3">
             <a
               href={contactInfo.phoneHref}
-              className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-md bg-brand-goldDark px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-ink"
+              className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-md bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-brand-ink"
             >
               <Phone size={18} aria-hidden="true" />
               {contactInfo.hotline}
@@ -101,7 +101,7 @@ export default function ThankYou() {
               href={contactInfo.zaloHref}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-md border border-brand-line px-5 py-3 text-sm font-semibold text-brand-ink transition-colors hover:border-brand-gold"
+              className="inline-flex min-h-12 flex-1 items-center justify-center gap-2 rounded-md border border-brand-line px-5 py-3 text-sm font-semibold text-brand-ink transition-colors hover:border-brand-accent"
             >
               <MessageCircle size={18} aria-hidden="true" />
               Nhắn Zalo
@@ -111,7 +111,7 @@ export default function ThankYou() {
 
         <Link
           to="/"
-          className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-brand-goldDark hover:underline"
+          className="mt-8 inline-flex items-center gap-2 text-sm font-semibold text-brand-primary hover:underline"
         >
           <Home size={16} aria-hidden="true" />
           Về trang chủ

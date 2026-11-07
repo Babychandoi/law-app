@@ -58,7 +58,7 @@ export default function LandingPage() {
       <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-brand-surface px-6 text-center">
         <Seo title="Không tìm thấy trang -  Poip Legal" noindex />
         <h1 className="text-2xl font-semibold text-brand-ink">Không tìm thấy trang</h1>
-        <a href="/" className="text-brand-goldDark underline">
+        <a href="/" className="text-brand-primary underline">
           Về trang chủ Poip Legal
         </a>
       </div>
@@ -91,12 +91,12 @@ export default function LandingPage() {
       <header className="border-b border-brand-line bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
           <span className="text-lg font-semibold tracking-tight text-brand-ink">
-            Luật <span className="text-brand-goldDark">Poip Legal</span>
+            Luật <span className="text-brand-primary">Poip Legal</span>
           </span>
           <a
             href={contactInfo.phoneHref}
             onClick={() => trackLead(`${landing.slug}-header-call`)}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-brand-goldDark"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-brand-primary"
           >
             <Phone size={16} aria-hidden="true" />
             {contactInfo.hotline}
@@ -109,7 +109,7 @@ export default function LandingPage() {
         <div className="landing-hero-inner mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:py-20">
           <div className="lg:pt-6">
             {landing.eyebrow && (
-              <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">
+              <p className="text-sm font-semibold uppercase tracking-[0.16em] text-brand-accent">
                 {landing.eyebrow}
               </p>
             )}
@@ -125,7 +125,7 @@ export default function LandingPage() {
                 {heroPoints.map((point) => (
                   <li key={point} className="flex items-start gap-3 text-sm text-white/85">
                     <CheckCircle2
-                      className="mt-0.5 shrink-0 text-brand-gold"
+                      className="mt-0.5 shrink-0 text-brand-accent"
                       size={19}
                       aria-hidden="true"
                     />
@@ -139,7 +139,7 @@ export default function LandingPage() {
               <a
                 href={contactInfo.phoneHref}
                 onClick={() => trackLead(`${landing.slug}-hero-call`)}
-                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-goldDark px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-brand-ink"
+                className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-brand-ink"
               >
                 <Phone size={18} aria-hidden="true" />
                 Gọi {contactInfo.hotline}
@@ -188,7 +188,7 @@ export default function LandingPage() {
             <button
               type="button"
               onClick={scrollToForm}
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-goldDark px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-brand-ink"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-white hover:text-brand-ink"
             >
               Để lại thông tin tư vấn
             </button>
@@ -209,7 +209,7 @@ export default function LandingPage() {
         <a
           href={contactInfo.phoneHref}
           onClick={() => trackLead(`${landing.slug}-sticky-call`)}
-          className="flex min-h-14 items-center justify-center gap-2 text-sm font-semibold text-brand-goldDark"
+          className="flex min-h-14 items-center justify-center gap-2 text-sm font-semibold text-brand-primary"
         >
           <Phone size={18} aria-hidden="true" />
           Gọi ngay
@@ -219,7 +219,7 @@ export default function LandingPage() {
           target="_blank"
           rel="noreferrer"
           onClick={() => trackLead(`${landing.slug}-sticky-zalo`)}
-          className="flex min-h-14 items-center justify-center gap-2 bg-brand-goldDark text-sm font-semibold text-white"
+          className="flex min-h-14 items-center justify-center gap-2 bg-brand-primary text-sm font-semibold text-white"
         >
           <MessageCircle size={18} aria-hidden="true" />
           Nhắn Zalo
