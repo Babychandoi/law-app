@@ -13,6 +13,7 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.retry.RejectAndDontRequeueRecoverer;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,6 +24,11 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @EnableRabbit
 public class RabbitConfig {
+
+  // Existing RabbitMQ queues cannot have declaration arguments changed in place.
+  // Legacy deployments can supply the same DLX settings through a broker policy.
+  @Value("${app.rabbitmq.case-queue-dead-letter-arguments:true}")
+  private boolean caseQueueDeadLetterArguments = true;
 
   public static final String EXCHANGE = "law-app.events";
   public static final String QUEUE_CASES = "crm.cases";
@@ -36,6 +42,7 @@ public class RabbitConfig {
 
   @Bean
   public Queue crmCasesQueue() {
+    if (!caseQueueDeadLetterArguments) return QueueBuilder.durable(QUEUE_CASES).build();
     return QueueBuilder.durable(QUEUE_CASES)
         .deadLetterExchange(DEAD_LETTER_EXCHANGE)
         .deadLetterRoutingKey(QUEUE_CASES_DEAD)

@@ -36,6 +36,20 @@ public class NotificationServiceImpl implements NotificationService {
   UserRepository userRepository;
   ConversationRepository conversationRepository;
 
+  @Override
+  @org.springframework.transaction.annotation.Transactional(readOnly = true)
+  public org.springframework.data.domain.Page<NotificationResponse> getNotificationPage(
+      String userId, org.springframework.data.domain.Pageable pageable) {
+    return notificationUserRepository
+        .findByUser_Id(userId, pageable)
+        .map(notificationMapper::toNotificationResponse);
+  }
+
+  @Override
+  public long getUnreadCount(String userId) {
+    return notificationUserRepository.countByUser_IdAndReadFalse(userId);
+  }
+
   private void notifyUser(NotificationUser notificationUser) {
     try {
       NotificationMessage msg = notificationMapper.toNotificationMessage(notificationUser);

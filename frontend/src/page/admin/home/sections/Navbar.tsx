@@ -1,6 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Bell, LogOut, Mail, Phone, ChevronDown, Eye, Menu, Search } from 'lucide-react';
-import { myProfile, logout, getNotificationById } from '../../../../service/admin';
+import {
+  myProfile,
+  logout,
+  getNotificationPage,
+  getNotificationUnreadCount,
+} from '../../../../service/admin';
 import { Notification, User } from '../../../../types/admin';
 import { toast } from 'react-toastify';
 import { markAsRead, markAllRead } from '../../../../service/admin';
@@ -16,29 +21,42 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [displayedNotifications, setDisplayedNotifications] = useState<Notification[]>([]);
   const [notificationsToShow, setNotificationsToShow] = useState(3);
-  const [showAllNotifications, setShowAllNotifications] = useState(false);
+  const [hasMoreNotifications, setHasMoreNotifications] = useState(false);
+  const [totalNotifications, setTotalNotifications] = useState(0);
+  const [loadingNotifications, setLoadingNotifications] = useState(false);
+  const nextNotificationPage = useRef(0);
+  const notificationRequest = useRef(false);
+
+  const loadNotificationPage = async () => {
+    if (notificationRequest.current) return false;
+    notificationRequest.current = true;
+    setLoadingNotifications(true);
+    try {
+      const response = await getNotificationPage(nextNotificationPage.current, 5);
+      if (response.code !== 200) throw new Error('Notification request failed');
+      setNotifications((prev) => {
+        const known = new Set(prev.map((n) => n.id));
+        return [...prev, ...response.data.filter((n) => !known.has(n.id))];
+      });
+      nextNotificationPage.current += 1;
+      setHasMoreNotifications(response.meta?.hasNext ?? false);
+      setTotalNotifications(response.meta?.totalElements ?? response.data.length);
+      return true;
+    } catch {
+      toast.error('Không thể tải thông báo');
+      return false;
+    } finally {
+      notificationRequest.current = false;
+      setLoadingNotifications(false);
+    }
+  };
 
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await getNotificationById();
+        const response = await getNotificationUnreadCount();
         if (response.code === 200) {
-          const mappedNotifications = response.data.map((notification: any) => ({
-            id: notification.id,
-            title: notification.title,
-            content: notification.content,
-            type: notification.type,
-            link: notification.link,
-            referenceId: notification.referenceId,
-            // Legacy fields
-            customerServiceName: notification.customerServiceName,
-            serviceName: notification.serviceName,
-            createdAt: notification.createdAt,
-            read: notification.read,
-          }));
-          setNotifications(mappedNotifications);
-          setDisplayedNotifications(mappedNotifications.slice(0, 3));
-          setUnreadCount(mappedNotifications.filter((n) => !n.read).length);
+          setUnreadCount(response.data);
         } else {
           toast.error('Không thể tải thông báo');
         }
@@ -94,6 +112,7 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
         };
 
         setNotifications((prev) => [newNotification, ...prev]);
+        setTotalNotifications((prev) => prev + 1);
         setUnreadCount((prevCount) => prevCount + (data.read ? 0 : 1));
       };
 
@@ -109,12 +128,8 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
   }, [profile?.id]);
 
   useEffect(() => {
-    if (showAllNotifications) {
-      setDisplayedNotifications(notifications);
-    } else {
-      setDisplayedNotifications(notifications.slice(0, notificationsToShow));
-    }
-  }, [notifications, notificationsToShow, showAllNotifications]);
+    setDisplayedNotifications(notifications.slice(0, notificationsToShow));
+  }, [notifications, notificationsToShow]);
 
   const markRead = async (id: string) => {
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
@@ -123,21 +138,16 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
     await markAsRead(id);
   };
 
-  const handleLoadMore = () => {
+  const handleLoadMore = async () => {
     const newCount = notificationsToShow + 5;
+    if (newCount > notifications.length && hasMoreNotifications) {
+      if (!(await loadNotificationPage())) return;
+    }
     setNotificationsToShow(newCount);
-    setDisplayedNotifications(notifications.slice(0, newCount));
-  };
-
-  const handleViewAll = () => {
-    setShowAllNotifications(true);
-    setDisplayedNotifications(notifications);
   };
 
   const handleViewLess = () => {
-    setShowAllNotifications(false);
-    setNotificationsToShow(5);
-    setDisplayedNotifications(notifications.slice(0, 5));
+    setNotificationsToShow(3);
   };
 
   const markAllAsRead = async () => {
@@ -159,6 +169,7 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
   };
 
   const handleNotifications = () => {
+    if (!showNotifications && nextNotificationPage.current === 0) void loadNotificationPage();
     setShowNotifications(!showNotifications);
     setShowProfile(false);
   };
@@ -220,7 +231,7 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
               <div className="absolute right-0 top-12 w-80 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                 <div className="p-4 border-b border-gray-200 flex items-center justify-between">
                   <h3 className="font-semibold text-gray-800">
-                    Thông báo liên hệ {notifications.length > 0 && `(${notifications.length})`}
+                    Thông báo liên hệ {totalNotifications > 0 && `(${totalNotifications})`}
                   </h3>
                   {unreadCount > 0 && (
                     <button
@@ -236,7 +247,9 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
                   {displayedNotifications.length === 0 ? (
                     <div className="p-4 text-center text-gray-500">
                       <Bell size={32} className="mx-auto mb-2 text-gray-300" />
-                      <p>Không có thông báo nào</p>
+                      <p>
+                        {loadingNotifications ? 'Đang tải thông báo…' : 'Không có thông báo nào'}
+                      </p>
                     </div>
                   ) : (
                     displayedNotifications.map((n) => (
@@ -293,33 +306,21 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
                       </div>
                     ))
                   )}
-                  {notifications.length > 5 && (
+                  {(hasMoreNotifications || notifications.length > 3) && (
                     <div className="p-3 border-t border-gray-200 bg-gray-50">
                       <div className="flex justify-center space-x-4">
-                        {!showAllNotifications &&
-                          displayedNotifications.length < notifications.length && (
-                            <button
-                              onClick={handleLoadMore}
-                              className="flex items-center space-x-1 text-sm text-brand-goldDark hover:text-brand-goldDark"
-                            >
-                              <ChevronDown size={16} />
-                              <span>
-                                Xem thêm (
-                                {Math.min(5, notifications.length - displayedNotifications.length)})
-                              </span>
-                            </button>
-                          )}
-                        {!showAllNotifications &&
-                          displayedNotifications.length < notifications.length && (
-                            <button
-                              onClick={handleViewAll}
-                              className="flex items-center space-x-1 text-sm text-brand-goldDark hover:text-brand-goldDark"
-                            >
-                              <Eye size={16} />
-                              <span>Xem tất cả ({notifications.length})</span>
-                            </button>
-                          )}
-                        {showAllNotifications && (
+                        {(hasMoreNotifications ||
+                          displayedNotifications.length < notifications.length) && (
+                          <button
+                            onClick={handleLoadMore}
+                            disabled={loadingNotifications}
+                            className="flex items-center space-x-1 text-sm text-brand-goldDark hover:text-brand-goldDark"
+                          >
+                            <ChevronDown size={16} />
+                            <span>{loadingNotifications ? 'Đang tải…' : 'Xem thêm'}</span>
+                          </button>
+                        )}
+                        {notificationsToShow > 3 && (
                           <button
                             onClick={handleViewLess}
                             className="flex items-center space-x-1 text-sm text-gray-600 hover:text-gray-700"

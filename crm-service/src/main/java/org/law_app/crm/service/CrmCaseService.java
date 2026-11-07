@@ -7,6 +7,8 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.law_app.crm.domain.CareLog;
 import org.law_app.crm.domain.CaseTag;
@@ -106,7 +108,17 @@ public class CrmCaseService {
           return cb.and(ps.toArray(new Predicate[0]));
         };
 
-    return caseRepo.findAll(spec, pageable).map(this::toRow);
+    Page<CrmCase> cases = caseRepo.findAll(spec, pageable);
+    if (cases.isEmpty()) return cases.map(c -> toRow(c, List.of()));
+    Map<String, List<Long>> tagsByCase =
+        caseTagRepo
+            .findByCaseIdIn(cases.getContent().stream().map(CrmCase::getId).toList())
+            .stream()
+            .collect(
+                Collectors.groupingBy(
+                    CaseTag::getCaseId,
+                    Collectors.mapping(CaseTag::getTagId, Collectors.toList())));
+    return cases.map(c -> toRow(c, tagsByCase.getOrDefault(c.getId(), List.of())));
   }
 
   public CrmCase requireCase(String id) {
@@ -198,6 +210,10 @@ public class CrmCaseService {
   private CaseRow toRow(CrmCase c) {
     List<Long> tagIds =
         caseTagRepo.findByCaseId(c.getId()).stream().map(CaseTag::getTagId).toList();
+    return toRow(c, tagIds);
+  }
+
+  private CaseRow toRow(CrmCase c, List<Long> tagIds) {
     return new CaseRow(
         c.getId(),
         c.getCustomerEmail(),

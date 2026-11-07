@@ -25,6 +25,13 @@ import org.springframework.web.bind.annotation.*;
 public class CustomerController {
   CustomerServices customerServices;
 
+  @GetMapping("/stats")
+  ApiResponse<org.law_app.backend.dto.response.CustomerStatsResponse> getStats() {
+    return ApiResponse.<org.law_app.backend.dto.response.CustomerStatsResponse>builder()
+        .data(customerServices.getStats())
+        .build();
+  }
+
   @PostMapping
   ApiResponse<Boolean> createCustomer(@Valid @RequestBody CustomerRequest request) {
     return ApiResponse.<Boolean>builder()

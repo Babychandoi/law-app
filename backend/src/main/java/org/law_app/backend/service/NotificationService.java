@@ -5,6 +5,11 @@ import org.law_app.backend.dto.response.NotificationResponse;
 import org.law_app.backend.entity.Notification;
 
 public interface NotificationService {
+  org.springframework.data.domain.Page<NotificationResponse> getNotificationPage(
+      String userId, org.springframework.data.domain.Pageable pageable);
+
+  long getUnreadCount(String userId);
+
   List<NotificationResponse> getNotificationsByUserId(String userId);
 
   Boolean markNotificationAsRead(String notificationId);

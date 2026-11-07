@@ -5,6 +5,7 @@ import {
   IntrospectResponse,
   Login,
   LoginResponse,
+  Notification,
   User,
   UserCreate,
 } from '../types/admin';
@@ -43,6 +44,28 @@ export interface CustomerQuery {
 }
 export const getCustomers = async (params?: CustomerQuery): Promise<ApiResponse<Customer[]>> => {
   const response = await axiosClient.get<ApiResponse<Customer[]>>(`/customer`, { params });
+  return response.data;
+};
+export interface CustomerStats {
+  total: number;
+  newLead: number;
+  pending: number;
+}
+export const getCustomerStats = async (): Promise<ApiResponse<CustomerStats>> => {
+  const response = await axiosClient.get<ApiResponse<CustomerStats>>('/customer/stats');
+  return response.data;
+};
+export const getNotificationPage = async (
+  page = 0,
+  size = 5
+): Promise<ApiResponse<Notification[]>> => {
+  const response = await axiosClient.get<ApiResponse<Notification[]>>('/notifications/page', {
+    params: { page, size },
+  });
+  return response.data;
+};
+export const getNotificationUnreadCount = async (): Promise<ApiResponse<number>> => {
+  const response = await axiosClient.get<ApiResponse<number>>('/notifications/unread-count');
   return response.data;
 };
 export const getCustomerById = async (id: string): Promise<ApiResponse<CustomerDetail>> => {

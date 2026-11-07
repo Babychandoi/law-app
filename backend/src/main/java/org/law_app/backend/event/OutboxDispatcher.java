@@ -30,7 +30,7 @@ public class OutboxDispatcher {
   @Value("${app.outbox.batch-size:50}")
   private int batchSize;
 
-  @Scheduled(fixedDelayString = "${app.outbox.dispatch-delay-ms:1000}")
+  @Scheduled(fixedDelayString = "${app.outbox.dispatch-delay-ms:5000}")
   @Transactional
   public void dispatch() {
     Instant now = Instant.now();

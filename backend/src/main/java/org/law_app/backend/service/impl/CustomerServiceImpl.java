@@ -41,6 +41,22 @@ public class CustomerServiceImpl implements CustomerServices {
   // giữ EmailService lẫn địa chỉ admin.
   org.springframework.context.ApplicationEventPublisher eventPublisher;
 
+  @Override
+  @Transactional(readOnly = true)
+  public org.law_app.backend.dto.response.CustomerStatsResponse getStats() {
+    long total = 0;
+    long newLead = 0;
+    long pending = 0;
+    for (var row : customerServiceRepository.countByStatus()) {
+      total += row.getCount();
+      if (row.getStatus() == Status.NEW) newLead += row.getCount();
+      if (row.getStatus() == Status.RECEIVED || row.getStatus() == Status.PROCESSING) {
+        pending += row.getCount();
+      }
+    }
+    return new org.law_app.backend.dto.response.CustomerStatsResponse(total, newLead, pending);
+  }
+
   @Transactional
   @Override
   public Boolean createCustomerService(CustomerRequest customerRequest) {

@@ -12,7 +12,7 @@ import {
   AlertCircle,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { getCustomers } from '../../../../service/admin';
+import { getCustomers, getCustomerStats } from '../../../../service/admin';
 import chatService from '../../../../service/chat';
 import { getMe, MeResponse } from '../../../../service/auth';
 import type { Customer } from '../../../../types/admin';
@@ -41,23 +41,37 @@ export default function Dashboard() {
       setLoading(true);
       setError(false);
       try {
-        const user = await getMe();
-        // Đếm CHÍNH XÁC toàn hệ thống qua meta.totalElements (không dùng .length của trang đầu).
-        const countOf = async (status?: string) =>
-          (await getCustomers({ page: 0, size: 1, status })).meta?.totalElements ?? 0;
-        const [total, newLead, received, processing, recentRes, stats] = await Promise.all([
-          countOf(),
-          countOf('NEW'),
-          countOf('RECEIVED'),
-          countOf('PROCESSING'),
-          getCustomers({ page: 0, size: 6 }),
-          user ? chatService.fetchStats(user.id) : Promise.resolve(null),
+        const reportError = () => {
+          if (!cancelled) setError(true);
+        };
+        await Promise.all([
+          getCustomerStats()
+            .then((res) => {
+              if (!cancelled) {
+                setCounts(res.data);
+                setLoading(false);
+              }
+            })
+            .catch(reportError),
+          getCustomers({ page: 0, size: 6 })
+            .then((res) => {
+              if (!cancelled) {
+                setRecent(Array.isArray(res.data) ? res.data : []);
+                setLoading(false);
+              }
+            })
+            .catch(reportError),
+          getMe()
+            .then(async (user) => {
+              if (cancelled) return;
+              setMe(user);
+              if (user) {
+                const stats = await chatService.fetchStats(user.id);
+                if (!cancelled) setUnread(stats?.unreadConversations ?? 0);
+              }
+            })
+            .catch(reportError),
         ]);
-        if (cancelled) return;
-        setMe(user);
-        setCounts({ total, newLead, pending: received + processing });
-        setRecent(Array.isArray(recentRes.data) ? recentRes.data : []);
-        setUnread(stats?.unreadConversations ?? 0);
       } catch {
         if (!cancelled) setError(true);
       } finally {
