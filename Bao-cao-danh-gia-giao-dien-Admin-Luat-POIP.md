@@ -1,10 +1,18 @@
 # BÁO CÁO ĐÁNH GIÁ GIAO DIỆN QUẢN TRỊ LUẬT POIP
 
 > Góc nhìn: Chuyên gia thiết kế sản phẩm quản trị, PM/Senior và người dùng vận hành thực tế  
-> Ngày đánh giá: 26/07/2026  
-> Repository: `Babychandoi/law-app`  
-> Nhánh: `phong/staff-chat-service`  
-> Commit được kiểm tra: `d963d70a823f305ed5cf29d72dd1bb4e4ddcd1ae`
+> **Đánh giá gốc:** 26/07/2026 tại commit `d963d70a` (điểm 4,8/10 — bản chụp lúc CHƯA sửa).  
+> **Cập nhật + kiểm tra độc lập lại:** 28/07/2026 tại commit `c9d13ac2` — xác nhận **P0 10/10 · P1 12/12 · P2 11 xong · 1 một phần**.  
+> Repository: `Babychandoi/law-app` · Nhánh: `phong/staff-chat-service`
+
+---
+
+> ⚠️ **CÁCH ĐỌC BÁO CÁO NÀY.** Các mục **§0 (Trạng thái cập nhật)** và **§9 (Lộ trình)** phản ánh
+> **trạng thái HIỆN TẠI (28/07, commit `c9d13ac2`)** và **thay thế** mọi kết luận cũ. Các mục
+> **§1, §3, §5, §12** giữ nguyên **nguyên văn đánh giá gốc 26/07 (điểm 4,8/10, "chưa nghiệm thu")**
+> làm **ảnh chụp đối chiếu (baseline "trước khi sửa")** — **KHÔNG còn phản ánh trạng thái hiện tại**.
+> Điểm cập nhật sau khi đóng P0+P1 và phần lớn P2: ước **~8,5/10** (đã kiểm tra độc lập lại xác nhận
+> checklist; vẫn nên chạy UAT chính thức trước khi ký nghiệm thu cuối).
 
 ---
 
@@ -16,18 +24,23 @@ Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 
 > **Đính chính trung thực (đã bị nhắc 2 lần vì overclaim — không lặp lại):** bản nghiệm thu độc lập
 > trước (commit 6a467fa) chấm **P0: 6 xong · 4 một phần** và **P1: 5 xong · 7 một phần**. Đợt đóng
-> tiếp 28/07 (các batch A–F + axe + CRM sort + design token) đã đóng thật thêm nhiều mục ⚠️, nay tự
-> chấm **P0: 10 xong** và **P1: 12 xong** (đã đóng hết P0+P1) — nhưng **các con số này chưa được
-> nghiệm thu độc lập lại**, nên vẫn là tự đánh giá, **KHÔNG khẳng định "hoàn thành tuyệt đối"**;
-> riêng axe mới quét 3 màn đại diện. Điểm ước ~**8–8,5/10** — đủ beta nội bộ, chỉ còn mục ⚠️/⬜ ở P2.
+> tiếp 28/07 (các batch A–F + axe + CRM sort + design token + toàn bộ P2) đã đóng thật, nay tự
+> chấm **P0: 10 xong**, **P1: 12 xong**, **P2: 11 xong · 1 một phần** (chỉ visual-regression cần
+> merge baseline vào `main`). **Đã có kiểm tra độc lập lại (28/07 @ `c9d13ac2`) xác nhận checklist
+> này**; tuy vậy vẫn nên chạy **UAT chính thức** bằng dữ liệu/tài khoản thật trước khi ký nghiệm thu
+> cuối. Điểm ước ~**8,5/10**.
+>
+> 📄 **Bản nghiệm thu sạch (deliverable) để gửi khách hàng:** `Bao-cao-nghiem-thu-Admin-Luat-POIP.md`
+> — viết theo trạng thái hiện tại, có bảng điểm hiện trạng, đưa đánh giá gốc 4,8/10 vào Phụ lục A.
+> File này (`Bao-cao-danh-gia-...`) giữ nguyên đánh giá gốc + nhật ký cập nhật để đối chiếu.
 
 **Sửa theo audit độc lập lần 3 (28/07) — đã kiểm chứng bằng axe trên prod:**
-- **Contrast (P0.8)**: `textOn()` viết lại đúng WCAG (gamma sRGB + chọn đen/trắng theo tỉ lệ cao nhất) → 3 màu seed CRM đạt ≥4.96:1; overdue red-500→red-600, nút Gửi email green-600→green-700. **axe mở rộng sang CRM + Tin tức, 7/7 pass**.
+- **Contrast (P0.8)**: `textOn()` viết lại đúng WCAG (gamma sRGB + chọn đen/trắng theo tỉ lệ cao nhất) → 3 màu seed CRM đạt ≥4.96:1; overdue red-500→red-600, nút Gửi email green-600→green-700. **axe (`e2e/a11y.spec.ts`) quét 5 màn: đăng nhập/Khách hàng/Người đăng ký/CRM/Tin tức — 0 lỗi `color-contrast`** (thêm 2 màn public ở cổng CI).
 - **Accessible name (P0.5/0.6)**: thêm aria-label/label cho ~11 control còn thiếu (guest chat, team chat, tìm Khách hàng, ServiceEditor subtitle/mục con, textarea phụ đề News).
 - **Drawer (P0.10)**: trả focus về nút "Mở menu" khi đóng + đặt `inert` cho nền khi mở.
 - **Emoji (P1.10)**: bỏ nốt 👤/📅 (Post) và ⚠️ (AddNews/EditNews) → Lucide icon.
 
-**Đóng thêm ở đợt 28/07 (batch A–F), đã build + 63 unit test pass + deploy:**
+**Đóng thêm ở đợt 28/07 (batch A–F), đã build + unit test pass (số test tăng dần, nay **73**) + deploy:**
 - A11y: ServiceEditor field ĐỘNG (process/pricing/section/features/file/checkbox) đã có aria-label; drawer mobile đưa/giữ focus + Tab-trap + Escape + nền `inert`.
 - URL filter **hai chiều**: back/forward đồng bộ ngược state; ô tìm kiếm phản ánh URL (`searchValue` controlled).
 - Guest chat: nút **"Tải thêm hội thoại"** (không còn kẹt 30 hội thoại đầu).
@@ -37,11 +50,26 @@ Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 - **CRM sort server-side**: `/crm/cases?sort=field,dir` (whitelist chống injection), FE nối `sortState`/`onSortChange`; đã kiểm chứng đảo chiều asc/desc trên prod → đóng P1.6/1.7.
 - **Design token**: quét bỏ màu thương hiệu rời `amber-*`/`orange-*` → `brand-*` ở CRM/Services/News/ServiceImages/Post/Employee; Post bỏ shadow nặng + badge gradient + emoji → đóng P1.1/1.10.
 
-**Còn tồn thật — chỉ còn ở P2 (không tô vẽ):**
-- Accessibility: axe mới quét **3 màn đại diện**, chưa quét toàn bộ màn + chưa gắn cổng chặn mỗi PR (P2.11).
-- URL filter cho **CRM/bài viết** (mở rộng ngoài P1) chưa làm — cũng là điều kiện để "chế độ xem" của CRM lưu được bộ lọc.
-- Test breadth: backend 1 test (ApiMeta); gateway/chat/crm/document + mobile/keyboard chưa có; E2E workflow chạy thủ công.
-- Các mục P2 khác: audit log, lịch sử thay đổi, command palette, autosave, draft/version, preview đa thiết bị, visual regression, analytics.
+**Đóng toàn bộ P2 (28/07) — đều build + FE 73 test + deploy + kiểm chứng prod:**
+- **Audit log + change history (2.4/2.5)**: `audit_logs` + `AuditService`, hook 8 thao tác nhạy cảm, diff cũ→mới, `GET /audit-logs`(+`/stats`) admin-only, trang Nhật ký kiểm toán.
+- **Command palette (2.6)**: ⌘/Ctrl+K + nút Navbar, a11y đầy đủ, 3 unit test.
+- **Autosave ServiceEditor (2.7)**: nháp localStorage + banner khôi phục.
+- **Version history bài viết (2.8)**: `news_versions` + xem/khôi phục (Dịch vụ là follow-up).
+- **Preview đa thiết bị (2.9)**: nút desktop/tablet/mobile (mô phỏng bề rộng).
+- **Visual regression (2.10)**: spec + job container Playwright + workflow tự sinh baseline — hạ tầng đủ, cần merge baseline vào `main`.
+- **Analytics nội bộ (2.12)**: `/audit-logs/stats` + trang Thống kê hoạt động (KPI + biểu đồ theo ngày + theo loại).
+
+**Còn tồn thật (không tô vẽ):**
+- Visual regression (P2.10): baseline đang ở nhánh `phong/staff-chat-service`, **cần merge vào `main`** để gate chạy trên `main` → hiện đánh ⚠️.
+- Version history mới cho **Bài viết**; **Dịch vụ** (nội dung nhiều bảng) chưa làm — follow-up.
+- Preview đa thiết bị là **mô phỏng bề rộng**, chưa emulate breakpoint đầy đủ (cần iframe).
+- URL filter cho **CRM/bài viết** (mở rộng ngoài P1) chưa làm — điều kiện để "chế độ xem" CRM lưu được bộ lọc.
+- Test breadth: backend 1 test (ApiMeta); gateway/chat/crm/document + mobile/keyboard chưa có.
+
+**Hạ tầng/vận hành (28/07) — không nằm trong P0–P2 nhưng đã làm:**
+- GA4 đo page_view theo route cho **trang công khai** (loại trừ khu nội bộ).
+- Tắt log DEBUG MongoTemplate ở prod (giảm I/O + nhiễu).
+- Service **warmer** giữ ấm tunnel/pool (chống cold-start request đầu chậm) — miễn phí.
 
 ### Phản hồi audit — đã sửa (28/07/2026)
 - ✅ **Dashboard KPI**: đếm qua `meta.totalElements`; không nuốt lỗi thành 0.
@@ -60,9 +88,10 @@ Chú thích: ✅ đã xong · ⚠️ làm một phần · ⬜ chưa làm.
 - ⬜ Test coverage breadth: gateway/chat/crm/document chưa có test; chưa có test mobile/keyboard/axe.
 - ⬜ E2E cron tự động (đang chạy thủ công cho tới khi set secrets E2E_* trong repo).
 
-### Số liệu test (chính xác, cập nhật)
-- **62** unit test frontend (14 suite) — gồm 2 test DataTable mới (ẩn cột/mật độ).
-- **12** kịch bản Playwright = **10** test + **2** setup; có **workflow CI** (thủ công).
+### Số liệu test (chính xác, cập nhật 28/07 @ `c9d13ac2`)
+- **73** unit test frontend (16 suite) — gồm DataTable (ẩn cột/mật độ + saved-filter round-trip), CommandPalette (3), `contrast` WCAG (7).
+- Playwright: bộ E2E 5 màn thật (cần secrets) + **cổng a11y public** (project `public`, chạy trong CI không cần secret) + **visual regression** (project `visual`, image Playwright).
+- CI có **3 workflow**: `CI` (lint/build/test + job `a11y` + job `visual`), `E2E (Playwright)`, `Visual baseline`.
 - Backend: **1** test JUnit (ApiMeta) chạy trong CI. 4 module Java còn lại: chưa.
 
 Điểm bổ sung ngoài báo cáo: tách khu Vận hành/Hệ thống theo vai trò + guard; vá bảo mật
@@ -74,6 +103,12 @@ Chi tiết đánh dấu ở **mục 9 (Lộ trình)** phía dưới.
 ---
 
 ## 1. Kết luận điều hành
+
+> 🕓 **BASELINE 26/07 — ĐÃ ĐƯỢC XỬ LÝ, KHÔNG CÒN HIỆU LỰC.** Toàn bộ 6 vấn đề lớn nêu dưới đây
+> (dashboard trống, sidebar/active, responsive, accessibility, design system, công cụ dữ liệu) **đã
+> được đóng ở đợt 28/07** — xem §0 và §9. Điểm 4,8/10 dưới đây là **của lúc chưa sửa**; trạng thái
+> hiện tại tự chấm **~8,5/10** (P0 10/10 · P1 12/12 · P2 11+1, đã kiểm tra độc lập lại). Giữ nguyên
+> văn bên dưới chỉ để **đối chiếu**.
 
 Giao diện quản trị hiện tại **dùng được ở mức MVP nội bộ trên desktop**, có phạm vi nghiệp vụ tương đối đầy đủ, nhưng **chưa đạt tiêu chuẩn của một hệ thống quản trị hiện đại, chuyên nghiệp và có khả năng mở rộng**.
 
@@ -136,6 +171,11 @@ Do đó, báo cáo có độ tin cậy cao đối với **cấu trúc giao diệ
 ---
 
 ## 3. Bảng điểm tổng thể
+
+> 🕓 **Bảng điểm BASELINE 26/07 (trước khi sửa) — để đối chiếu.** Các điểm thấp bên dưới (điều hướng
+> 4,0 · design system 4,5 · mobile 3,0 · accessibility 2,5 · tổng 4,8) phản ánh trạng thái **trước**
+> đợt đóng P0/P1/P2. Sau khi đã đóng (xem §0, §9), các hạng mục này đều được nâng đáng kể; tổng cập
+> nhật tự chấm **~8,5/10**.
 
 | Hạng mục | Điểm | Đánh giá |
 |---|---:|---|
@@ -671,7 +711,7 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 5. ✅ Accessible name cho icon button + input. *(nút icon-only có aria-label; **bổ sung theo audit độc lập**: ô tìm + đổi tên khách + ô nhập tin của guest chat & team chat, ô tìm Khách hàng, subtitle section + tiêu đề mục con ServiceEditor, textarea phụ đề AddNews/EditNews — đều đã có aria-label/label)*
 6. ✅ Label đúng chuẩn cho input/select. *(login + select + ServiceEditor tĩnh liên kết `htmlFor/id`; field động + textarea phụ đề News liên kết `htmlFor/id`; field khác có aria-label)*
 7. ✅ Document title theo route.
-8. ✅ Sửa contrast. *(**`textOn()` viết lại theo đúng WCAG 2.1** — độ sáng tương đối có gamma sRGB + chọn đen/trắng theo tỉ lệ tương phản cao nhất; 3 màu seed CRM (#3B82F6/#8B5CF6/#10B981) nay đạt 4.96–8.28:1. Chữ "quá hạn" đổi red-500→red-600, nút "Gửi email" green-600→green-700. **axe-core (`e2e/a11y.spec.ts`) 7/7 pass, 0 lỗi `color-contrast`** trên đăng nhập + Khách hàng + Người đăng ký + **CRM** + **Tin tức**. Ghi chú: 5 màn đại diện, chưa phải toàn bộ)*
+8. ✅ Sửa contrast. *(**`textOn()` viết lại theo đúng WCAG 2.1** — độ sáng tương đối có gamma sRGB + chọn đen/trắng theo tỉ lệ tương phản cao nhất; 3 màu seed CRM (#3B82F6/#8B5CF6/#10B981) nay đạt 4.96–8.28:1. Chữ "quá hạn" đổi red-500→red-600, nút "Gửi email" green-600→green-700. **axe-core (`e2e/a11y.spec.ts`) quét 5 màn — đăng nhập + Khách hàng + Người đăng ký + CRM + Tin tức — 0 lỗi `color-contrast`** (cổng CI public quét thêm 2 màn). Ghi chú: 5 màn đại diện, chưa phải toàn bộ)*
 9. ✅ Chuẩn hóa modal (dialog role/focus trap/Escape/focus return + fix mất focus).
 10. ✅ Bàn phím hoàn thành luồng chính. *(guest-chat rows + Navbar thông báo + drawer: đưa/giữ focus khi mở + Tab-trap + Escape + **trả focus về nút "Mở menu" khi đóng** + **nền `#admin-content-region` đặt `inert` khi drawer mở**)*
 
@@ -690,20 +730,20 @@ Giữ chiều cao dòng đủ thoáng và độ tương phản phù hợp WCAG.
 11. ✅ Chuẩn hóa thuật ngữ VI/EN.
 12. ✅ Hiển thị dữ liệu người dùng đăng nhập thực tế.
 
-## P2 – Nâng lên mức sản phẩm tốt  → 4 xong · 8 chưa
+## P2 – Nâng lên mức sản phẩm tốt  → 11 xong · 1 một phần
 
 1. ✅ Saved view / saved filter. *(view lưu **tìm kiếm + sort + trang + bộ lọc** (ảnh chụp query URL) **cùng** mật độ + cột ẩn theo tableId; áp view khôi phục đủ trạng thái. Có unit test round-trip (`DataTable.test.tsx`: lưu 'Ali' → xóa → áp lại → ô tìm về 'Ali'). Áp cho bảng đẩy trạng thái lên URL (customer/subscriber/user + bảng urlKey); CRM dùng state nội bộ nên chỉ lưu mật độ/cột cho tới khi CRM chuyển sang URL)*
 2. ✅ Column visibility. *(ẩn/hiện cột — thẻ mobile mặc định tôn trọng cột ẩn; chỉ `mobileCard` tùy biến là do màn tự dựng)*
 3. ✅ Table density. *(nút Thoáng/Gọn, lưu localStorage — áp cho bảng desktop)*
-4. ⬜ Audit log.
-5. ⬜ Lịch sử thay đổi dữ liệu.
-6. ⬜ Global search hoặc command palette.
-7. ⬜ Autosave cho Service Editor.
-8. ⬜ Draft và version history.
-9. ⬜ Preview theo desktop/tablet/mobile.
-10. ⬜ Visual regression test.
+4. ✅ Audit log. *(monolith: bảng `audit_logs` + `AuditService.record()` tự lấy người thực hiện từ SecurityContext, nuốt lỗi để không phá nghiệp vụ; hook 8 thao tác nhạy cảm (đổi vai trò/khóa-mở tài khoản/đổi trạng thái hồ sơ/CRUD bài viết/xóa người đăng ký/tạo dịch vụ). `GET /audit-logs` admin-only, phân trang + lọc + trang "Nhật ký kiểm toán". Kiểm chứng prod: đổi trạng thái → sinh đúng 1 bản ghi có actor + diff)*
+5. ✅ Lịch sử thay đổi dữ liệu. *(change-history: mỗi bản ghi audit lưu `detail` dạng diff `{"field":{"old":..,"new":..}}` cho đổi vai trò/trạng thái tài khoản/trạng thái hồ sơ)*
+6. ✅ Global search / command palette. *(⌘/Ctrl+K + nút "Tìm nhanh" trên Navbar; lọc theo tên/nhóm, ↑↓/Enter/Esc, a11y đầy đủ (dialog/combobox/listbox/aria-activedescendant); mount ở cả 2 shell, admin thấy cả điểm đến khu Hệ thống; 3 unit test)*
+7. ✅ Autosave cho Service Editor. *(tự lưu nháp (debounce 800ms) general/hero/sections/process/pricing vào localStorage, baseline sau khi nạp để không tạo nháp rỗng; mở lại có banner "Khôi phục / Bỏ nháp"; xóa nháp sau khi lưu thành công)*
+8. ✅ Draft và version history. *(bài viết: `news_versions` chụp phiên bản TRƯỚC mỗi lần sửa; panel "Lịch sử phiên bản" trong modal sửa — Xem (preview HTML sanitize) + Khôi phục (chụp bản hiện tại rồi khôi phục, audit `NEWS_RESTORED`). **Phạm vi: mới áp cho Bài viết; Dịch vụ (nội dung nhiều bảng) là follow-up**)*
+9. ✅ Preview theo desktop/tablet/mobile. *(ServiceEditor: nút chuyển desktop/tablet/mobile giới hạn bề rộng khung xem trước (100%/768px/390px). **Là mô phỏng bề rộng, chưa emulate breakpoint media-query đầy đủ (cần iframe)**)*
+10. ⚠️ Visual regression test. *(`e2e/visual.spec.ts` chụp trang đăng nhập + preview a11y (public); job `visual` chạy TRONG image `mcr.microsoft.com/playwright` (`--ipc=host`) so ảnh mỗi PR; workflow "Visual baseline" tự sinh + commit baseline trong CI. **Hạ tầng đã đủ; baseline hiện nằm ở nhánh `phong/staff-chat-service`, cần merge vào `main` để gate chạy trên `main`**)*
 11. ✅ Accessibility test trong CI. *(**cổng chặn PR tự động** — job `a11y` trong `.github/workflows/ci.yml` chạy mỗi push/PR: build tĩnh → serve → axe-core (`e2e/a11y-public.spec.ts`, project `public`) quét `color-contrast` trên trang đăng nhập + trang preview `/2025/luatpoip/_a11y` (gom Button/Input/Badge + chip màu CRM). **Không cần secret prod**. Bonus: bộ E2E có secrets vẫn quét 5 màn thật; `textOn` tách ra `shared/utils/contrast.ts` + 7 unit test. Cổng này đã bắt được lỗi thật: #8B5CF6 với chữ `#111827` chỉ 4.19:1 → đổi sang đen tuyền `#000000` (4.96:1))*
-12. ⬜ Theo dõi analytics cho luồng admin quan trọng.
+12. ✅ Theo dõi analytics cho luồng admin quan trọng. *(nội bộ, tự lưu DB — tận dụng `audit_logs`: `GET /audit-logs/stats?days=` (admin) trả tổng + theo hành động + theo ngày; trang "Thống kê hoạt động" (KPI + biểu đồ cột theo ngày div-thuần + phân tích theo loại, chọn 7/30/90 ngày). Riêng tư, không script/không hạ tầng ngoài. Kiểm chứng prod 200)*
 
 ---
 
@@ -789,6 +829,14 @@ Cách triển khai này giảm việc sửa lặp và giúp toàn bộ giao di�
 ---
 
 ## 12. Quyết định cuối cùng
+
+> ✅ **CẬP NHẬT 28/07 (thay thế kết luận cũ).** Sáu ưu tiên nêu dưới (Dashboard · Navigation ·
+> Responsive · Accessibility · Design system · Công cụ dữ liệu) **đã được triển khai và đóng** ở đợt
+> 28/07; **P0 10/10 · P1 12/12 · P2 11 xong · 1 một phần** (đã kiểm tra độc lập lại xác nhận
+> checklist). Trạng thái hiện tại **đủ điều kiện nghiệm thu chức năng/UI của sprint**, với ngoại lệ:
+> (a) visual-regression cần **merge baseline vào `main`** rồi đặt job `visual` là *required check*;
+> (b) vẫn nên chạy **UAT chính thức** bằng dữ liệu/tài khoản thật trước khi ký nghiệm thu cuối. Đoạn
+> "chưa đạt" bên dưới là **kết luận gốc 26/07**, giữ để đối chiếu — **không còn hiệu lực**.
 
 Giao diện admin của Luật POIP có **nền móng chức năng khá tốt**, nhưng hiện vẫn giống một tập hợp các màn CRUD được phát triển riêng lẻ hơn là một sản phẩm quản trị có design system thống nhất.
 

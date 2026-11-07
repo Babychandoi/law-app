@@ -14,6 +14,7 @@ const PROACTIVE_REFRESH_MS = 10 * 60 * 1000;
 const TITLES: Record<string, string> = {
   '/2025/luatpoip/he-thong': 'Quản trị hệ thống',
   '/2025/luatpoip/he-thong/services': 'Dịch vụ',
+  '/2025/luatpoip/he-thong/landing': 'Landing page',
   '/2025/luatpoip/he-thong/posts': 'Bài viết',
   '/2025/luatpoip/he-thong/service-images': 'Ảnh dịch vụ',
   '/2025/luatpoip/he-thong/employees': 'Nhân viên',
@@ -21,6 +22,7 @@ const TITLES: Record<string, string> = {
   '/2025/luatpoip/he-thong/subscribers': 'Người đăng ký',
   '/2025/luatpoip/he-thong/crm-config': 'Cấu hình CRM',
   '/2025/luatpoip/he-thong/audit-logs': 'Nhật ký kiểm toán',
+  '/2025/luatpoip/he-thong/activity-stats': 'Thống kê hoạt động',
 };
 
 const SystemHome: React.FC = () => {

@@ -1,45 +1,48 @@
 import { Send } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import PhoneInput from 'react-phone-input-2';
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import 'react-phone-input-2/lib/style.css';
-import { createCustomerService, getServiceHome } from '../../../service/service';
+import { createCustomerService } from '../../../service/service';
 import { CustomerService } from '../../../types/service';
-import { trackLead } from '../tracking';
+import { newSubmissionId } from '../../../shared/analytics/submission';
 
 interface LandingFormProps {
   /** slug LP — dùng làm nguồn lead để biết ads nào ra khách */
   source: string;
-  /** chuỗi khớp title dịch vụ để chọn serviceId (vd 'nhãn hiệu') */
-  serviceTitleMatch: string;
+  /**
+   * Id dịch vụ con mà landing này thu lead về, lấy thẳng từ cấu hình landing trong DB.
+   * Trước đây đoán theo chuỗi con của tên dịch vụ và fallback về dịch vụ đầu danh sách,
+   * nên khi dữ liệu dịch vụ đổi thì lead âm thầm chạy sang dịch vụ sai.
+   */
+  serviceId: string;
+  /** Tên dịch vụ, chỉ để nhắc lại trên trang cảm ơn cho khách yên tâm. */
+  serviceTitle?: string;
   /** id để bắn focus từ nút CTA */
   id?: string;
+  title?: string;
+  subtitle?: string;
 }
 
 const inputClass =
   'min-h-12 w-full rounded-md border border-brand-line bg-white px-4 py-3 text-base text-brand-ink outline-none transition-colors placeholder:text-brand-muted hover:border-brand-gold focus:border-brand-goldDark focus:ring-2 focus:ring-brand-gold/25';
 
-export default function LandingForm({ source, serviceTitleMatch, id }: LandingFormProps) {
+export default function LandingForm({
+  source,
+  serviceId,
+  serviceTitle,
+  id,
+  title = 'Nhận tư vấn miễn phí',
+  subtitle = 'Điền thông tin, luật sư sẽ gọi lại cho bạn.',
+}: LandingFormProps) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('+84');
   const [email, setEmail] = useState('');
   const [note, setNote] = useState('');
-  const [serviceId, setServiceId] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
-
-  useEffect(() => {
-    getServiceHome()
-      .then((res) => {
-        const list = res.data || [];
-        if (!list.length) return;
-        const matched =
-          list.find((s) => s.title?.toLowerCase().includes(serviceTitleMatch.toLowerCase())) ||
-          list[0];
-        setServiceId(matched.id);
-      })
-      .catch(() => undefined);
-  }, [serviceTitleMatch]);
+  const navigate = useNavigate();
 
   const validate = () => {
     const next: { name?: string; phone?: string } = {};
@@ -70,17 +73,16 @@ export default function LandingForm({ source, serviceTitleMatch, id }: LandingFo
     };
 
     try {
-      const res = await createCustomerService(payload);
-      trackLead(source);
-      await Swal.fire({
-        icon: 'success',
-        title: 'Đã nhận yêu cầu tư vấn',
-        text: res.message || 'Đội ngũ Luật Poip Legal sẽ liên hệ với bạn trong thời gian sớm nhất.',
-      });
+      await createCustomerService(payload);
+      Swal.close();
       setName('');
       setPhone('+84');
       setEmail('');
       setNote('');
+      // Sang trang cảm ơn; chuyển đổi được bắn tại đó, không bắn ở đây (một chỗ duy nhất).
+      navigate('/cam-on', {
+        state: { source, submissionId: newSubmissionId(), serviceTitle },
+      });
     } catch {
       await Swal.fire({
         icon: 'error',
@@ -99,8 +101,8 @@ export default function LandingForm({ source, serviceTitleMatch, id }: LandingFo
       noValidate
       className="landing-form rounded-lg border border-brand-line bg-white p-5 shadow-soft sm:p-6"
     >
-      <h2 className="text-lg font-semibold text-brand-ink">Nhận tư vấn miễn phí</h2>
-      <p className="mt-1 text-sm text-brand-muted">Điền thông tin, luật sư sẽ gọi lại cho bạn.</p>
+      <h2 className="text-lg font-semibold text-brand-ink">{title}</h2>
+      <p className="mt-1 text-sm text-brand-muted">{subtitle}</p>
 
       <div className="landing-form-fields mt-5 space-y-4">
         <div>

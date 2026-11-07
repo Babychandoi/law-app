@@ -1,5 +1,6 @@
 package org.law_app.backend.controller;
 
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,15 @@ import org.springframework.web.bind.annotation.*;
 public class CustomerController {
   CustomerServices customerServices;
 
+  @GetMapping("/stats")
+  ApiResponse<org.law_app.backend.dto.response.CustomerStatsResponse> getStats() {
+    return ApiResponse.<org.law_app.backend.dto.response.CustomerStatsResponse>builder()
+        .data(customerServices.getStats())
+        .build();
+  }
+
   @PostMapping
-  ApiResponse<Boolean> createCustomer(@RequestBody CustomerRequest request) {
+  ApiResponse<Boolean> createCustomer(@Valid @RequestBody CustomerRequest request) {
     return ApiResponse.<Boolean>builder()
         .message("Customer created successfully")
         .data(customerServices.createCustomerService(request))

@@ -14,7 +14,7 @@ export default function VideoSection() {
           <div className="aspect-video">
             <iframe
               className="h-full w-full"
-              src="https://www.youtube.com/embed/wp3XxhYfQ90"
+              src="https://www.youtube.com/embed/mdE0caGDfrE"
               title="Giới thiệu về Luật Poip Legal"
               loading="lazy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

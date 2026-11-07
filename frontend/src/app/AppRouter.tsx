@@ -1,6 +1,7 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, useRoutes } from 'react-router-dom';
 import { appRoutes } from './routes';
+import { usePageViews } from '../shared/analytics/pageview';
 
 const ToastContainer = lazy(() =>
   import('react-toastify').then((module) => ({ default: module.ToastContainer }))
@@ -13,6 +14,12 @@ type WindowWithIdleCallback = Window & {
 
 function Routes() {
   return useRoutes(appRoutes);
+}
+
+// Gửi page_view GA4 mỗi lần đổi route (chỉ trang công khai). Đặt trong BrowserRouter.
+function PageViewTracker() {
+  usePageViews();
+  return null;
 }
 
 function LazyToastContainer() {
@@ -68,6 +75,7 @@ function LazyToastContainer() {
 export default function AppRouter() {
   return (
     <BrowserRouter>
+      <PageViewTracker />
       <Routes />
       <LazyToastContainer />
     </BrowserRouter>

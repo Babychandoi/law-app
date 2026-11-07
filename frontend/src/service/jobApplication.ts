@@ -74,6 +74,23 @@ export const deleteApplication = async (id: string): Promise<void> => {
   await axiosClient.delete(`/jobs/applications/${id}`);
 };
 
+/** Fetch a private CV through the authenticated API; MinIO credentials/URLs never reach the UI. */
+export const getJobApplicationCv = async (
+  id: string
+): Promise<{ blob: Blob; fileName?: string }> => {
+  const response = await axiosClient.get(`/jobs/applications/${id}/cv`, {
+    responseType: 'blob',
+    timeout: 60000,
+  });
+  const disposition = response.headers['content-disposition'] as string | undefined;
+  const encoded = disposition?.match(/filename\*=UTF-8''([^;]+)/i)?.[1];
+  const ascii = disposition?.match(/filename="?([^";]+)"?/i)?.[1];
+  return {
+    blob: response.data,
+    fileName: encoded ? decodeURIComponent(encoded) : ascii,
+  };
+};
+
 /**
  * Submit job application (Public - no auth required)
  */

@@ -24,6 +24,41 @@ npm run e2e:ui         # chạy có giao diện xem từng bước
 
 Ghi đè môi trường đích: `$env:E2E_BASE_URL="https://luatpoip.com"` (mặc định prod).
 
+Chỉ chạy bộ a11y + mobile khu tài liệu:
+
+```powershell
+npm run e2e:documents
+```
+
+## `E2E_ADMIN_USER/PASS` là gì & lấy ở đâu
+
+Là **tài khoản đăng nhập** ở `/2025/luatpoip/admin/login` (username + mật khẩu). `auth.setup.ts`
+dùng nó để đăng nhập một lần và lưu session cho các test đã-đăng-nhập; nếu thiếu, các test đó **tự
+bỏ qua** (không fail).
+
+- `E2E_ADMIN_USER/PASS`: một tài khoản **vai trò ADMIN**.
+- `E2E_STAFF_USER/PASS`: một tài khoản **vai trò USER (nhân viên)**.
+
+> Khuyến nghị: tạo **tài khoản test riêng** (vd `e2e-admin`) thay vì dùng tài khoản cá nhân —
+> các test này chỉ ĐỌC (điều hướng + axe), nhưng tách tài khoản giúp an toàn và dễ thu hồi.
+
+### Thêm secrets vào GitHub (để chạy trong CI)
+
+Qua GitHub UI: **Settings → Secrets and variables → Actions → New repository secret**, thêm 4 secret:
+`E2E_ADMIN_USER`, `E2E_ADMIN_PASS`, `E2E_STAFF_USER`, `E2E_STAFF_PASS`.
+
+Hoặc bằng `gh` CLI (đã đăng nhập repo):
+
+```bash
+gh secret set E2E_ADMIN_USER   # dán username khi được hỏi
+gh secret set E2E_ADMIN_PASS   # dán mật khẩu
+gh secret set E2E_STAFF_USER
+gh secret set E2E_STAFF_PASS
+```
+
+Sau khi có secrets: chạy thủ công workflow **e2e** (tab Actions → e2e → Run workflow), hoặc bật
+`schedule` trong `.github/workflows/e2e.yml` để chạy định kỳ.
+
 ## Phạm vi hiện có (9 test)
 
 **`auth.spec.ts`** — đăng nhập & phân quyền:

@@ -27,11 +27,11 @@ VALUES
 
 INSERT INTO company (id, name, representative, tax_code, website_name, email)
 VALUES
-  ('51111111-1111-1111-1111-111111111111', 'Công ty Luật Poip Legal', 'Đại diện công ty', '0100100001', 'luatpoip.com', 'contact@luatpoip.com');
+  ('51111111-1111-1111-1111-111111111111', 'CÔNG TY TNHH POIP LEGAL', 'Ls. Trần Thị Kiều Oanh', '0111585280', 'luatpoip.com', 'luatpoip@gmail.com');
 
 INSERT INTO location (id, type, address, color, company_id)
 VALUES
-  ('52111111-1111-1111-1111-111111111111', 'headquarter', 'Số 1, Hà Nội, Việt Nam', 0, '51111111-1111-1111-1111-111111111111'),
+  ('52111111-1111-1111-1111-111111111111', 'Trụ sở chính', '70 Ngách 6, Ngõ 10 Tả Thanh Oai, Xã Đại Thanh, TP Hà Nội', 0, '51111111-1111-1111-1111-111111111111'),
   ('52222222-2222-2222-2222-222222222222', 'branch', 'Số 2, TP. Hồ Chí Minh, Việt Nam', 1, '51111111-1111-1111-1111-111111111111');
 
 INSERT INTO important (id, text, href, icon, color, company_id)

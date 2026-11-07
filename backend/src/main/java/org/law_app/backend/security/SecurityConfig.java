@@ -44,7 +44,10 @@ public class SecurityConfig {
         "/news/**",
         "/chat/{guestId}",
         "/chat/conversation",
-        "/sitemap.xml"
+        // Chỉ trang landing đã xuất bản; bản nháp bị service lọc bỏ, không lộ ra ngoài.
+        "/landing/page",
+        "/sitemap.xml",
+        "/og/**"
       };
 
   @Autowired private CustomJwtDecoder customJwtDecoder;
@@ -77,6 +80,8 @@ public class SecurityConfig {
                     // /news/** permitAll -> lộ công khai. Chặn về ADMIN trước khi mở public GET.
                     .requestMatchers(HttpMethod.GET, "/jobs/applications", "/jobs/*/applications")
                     .hasRole("ADMIN")
+                    .requestMatchers("/jobs/applications/**")
+                    .hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/news/subscribers", "/news/subscribers/**")
                     .hasRole("ADMIN")
                     // Ghi nội dung website (dịch vụ/bài viết) + tin tuyển dụng: chỉ ADMIN.
@@ -93,6 +98,10 @@ public class SecurityConfig {
                     .hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, AuthorizedUrlsPublic)
                     .permitAll()
+                    // Quản lý landing (kể cả xem danh sách bản nháp) chỉ dành cho ADMIN.
+                    // Đặt sau permitAll ở trên nên GET /landing/page vẫn public.
+                    .requestMatchers("/landing/**")
+                    .hasRole("ADMIN")
                     .requestMatchers(HttpMethod.GET, "/chat/*")
                     .permitAll() // Allow guest to get their messages
                     .requestMatchers(HttpMethod.POST, "/chat/conversation")
@@ -129,7 +138,35 @@ public class SecurityConfig {
                 .csrfTokenRequestHandler(csrfHandler)
                 .ignoringRequestMatchers(CsrfIgnored));
 
+    // HSTS. Spring chỉ gửi header này khi request.isSecure() = true, nhưng ở đây TLS kết thúc tại
+    // Cloudflare và cloudflared gọi origin bằng HTTP thuần nên isSecure() = false — header bị bỏ
+    // qua, api.luatpoip.com không có HSTS.
+    //
+    // Chỉ gửi khi X-Forwarded-Proto = https. KHÔNG gửi vô điều kiện: chạy backend local qua
+    // http://localhost thì trình duyệt sẽ ghi nhớ và ép localhost sang HTTPS, hỏng môi trường dev.
+    http.headers(
+        headers ->
+            headers.httpStrictTransportSecurity(
+                hsts ->
+                    hsts.requestMatcher(
+                            request ->
+                                isForwardedHttps(
+                                    request.getHeader("X-Forwarded-Proto"),
+                                    request.getHeader("CF-Visitor")))
+                        .maxAgeInSeconds(31536000)
+                        .includeSubDomains(true)));
+
     return http.build();
+  }
+
+  /**
+   * Cloudflare gửi CF-Visitor, cloudflared gửi X-Forwarded-Proto — không có gì bảo đảm cả hai đều
+   * có mặt, nên nhận cả hai. Nếu chỉ dựa vào một cái mà cái đó vắng thì header HSTS âm thầm không
+   * bao giờ được gửi, đúng kiểu lỗi im lặng khó phát hiện.
+   */
+  static boolean isForwardedHttps(String forwardedProto, String cfVisitor) {
+    return "https".equalsIgnoreCase(forwardedProto)
+        || (cfVisitor != null && cfVisitor.contains("\"https\""));
   }
 
   @Bean

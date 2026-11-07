@@ -1,0 +1,12 @@
+# Override rieng cho ban STAGE (nhanh feat/redesign-light-theme).
+# Build tu git worktree ../law-app-stage, phuc vu qua cloudflared: stage.luatpoip.com.
+# Dung:  docker compose -f docker-compose.yml -f docker-compose.stage.yml up -d --build frontend-stage
+services:
+  frontend-stage:
+    build:
+      context: ../law-app-stage/frontend
+      dockerfile: Dockerfile
+    container_name: law-app-frontend-stage
+    networks:
+      - law-app-network
+    restart: unless-stopped

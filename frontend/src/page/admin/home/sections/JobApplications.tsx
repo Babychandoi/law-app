@@ -4,6 +4,7 @@ import { Card, PageHeader, Spinner } from '../../../../component/common/ui';
 import { toast } from 'react-toastify';
 import {
   getAllJobApplications,
+  getJobApplicationCv,
   updateApplicationStatus,
   JobApplication,
 } from '../../../../service/jobApplication';
@@ -101,9 +102,37 @@ const JobApplications: React.FC = () => {
   const filteredApplications =
     selectedJob === 'all' ? applications : applications.filter((app) => app.jobId === selectedJob);
 
-  const handlePreview = (cvUrl: string) => {
-    // MinIO URLs can be opened directly for preview
-    window.open(cvUrl, '_blank');
+  const handlePreview = async (app: JobApplication) => {
+    const preview = window.open('', '_blank');
+    try {
+      const { blob } = await getJobApplicationCv(app.id);
+      const url = window.URL.createObjectURL(blob);
+      if (preview) {
+        preview.location.href = url;
+      } else {
+        window.open(url, '_blank', 'noopener,noreferrer');
+      }
+      window.setTimeout(() => window.URL.revokeObjectURL(url), 60_000);
+    } catch {
+      preview?.close();
+      toast.error('Không thể mở CV');
+    }
+  };
+
+  const handleDownload = async (app: JobApplication) => {
+    try {
+      const { blob, fileName } = await getJobApplicationCv(app.id);
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = fileName || app.cvFileName || 'candidate-cv';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch {
+      toast.error('Không thể tải CV');
+    }
   };
 
   if (loading) {
@@ -199,20 +228,19 @@ const JobApplications: React.FC = () => {
                 {/* Actions */}
                 <div className="flex flex-wrap gap-2 pt-4 border-t">
                   <button
-                    onClick={() => handlePreview(app.cvFileUrl)}
+                    onClick={() => handlePreview(app)}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-brand-goldDark text-white rounded-lg hover:bg-brand-goldDark transition-colors"
                   >
                     <Eye className="w-4 h-4" />
                     Xem CV
                   </button>
-                  <a
-                    href={app.cvFileUrl.replace('/upload/', '/upload/fl_attachment/')}
-                    download={app.cvFileName}
+                  <button
+                    onClick={() => handleDownload(app)}
                     className="inline-flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                   >
                     <Download className="w-4 h-4" />
                     Tải xuống
-                  </a>
+                  </button>
 
                   {/* Status Update Buttons */}
                   {app.status === 'PENDING' && (

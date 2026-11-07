@@ -39,6 +39,7 @@ public class ChildrenServiceImpl implements ChildrenService {
   ChildrenMapper childrenMapper;
   HeroRepository heroRepository;
   ProcessTimeLineRepository processTimeLineRepository;
+  org.law_app.backend.service.LandingPageProvisioner landingPageProvisioner;
 
   @Override
   @Transactional
@@ -296,6 +297,8 @@ public class ChildrenServiceImpl implements ChildrenService {
             .parentService(parent)
             .build();
     child = childrenServiceRepository.save(child);
+    // Mỗi dịch vụ con kèm sẵn một landing nháp; admin chỉ cần bật khi muốn chạy ads.
+    landingPageProvisioner.createDraftFor(child);
     return ChildrenServiceResponse.builder()
         .id(child.getId())
         .title(child.getTitle())
@@ -344,6 +347,8 @@ public class ChildrenServiceImpl implements ChildrenService {
     pricingRepository.deleteByService(child);
     serviceSectionRepository.deleteByService(child);
     processTimeLineRepository.deleteAll(processTimeLineRepository.findByService(child));
+    // Landing trỏ vào dịch vụ này phải đi cùng, nếu không /lp/<slug> sẽ 500 vì FK mồ côi.
+    landingPageProvisioner.deleteFor(child);
     childrenServiceRepository.delete(child);
     return true;
   }

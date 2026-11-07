@@ -49,8 +49,8 @@ rabbitmq:
 minio:
   url: ${MINIO_URL}
   public-url: ${MINIO_PUBLIC_URL}
-  access-key: ${MINIO_ACCESS_KEY}
-  secret-key: ${MINIO_SECRET_KEY}
+  access-key: ${MINIO_CHAT_ACCESS_KEY:${MINIO_ACCESS_KEY}}
+  secret-key: ${MINIO_CHAT_SECRET_KEY:${MINIO_SECRET_KEY}}
   bucket:
     files: ${MINIO_BUCKET_STAFF_FILES:staff-files}
 

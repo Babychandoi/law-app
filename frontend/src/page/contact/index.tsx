@@ -2,6 +2,7 @@ import React, { lazy, Suspense } from 'react';
 import Consultation from './consultation/Consultation';
 import HeroSection from '../../component/service/HeroService';
 import { Seo } from '../../component/Seo';
+import CompanyLegalInfo from '../../component/common/CompanyLegalInfo';
 
 // Lazy load GoogleMap component
 const GoogleMap = lazy(() =>
@@ -21,6 +22,7 @@ export default function Contact() {
         subtitle="Chúng tôi luôn sẵn sàng hỗ trợ bạn. Hãy liên hệ với chúng tôi nếu bạn có bất kỳ thắc mắc hoặc cần hỗ trợ."
       />
       <Consultation />
+      <CompanyLegalInfo />
       <Suspense
         fallback={
           <div className="flex items-center justify-center gap-3 py-20" role="status">

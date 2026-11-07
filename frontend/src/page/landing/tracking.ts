@@ -1,9 +1,34 @@
 // Tracking conversion cho landing page ads.
 // Điền ID pixel thật vào đây (hoặc đặt qua biến môi trường REACT_APP_*).
 
+/**
+ * ID thẻ Google Ads — phải trùng với `gtag('config', ...)` trong public/index.html.
+ * Đổi tài khoản Ads thì sửa cả hai chỗ.
+ */
+export const GOOGLE_ADS_ID = 'AW-18319389912';
+
+/**
+ * Báo một lượt tải trang cho Google Ads, dùng cho hành động chuyển đổi kiểu "Tải trang".
+ *
+ * Bắt buộc phải gọi tay: đây là SPA, Google Ads chỉ nhận được lượt xem trang duy nhất lúc trình
+ * duyệt tải cứng trang đầu tiên. Điều hướng nội bộ của React chỉ gửi page_view sang GA4
+ * (xem shared/analytics/pageview.ts), nên nếu không có hàm này thì hành động "Tải trang" trỏ vào
+ * /cam-on sẽ không bao giờ nhận được tín hiệu và nằm im ở trạng thái Không hoạt động.
+ */
+export const trackAdsPageView = (): void => {
+  if (typeof window === 'undefined' || !window.gtag) return;
+  window.gtag('config', GOOGLE_ADS_ID, {
+    page_location: window.location.href,
+    page_path: window.location.pathname,
+  });
+};
+
 export const TRACKING = {
-  // Google Ads — đã dùng sẵn trong dự án
-  googleAdsConversionId: 'AW-17438859267/9CUZCKWNmoAbEIPAv_tA',
+  // Google Ads — NHÃN HÀNH ĐỘNG CHUYỂN ĐỔI, dạng 'AW-18319389912/AbC-dEfGhIjK'.
+  // Lấy ở Google Ads > Mục tiêu > Chuyển đổi > Hành động chuyển đổi (không phải ID thẻ trần).
+  // Để trống thì không bắn chuyển đổi nào — chủ ý, vì bắn nhầm về nhãn của tài khoản cũ
+  // AW-17438859267 sẽ làm số liệu tài khoản mới sai mà không ai phát hiện.
+  googleAdsConversionId: process.env.REACT_APP_GOOGLE_ADS_CONVERSION_LABEL || '',
   // Dán Pixel ID Facebook vào đây (vd '1234567890')
   facebookPixelId: process.env.REACT_APP_FB_PIXEL_ID || '',
   // Dán Pixel ID TikTok vào đây (vd 'CXXXXXXXXXXXX')

@@ -7,6 +7,7 @@ const About = lazy(() => import('../page/aboutUs'));
 const PrivacyPolicy = lazy(() => import('../page/legal/PrivacyPolicy'));
 const AdminDashboard = lazy(() => import('../page/admin/home/sections/Dashboard'));
 const Contact = lazy(() => import('../page/contact'));
+const ThankYou = lazy(() => import('../pages/ThankYou'));
 const Home = lazy(() => import('../page/home/Home'));
 const Job = lazy(() => import('../page/recruitment/Job'));
 const Recruitment = lazy(() => import('../page/recruitment/recruitment'));
@@ -27,17 +28,24 @@ const LandingPage = lazy(() => import('../page/landing/LandingPage'));
 const DynamicServicePage = lazy(() => import('../page/service/DynamicServicePage'));
 const ServiceImages = lazy(() => import('../page/admin/home/sections/ServiceImages'));
 const ServiceManager = lazy(() => import('../page/admin/home/sections/Services'));
+const LandingManager = lazy(() => import('../page/admin/home/sections/Landing'));
 const CRM = lazy(() => import('../page/admin/home/sections/CRM'));
 const CrmConfig = lazy(() => import('../page/admin/home/sections/CRM/Config'));
 const TeamChat = lazy(() => import('../page/admin/home/sections/TeamChat'));
 const A11yPreview = lazy(() => import('../page/admin/A11yPreview'));
 const AuditLog = lazy(() => import('../page/admin/home/sections/AuditLog'));
+const AuditAnalytics = lazy(() => import('../page/admin/home/sections/AuditAnalytics'));
 const DocumentLayout = lazy(() => import('../page/documents/DocumentLayout'));
 const TemplateList = lazy(() => import('../page/documents/TemplateList'));
 const TemplateUpload = lazy(() => import('../page/documents/TemplateUpload'));
 const TemplateFieldEditor = lazy(() => import('../page/documents/TemplateFieldEditor'));
 const GenerateDocument = lazy(() => import('../page/documents/GenerateDocument'));
 const GeneratedDocumentList = lazy(() => import('../page/documents/GeneratedDocumentList'));
+const DocumentDashboard = lazy(() => import('../page/documents/DocumentDashboard'));
+const BundleList = lazy(() => import('../page/documents/BundleList'));
+const BundleEditor = lazy(() => import('../page/documents/BundleEditor'));
+const GenerateBundle = lazy(() => import('../page/documents/GenerateBundle'));
+const ClauseLibrary = lazy(() => import('../page/documents/ClauseLibrary'));
 
 function RouteFallback() {
   return (
@@ -65,6 +73,8 @@ export const publicRoutes: RouteObject = {
     { path: 'tin-tuc', element: withSuspense(<News />) },
     { path: 'tin-tuc/:id', element: withSuspense(<NewsDetail />) },
     { path: 'chinh-sach-bao-mat', element: withSuspense(<PrivacyPolicy />) },
+    // Đặt TRƯỚC ':slug' — nếu để sau, trang dịch vụ động sẽ nuốt mất /cam-on.
+    { path: 'cam-on', element: withSuspense(<ThankYou />) },
     { path: ':slug', element: withSuspense(<DynamicServicePage />) },
   ],
 };
@@ -92,6 +102,7 @@ export const adminRoutes: RouteObject[] = [
     children: [
       { index: true, element: <Navigate to="services" replace /> },
       { path: 'services', element: withSuspense(<ServiceManager />) },
+      { path: 'landing', element: withSuspense(<LandingManager />) },
       { path: 'posts', element: withSuspense(<PostManagement />) },
       { path: 'service-images', element: withSuspense(<ServiceImages />) },
       { path: 'employees', element: withSuspense(<EmployeeManagement />) },
@@ -99,6 +110,7 @@ export const adminRoutes: RouteObject[] = [
       { path: 'subscribers', element: withSuspense(<Subscribers />) },
       { path: 'crm-config', element: withSuspense(<CrmConfig />) },
       { path: 'audit-logs', element: withSuspense(<AuditLog />) },
+      { path: 'activity-stats', element: withSuspense(<AuditAnalytics />) },
     ],
   },
 ];
@@ -109,10 +121,16 @@ export const documentRoutes: RouteObject[] = [
     element: withSuspense(<DocumentLayout />),
     children: [
       { index: true, element: withSuspense(<TemplateList />) },
+      { path: 'dashboard', element: withSuspense(<DocumentDashboard />) },
       { path: 'templates/new', element: withSuspense(<TemplateUpload />) },
       { path: 'templates/:id/edit', element: withSuspense(<TemplateFieldEditor />) },
       { path: 'generate/:templateId', element: withSuspense(<GenerateDocument />) },
       { path: 'generated', element: withSuspense(<GeneratedDocumentList />) },
+      { path: 'bundles', element: withSuspense(<BundleList />) },
+      { path: 'bundles/new', element: withSuspense(<BundleEditor />) },
+      { path: 'bundles/:id/edit', element: withSuspense(<BundleEditor />) },
+      { path: 'bundles/:id/generate', element: withSuspense(<GenerateBundle />) },
+      { path: 'clauses', element: withSuspense(<ClauseLibrary />) },
     ],
   },
 ];

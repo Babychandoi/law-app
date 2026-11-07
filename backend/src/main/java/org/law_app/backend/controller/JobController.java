@@ -1,5 +1,6 @@
 package org.law_app.backend.controller;
 
+import java.io.InputStream;
 import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -10,12 +11,18 @@ import org.law_app.backend.dto.response.ApiMeta;
 import org.law_app.backend.dto.response.ApiResponse;
 import org.law_app.backend.dto.response.JobApplicationResponse;
 import org.law_app.backend.dto.response.JobResponse;
+import org.law_app.backend.service.AuditService;
 import org.law_app.backend.service.JobApplicationService;
 import org.law_app.backend.service.JobService;
+import org.law_app.backend.service.MinioService;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 public class JobController {
   JobService jobService;
   JobApplicationService jobApplicationService;
+  AuditService auditService;
 
   @PostMapping
   public ApiResponse<Boolean> createJob(@RequestBody JobRequest jobRequest) {
@@ -128,5 +136,53 @@ public class JobController {
         .message("Applications retrieved successfully")
         .data(jobApplicationService.getApplicationsByJobId(jobId))
         .build();
+  }
+
+  @GetMapping("/applications/{id}")
+  public ApiResponse<JobApplicationResponse> getApplication(@PathVariable String id) {
+    return ApiResponse.<JobApplicationResponse>builder()
+        .message("Application retrieved successfully")
+        .data(jobApplicationService.getApplicationById(id))
+        .build();
+  }
+
+  @PutMapping("/applications/{id}/status")
+  public ApiResponse<JobApplicationResponse> updateApplicationStatus(
+      @PathVariable String id,
+      @RequestParam String status,
+      @RequestParam(required = false) String notes) {
+    return ApiResponse.<JobApplicationResponse>builder()
+        .message("Application status updated")
+        .data(jobApplicationService.updateApplicationStatus(id, status, notes))
+        .build();
+  }
+
+  @DeleteMapping("/applications/{id}")
+  public ApiResponse<Void> deleteApplication(@PathVariable String id) {
+    jobApplicationService.deleteApplication(id);
+    return ApiResponse.<Void>builder().message("Application deleted").build();
+  }
+
+  @GetMapping("/applications/{id}/cv")
+  public ResponseEntity<InputStreamResource> downloadCv(@PathVariable String id) {
+    MinioService.DownloadFile file = jobApplicationService.downloadCv(id);
+    auditService.record(
+        "JOB_APPLICATION_CV_DOWNLOADED",
+        "JOB_APPLICATION",
+        id,
+        "Tải CV ứng viên qua API được bảo vệ",
+        null);
+    InputStream stream = file.stream();
+    return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType(file.contentType()))
+        .header(HttpHeaders.CACHE_CONTROL, "no-store, private")
+        .header("X-Content-Type-Options", "nosniff")
+        .header(
+            HttpHeaders.CONTENT_DISPOSITION,
+            ContentDisposition.attachment()
+                .filename(file.fileName(), java.nio.charset.StandardCharsets.UTF_8)
+                .build()
+                .toString())
+        .body(new InputStreamResource(stream));
   }
 }

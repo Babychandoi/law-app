@@ -1,3 +1,8 @@
+# LUU Y VE SEO: anh nay KHONG co Chrome, nen buoc postbuild (scripts/prerender.js) se bo qua va
+# ba trang /ve-chung-toi, /lien-he, /chinh-sach-bao-mat quay lai phuc vu vo SPA rong cho trinh
+# quet. Nginx tu lui ve vo SPA nen khong hong gi, chi la mat phan noi dung cho bot — im lang.
+# Muon giu phan do thi build CRA tren may co Chrome roi dong goi bang Dockerfile.prebuilt.
+
 # ==================== BUILD STAGE ====================
 FROM node:20-alpine AS build
 

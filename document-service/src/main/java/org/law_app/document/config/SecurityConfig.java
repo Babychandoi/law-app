@@ -50,6 +50,11 @@ public class SecurityConfig {
                 auth.requestMatchers(
                         "/actuator/health", "/actuator/health/**", "/actuator/prometheus")
                     .permitAll()
+                    // Link chia sẻ công khai: token trong URL chính là ủy quyền (không cần đăng
+                    // nhập).
+                    .requestMatchers(
+                        org.springframework.http.HttpMethod.GET, "/documents/shared/**")
+                    .permitAll()
                     .anyRequest()
                     .authenticated())
         .oauth2ResourceServer(

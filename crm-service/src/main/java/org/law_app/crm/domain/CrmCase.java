@@ -42,6 +42,7 @@ public class CrmCase {
   private String customerId;
   private String customerEmail;
   private String customerPhone;
+  private String serviceId;
   private String serviceName;
   private String name;
 

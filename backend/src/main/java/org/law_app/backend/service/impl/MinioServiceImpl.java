@@ -155,7 +155,7 @@ public class MinioServiceImpl implements MinioService {
           ErrorResponseException,
           InvalidResponseException,
           InternalException {
-    String filename = UUID.randomUUID() + "_" + file.getOriginalFilename();
+    String filename = UUID.randomUUID() + safeExtension(file.getOriginalFilename());
     InputStream inputStream = file.getInputStream();
     boolean isExists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
     if (!isExists) {
@@ -169,12 +169,53 @@ public class MinioServiceImpl implements MinioService {
     return filename;
   }
 
+  private String safeExtension(String originalName) {
+    if (originalName == null) return "";
+    int dot = originalName.lastIndexOf('.');
+    if (dot < 0 || dot == originalName.length() - 1) return "";
+    String extension = originalName.substring(dot).toLowerCase(java.util.Locale.ROOT);
+    return extension.matches("\\.[a-z0-9]{1,10}") ? extension : "";
+  }
+
   public String generateFileUrl(String bucket, String objectName) {
     try {
       return minioConfig.getPublicUrl() + "/" + bucket + "/" + objectName;
     } catch (Exception e) {
       log.error("Error generating file URL: {}", e.getMessage());
       throw new RuntimeException("Failed to generate file URL", e);
+    }
+  }
+
+  @Override
+  public DownloadFile download(String bucket, String objectName, String fallbackFileName) {
+    try {
+      StatObjectResponse stat =
+          minioClient.statObject(
+              StatObjectArgs.builder().bucket(bucket).object(objectName).build());
+      InputStream stream =
+          minioClient.getObject(GetObjectArgs.builder().bucket(bucket).object(objectName).build());
+      String contentType =
+          stat.contentType() == null || stat.contentType().isBlank()
+              ? "application/octet-stream"
+              : stat.contentType();
+      String fileName =
+          fallbackFileName == null || fallbackFileName.isBlank() ? objectName : fallbackFileName;
+      return new DownloadFile(fileName, contentType, stream);
+    } catch (Exception e) {
+      log.warn("Cannot read private object {}/{}: {}", bucket, objectName, e.getMessage());
+      throw new RuntimeException("File is unavailable", e);
+    }
+  }
+
+  @Override
+  public void delete(String bucket, String objectName) {
+    if (objectName == null || objectName.isBlank()) return;
+    try {
+      minioClient.removeObject(
+          RemoveObjectArgs.builder().bucket(bucket).object(objectName).build());
+    } catch (Exception e) {
+      log.warn("Cannot delete private object from bucket {}: {}", bucket, e.getMessage());
+      throw new RuntimeException("File cleanup failed", e);
     }
   }
 }

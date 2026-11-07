@@ -7,6 +7,7 @@ import VideoSection from '../../component/VideoSection';
 import ContactSection from './sections/ContactSection';
 import { Service } from './types';
 import { Seo } from '../../component/Seo';
+import CompanyLegalInfo from '../../component/common/CompanyLegalInfo';
 
 const HomePage: React.FC = () => {
   const aboutContent = [
@@ -74,6 +75,7 @@ const HomePage: React.FC = () => {
         image="/assets/images/law-team.webp"
       />
       <VideoSection />
+      <CompanyLegalInfo />
       <ContactSection title="Liên hệ chúng tôi" buttonText="Liên hệ" />
     </div>
   );

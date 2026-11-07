@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CaseTagRepository extends JpaRepository<CaseTag, Long> {
   List<CaseTag> findByCaseId(String caseId);
 
+  List<CaseTag> findByCaseIdIn(List<String> caseIds);
+
   List<CaseTag> findByTagId(Long tagId);
 
   void deleteByCaseIdAndTagId(String caseId, Long tagId);

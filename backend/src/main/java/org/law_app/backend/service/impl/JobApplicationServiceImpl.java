@@ -28,6 +28,8 @@ public class JobApplicationServiceImpl implements JobApplicationService {
   @Override
   public JobApplicationResponse submitApplication(
       JobApplicationRequest request, MultipartFile cvFile) throws Exception {
+    String uploadedObject = null;
+    boolean persisted = false;
     try {
       // Validate file
       if (cvFile == null || cvFile.isEmpty()) {
@@ -49,24 +51,8 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         throw new IllegalArgumentException("File size must not exceed 10MB");
       }
 
-      // Generate unique file name
-      String originalFileName = cvFile.getOriginalFilename();
-      String fileExtension =
-          originalFileName != null && originalFileName.contains(".")
-              ? originalFileName.substring(originalFileName.lastIndexOf("."))
-              : "";
-      String uniqueFileName =
-          String.format(
-              "CV_%s_%s_%d%s",
-              request.getCandidateName().replaceAll("[^a-zA-Z0-9]", "_"),
-              request.getJobTitle().replaceAll("[^a-zA-Z0-9]", "_"),
-              System.currentTimeMillis(),
-              fileExtension);
-
       // Upload to MinIO
-      log.info("Uploading CV to MinIO: {}", uniqueFileName);
-      String minioFileName = minioService.uploadCV(cvFile);
-      String cvUrl = minioService.generateFileUrl(minioConfig.getCvsBucket(), minioFileName);
+      uploadedObject = minioService.uploadCV(cvFile);
 
       // Save application to database
       JobApplication application =
@@ -76,14 +62,15 @@ public class JobApplicationServiceImpl implements JobApplicationService {
               .candidateName(request.getCandidateName())
               .candidateEmail(request.getCandidateEmail())
               .candidatePhone(request.getCandidatePhone())
-              .cvFileUrl(cvUrl)
-              .cvFileName(minioFileName)
+              .cvFileUrl("private-object")
+              .cvFileName(uploadedObject)
               .status("PENDING")
               .build();
 
       JobApplication savedApplication = jobApplicationRepository.save(application);
+      persisted = true;
       log.info(
-          "Job application saved: {} for job: {}", savedApplication.getId(), request.getJobTitle());
+          "Job application saved: {} for job id: {}", savedApplication.getId(), request.getJobId());
 
       // Send confirmation email asynchronously
       emailService.sendApplicationConfirmationEmail(
@@ -92,8 +79,15 @@ public class JobApplicationServiceImpl implements JobApplicationService {
       return mapToResponse(savedApplication);
 
     } catch (Exception e) {
-      log.error("Error submitting job application: {}", e.getMessage(), e);
-      throw new Exception("Failed to submit application: " + e.getMessage());
+      if (!persisted && uploadedObject != null) {
+        try {
+          minioService.delete(minioConfig.getCvsBucket(), uploadedObject);
+        } catch (RuntimeException cleanupError) {
+          log.warn("CV compensation cleanup failed");
+        }
+      }
+      log.warn("Job application submission failed: {}", e.getClass().getSimpleName());
+      throw new Exception("Failed to submit application");
     }
   }
 
@@ -144,8 +138,25 @@ public class JobApplicationServiceImpl implements JobApplicationService {
 
   @Override
   public void deleteApplication(String id) {
-    jobApplicationRepository.deleteById(id);
+    JobApplication application =
+        jobApplicationRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Application not found"));
+    minioService.delete(minioConfig.getCvsBucket(), application.getCvFileName());
+    jobApplicationRepository.delete(application);
     log.info("Application deleted: {}", id);
+  }
+
+  @Override
+  public MinioService.DownloadFile downloadCv(String id) {
+    JobApplication application =
+        jobApplicationRepository
+            .findById(id)
+            .orElseThrow(() -> new RuntimeException("Application not found"));
+    String originalName =
+        application.getCvFileName() == null ? "candidate-cv" : application.getCvFileName();
+    return minioService.download(
+        minioConfig.getCvsBucket(), application.getCvFileName(), originalName);
   }
 
   private JobApplicationResponse mapToResponse(JobApplication application) {
@@ -156,7 +167,9 @@ public class JobApplicationServiceImpl implements JobApplicationService {
         .candidateName(application.getCandidateName())
         .candidateEmail(application.getCandidateEmail())
         .candidatePhone(application.getCandidatePhone())
-        .cvFileUrl(application.getCvFileUrl())
+        // Private object storage is never returned directly. The API checks ADMIN authorization
+        // and records every download.
+        .cvFileUrl("/jobs/applications/" + application.getId() + "/cv")
         .cvFileName(application.getCvFileName())
         .status(application.getStatus())
         .appliedDate(application.getAppliedDate())

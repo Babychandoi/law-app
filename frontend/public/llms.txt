@@ -1,0 +1,41 @@
+# Luật POIP Legal
+
+> Công ty TNHH POIP Legal — tư vấn và thực hiện thủ tục sở hữu trí tuệ, giấy phép
+> và pháp lý doanh nghiệp tại Việt Nam: đăng ký nhãn hiệu, bản quyền, kiểu dáng
+> công nghiệp, xử lý xâm phạm, mã số mã vạch, giấy phép nền tảng số và hợp đồng.
+
+Website dùng React nên nội dung được dựng bằng JavaScript. Tập tin này liệt kê
+sẵn các trang chính dưới dạng văn bản thuần để công cụ đọc hiểu được nội dung mà
+không cần chạy JavaScript.
+
+- Hotline: 0947 600 064
+- Email: luatpoip@gmail.com
+- Địa chỉ: Số 70 Ngách 6, Ngõ 10 Tả Thanh Oai, xã Đại Thanh, Hà Nội, Việt Nam
+- Ngôn ngữ nội dung: tiếng Việt
+
+## Dịch vụ
+
+- [Đăng ký bảo hộ nhãn hiệu](https://luatpoip.com/dang-ky-bao-ho-nhan-hieu): Tra cứu khả năng bảo hộ, phân nhóm, soạn và nộp hồ sơ tại Cục Sở hữu trí tuệ, theo dõi đến khi có văn bằng.
+- [Đăng ký bảo hộ bản quyền](https://luatpoip.com/dang-ky-bao-ho-ban-quyen): Đăng ký quyền tác giả cho phần mềm, nội dung, thiết kế và tác phẩm sáng tạo.
+- [Bảo hộ kiểu dáng công nghiệp](https://luatpoip.com/bao-ho-kieu-dang-cong-nghiep): Bảo hộ hình dáng bên ngoài của sản phẩm, ngăn đối thủ sao chép mẫu mã.
+- [Xử lý xâm phạm](https://luatpoip.com/xu-ly-xam-pham): Đánh giá hành vi xâm phạm, thu thập chứng cứ, gửi cảnh báo và phối hợp cơ quan chức năng.
+- [Mã số mã vạch](https://luatpoip.com/ma-so-ma-vach): Đăng ký mã số mã vạch để sản phẩm lên kệ siêu thị và sàn thương mại điện tử.
+- [Đăng ký giấy phép mạng xã hội](https://luatpoip.com/dang-ky-giay-phep-mang-xa-hoi): Tư vấn điều kiện và xin giấy phép thiết lập mạng xã hội cho website, ứng dụng.
+- [Tư vấn soạn thảo hợp đồng](https://luatpoip.com/tu-van-soan-thao-hop-dong): Soạn thảo và rà soát hợp đồng, phát hiện điều khoản bất lợi trước khi ký.
+- [Thông báo nền tảng thương mại điện tử](https://luatpoip.com/thong-bao-nen-tang-thuong-mai-dien-tu): Thông báo và đăng ký website, ứng dụng thương mại điện tử với cơ quan quản lý.
+- [Thành lập doanh nghiệp, hộ kinh doanh](https://luatpoip.com/thanh-lap-doanh-nghiep-ho-kinh-doanh): Tư vấn loại hình, soạn hồ sơ và thực hiện thủ tục thành lập.
+
+## Trang chính
+
+- [Trang chủ](https://luatpoip.com/): Giới thiệu tổng quan dịch vụ của Luật POIP Legal.
+- [Tất cả dịch vụ](https://luatpoip.com/dich-vu): Danh mục đầy đủ các dịch vụ đang cung cấp.
+- [Giải pháp pháp lý toàn diện](https://luatpoip.com/giai-phap-phap-ly/): Trang tổng hợp mô tả từng nhóm dịch vụ kèm quy trình làm việc.
+- [Về chúng tôi](https://luatpoip.com/ve-chung-toi): Giới thiệu công ty và đội ngũ.
+- [Liên hệ](https://luatpoip.com/lien-he): Thông tin liên hệ và form nhận tư vấn.
+- [Tin tức](https://luatpoip.com/tin-tuc): Bài viết về sở hữu trí tuệ và pháp lý doanh nghiệp.
+- [Tuyển dụng](https://luatpoip.com/tuyen-dung): Vị trí đang tuyển.
+
+## Optional
+
+- [Chính sách bảo mật](https://luatpoip.com/chinh-sach-bao-mat): Cách Luật POIP Legal thu thập và sử dụng thông tin người dùng.
+- [Sơ đồ trang web](https://luatpoip.com/sitemap.xml): Danh sách URL đầy đủ, sinh động từ cơ sở dữ liệu.

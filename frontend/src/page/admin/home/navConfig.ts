@@ -11,7 +11,10 @@ import {
   SlidersHorizontal,
   Puzzle,
   Image,
+  Megaphone,
   ScrollText,
+  BarChart3,
+  FolderKanban,
   type LucideIcon,
 } from 'lucide-react';
 
@@ -50,6 +53,16 @@ export const OPERATIONS_GROUPS: NavGroup[] = [
       { label: 'Chat nội bộ', path: `${ADMIN_BASE}/team-chat`, icon: MessagesSquare },
     ],
   },
+  {
+    title: 'Hồ sơ pháp lý',
+    items: [
+      {
+        label: 'Tài liệu & biểu mẫu',
+        path: '/2025/luatpoip/tai-lieu',
+        icon: FolderKanban,
+      },
+    ],
+  },
 ];
 
 /** Quản trị hệ thống — chỉ admin. */
@@ -58,6 +71,7 @@ export const SYSTEM_GROUPS: NavGroup[] = [
     title: 'Nội dung website',
     items: [
       { label: 'Dịch vụ', path: `${SYS_BASE}/services`, icon: Puzzle },
+      { label: 'Landing page', path: `${SYS_BASE}/landing`, icon: Megaphone },
       { label: 'Bài viết', path: `${SYS_BASE}/posts`, icon: Newspaper },
       { label: 'Ảnh dịch vụ', path: `${SYS_BASE}/service-images`, icon: Image },
     ],
@@ -75,6 +89,7 @@ export const SYSTEM_GROUPS: NavGroup[] = [
       { label: 'Người đăng ký', path: `${SYS_BASE}/subscribers`, icon: Mail },
       { label: 'Cấu hình CRM', path: `${SYS_BASE}/crm-config`, icon: SlidersHorizontal },
       { label: 'Nhật ký kiểm toán', path: `${SYS_BASE}/audit-logs`, icon: ScrollText },
+      { label: 'Thống kê hoạt động', path: `${SYS_BASE}/activity-stats`, icon: BarChart3 },
     ],
   },
 ];

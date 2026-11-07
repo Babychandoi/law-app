@@ -1,45 +1,247 @@
 package org.law_app.document.web;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
+import org.law_app.document.domain.DataClassification;
 import org.law_app.document.domain.DocumentFieldInputType;
 import org.law_app.document.domain.DocumentTemplateStatus;
+import org.law_app.document.domain.DocumentWorkflowStatus;
 
 public final class Dtos {
   private Dtos() {}
 
   public record TemplateFieldRequest(
-      @NotBlank String fieldKey,
-      @NotBlank String label,
-      String helpText,
+      @NotBlank
+          @Pattern(
+              regexp = "[A-Za-z][A-Za-z0-9_]{0,63}",
+              message = "Key must start with a letter and contain only letters, numbers or _")
+          String fieldKey,
+      @NotBlank @Size(max = 200) String label,
+      @Size(max = 1000) String helpText,
       @NotNull DocumentFieldInputType inputType,
       boolean required,
-      int sortOrder,
-      String defaultValue) {}
+      @Min(0) @Max(10_000) int sortOrder,
+      @Size(max = 20_000) String defaultValue,
+      @Min(1) @Max(100_000) Integer maxLength,
+      @Size(max = 500) String validationPattern,
+      BigDecimal minimum,
+      BigDecimal maximum,
+      @Size(max = 500) List<@NotBlank @Size(max = 500) String> options,
+      DataClassification dataClassification) {}
 
-  public record UpdateFieldsRequest(@Valid @NotEmpty List<TemplateFieldRequest> fields) {}
+  public record UpdateFieldsRequest(
+      @Valid @NotEmpty @Size(max = 500) List<TemplateFieldRequest> fields,
+      @Size(max = 500) String changeReason,
+      Long expectedRevision) {}
 
-  /** One sample-text → placeholder mapping the admin defines on the preview. */
+  /** One exact sample-text to placeholder mapping the admin defines on the preview. */
   public record MappingRequest(
-      @NotBlank String sampleText,
-      @NotBlank String fieldKey,
-      @NotBlank String label,
-      String helpText,
+      @NotBlank @Size(max = 20_000) String sampleText,
+      @NotBlank
+          @Pattern(
+              regexp = "[A-Za-z][A-Za-z0-9_]{0,63}",
+              message = "Key must start with a letter and contain only letters, numbers or _")
+          String fieldKey,
+      @NotBlank @Size(max = 200) String label,
+      @Size(max = 1000) String helpText,
       @NotNull DocumentFieldInputType inputType,
       boolean required,
-      int sortOrder,
-      String defaultValue) {}
+      @Min(0) @Max(10_000) int sortOrder,
+      @Size(max = 20_000) String defaultValue,
+      @Min(1) @Max(100_000) Integer maxLength,
+      @Size(max = 500) String validationPattern,
+      BigDecimal minimum,
+      BigDecimal maximum,
+      @Size(max = 500) List<@NotBlank @Size(max = 500) String> options,
+      DataClassification dataClassification,
+      @Min(1) @Max(100) Integer expectedOccurrences) {}
 
-  public record ApplyMappingsRequest(@Valid @NotEmpty List<MappingRequest> mappings) {}
+  public record ApplyMappingsRequest(
+      @Valid @NotEmpty @Size(max = 500) List<MappingRequest> mappings,
+      @Size(max = 500) String changeReason,
+      Long expectedRevision) {}
+
+  /**
+   * Atomic save-and-publish payload. Sending the current editor state here prevents the traditional
+   * "publish before save" data-loss bug. The payload remains optional for the legacy endpoint.
+   */
+  public record PublishTemplateRequest(
+      @Valid @Size(min = 1, max = 500) List<TemplateFieldRequest> fields,
+      @Size(max = 200) String name,
+      @Size(max = 2000) String description,
+      @Size(max = 100) String serviceId,
+      @Size(max = 200) String serviceName,
+      @Size(max = 100) List<@NotBlank @Size(max = 100) String> tags,
+      @Size(max = 500) String changeReason,
+      Instant effectiveFrom,
+      Long expectedRevision) {}
+
+  public record RestoreVersionRequest(
+      @NotBlank @Size(max = 500) String changeReason, Long expectedRevision) {}
 
   public record TemplatePreviewResponse(String id, String name, String html) {}
 
-  public record GenerateDocumentRequest(@NotNull Map<String, String> values) {}
+  public record TemplateDryRunResponse(
+      String templateId,
+      String templateVersionId,
+      int templateVersion,
+      boolean valid,
+      long outputSize,
+      String outputSha256) {}
+
+  public record LegalContextRequest(
+      @Size(max = 100) String crmCaseId,
+      @Size(max = 100) String customerId,
+      @Size(max = 100) String serviceId,
+      @Size(max = 200) String serviceName,
+      @Size(max = 100) String dossierId,
+      @Size(max = 100) String matterReference,
+      @Size(max = 50) Map<@Size(max = 100) String, @Size(max = 500) String> sourceReferences) {}
+
+  public record GenerateDocumentRequest(
+      @NotNull @Size(max = 500) Map<@NotBlank String, @Size(max = 100_000) String> values,
+      // Trường lặp: listKey -> danh sách dòng; mỗi dòng là map childKey -> giá trị.
+      @Size(max = 50)
+          Map<
+                  @NotBlank String,
+                  @Size(max = 500) List<Map<@NotBlank String, @Size(max = 100_000) String>>>
+              lists,
+      @Valid LegalContextRequest context) {}
+
+  /* ===== Chia sẻ bảo mật ===== */
+
+  public record CreateShareRequest(
+      @Min(1) @Max(8760) Integer expiresInHours, @Min(1) @Max(100_000) Integer maxDownloads) {}
+
+  public record SendDocumentEmailRequest(
+      @jakarta.validation.constraints.Email @NotBlank @Size(max = 254) String to,
+      @Size(max = 2000) String message,
+      @Min(1) @Max(8760) Integer expiresInHours,
+      @Min(1) @Max(100_000) Integer maxDownloads) {}
+
+  public record ShareLinkResponse(
+      String id,
+      String token,
+      String path,
+      Instant expiresAt,
+      Integer maxDownloads,
+      int downloadCount,
+      boolean revoked,
+      boolean active,
+      Instant createdAt) {}
+
+  /** Thống kê khối lượng tài liệu cho dashboard. */
+  public record DocumentStatsResponse(
+      long templatesTotal,
+      Map<String, Long> templatesByStatus,
+      long generatedTotal,
+      Map<String, Long> generatedByStatus,
+      long generatedLast30Days,
+      long bundlesActive) {}
+
+  /* ===== Thư mục ===== */
+
+  public record FolderRequest(@NotBlank @Size(max = 200) String name, Long expectedRevision) {}
+
+  public record FolderResponse(
+      String id,
+      String name,
+      String createdByUserId,
+      Instant createdAt,
+      Instant updatedAt,
+      Long revision) {}
+
+  public record SetFolderRequest(@Size(max = 100) String folderId) {}
+
+  /* ===== Thư viện điều khoản ===== */
+
+  public record ClauseRequest(
+      @NotBlank @Size(max = 300) String title,
+      @NotBlank @Size(max = 50_000) String content,
+      @Size(max = 200) String category,
+      @Size(max = 50) List<@NotBlank @Size(max = 100) String> tags,
+      Long expectedRevision) {}
+
+  public record ClauseResponse(
+      String id,
+      String title,
+      String content,
+      String category,
+      List<String> tags,
+      DocumentTemplateStatus status,
+      String createdByUserId,
+      String updatedByUserId,
+      Instant createdAt,
+      Instant updatedAt,
+      Long revision) {}
+
+  /* ===== Bộ mẫu (document bundle) ===== */
+
+  public record BundleItemRequest(
+      @NotBlank @Size(max = 100) String templateId,
+      @Min(0) @Max(10_000) int sortOrder,
+      boolean required) {}
+
+  public record DocumentBundleRequest(
+      @NotBlank @Size(max = 200) String name,
+      @Size(max = 2000) String description,
+      @Size(max = 100) String serviceId,
+      @Size(max = 200) String serviceName,
+      @Size(max = 100) List<@NotBlank @Size(max = 100) String> tags,
+      @Valid @NotEmpty @Size(max = 50) List<BundleItemRequest> items,
+      Long expectedRevision) {}
+
+  public record BundleItemResponse(String templateId, int sortOrder, boolean required) {}
+
+  public record DocumentBundleResponse(
+      String id,
+      String name,
+      String description,
+      DocumentTemplateStatus status,
+      String serviceId,
+      String serviceName,
+      List<String> tags,
+      List<BundleItemResponse> items,
+      String createdByUserId,
+      String updatedByUserId,
+      Instant createdAt,
+      Instant updatedAt,
+      Long revision) {}
+
+  /** Một mục dữ liệu riêng cho từng mẫu khi sinh cả bộ; giá trị riêng ghi đè dữ liệu dùng chung. */
+  public record GenerateBundleItemRequest(
+      @NotBlank @Size(max = 100) String templateId,
+      @Size(max = 500) Map<@NotBlank String, @Size(max = 100_000) String> values,
+      @Size(max = 50)
+          Map<
+                  @NotBlank String,
+                  @Size(max = 500) List<Map<@NotBlank String, @Size(max = 100_000) String>>>
+              lists) {}
+
+  public record GenerateBundleRequest(
+      @Size(max = 500) Map<@NotBlank String, @Size(max = 100_000) String> sharedValues,
+      @Valid @Size(max = 50) List<GenerateBundleItemRequest> items,
+      @Valid LegalContextRequest context) {}
+
+  public record BundleGenerationResult(
+      String templateId, GeneratedDocumentResponse document, String error) {}
+
+  public record GenerateBundleResponse(
+      String bundleId,
+      int total,
+      int succeeded,
+      int failed,
+      List<BundleGenerationResult> results) {}
 
   public record TemplateFieldResponse(
       String fieldKey,
@@ -48,7 +250,13 @@ public final class Dtos {
       DocumentFieldInputType inputType,
       boolean required,
       int sortOrder,
-      String defaultValue) {}
+      String defaultValue,
+      Integer maxLength,
+      String validationPattern,
+      BigDecimal minimum,
+      BigDecimal maximum,
+      List<String> options,
+      DataClassification dataClassification) {}
 
   public record DocumentTemplateResponse(
       String id,
@@ -56,20 +264,103 @@ public final class Dtos {
       String description,
       DocumentTemplateStatus status,
       int version,
+      String latestVersionId,
+      String activeVersionId,
+      boolean hasUnpublishedChanges,
       String originalFileName,
       long fileSize,
+      String contentSha256,
       List<TemplateFieldResponse> fields,
+      // Trường lặp suy ra từ placeholder ${list__child}: listKey -> danh sách childKey theo thứ tự.
+      Map<String, List<String>> lists,
+      String serviceId,
+      String serviceName,
+      List<String> tags,
+      String folderId,
       String createdByUserId,
+      String updatedByUserId,
+      String publishedByUserId,
+      Instant effectiveFrom,
+      Instant publishedAt,
       Instant createdAt,
-      Instant updatedAt) {}
+      Instant updatedAt,
+      Long revision) {}
+
+  public record LegalContextResponse(
+      String crmCaseId,
+      String customerId,
+      String serviceId,
+      String serviceName,
+      String dossierId,
+      String matterReference,
+      Map<String, String> sourceReferences) {}
 
   public record GeneratedDocumentResponse(
       String id,
       String templateId,
+      String templateVersionId,
       String templateName,
       int templateVersion,
+      String templateContentSha256,
+      String generatedContentSha256,
       String fileName,
       String downloadUrl,
+      LegalContextResponse context,
+      DocumentWorkflowStatus status,
+      String reviewerUserId,
+      String approvedByUserId,
+      String finalizedByUserId,
+      String rejectionReason,
       String createdByUserId,
+      Instant submittedAt,
+      Instant approvedAt,
+      Instant finalizedAt,
+      Instant createdAt,
+      Instant updatedAt,
+      Long revision,
+      boolean hiddenByRetention) {}
+
+  public record WorkflowTransitionRequest(
+      @NotNull DocumentWorkflowStatus targetStatus,
+      @Size(max = 100) String reviewerUserId,
+      @Size(max = 2000) String reason,
+      Long expectedRevision) {}
+
+  public record TemplateVersionResponse(
+      String id,
+      String templateId,
+      int versionNumber,
+      String previousVersionId,
+      String name,
+      String description,
+      String originalFileName,
+      long fileSize,
+      String contentSha256,
+      List<TemplateFieldResponse> fields,
+      String changeReason,
+      Instant effectiveFrom,
+      String createdByUserId,
+      Instant createdAt,
+      boolean active,
+      boolean latest) {}
+
+  public record AuditEventResponse(
+      String id,
+      String entityType,
+      String entityId,
+      String action,
+      String actorUserId,
+      String fromStatus,
+      String toStatus,
+      Map<String, String> metadata,
       Instant createdAt) {}
+
+  public record PageResponse<T>(
+      List<T> content,
+      int page,
+      int size,
+      long totalElements,
+      int totalPages,
+      boolean first,
+      boolean last) {}
 }

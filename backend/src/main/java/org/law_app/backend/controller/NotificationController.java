@@ -17,6 +17,30 @@ import org.springframework.web.bind.annotation.*;
 public class NotificationController {
   NotificationService notificationService;
 
+  @GetMapping("/page")
+  public ApiResponse<List<NotificationResponse>> getNotificationPage(
+      @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "5") int size) {
+    String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+    var pageable =
+        org.springframework.data.domain.PageRequest.of(
+            Math.max(0, page),
+            Math.min(100, Math.max(1, size)),
+            org.springframework.data.domain.Sort.by(
+                org.springframework.data.domain.Sort.Order.desc("createdAt"),
+                org.springframework.data.domain.Sort.Order.desc("id")));
+    var notifications = notificationService.getNotificationPage(userId, pageable);
+    return ApiResponse.<List<NotificationResponse>>builder()
+        .data(notifications.getContent())
+        .meta(org.law_app.backend.dto.response.ApiMeta.from(notifications))
+        .build();
+  }
+
+  @GetMapping("/unread-count")
+  public ApiResponse<Long> getUnreadCount() {
+    String userId = SecurityContextHolder.getContext().getAuthentication().getName();
+    return ApiResponse.<Long>builder().data(notificationService.getUnreadCount(userId)).build();
+  }
+
   @GetMapping
   public ApiResponse<List<NotificationResponse>> getNotifications() {
     var context = SecurityContextHolder.getContext();

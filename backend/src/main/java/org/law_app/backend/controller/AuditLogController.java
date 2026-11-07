@@ -24,6 +24,15 @@ import org.springframework.web.bind.annotation.*;
 public class AuditLogController {
   AuditService auditService;
 
+  /** Thống kê hoạt động admin (analytics P2.12). */
+  @GetMapping("/stats")
+  ApiResponse<AuditService.StatsResponse> stats(@RequestParam(defaultValue = "30") int days) {
+    return ApiResponse.<AuditService.StatsResponse>builder()
+        .message("Audit stats retrieved successfully")
+        .data(auditService.stats(days))
+        .build();
+  }
+
   @GetMapping
   ApiResponse<List<AuditLog>> list(
       @RequestParam(required = false) String targetType,

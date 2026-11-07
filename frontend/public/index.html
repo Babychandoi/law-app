@@ -17,8 +17,10 @@
           window.dataLayer.push(arguments);
         };
       gtag('js', new Date());
-      gtag('config', 'G-W3K9FB9FC3'); // GA4
-      gtag('config', 'AW-17438859267'); // Google Ads
+      // GA4: tắt page_view tự động — SPA tự gửi page_view mỗi route (chỉ trang công khai)
+      // trong src/shared/analytics/pageview.ts để không đếm trùng và loại khu nội bộ.
+      gtag('config', 'G-W3K9FB9FC3', { send_page_view: false }); // GA4
+      gtag('config', 'AW-18319389912'); // Google Ads (thay tài khoản cũ AW-17438859267)
     </script>
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/assets/images/logo.png" />
@@ -36,6 +38,10 @@
       content="Luật Poip Legal tư vấn sở hữu trí tuệ và pháp lý doanh nghiệp cho doanh nghiệp, nhà sáng lập và người sáng tạo."
     />
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <!-- Tiêu đề mặc định. react-head ghi đè theo từng route khi JavaScript chạy, nhưng trình
+         quét không chạy JS (và Semrush) chỉ thấy HTML gốc — thiếu thẻ này thì mọi trang phục vụ
+         vỏ SPA đều bị báo lỗi "trang không có thẻ tiêu đề". -->
+    <title>Luật POIP Legal — Tư vấn sở hữu trí tuệ và pháp lý doanh nghiệp</title>
 
     <!-- Open Graph / Twitter TĨNH: bot Zalo/Facebook không chạy JS nên cần thẻ sẵn trong HTML.
          (react-head vẫn bổ sung OG per-page cho trình duyệt thật lúc runtime.) -->
@@ -65,10 +71,39 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Organization",
+        "@type": "LegalService",
+        "@id": "https://luatpoip.com/#organization",
         "url": "https://luatpoip.com",
-        "name": "Luật Poip Legal",
-        "logo": "https://luatpoip.com/assets/images/og-logo.png"
+        "name": "Luật POIP Legal",
+        "legalName": "CÔNG TY TNHH POIP LEGAL",
+        "alternateName": "POIP LEGAL",
+        "logo": "https://luatpoip.com/assets/images/og-logo.png",
+        "image": "https://luatpoip.com/assets/images/og-logo.png",
+        "telephone": "+84947600064",
+        "email": "luatpoip@gmail.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "Số 70 Ngách 6, Ngõ 10 Tả Thanh Oai",
+          "addressLocality": "xã Đại Thanh",
+          "addressRegion": "Hà Nội",
+          "addressCountry": "VN"
+        },
+        "areaServed": "VN",
+        "sameAs": [
+          "https://www.facebook.com/profile.php?id=61577813197981",
+          "https://www.youtube.com/@PoipLaw"
+        ],
+        "serviceType": [
+          "Đăng ký bảo hộ nhãn hiệu",
+          "Đăng ký bảo hộ bản quyền",
+          "Bảo hộ kiểu dáng công nghiệp",
+          "Xử lý xâm phạm quyền sở hữu trí tuệ",
+          "Mã số mã vạch",
+          "Đăng ký giấy phép mạng xã hội",
+          "Thông báo nền tảng thương mại điện tử",
+          "Tư vấn soạn thảo hợp đồng",
+          "Thành lập doanh nghiệp, hộ kinh doanh"
+        ]
       }
     </script>
   </head>

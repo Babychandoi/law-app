@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface CustomerServices {
+  org.law_app.backend.dto.response.CustomerStatsResponse getStats();
+
   Boolean createCustomerService(CustomerRequest customerRequest);
 
   Boolean updateStatusCustomerService(String id, Status status);

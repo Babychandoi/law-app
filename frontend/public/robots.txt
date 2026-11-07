@@ -1,3 +1,11 @@
 User-agent: *
 Allow: /
+
+# Khu nội bộ: đã có xác thực nhưng vẫn chặn để trang đăng nhập và các URL quản trị
+# không lọt vào kết quả tìm kiếm.
+Disallow: /2025/luatpoip/admin
+Disallow: /2025/luatpoip/he-thong
+Disallow: /2025/luatpoip/tai-lieu
+Disallow: /2025/luatpoip/_a11y
+
 Sitemap: https://luatpoip.com/sitemap.xml
