@@ -193,7 +193,7 @@ const UserForm: React.FC<UserFormProps> = ({ isOpen, onClose, onSave }) => {
             aria-label="Vai trò"
             value={formData.role}
             onChange={(e) => handleInputChange('role', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-goldDark transition-colors"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-brand-primary transition-colors"
             disabled={isLoading}
           >
             <option value="USER">Nhân viên</option>

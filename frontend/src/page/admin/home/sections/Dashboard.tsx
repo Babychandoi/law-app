@@ -110,7 +110,7 @@ export default function Dashboard() {
       value: counts.total,
       icon: Users,
       to: `${BASE}/customers`,
-      accent: 'text-brand-goldDark bg-brand-surface',
+      accent: 'text-brand-primary bg-brand-surface',
     },
   ];
 
@@ -155,7 +155,7 @@ export default function Dashboard() {
           <Link
             key={s.label}
             to={s.to}
-            className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:border-brand-goldDark/40 hover:shadow"
+            className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:border-brand-primary/40 hover:shadow"
           >
             <div className="flex items-center justify-between">
               <span
@@ -177,7 +177,7 @@ export default function Dashboard() {
             <h2 className="font-semibold text-gray-800">Khách hàng gần đây</h2>
             <Link
               to={`${BASE}/customers`}
-              className="text-sm font-medium text-brand-goldDark hover:underline"
+              className="text-sm font-medium text-brand-primary hover:underline"
             >
               Xem tất cả
             </Link>
@@ -213,7 +213,7 @@ export default function Dashboard() {
               <Link
                 key={a.to}
                 to={a.to}
-                className="flex flex-col items-center gap-2 rounded-lg border border-gray-200 px-3 py-4 text-center text-sm text-gray-600 transition hover:border-brand-goldDark/40 hover:bg-brand-surface hover:text-brand-goldDark"
+                className="flex flex-col items-center gap-2 rounded-lg border border-gray-200 px-3 py-4 text-center text-sm text-gray-600 transition hover:border-brand-primary/40 hover:bg-brand-surface hover:text-brand-primary"
               >
                 <a.icon size={22} aria-hidden="true" />
                 {a.label}

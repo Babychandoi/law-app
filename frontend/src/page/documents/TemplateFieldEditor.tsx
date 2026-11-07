@@ -401,7 +401,7 @@ export default function TemplateFieldEditor() {
               type="button"
               onClick={togglePreview}
               disabled={previewLoading}
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:opacity-50"
               aria-expanded={!!preview}
             >
               {previewLoading ? (
@@ -415,7 +415,7 @@ export default function TemplateFieldEditor() {
               type="button"
               onClick={dryRun}
               disabled={dryRunning}
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:opacity-50"
             >
               {dryRunning ? (
                 <Spinner size={16} label="Đang tạo thử" />
@@ -428,7 +428,7 @@ export default function TemplateFieldEditor() {
               type="button"
               onClick={saveDraft}
               disabled={!fieldsDirty || action !== null}
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:cursor-not-allowed disabled:opacity-50"
             >
               {action === 'save' ? (
                 <Spinner size={16} label="Đang lưu bản nháp" />
@@ -441,7 +441,7 @@ export default function TemplateFieldEditor() {
               type="button"
               onClick={saveAndPublish}
               disabled={action !== null || issues.length > 0}
-              className="inline-flex items-center gap-2 rounded-lg bg-brand-goldDark px-3 py-2 text-sm font-medium text-white hover:bg-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-medium text-white hover:bg-brand-primaryDark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               title={issues.length ? 'Sửa lỗi cấu hình trước khi xuất bản' : undefined}
             >
               {action === 'publish' ? (
@@ -566,7 +566,7 @@ export default function TemplateFieldEditor() {
                   onChange={(event) =>
                     setMetadata((current) => ({ ...current, name: event.target.value }))
                   }
-                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
                 />
               </label>
               <label
@@ -578,7 +578,7 @@ export default function TemplateFieldEditor() {
                   id="template-editor-folder"
                   value={template.folderId || ''}
                   onChange={(event) => changeFolder(event.target.value)}
-                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+                  className="mt-1 w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
                 >
                   <option value="">— Không thuộc thư mục —</option>
                   {folders.map((folder) => (
@@ -604,7 +604,7 @@ export default function TemplateFieldEditor() {
                     }))
                   }
                   placeholder="Ví dụ: Đăng ký nhãn hiệu"
-                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
                 />
               </label>
               <label
@@ -619,7 +619,7 @@ export default function TemplateFieldEditor() {
                   onChange={(event) =>
                     setMetadata((current) => ({ ...current, serviceId: event.target.value }))
                   }
-                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 font-mono focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 font-mono focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
                 />
               </label>
               <label
@@ -634,7 +634,7 @@ export default function TemplateFieldEditor() {
                     setMetadata((current) => ({ ...current, tagsText: event.target.value }))
                   }
                   placeholder="hợp đồng, doanh nghiệp"
-                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
                 />
               </label>
               <label
@@ -653,7 +653,7 @@ export default function TemplateFieldEditor() {
                       description: event.target.value,
                     }))
                   }
-                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+                  className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
                 />
               </label>
             </div>
@@ -675,7 +675,7 @@ export default function TemplateFieldEditor() {
             rows={2}
             maxLength={500}
             placeholder="Ví dụ: Cập nhật điều khoản theo quy định mới (khuyến nghị khi xuất bản phiên bản mới)"
-            className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+            className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
           />
         </label>
       </section>
@@ -685,7 +685,7 @@ export default function TemplateFieldEditor() {
           type="button"
           onClick={toggleHistory}
           aria-expanded={historyOpen}
-          className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left font-semibold hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-goldDark"
+          className="flex w-full items-center justify-between gap-3 px-5 py-4 text-left font-semibold hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-brand-primary"
         >
           <span className="inline-flex items-center gap-2">
             <History size={18} aria-hidden="true" /> Lịch sử phiên bản
@@ -759,7 +759,7 @@ export default function TemplateFieldEditor() {
                               ? 'Hãy lưu hoặc bỏ các thay đổi hiện tại trước khi khôi phục.'
                               : undefined
                           }
-                          className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:cursor-not-allowed disabled:opacity-50"
+                          className="mt-3 inline-flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-xs font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:cursor-not-allowed disabled:opacity-50"
                         >
                           <RotateCcw size={14} aria-hidden="true" /> Tạo bản nháp từ phiên bản này
                         </button>
@@ -775,7 +775,7 @@ export default function TemplateFieldEditor() {
 
       <Link
         to="/2025/luatpoip/tai-lieu"
-        className="inline-flex text-sm font-medium text-brand-goldDark hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+        className="inline-flex text-sm font-medium text-brand-primary hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
       >
         ← Quay lại danh sách
       </Link>
@@ -821,7 +821,7 @@ export default function TemplateFieldEditor() {
               required
               aria-invalid={!!restoreError}
               aria-describedby={restoreError ? 'restore-version-error' : undefined}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
             />
           </label>
           {restoreError && (
@@ -851,20 +851,20 @@ function FieldCard({
   const describedBy = (property: keyof DocumentTemplateField) =>
     issueFor(property) ? `${fieldInputId(index, property)}-error` : undefined;
   const controlClass =
-    'mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20';
+    'mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20';
 
   return (
     <article
       id={`document-field-${index}`}
       tabIndex={-1}
-      className={`rounded-2xl border bg-white p-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-goldDark ${
+      className={`rounded-2xl border bg-white p-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-primary ${
         issues.length ? 'border-amber-300' : 'border-gray-200'
       }`}
     >
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 pb-3">
         <div className="min-w-0">
           <p className="text-xs text-gray-500">Trường {index + 1}</p>
-          <code className="break-all text-sm font-semibold text-brand-goldDark">
+          <code className="break-all text-sm font-semibold text-brand-primary">
             {'${'}
             {field.fieldKey}
             {'}'}
@@ -876,7 +876,7 @@ function FieldCard({
             type="checkbox"
             checked={field.required}
             onChange={(event) => onChange({ required: event.target.checked })}
-            className="h-4 w-4 rounded border-gray-300 text-brand-goldDark focus:ring-brand-goldDark"
+            className="h-4 w-4 rounded border-gray-300 text-brand-primary focus:ring-brand-primary"
           />
           Bắt buộc
         </label>

@@ -25,7 +25,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     <div className="flex flex-wrap items-center justify-between gap-3">
       <div className="flex items-center gap-3 min-w-0">
         {Icon && (
-          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-surface text-brand-goldDark">
+          <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-surface text-brand-primary">
             <Icon className="h-6 w-6" aria-hidden="true" />
           </span>
         )}

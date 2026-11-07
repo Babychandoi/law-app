@@ -31,7 +31,7 @@ export default function Hero() {
       <div className="public-home-hero-inner mx-auto grid min-h-[620px] max-w-7xl items-center gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[minmax(0,1.2fr)_minmax(320px,0.8fr)] lg:py-20">
         <div className="max-w-3xl">
           <div className="mb-6 inline-flex items-center gap-2 border border-white/20 bg-black/25 px-3 py-2 text-sm font-medium text-white/90">
-            <ShieldCheck size={17} className="text-brand-gold" aria-hidden="true" />
+            <ShieldCheck size={17} className="text-brand-accent" aria-hidden="true" />
             Tư vấn sở hữu trí tuệ và pháp lý doanh nghiệp
           </div>
 
@@ -47,7 +47,7 @@ export default function Hero() {
             <button
               type="button"
               onClick={scrollToConsultation}
-              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-goldDark px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-gold"
+              className="inline-flex min-h-12 items-center justify-center gap-2 rounded-md bg-brand-primary px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-black focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-brand-accent"
             >
               Nhận tư vấn ban đầu
               <ArrowRight size={18} aria-hidden="true" />
@@ -75,7 +75,7 @@ export default function Hero() {
               <li key={assurance} className="flex items-start gap-2">
                 <CheckCircle2
                   size={17}
-                  className="mt-0.5 shrink-0 text-brand-gold"
+                  className="mt-0.5 shrink-0 text-brand-accent"
                   aria-hidden="true"
                 />
                 <span>{assurance}</span>
@@ -88,7 +88,7 @@ export default function Hero() {
           className="border border-white/20 bg-black/35 p-6 sm:p-7"
           aria-label="Cam kết tư vấn"
         >
-          <p className="text-sm font-semibold text-brand-gold">Bắt đầu đúng ngay từ đầu</p>
+          <p className="text-sm font-semibold text-brand-accent">Bắt đầu đúng ngay từ đầu</p>
           <h2 className="mt-3 text-2xl font-semibold leading-snug text-white">
             Chưa chắc dịch vụ nào phù hợp?
           </h2>
@@ -100,21 +100,21 @@ export default function Hero() {
           <dl className="mt-7 grid grid-cols-3 border-y border-white/15 py-5 text-center">
             <div>
               <dt className="text-xs leading-5 text-white/65">Kinh nghiệm tư vấn</dt>
-              <dd className="mt-1 text-2xl font-semibold text-brand-gold">10+</dd>
+              <dd className="mt-1 text-2xl font-semibold text-brand-accent">10+</dd>
             </div>
             <div className="border-x border-white/15 px-2">
               <dt className="text-xs leading-5 text-white/65">Nhóm dịch vụ</dt>
-              <dd className="mt-1 text-2xl font-semibold text-brand-gold">8</dd>
+              <dd className="mt-1 text-2xl font-semibold text-brand-accent">8</dd>
             </div>
             <div>
               <dt className="text-xs leading-5 text-white/65">Phản hồi ban đầu</dt>
-              <dd className="mt-1 text-2xl font-semibold text-brand-gold">24h</dd>
+              <dd className="mt-1 text-2xl font-semibold text-brand-accent">24h</dd>
             </div>
           </dl>
 
           <Link
             to="/dich-vu"
-            className="mt-6 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-white underline decoration-brand-gold decoration-2 underline-offset-4 hover:text-brand-gold"
+            className="mt-6 inline-flex min-h-11 items-center gap-2 text-sm font-semibold text-white underline decoration-brand-accent decoration-2 underline-offset-4 hover:text-brand-accent"
           >
             Xem tất cả dịch vụ
             <ArrowRight size={17} aria-hidden="true" />

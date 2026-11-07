@@ -22,7 +22,7 @@ const Spinner: React.FC<SpinnerProps> = ({
       <Loader2
         width={size}
         height={size}
-        className={`animate-spin text-brand-goldDark ${className}`}
+        className={`animate-spin text-brand-primary ${className}`}
       />
       <span className="sr-only">{label}</span>
     </span>

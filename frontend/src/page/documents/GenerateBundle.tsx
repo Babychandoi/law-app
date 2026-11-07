@@ -185,7 +185,7 @@ export default function GenerateBundle() {
     <div className="mx-auto max-w-3xl space-y-5">
       <Link
         to={`${DOCUMENT_BASE}/bundles`}
-        className="inline-flex items-center gap-1 text-sm font-medium text-brand-goldDark hover:underline"
+        className="inline-flex items-center gap-1 text-sm font-medium text-brand-primary hover:underline"
       >
         <ArrowLeft size={16} aria-hidden="true" /> Bộ mẫu
       </Link>
@@ -279,7 +279,7 @@ export default function GenerateBundle() {
           type="button"
           onClick={submit}
           disabled={submitting || templates.length === 0}
-          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-goldDark px-4 py-3 font-semibold text-white hover:bg-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:opacity-60"
+          className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-3 font-semibold text-white hover:bg-brand-primaryDark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:opacity-60"
         >
           {submitting ? (
             <Spinner size={18} className="text-white" label="Đang tạo bộ tài liệu" />
@@ -339,4 +339,4 @@ export default function GenerateBundle() {
 }
 
 const inputClass =
-  'mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-brand-goldDark focus:ring-2 focus:ring-brand-goldDark/20';
+  'mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20';

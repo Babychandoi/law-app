@@ -113,7 +113,7 @@ const ChatMenu: React.FC = () => {
             <h3 className="font-semibold text-gray-800">Chat nội bộ</h3>
             <button
               onClick={() => openConv('')}
-              className="text-xs text-brand-goldDark hover:underline"
+              className="text-xs text-brand-primary hover:underline"
             >
               Mở trang chat
             </button>
@@ -185,7 +185,7 @@ const ChatMenu: React.FC = () => {
             <div className="p-3 border-t border-gray-200 bg-gray-50">
               <button
                 onClick={() => setShown((n) => n + PAGE_SIZE)}
-                className="w-full flex items-center justify-center gap-1 text-sm text-brand-goldDark hover:underline"
+                className="w-full flex items-center justify-center gap-1 text-sm text-brand-primary hover:underline"
               >
                 <ChevronDown size={16} />
                 Xem thêm ({Math.min(PAGE_SIZE, sorted.length - shown)})

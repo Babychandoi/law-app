@@ -16,7 +16,7 @@ const ContactSection = ({ title, buttonText }: ContactSectionProps) => {
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-gold">
+          <p className="mb-3 text-sm font-semibold uppercase tracking-[0.16em] text-brand-accent">
             Bắt đầu trao đổi
           </p>
           <h2 id="about-contact-title" className="text-3xl font-semibold leading-tight md:text-4xl">
@@ -33,9 +33,9 @@ const ContactSection = ({ title, buttonText }: ContactSectionProps) => {
             <li key={label}>
               <a
                 href={href}
-                className="flex h-full items-start gap-4 rounded-lg border border-white/20 p-5 transition-colors duration-200 hover:border-brand-gold focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/30"
+                className="flex h-full items-start gap-4 rounded-lg border border-white/20 p-5 transition-colors duration-200 hover:border-brand-accent focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-accent/30"
               >
-                <Icon className="mt-1 h-5 w-5 flex-none text-brand-gold" aria-hidden="true" />
+                <Icon className="mt-1 h-5 w-5 flex-none text-brand-accent" aria-hidden="true" />
                 <span>
                   <span className="block text-sm text-gray-300">{label}</span>
                   <strong className="mt-1 block text-sm text-white">{value}</strong>
@@ -48,7 +48,7 @@ const ContactSection = ({ title, buttonText }: ContactSectionProps) => {
         <div className="mt-10 text-center">
           <Link
             to="/lien-he"
-            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand-goldDark px-5 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-white hover:text-brand-ink focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-gold/30"
+            className="inline-flex min-h-11 items-center gap-2 rounded-md bg-brand-primary px-5 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-white hover:text-brand-ink focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand-accent/30"
           >
             {buttonText}
             <ArrowRight className="h-4 w-4" aria-hidden="true" />

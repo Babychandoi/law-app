@@ -74,7 +74,7 @@ const JobApplications: React.FC = () => {
       case 'PENDING':
         return 'bg-yellow-100 text-yellow-800';
       case 'REVIEWING':
-        return 'bg-brand-surface text-brand-goldDark';
+        return 'bg-brand-surface text-brand-primary';
       case 'ACCEPTED':
         return 'bg-green-100 text-green-800';
       case 'REJECTED':
@@ -160,7 +160,7 @@ const JobApplications: React.FC = () => {
           aria-label="Lọc theo vị trí tuyển dụng"
           value={selectedJob}
           onChange={(e) => setSelectedJob(e.target.value)}
-          className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent"
+          className="w-full md:w-96 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
         >
           <option value="all">Tất cả vị trí ({applications.length})</option>
           {groupedApplications.map((job) => (
@@ -207,14 +207,14 @@ const JobApplications: React.FC = () => {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
                   <div className="flex items-center gap-2 text-sm text-gray-600">
                     <Mail className="w-4 h-4" />
-                    <a href={`mailto:${app.candidateEmail}`} className="hover:text-brand-goldDark">
+                    <a href={`mailto:${app.candidateEmail}`} className="hover:text-brand-primary">
                       {app.candidateEmail}
                     </a>
                   </div>
                   {app.candidatePhone && (
                     <div className="flex items-center gap-2 text-sm text-gray-600">
                       <Phone className="w-4 h-4" />
-                      <a href={`tel:${app.candidatePhone}`} className="hover:text-brand-goldDark">
+                      <a href={`tel:${app.candidatePhone}`} className="hover:text-brand-primary">
                         {app.candidatePhone}
                       </a>
                     </div>
@@ -229,7 +229,7 @@ const JobApplications: React.FC = () => {
                 <div className="flex flex-wrap gap-2 pt-4 border-t">
                   <button
                     onClick={() => handlePreview(app)}
-                    className="inline-flex items-center gap-2 px-4 py-2 bg-brand-goldDark text-white rounded-lg hover:bg-brand-goldDark transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 bg-brand-primary text-white rounded-lg hover:bg-brand-primary transition-colors"
                   >
                     <Eye className="w-4 h-4" />
                     Xem CV
@@ -246,7 +246,7 @@ const JobApplications: React.FC = () => {
                   {app.status === 'PENDING' && (
                     <button
                       onClick={() => handleUpdateStatus(app.id, 'REVIEWING')}
-                      className="px-4 py-2 bg-brand-surface text-brand-goldDark rounded-lg hover:bg-brand-surface transition-colors"
+                      className="px-4 py-2 bg-brand-surface text-brand-primary rounded-lg hover:bg-brand-surface transition-colors"
                     >
                       Đang xem xét
                     </button>

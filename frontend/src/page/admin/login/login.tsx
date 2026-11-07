@@ -96,20 +96,20 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-brand-gold to-brand-goldDark flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-brand-accent to-brand-primary flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/30"></div>
 
       {/* Animated background elements */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-r from-brand-gold to-brand-goldDark rounded-full blur-3xl "></div>
-        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-l from-brand-gold to-brand-goldDark rounded-full blur-3xl  delay-1000"></div>
+        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-r from-brand-accent to-brand-primary rounded-full blur-3xl "></div>
+        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-l from-brand-accent to-brand-primary rounded-full blur-3xl  delay-1000"></div>
       </div>
 
       <div className="relative w-full max-w-md">
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-soft border border-white/20 p-8 space-y-6">
           {/* Header */}
           <div className="text-center space-y-2">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-brand-gold to-brand-goldDark rounded-full mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-brand-accent to-brand-primary rounded-full mb-4">
               <Shield className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-white">Poip Legal Law</h1>
@@ -139,7 +139,7 @@ const LoginForm: React.FC = () => {
                   value={formData.username}
                   onChange={handleInputChange}
                   onKeyPress={handleKeyPress}
-                  className="w-full bg-white/10 border border-white/20 rounded-lg px-10 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-all duration-200"
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-10 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all duration-200"
                   placeholder="Nhập tên đăng nhập"
                   autoComplete="username"
                 />
@@ -161,7 +161,7 @@ const LoginForm: React.FC = () => {
                   value={formData.password}
                   onChange={handleInputChange}
                   onKeyPress={handleKeyPress}
-                  className="w-full bg-white/10 border border-white/20 rounded-lg px-10 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-goldDark focus:border-transparent transition-all duration-200"
+                  className="w-full bg-white/10 border border-white/20 rounded-lg px-10 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:border-transparent transition-all duration-200"
                   placeholder="Nhập mật khẩu"
                   autoComplete="current-password"
                 />
@@ -182,7 +182,7 @@ const LoginForm: React.FC = () => {
               type="button"
               onClick={handleSubmit}
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-brand-gold to-brand-goldDark text-white font-semibold py-3 px-6 rounded-lg hover:from-brand-gold hover:to-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200 transform  disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full bg-gradient-to-r from-brand-accent to-brand-primary text-white font-semibold py-3 px-6 rounded-lg hover:from-brand-accent hover:to-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200 transform  disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">

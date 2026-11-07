@@ -287,7 +287,7 @@ export default function TemplateList() {
         {isAdmin && (
           <Link
             to="/2025/luatpoip/tai-lieu/templates/new"
-            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-brand-goldDark px-4 py-2 text-sm font-medium text-white hover:bg-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark focus-visible:ring-offset-2"
+            className="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-medium text-white hover:bg-brand-primaryDark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary focus-visible:ring-offset-2"
           >
             <Plus size={18} aria-hidden="true" /> Tải mẫu mới
           </Link>
@@ -329,7 +329,7 @@ export default function TemplateList() {
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Tìm tên, dịch vụ hoặc thẻ..."
-            className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+            className="w-full rounded-lg border border-gray-300 py-2 pl-10 pr-3 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
           />
         </label>
         {isAdmin ? (
@@ -338,7 +338,7 @@ export default function TemplateList() {
             <select
               value={status}
               onChange={(event) => setStatus(event.target.value as StatusFilter)}
-              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+              className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
             >
               <option value="ALL">Mọi trạng thái</option>
               <option value="ACTIVE">Đang hoạt động</option>
@@ -354,7 +354,7 @@ export default function TemplateList() {
           <select
             value={sort}
             onChange={(event) => setSort(event.target.value as SortValue)}
-            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+            className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
           >
             <option value="updatedAt,desc">Cập nhật gần nhất</option>
             <option value="name,asc">Tên A–Z</option>
@@ -368,7 +368,7 @@ export default function TemplateList() {
             <select
               value={folderId}
               onChange={(event) => setFolderId(event.target.value)}
-              className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-brand-goldDark focus:outline-none focus:ring-2 focus:ring-brand-goldDark/20"
+              className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:border-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary/20"
             >
               <option value="">Tất cả</option>
               <option value="none">Chưa phân thư mục</option>
@@ -402,7 +402,7 @@ export default function TemplateList() {
               <button
                 type="button"
                 onClick={createFolder}
-                className="rounded-lg bg-brand-goldDark px-3 py-2 text-sm font-medium text-white hover:bg-brand-gold"
+                className="rounded-lg bg-brand-primary px-3 py-2 text-sm font-medium text-white hover:bg-brand-primaryDark"
               >
                 Lưu
               </button>
@@ -433,7 +433,7 @@ export default function TemplateList() {
               type="button"
               onClick={() => setViewMode('card')}
               aria-pressed={viewMode === 'card'}
-              className={`inline-flex items-center gap-1 px-3 py-2 text-sm ${viewMode === 'card' ? 'bg-brand-goldDark text-white' : 'bg-white hover:bg-gray-50'}`}
+              className={`inline-flex items-center gap-1 px-3 py-2 text-sm ${viewMode === 'card' ? 'bg-brand-primary text-white' : 'bg-white hover:bg-gray-50'}`}
             >
               <LayoutGrid size={14} aria-hidden="true" /> Thẻ
             </button>
@@ -441,7 +441,7 @@ export default function TemplateList() {
               type="button"
               onClick={() => setViewMode('table')}
               aria-pressed={viewMode === 'table'}
-              className={`inline-flex items-center gap-1 px-3 py-2 text-sm ${viewMode === 'table' ? 'bg-brand-goldDark text-white' : 'bg-white hover:bg-gray-50'}`}
+              className={`inline-flex items-center gap-1 px-3 py-2 text-sm ${viewMode === 'table' ? 'bg-brand-primary text-white' : 'bg-white hover:bg-gray-50'}`}
             >
               <TableIcon size={14} aria-hidden="true" /> Bảng
             </button>
@@ -587,7 +587,7 @@ function TemplateTable({
                   {template.status === 'ACTIVE' && (
                     <Link
                       to={`/2025/luatpoip/tai-lieu/generate/${template.id}${generationContextQuery}`}
-                      className="inline-flex items-center gap-1 rounded-lg bg-brand-goldDark px-2.5 py-1.5 text-xs font-medium text-white hover:bg-brand-gold"
+                      className="inline-flex items-center gap-1 rounded-lg bg-brand-primary px-2.5 py-1.5 text-xs font-medium text-white hover:bg-brand-primaryDark"
                     >
                       <Wand2 size={13} aria-hidden="true" /> Tạo
                     </Link>
@@ -661,7 +661,7 @@ function TemplateCard({
   return (
     <article className="flex min-w-0 flex-col rounded-2xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
       <div className="flex items-start justify-between gap-3">
-        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-gold/15 text-brand-goldDark">
+        <span className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-brand-accent/15 text-brand-primary">
           <FileText size={22} aria-hidden="true" />
         </span>
         <StatusBadge status={template.status} />
@@ -705,7 +705,7 @@ function TemplateCard({
         {template.status === 'ACTIVE' && (
           <Link
             to={`/2025/luatpoip/tai-lieu/generate/${template.id}${generationContextQuery}`}
-            className="inline-flex items-center gap-2 rounded-lg bg-brand-goldDark px-3 py-2 text-sm font-medium text-white hover:bg-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+            className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-3 py-2 text-sm font-medium text-white hover:bg-brand-primaryDark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
           >
             <Wand2 size={16} aria-hidden="true" /> Tạo tài liệu
           </Link>
@@ -714,7 +714,7 @@ function TemplateCard({
           <>
             <Link
               to={`/2025/luatpoip/tai-lieu/templates/${template.id}/edit`}
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
             >
               <Edit size={16} aria-hidden="true" /> Cấu hình
             </Link>
@@ -722,7 +722,7 @@ function TemplateCard({
               type="button"
               onClick={onDuplicate}
               disabled={duplicating}
-              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:opacity-50"
+              className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:opacity-50"
             >
               {duplicating ? (
                 <Spinner size={16} label={`Đang nhân bản ${template.name}`} />
@@ -736,7 +736,7 @@ function TemplateCard({
                 type="button"
                 onClick={onArchive}
                 disabled={archiving}
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:opacity-50"
+                className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:opacity-50"
               >
                 {archiving ? (
                   <Spinner size={16} label={`Đang lưu trữ ${template.name}`} />

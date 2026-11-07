@@ -21,7 +21,7 @@ export default function PrivacyPolicy() {
       {/* Header */}
       <div className="bg-brand-ink py-14 text-center text-white">
         <div className="mx-auto max-w-3xl px-6">
-          <p className="text-sm font-semibold uppercase tracking-wide text-brand-gold">
+          <p className="text-sm font-semibold uppercase tracking-wide text-brand-primary">
             Luật Poip Legal
           </p>
           <h1 className="mt-2 text-3xl font-bold sm:text-4xl">Chính sách bảo mật thông tin</h1>
@@ -37,7 +37,7 @@ export default function PrivacyPolicy() {
             prose-h2:mt-10 prose-h2:text-xl
             prose-p:leading-8 prose-p:text-brand-muted
             prose-li:text-brand-muted
-            prose-a:text-brand-goldDark prose-a:underline-offset-4
+            prose-a:text-brand-primary prose-a:underline-offset-4
             prose-strong:text-brand-ink"
         >
           <p>

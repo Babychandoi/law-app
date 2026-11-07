@@ -131,7 +131,7 @@ const LandingManager: React.FC = () => {
             href={`/lp/${page.slug}`}
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-1 font-semibold text-brand-goldDark hover:underline"
+            className="inline-flex items-center gap-1 font-semibold text-brand-primary hover:underline"
           >
             /lp/{page.slug}
             <ExternalLink className="h-3.5 w-3.5" />
@@ -239,7 +239,7 @@ const LandingManager: React.FC = () => {
                 id="landing-service"
                 value={newServiceId}
                 onChange={(e) => setNewServiceId(e.target.value)}
-                className="w-full rounded-control border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-goldDark"
+                className="w-full rounded-control border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
               >
                 <option value="">— Chọn dịch vụ —</option>
                 {servicesWithoutLanding.map((s) => (

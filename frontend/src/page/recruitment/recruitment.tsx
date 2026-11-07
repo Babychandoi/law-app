@@ -98,7 +98,7 @@ const JobListing: React.FC = () => {
           Gia nhập đội ngũ chuyên nghiệp của Luật Poip Legal - Nơi bạn phát triển sự nghiệp cùng
           chúng tôi
         </p>
-        <div className="w-24 h-1 bg-[#f2c64d] mx-auto"></div>
+        <div className="w-24 h-1 bg-brand-accent mx-auto"></div>
       </div>
       <ChoosePoip />
       {/* Bộ lọc */}
@@ -114,7 +114,7 @@ const JobListing: React.FC = () => {
                 <input
                   type="text"
                   id="keywords"
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                   placeholder={jobListingConfig.filterLabels.keywords}
                   value={filters.keywords}
                   onChange={(e) => handleFilterChange('keywords', e.target.value)}
@@ -128,7 +128,7 @@ const JobListing: React.FC = () => {
               </label>
               <select
                 id="job-category"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                 value={filters.category}
                 onChange={(e) => handleFilterChange('category', e.target.value)}
               >
@@ -146,7 +146,7 @@ const JobListing: React.FC = () => {
               </label>
               <select
                 id="job-type"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                 value={filters.jobType}
                 onChange={(e) => handleFilterChange('jobType', e.target.value)}
               >
@@ -164,7 +164,7 @@ const JobListing: React.FC = () => {
               </label>
               <select
                 id="job-location"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-goldDark focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-primary focus:border-transparent"
                 value={filters.location}
                 onChange={(e) => handleFilterChange('location', e.target.value)}
               >
@@ -179,7 +179,7 @@ const JobListing: React.FC = () => {
             <div>
               <button
                 type="submit"
-                className="w-full bg-brand-goldDark hover:bg-brand-goldDark text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
+                className="w-full bg-brand-primary hover:bg-brand-primary text-white font-semibold py-2 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center"
               >
                 <Search className="w-5 h-5 mr-2" />
                 Tìm kiếm
@@ -218,7 +218,7 @@ const JobListing: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => navigateToJobDetail(job.id)}
-                        className="hover:text-brand-goldDark transition-colors duration-200 text-left"
+                        className="hover:text-brand-primary transition-colors duration-200 text-left"
                       >
                         {job.title}
                       </button>
@@ -235,7 +235,7 @@ const JobListing: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => navigateToJobDetail(job.id)}
-                      className="inline-block bg-brand-goldDark hover:bg-brand-goldDark text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200"
+                      className="inline-block bg-brand-primary hover:bg-brand-primary text-white font-semibold py-2 px-6 rounded-lg transition-colors duration-200"
                     >
                       Nộp đơn
                     </button>
@@ -244,7 +244,7 @@ const JobListing: React.FC = () => {
 
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4 text-sm text-gray-600">
                   <div className="flex items-center">
-                    <Briefcase className="w-4 h-4 mr-2 text-brand-goldDark" />
+                    <Briefcase className="w-4 h-4 mr-2 text-brand-primary" />
                     <span>{job.jobType}</span>
                   </div>
 
@@ -254,7 +254,7 @@ const JobListing: React.FC = () => {
                   </div>
 
                   <div className="flex items-center">
-                    <Calendar className="w-4 h-4 mr-2 text-brand-goldDark" />
+                    <Calendar className="w-4 h-4 mr-2 text-brand-primary" />
                     <span>
                       {new Date(job.postedDate).toLocaleDateString('vi-VN', {
                         day: '2-digit',

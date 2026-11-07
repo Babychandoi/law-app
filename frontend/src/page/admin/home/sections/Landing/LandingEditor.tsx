@@ -12,7 +12,7 @@ interface LandingEditorProps {
 }
 
 const textareaClass =
-  'w-full rounded-control border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-goldDark';
+  'w-full rounded-control border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-primary';
 
 /**
  * Sửa phần riêng của landing: đường dẫn ads, câu chữ hero/form/CTA. Thân trang không nằm ở đây —
@@ -104,7 +104,7 @@ const LandingEditor: React.FC<LandingEditorProps> = ({ page, onClose }) => {
                 href={page.serviceHref}
                 target="_blank"
                 rel="noreferrer"
-                className="mt-1 inline-flex items-center gap-1 text-brand-goldDark hover:underline"
+                className="mt-1 inline-flex items-center gap-1 text-brand-primary hover:underline"
               >
                 Xem trang dịch vụ {page.serviceHref}
                 <ExternalLink className="h-3.5 w-3.5" />

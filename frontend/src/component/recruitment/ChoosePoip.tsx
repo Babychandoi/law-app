@@ -51,7 +51,7 @@ const ChoosePoip: React.FC = () => {
             className="flex flex-col relative overflow-hidden h-auto
                      shadow-medium rounded-large transition-transform-background
                      bg-brand-surface
-                     border-2 border-[#f2c64d]/30
+                     border-2 border-brand-accent/30
                       hover:shadow-sm duration-300"
           >
             <div

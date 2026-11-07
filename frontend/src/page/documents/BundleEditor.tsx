@@ -140,7 +140,7 @@ export default function BundleEditor() {
     <div className="mx-auto max-w-3xl space-y-5">
       <Link
         to={`${DOCUMENT_BASE}/bundles`}
-        className="inline-flex items-center gap-1 text-sm font-medium text-brand-goldDark hover:underline"
+        className="inline-flex items-center gap-1 text-sm font-medium text-brand-primary hover:underline"
       >
         <ArrowLeft size={16} aria-hidden="true" /> Bộ mẫu
       </Link>
@@ -202,7 +202,7 @@ export default function BundleEditor() {
             type="button"
             onClick={addItem}
             disabled={!picker}
-            className="inline-flex items-center gap-1 rounded-lg border border-brand-goldDark px-3 py-2 text-sm font-medium text-brand-goldDark hover:bg-brand-goldDark/5 disabled:opacity-50"
+            className="inline-flex items-center gap-1 rounded-lg border border-brand-primary px-3 py-2 text-sm font-medium text-brand-primary hover:bg-brand-primary/5 disabled:opacity-50"
           >
             <Plus size={16} aria-hidden="true" /> Thêm
           </button>
@@ -271,7 +271,7 @@ export default function BundleEditor() {
         type="button"
         onClick={save}
         disabled={saving}
-        className="inline-flex items-center gap-2 rounded-lg bg-brand-goldDark px-4 py-2.5 font-semibold text-white hover:bg-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark disabled:opacity-60"
+        className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-4 py-2.5 font-semibold text-white hover:bg-brand-primaryDark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary disabled:opacity-60"
       >
         {saving ? (
           <Spinner size={18} className="text-white" label="Đang lưu" />
@@ -285,7 +285,7 @@ export default function BundleEditor() {
 }
 
 const inputClass =
-  'w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-brand-goldDark focus:ring-2 focus:ring-brand-goldDark/20';
+  'w-full rounded-lg border border-gray-300 px-3 py-2 outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20';
 
 function Field({
   label,

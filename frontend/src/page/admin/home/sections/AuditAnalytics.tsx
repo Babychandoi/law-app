@@ -65,7 +65,7 @@ const AuditAnalytics: React.FC = () => {
                   aria-pressed={days === r.v}
                   className={`rounded-md px-3 py-1.5 text-sm ${
                     days === r.v
-                      ? 'bg-brand-surface text-brand-goldDark font-medium'
+                      ? 'bg-brand-surface text-brand-primary font-medium'
                       : 'text-gray-500 hover:bg-gray-50'
                   }`}
                 >
@@ -86,7 +86,7 @@ const AuditAnalytics: React.FC = () => {
           {/* KPI tổng */}
           <Card bodyClassName="p-5">
             <div className="flex items-center gap-3">
-              <span className="grid h-12 w-12 place-items-center rounded-xl bg-brand-surface text-brand-goldDark">
+              <span className="grid h-12 w-12 place-items-center rounded-xl bg-brand-surface text-brand-primary">
                 <Activity size={22} aria-hidden="true" />
               </span>
               <div>
@@ -114,7 +114,7 @@ const AuditAnalytics: React.FC = () => {
                     >
                       <span className="text-[10px] text-gray-500">{d.count}</span>
                       <div
-                        className="w-full rounded-t bg-brand-gold"
+                        className="w-full rounded-t bg-brand-accent"
                         style={{ height: h }}
                         aria-hidden="true"
                       />
@@ -142,7 +142,7 @@ const AuditAnalytics: React.FC = () => {
                     </span>
                     <div className="h-4 flex-1 rounded bg-gray-100">
                       <div
-                        className="h-4 rounded bg-brand-goldDark"
+                        className="h-4 rounded bg-brand-primary"
                         style={{ width: `${Math.round((a.count / maxAction) * 100)}%` }}
                         aria-hidden="true"
                       />

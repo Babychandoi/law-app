@@ -90,7 +90,7 @@ export default function Footer() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 lg:grid-cols-[1.25fr_0.75fr_1fr]">
         <section>
           <div className="mb-5 flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-md bg-brand-gold">
+            <div className="flex h-11 w-11 items-center justify-center rounded-md bg-brand-accent">
               <ShieldCheck size={24} />
             </div>
             <div>
@@ -102,7 +102,7 @@ export default function Footer() {
           <div className="space-y-4 text-sm text-white/75">
             {company.locations.map((location) => (
               <div key={location.id} className="flex gap-3">
-                <MapPin className="mt-0.5 shrink-0 text-brand-gold" size={18} />
+                <MapPin className="mt-0.5 shrink-0 text-brand-accent" size={18} />
                 <div>
                   <p className="font-medium text-white">{location.type}</p>
                   <p>{location.address}</p>
@@ -110,7 +110,7 @@ export default function Footer() {
               </div>
             ))}
             <a
-              className="flex items-center gap-3 hover:text-brand-gold"
+              className="flex items-center gap-3 hover:text-brand-accent"
               href={`mailto:${company.company.email}`}
             >
               <Mail size={18} />
@@ -119,7 +119,7 @@ export default function Footer() {
             {company.phoneContacts.map((phone) => (
               <a
                 key={phone.id}
-                className="flex items-center gap-3 hover:text-brand-gold"
+                className="flex items-center gap-3 hover:text-brand-accent"
                 href={`tel:${normalizePhone(phone.number)}`}
               >
                 <Phone size={18} />
@@ -130,13 +130,13 @@ export default function Footer() {
             ))}
             {company.company.representative && (
               <div className="flex items-center gap-3">
-                <UserCheck className="shrink-0 text-brand-gold" size={18} />
+                <UserCheck className="shrink-0 text-brand-accent" size={18} />
                 <span>Người đại diện: {company.company.representative}</span>
               </div>
             )}
             {company.company.taxCode && (
               <div className="flex items-center gap-3">
-                <Building2 className="shrink-0 text-brand-gold" size={18} />
+                <Building2 className="shrink-0 text-brand-accent" size={18} />
                 <span>MST: {company.company.taxCode}</span>
               </div>
             )}
@@ -144,23 +144,23 @@ export default function Footer() {
         </section>
 
         <section>
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-brand-gold">
+          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-brand-accent">
             Liên kết
           </h3>
           <div className="grid gap-2 text-sm text-white/75">
             {quickLinks.map((item) => (
-              <Link key={item.id} to={item.href} className="hover:text-brand-gold">
+              <Link key={item.id} to={item.href} className="hover:text-brand-accent">
                 {item.title}
               </Link>
             ))}
-            <Link to="/chinh-sach-bao-mat" className="hover:text-brand-gold">
+            <Link to="/chinh-sach-bao-mat" className="hover:text-brand-accent">
               Chính sách bảo mật
             </Link>
           </div>
         </section>
 
         <section>
-          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-brand-gold">
+          <h3 className="mb-4 text-sm font-semibold uppercase tracking-wide text-brand-accent">
             Nhận bản tin
           </h3>
           <p className="mb-4 text-sm leading-6 text-white/70">
@@ -176,12 +176,12 @@ export default function Footer() {
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               placeholder="Email của bạn"
-              className="min-w-0 flex-1 rounded-md border border-white/15 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-brand-gold"
+              className="min-w-0 flex-1 rounded-md border border-white/15 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/45 outline-none focus:border-brand-accent"
             />
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center gap-2 rounded-md bg-brand-goldDark px-4 py-2 text-sm font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex items-center gap-2 rounded-md bg-brand-primary px-4 py-2 text-sm font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
             >
               <Send size={16} />
               Gửi
@@ -193,7 +193,7 @@ export default function Footer() {
               href={contactInfo.zaloHref}
               target="_blank"
               rel="noreferrer"
-              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-gold hover:text-brand-gold"
+              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-accent hover:text-brand-accent"
               aria-label="Zalo"
             >
               <MessageCircle size={18} />
@@ -202,14 +202,14 @@ export default function Footer() {
               href={contactInfo.messengerHref}
               target="_blank"
               rel="noreferrer"
-              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-gold hover:text-brand-gold"
+              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-accent hover:text-brand-accent"
               aria-label="Facebook"
             >
               <Facebook size={18} />
             </a>
             <a
               href={contactInfo.emailHref}
-              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-gold hover:text-brand-gold"
+              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-accent hover:text-brand-accent"
               aria-label="Email"
             >
               <Mail size={18} />
@@ -218,7 +218,7 @@ export default function Footer() {
               href={company.socials[0]?.href || contactInfo.mapHref}
               target="_blank"
               rel="noreferrer"
-              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-gold hover:text-brand-gold"
+              className="flex h-11 w-11 items-center justify-center rounded-md border border-white/15 text-white/75 hover:border-brand-accent hover:text-brand-accent"
               aria-label="LinkedIn"
             >
               <Linkedin size={18} />

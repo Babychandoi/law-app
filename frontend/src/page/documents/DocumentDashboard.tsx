@@ -106,13 +106,13 @@ export default function DocumentDashboard() {
       <div className="flex flex-wrap gap-3">
         <Link
           to={DOCUMENT_BASE}
-          className="inline-flex items-center gap-2 rounded-lg bg-brand-goldDark px-4 py-2 text-sm font-semibold text-white hover:bg-brand-gold focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+          className="inline-flex items-center gap-2 rounded-lg bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-primaryDark focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
         >
           <FileText size={16} aria-hidden="true" /> Xem biểu mẫu
         </Link>
         <Link
           to={`${DOCUMENT_BASE}/generated`}
-          className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+          className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
         >
           <Files size={16} aria-hidden="true" /> Tài liệu đã tạo
         </Link>
@@ -134,7 +134,7 @@ function KpiCard({
 }) {
   return (
     <div className="rounded-2xl border border-gray-200 bg-white p-5 shadow-sm">
-      <div className="flex items-center gap-2 text-brand-goldDark">{icon}</div>
+      <div className="flex items-center gap-2 text-brand-primary">{icon}</div>
       <p className="mt-3 text-3xl font-semibold text-gray-900">{value.toLocaleString('vi-VN')}</p>
       <p className="mt-1 text-sm text-gray-600">{label}</p>
       {hint && <p className="mt-0.5 text-xs text-gray-500">{hint}</p>}
@@ -168,7 +168,7 @@ function StatusBreakdown({
               </div>
               <div className="mt-1 h-2 overflow-hidden rounded-full bg-gray-100">
                 <div
-                  className="h-full rounded-full bg-brand-gold"
+                  className="h-full rounded-full bg-brand-accent"
                   style={{ width: total ? `${Math.round((count / total) * 100)}%` : '0%' }}
                 />
               </div>

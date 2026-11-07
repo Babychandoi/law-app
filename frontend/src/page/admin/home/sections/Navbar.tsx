@@ -236,7 +236,7 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
                   {unreadCount > 0 && (
                     <button
                       onClick={markAllAsRead}
-                      className="text-xs text-brand-goldDark hover:text-brand-goldDark flex items-center space-x-1"
+                      className="text-xs text-brand-primary hover:text-brand-primary flex items-center space-x-1"
                     >
                       <Eye size={12} />
                       <span>Đọc tất cả</span>
@@ -257,7 +257,7 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
                         key={n.id}
                         role="button"
                         tabIndex={0}
-                        className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark ${
+                        className={`p-4 border-b border-gray-100 hover:bg-gray-50 cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
                           !n.read ? 'bg-brand-surface' : ''
                         }`}
                         onClick={() => {
@@ -300,7 +300,7 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
                             <p className="text-xs text-gray-500 mt-1">{n.createdAt}</p>
                           </div>
                           {!n.read && (
-                            <div className="w-2 h-2 bg-brand-goldDark rounded-full mt-2"></div>
+                            <div className="w-2 h-2 bg-brand-primary rounded-full mt-2"></div>
                           )}
                         </div>
                       </div>
@@ -314,7 +314,7 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
                           <button
                             onClick={handleLoadMore}
                             disabled={loadingNotifications}
-                            className="flex items-center space-x-1 text-sm text-brand-goldDark hover:text-brand-goldDark"
+                            className="flex items-center space-x-1 text-sm text-brand-primary hover:text-brand-primary"
                           >
                             <ChevronDown size={16} />
                             <span>{loadingNotifications ? 'Đang tải…' : 'Xem thêm'}</span>
@@ -340,7 +340,7 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
             <button
               onClick={handleProfile}
               aria-label="Tài khoản"
-              className="w-9 h-9 grid place-items-center rounded-full bg-gradient-to-br from-brand-gold to-brand-goldDark text-white font-semibold hover:opacity-90 transition-opacity"
+              className="w-9 h-9 grid place-items-center rounded-full bg-gradient-to-br from-brand-accent to-brand-primary text-white font-semibold hover:opacity-90 transition-opacity"
             >
               {initialOf(profile?.fullName || profile?.username)}
             </button>
@@ -349,7 +349,7 @@ const Navbar: React.FC<{ onOpenSidebar?: () => void }> = ({ onOpenSidebar }) => 
               <div className="absolute right-0 top-12 w-72 bg-white rounded-lg shadow-lg border border-gray-200 z-50">
                 <div className="p-4 border-b border-gray-200">
                   <div className="flex items-center space-x-3">
-                    <div className="w-12 h-12 grid place-items-center rounded-full bg-gradient-to-br from-brand-gold to-brand-goldDark text-white text-lg font-semibold">
+                    <div className="w-12 h-12 grid place-items-center rounded-full bg-gradient-to-br from-brand-accent to-brand-primary text-white text-lg font-semibold">
                       {initialOf(profile?.fullName || profile?.username)}
                     </div>
                     <div className="min-w-0">

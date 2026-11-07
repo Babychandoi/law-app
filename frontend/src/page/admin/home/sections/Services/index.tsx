@@ -126,7 +126,7 @@ const ServiceManager: React.FC = () => {
           href={service.href}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1 text-brand-goldDark hover:underline"
+          className="inline-flex items-center gap-1 text-brand-primary hover:underline"
         >
           {service.href}
           <ExternalLink className="h-3.5 w-3.5" />
@@ -216,7 +216,7 @@ const ServiceManager: React.FC = () => {
                 id="group-icon"
                 value={gIcon}
                 onChange={(e) => setGIcon(e.target.value)}
-                className="w-full rounded-control border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-goldDark"
+                className="w-full rounded-control border border-gray-300 px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-brand-primary"
               >
                 <option value="">— Không dùng icon —</option>
                 {iconOptions.map((o) => (
@@ -241,7 +241,7 @@ const ServiceManager: React.FC = () => {
               variant="secondary"
               leftIcon={<FolderPlus className="h-4 w-4" />}
               onClick={openAddGroup}
-              className="!border-brand-goldDark !text-brand-goldDark hover:!bg-brand-surface"
+              className="!border-brand-primary !text-brand-primary hover:!bg-brand-surface"
             >
               Thêm nhóm
             </Button>

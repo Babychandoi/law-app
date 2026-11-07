@@ -57,7 +57,7 @@ export default function CompanyLegalInfo({ className = '' }: { className?: strin
   }) =>
     value ? (
       <div className="flex items-start gap-3">
-        <Icon className="mt-0.5 shrink-0 text-brand-goldDark" size={18} aria-hidden="true" />
+        <Icon className="mt-0.5 shrink-0 text-brand-primary" size={18} aria-hidden="true" />
         <p className="text-sm text-brand-ink">
           <span className="text-brand-muted">{label}: </span>
           <span className="font-medium">{value}</span>
@@ -69,7 +69,7 @@ export default function CompanyLegalInfo({ className = '' }: { className?: strin
     <section className={`mx-auto max-w-3xl px-4 py-10 ${className}`}>
       <div className="rounded-card border border-brand-line bg-white p-6 shadow-card">
         <h2 className="mb-4 flex items-center gap-2 text-lg font-semibold text-brand-ink">
-          <Building2 className="text-brand-goldDark" size={20} aria-hidden="true" />
+          <Building2 className="text-brand-primary" size={20} aria-hidden="true" />
           Thông tin công ty
         </h2>
         <div className="grid gap-3 sm:grid-cols-2">

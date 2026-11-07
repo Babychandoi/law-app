@@ -125,7 +125,7 @@ export default function CarePopup({
           )}
           <div className="space-y-2 max-h-40 overflow-y-auto">
             {logs.map((l) => (
-              <div key={l.id} className="text-sm border-l-2 border-brand-gold pl-2">
+              <div key={l.id} className="text-sm border-l-2 border-brand-accent pl-2">
                 <div className="text-gray-500">
                   {new Date(l.createdAt).toLocaleString('vi-VN')} · {staffName(l.staffId)}
                 </div>
@@ -145,7 +145,7 @@ export default function CarePopup({
             <label className="text-sm">
               Hành động *
               <select
-                className="w-full border border-brand-line rounded-lg px-3 py-2 mt-1 focus:border-brand-gold outline-none"
+                className="w-full border border-brand-line rounded-lg px-3 py-2 mt-1 focus:border-brand-accent outline-none"
                 value={actionId}
                 onChange={(e) => setActionId(e.target.value ? Number(e.target.value) : '')}
               >
@@ -162,7 +162,7 @@ export default function CarePopup({
             <label className="text-sm">
               Kết quả
               <select
-                className="w-full border border-brand-line rounded-lg px-3 py-2 mt-1 focus:border-brand-gold outline-none"
+                className="w-full border border-brand-line rounded-lg px-3 py-2 mt-1 focus:border-brand-accent outline-none"
                 value={resultId}
                 onChange={(e) => onResultChange(e.target.value ? Number(e.target.value) : '')}
               >
@@ -179,7 +179,7 @@ export default function CarePopup({
             <label className="text-sm">
               Trạng thái chăm sóc mới
               <select
-                className="w-full border border-brand-line rounded-lg px-3 py-2 mt-1 focus:border-brand-gold outline-none"
+                className="w-full border border-brand-line rounded-lg px-3 py-2 mt-1 focus:border-brand-accent outline-none"
                 value={newStatusId}
                 onChange={(e) => setNewStatusId(e.target.value ? Number(e.target.value) : '')}
               >
@@ -197,7 +197,7 @@ export default function CarePopup({
               Hẹn chăm lại {requireFollowUp && <span className="text-red-500">*</span>}
               <input
                 type="datetime-local"
-                className="w-full border border-brand-line rounded-lg px-3 py-2 mt-1 focus:border-brand-gold outline-none"
+                className="w-full border border-brand-line rounded-lg px-3 py-2 mt-1 focus:border-brand-accent outline-none"
                 value={followUpAt}
                 onChange={(e) => setFollowUpAt(e.target.value)}
               />
@@ -206,7 +206,7 @@ export default function CarePopup({
           <label className="text-sm block">
             Ghi chú
             <textarea
-              className="w-full border border-brand-line rounded-lg px-3 py-2 mt-1 focus:border-brand-gold outline-none"
+              className="w-full border border-brand-line rounded-lg px-3 py-2 mt-1 focus:border-brand-accent outline-none"
               rows={2}
               value={note}
               onChange={(e) => setNote(e.target.value)}
@@ -245,13 +245,13 @@ export default function CarePopup({
         <div className="p-4 border-t flex justify-end gap-3">
           <Link
             to={`/2025/luatpoip/tai-lieu?${documentContext.toString()}`}
-            className="inline-flex items-center justify-center gap-2 rounded-control border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+            className="inline-flex items-center justify-center gap-2 rounded-control border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
           >
             <FileText size={16} aria-hidden="true" /> Tạo tài liệu
           </Link>
           <Link
             to={`/2025/luatpoip/tai-lieu/bundles?${documentContext.toString()}`}
-            className="inline-flex items-center justify-center gap-2 rounded-control border border-brand-goldDark px-4 py-2 text-sm font-medium text-brand-goldDark transition-colors hover:bg-brand-goldDark/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-goldDark"
+            className="inline-flex items-center justify-center gap-2 rounded-control border border-brand-primary px-4 py-2 text-sm font-medium text-brand-primary transition-colors hover:bg-brand-primary/5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
           >
             <Layers size={16} aria-hidden="true" /> Tạo hồ sơ
           </Link>

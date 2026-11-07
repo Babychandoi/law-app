@@ -42,12 +42,12 @@ const resolveImg = (v?: string) =>
       : `https://minio.luatpoip.com/images/${v}`;
 
 const inputCls =
-  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-goldDark focus:ring-2 focus:ring-brand-goldDark/20';
+  'w-full rounded-md border border-gray-300 px-3 py-2 text-sm outline-none focus:border-brand-primary focus:ring-2 focus:ring-brand-primary/20';
 const labelCls = 'mb-1 block text-sm font-semibold text-gray-700';
 const btnPrimary =
-  'inline-flex items-center gap-2 rounded-md bg-brand-goldDark px-4 py-2 text-sm font-semibold text-white hover:bg-brand-gold disabled:opacity-50';
+  'inline-flex items-center gap-2 rounded-md bg-brand-primary px-4 py-2 text-sm font-semibold text-white hover:bg-brand-primaryDark disabled:opacity-50';
 const btnGhost =
-  'inline-flex items-center gap-1.5 rounded-md border border-gray-300 px-2.5 py-1.5 text-xs font-semibold text-gray-600 hover:border-brand-goldDark hover:text-brand-goldDark';
+  'inline-flex items-center gap-1.5 rounded-md border border-gray-300 px-2.5 py-1.5 text-xs font-semibold text-gray-600 hover:border-brand-primary hover:text-brand-primary';
 
 const SECTION_TYPES: { value: string; label: string }[] = [
   { value: 'info', label: 'Đoạn giới thiệu (văn bản + ảnh)' },
@@ -378,7 +378,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
             href={general.href}
             target="_blank"
             rel="noreferrer"
-            className="text-sm font-semibold text-brand-goldDark hover:underline"
+            className="text-sm font-semibold text-brand-primary hover:underline"
           >
             Xem trang →
           </a>
@@ -415,7 +415,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
               onClick={() => setTab(t.key)}
               className={`-mb-px border-b-2 px-4 py-2.5 text-sm font-semibold ${
                 tab === t.key
-                  ? 'border-brand-goldDark text-brand-goldDark'
+                  ? 'border-brand-primary text-brand-primary'
                   : 'border-transparent text-gray-500 hover:text-gray-800'
               } ${disabled ? 'cursor-not-allowed opacity-40' : ''}`}
             >
@@ -1008,7 +1008,7 @@ export default function ServiceEditor({ service, onClose }: Props) {
                     title={label}
                     className={`rounded-md p-1.5 ${
                       device === key
-                        ? 'bg-brand-surface text-brand-goldDark'
+                        ? 'bg-brand-surface text-brand-primary'
                         : 'text-gray-500 hover:bg-gray-50'
                     }`}
                   >

@@ -3,7 +3,7 @@ import React from 'react';
 export type BadgeColor = 'gold' | 'green' | 'red' | 'gray' | 'blue' | 'yellow';
 
 const COLORS: Record<BadgeColor, string> = {
-  gold: 'bg-brand-surface text-brand-goldDark',
+  gold: 'bg-brand-surface text-brand-primary',
   green: 'bg-green-100 text-green-800',
   red: 'bg-red-100 text-red-800',
   gray: 'bg-gray-100 text-gray-700',

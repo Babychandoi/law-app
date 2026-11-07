@@ -128,7 +128,7 @@ export default function CRM() {
   // ---- renderers dùng chung cho bảng (desktop) và thẻ (mobile) ----
   const renderCustomer = (r: CaseRow) => (
     <div className="flex items-center gap-3">
-      <span className="w-9 h-9 rounded-full bg-brand-gold/15 text-brand-goldDark grid place-items-center font-semibold shrink-0">
+      <span className="w-9 h-9 rounded-full bg-brand-accent/15 text-brand-primary grid place-items-center font-semibold shrink-0">
         {(r.serviceName ?? r.name ?? '?').charAt(0)}
       </span>
       <div>
@@ -141,7 +141,7 @@ export default function CRM() {
   const renderAssigned = (r: CaseRow) =>
     isAdmin ? (
       <select
-        className="border border-brand-line rounded-lg px-2 py-1.5 text-xs bg-white max-w-[140px] focus:border-brand-gold outline-none"
+        className="border border-brand-line rounded-lg px-2 py-1.5 text-xs bg-white max-w-[140px] focus:border-brand-accent outline-none"
         aria-label="Gán nhân viên phụ trách"
         value={r.assignedUserId ?? ''}
         onChange={(e) => assign(r, e.target.value)}
@@ -314,7 +314,7 @@ export default function CRM() {
           <select
             key={i}
             aria-label="Bộ lọc CRM"
-            className="border border-brand-line rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-gold outline-none"
+            className="border border-brand-line rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-accent outline-none"
             value={sel.val}
             onChange={(e) => sel.set(e.target.value)}
           >
@@ -326,7 +326,7 @@ export default function CRM() {
           </select>
         ))}
         <select
-          className="border border-brand-line rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-gold outline-none"
+          className="border border-brand-line rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-accent outline-none"
           aria-label="Lọc theo trạng thái chăm sóc"
           value={filter.careStatusId ?? ''}
           onChange={(e) =>
@@ -345,7 +345,7 @@ export default function CRM() {
           ))}
         </select>
         <select
-          className="border border-brand-line rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-gold outline-none"
+          className="border border-brand-line rounded-lg px-3 py-2 text-sm bg-white focus:border-brand-accent outline-none"
           aria-label="Lọc theo trạng thái vụ việc"
           value={filter.status ?? ''}
           onChange={(e) => setFilter((f) => ({ ...f, status: e.target.value, page: 0 }))}
