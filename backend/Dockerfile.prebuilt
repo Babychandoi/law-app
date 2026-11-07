@@ -1,0 +1,4 @@
+# Package the tested host JAR using the existing production Java runtime.
+ARG RUNTIME_IMAGE=law-app-backend:sql-rollback-20261008
+FROM ${RUNTIME_IMAGE}
+COPY --chown=spring:spring target/backend-1.0.0.jar /app/app.jar
