@@ -96,20 +96,47 @@ const LoginForm: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-brand-accent to-brand-primary flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/30"></div>
-
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-r from-brand-accent to-brand-primary rounded-full blur-3xl "></div>
-        <div className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-l from-brand-accent to-brand-primary rounded-full blur-3xl  delay-1000"></div>
+    <div className="min-h-screen relative flex items-center justify-center p-4 overflow-hidden bg-gradient-to-br from-brand-ink via-[#0d2e2a] to-gray-900">
+      {/*
+        Nền trang trí: không phải ảnh chụp (không có công cụ tạo ảnh trong phiên này) mà là quầng
+        sáng mờ + hoạ tiết hình thoi lặp lại lấy ý tưởng từ biểu tượng ◇ trong logo POIP, vẽ bằng
+        SVG/CSS thuần. Thay cho gradient cũ pha thẳng vàng-nắng (accent) với xanh-ngọc (primary) ở
+        hai đầu một dải màu — hai màu gần như đối lập nhau nên đoạn giữa loang thành mảng xanh-vàng
+        rối mắt, làm input/nút chữ gần như không đọc được.
+      */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div className="absolute -top-40 -right-32 w-[30rem] h-[30rem] rounded-full bg-brand-primary/25 blur-3xl"></div>
+        <div className="absolute -bottom-48 -left-40 w-[34rem] h-[34rem] rounded-full bg-brand-accent/10 blur-3xl"></div>
+        <svg className="absolute inset-0 w-full h-full opacity-[0.08]">
+          <defs>
+            <pattern
+              id="poip-login-diamond"
+              width="72"
+              height="72"
+              patternUnits="userSpaceOnUse"
+              patternTransform="rotate(15)"
+            >
+              <rect
+                x="18"
+                y="18"
+                width="36"
+                height="36"
+                transform="rotate(45 36 36)"
+                fill="none"
+                stroke="#f5b32d"
+                strokeWidth="1"
+              />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#poip-login-diamond)" />
+        </svg>
       </div>
 
       <div className="relative w-full max-w-md">
         <div className="bg-white/10 backdrop-blur-lg rounded-2xl shadow-soft border border-white/20 p-8 space-y-6">
           {/* Header */}
           <div className="text-center space-y-2">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-brand-accent to-brand-primary rounded-full mb-4">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-brand-primary rounded-full mb-4 ring-4 ring-brand-accent/30">
               <Shield className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-3xl font-bold text-white">Poip Legal Law</h1>
@@ -182,7 +209,7 @@ const LoginForm: React.FC = () => {
               type="button"
               onClick={handleSubmit}
               disabled={isLoading}
-              className="w-full bg-gradient-to-r from-brand-accent to-brand-primary text-white font-semibold py-3 px-6 rounded-lg hover:from-brand-accent hover:to-brand-primary focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200 transform  disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+              className="w-full bg-brand-primary text-white font-semibold py-3 px-6 rounded-lg hover:bg-brand-primaryDark focus:outline-none focus:ring-2 focus:ring-brand-accent focus:ring-offset-2 focus:ring-offset-transparent transition-all duration-200 transform disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
             >
               {isLoading ? (
                 <div className="flex items-center justify-center">
