@@ -46,6 +46,19 @@ const BundleList = lazy(() => import('../page/documents/BundleList'));
 const BundleEditor = lazy(() => import('../page/documents/BundleEditor'));
 const GenerateBundle = lazy(() => import('../page/documents/GenerateBundle'));
 const ClauseLibrary = lazy(() => import('../page/documents/ClauseLibrary'));
+const CrmWorkspaceLayout = lazy(() => import('../pages/crm/CrmWorkspaceLayout'));
+const LeadListPage = lazy(() => import('../pages/crm/LeadListPage'));
+const LeadDetailPage = lazy(() => import('../pages/crm/LeadDetailPage'));
+const LeadFormPage = lazy(() => import('../pages/crm/LeadFormPage'));
+const AccountListPage = lazy(() => import('../pages/crm/AccountListPage'));
+const AccountDetailPage = lazy(() => import('../pages/crm/AccountDetailPage'));
+const AccountFormPage = lazy(() => import('../pages/crm/AccountFormPage'));
+const OpportunityListPage = lazy(() => import('../pages/crm/OpportunityListPage'));
+const OpportunityDetailPage = lazy(() => import('../pages/crm/OpportunityDetailPage'));
+const OpportunityFormPage = lazy(() => import('../pages/crm/OpportunityFormPage'));
+const ContractListPage = lazy(() => import('../pages/crm/ContractListPage'));
+const ContractDetailPage = lazy(() => import('../pages/crm/ContractDetailPage'));
+const ContractFormPage = lazy(() => import('../pages/crm/ContractFormPage'));
 
 function RouteFallback() {
   return (
@@ -135,12 +148,39 @@ export const documentRoutes: RouteObject[] = [
   },
 ];
 
+export const crmRoutes: RouteObject[] = [
+  {
+    path: '/2025/luatpoip/crm',
+    element: withSuspense(<CrmWorkspaceLayout />),
+    children: [
+      { index: true, element: <Navigate to="sale-order" replace /> },
+      { path: 'lead', element: withSuspense(<LeadListPage />) },
+      { path: 'lead/new', element: withSuspense(<LeadFormPage />) },
+      { path: 'lead/:id', element: withSuspense(<LeadDetailPage />) },
+      { path: 'lead/:id/edit', element: withSuspense(<LeadFormPage />) },
+      { path: 'account', element: withSuspense(<AccountListPage />) },
+      { path: 'account/new', element: withSuspense(<AccountFormPage />) },
+      { path: 'account/:id', element: withSuspense(<AccountDetailPage />) },
+      { path: 'account/:id/edit', element: withSuspense(<AccountFormPage />) },
+      { path: 'opportunity', element: withSuspense(<OpportunityListPage />) },
+      { path: 'opportunity/new', element: withSuspense(<OpportunityFormPage />) },
+      { path: 'opportunity/:id', element: withSuspense(<OpportunityDetailPage />) },
+      { path: 'opportunity/:id/edit', element: withSuspense(<OpportunityFormPage />) },
+      { path: 'sale-order', element: withSuspense(<ContractListPage />) },
+      { path: 'sale-order/new', element: withSuspense(<ContractFormPage />) },
+      { path: 'sale-order/:id', element: withSuspense(<ContractDetailPage />) },
+      { path: 'sale-order/:id/edit', element: withSuspense(<ContractFormPage />) },
+    ],
+  },
+];
+
 export const landingRoutes: RouteObject[] = [
   { path: '/lp/:slug', element: withSuspense(<LandingPage />) },
 ];
 
 export const appRoutes: RouteObject[] = [
   ...adminRoutes,
+  ...crmRoutes,
   ...documentRoutes,
   ...landingRoutes,
   publicRoutes,

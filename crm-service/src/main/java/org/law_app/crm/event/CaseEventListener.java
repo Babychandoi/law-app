@@ -11,6 +11,7 @@ import org.law_app.crm.domain.ProcessedCaseEvent;
 import org.law_app.crm.repository.CareStatusRepository;
 import org.law_app.crm.repository.CrmCaseRepository;
 import org.law_app.crm.repository.ProcessedCaseEventRepository;
+import org.law_app.crm.service.CrmLeadSyncService;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
@@ -29,6 +30,7 @@ public class CaseEventListener {
   private final CrmCaseRepository caseRepo;
   private final CareStatusRepository careStatusRepo;
   private final ProcessedCaseEventRepository inboxRepo;
+  private final CrmLeadSyncService leadSyncService;
 
   @RabbitListener(queues = RabbitConfig.QUEUE_CASES)
   @Transactional
@@ -76,6 +78,7 @@ public class CaseEventListener {
     }
 
     caseRepo.save(c);
+    leadSyncService.syncFromCaseEvent(event);
     if (event.getEventId() != null && !event.getEventId().isBlank()) {
       inboxRepo.save(
           ProcessedCaseEvent.builder()

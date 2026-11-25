@@ -1,0 +1,26 @@
+.crm-workspace {
+  caret-color: #0f766e;
+}
+
+.crm-workspace ::selection {
+  background: #fff1cc;
+  color: #1b2a3a;
+}
+
+.crm-workspace ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.crm-workspace ::-webkit-scrollbar-track {
+  background: #f1f8f6;
+}
+
+.crm-workspace ::-webkit-scrollbar-thumb {
+  background: #bdd4cd;
+  border-radius: 4px;
+}
+
+.crm-workspace ::-webkit-scrollbar-thumb:hover {
+  background: #0f766e;
+}

@@ -165,6 +165,8 @@ services:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/law_app_crm?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Ho_Chi_Minh
       SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
       SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${CRM_JPA_DDL_AUTO:-update}
+      CRM_SEED_DEMO_ENABLED: ${CRM_SEED_DEMO_ENABLED:-false}
     depends_on:
       mysql:
         condition: service_healthy

@@ -15,11 +15,13 @@ import {
   ScrollText,
   BarChart3,
   FolderKanban,
+  FileSignature,
   type LucideIcon,
 } from 'lucide-react';
 
 export const ADMIN_BASE = '/2025/luatpoip/admin';
 export const SYS_BASE = '/2025/luatpoip/he-thong';
+export const CRM_WORKSPACE_BASE = '/2025/luatpoip/crm';
 
 export interface NavItem {
   label: string;
@@ -42,6 +44,11 @@ export const OPERATIONS_GROUPS: NavGroup[] = [
   {
     title: 'Khách hàng & CRM',
     items: [
+      {
+        label: 'Quản lý CRM (4 phân hệ)',
+        path: `${CRM_WORKSPACE_BASE}/sale-order`,
+        icon: FileSignature,
+      },
       { label: 'Khách hàng', path: `${ADMIN_BASE}/customers`, icon: Users },
       { label: 'CRM chăm sóc', path: `${ADMIN_BASE}/crm`, icon: HeartHandshake },
     ],

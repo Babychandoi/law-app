@@ -14,6 +14,7 @@ jest.mock('../../../service/documentTemplates', () => ({
     publish: jest.fn(),
     preview: jest.fn(),
     listTemplateVersions: jest.fn(),
+    listFolders: jest.fn(),
   },
 }));
 
@@ -69,6 +70,8 @@ function renderEditor() {
 describe('TemplateFieldEditor save and publish', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    service.listFolders.mockResolvedValue([]);
+    service.listTemplateVersions.mockResolvedValue([]);
   });
 
   it('gửi toàn bộ field trong publish nguyên tử khi server có revision', async () => {

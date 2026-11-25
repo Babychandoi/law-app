@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Dashboard from '../Dashboard';
 import { getCustomers, getCustomerStats } from '../../../../../service/admin';
@@ -33,9 +33,7 @@ test('uses aggregate stats and keeps successful sections when chat fails', async
   await screen.findByText('Khách gần đây');
   expect(screen.getByText('17')).toBeInTheDocument();
   expect(screen.getByText('9')).toBeInTheDocument();
-  await waitFor(() =>
-    expect(screen.getByText(/Không tải được một phần dữ liệu/)).toBeInTheDocument()
-  );
+  expect(await screen.findByText(/Không tải được một phần dữ liệu/)).toBeInTheDocument();
   expect(getCustomerStats).toHaveBeenCalledTimes(1);
   expect(getCustomers).toHaveBeenCalledTimes(1);
   expect(getCustomers).toHaveBeenCalledWith({ page: 0, size: 6 });

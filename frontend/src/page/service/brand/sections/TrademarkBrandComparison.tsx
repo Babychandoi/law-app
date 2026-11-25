@@ -37,9 +37,7 @@ const TrademarkBrandComparison = () => {
       className={`bg-white rounded-xl shadow-sm border ${color} p-6  transition-all duration-300`}
     >
       <div className="flex items-center mb-4">
-        <Icon
-          className={`w-8 h-8 mr-3 ${isProtected ? 'text-green-600' : 'text-brand-primary'}`}
-        />
+        <Icon className={`w-8 h-8 mr-3 ${isProtected ? 'text-green-600' : 'text-brand-primary'}`} />
         <h3 className="text-xl font-bold text-gray-800">{title}</h3>
         {isProtected ? (
           <Shield className="w-6 h-6 ml-auto text-green-600" />
