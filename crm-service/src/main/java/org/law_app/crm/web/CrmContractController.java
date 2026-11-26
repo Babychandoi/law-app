@@ -8,6 +8,7 @@ import org.law_app.crm.service.CrmContractService;
 import org.law_app.crm.service.CrmContractService.ContractSearchResult;
 import org.law_app.crm.service.CrmSupport;
 import org.law_app.crm.web.CrmCaseController.Meta;
+import org.law_app.crm.web.EnterpriseCrmDtos.BulkActionRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.BulkImportRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.CashflowCreateRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.ContractRevenueStatusRequest;
@@ -39,6 +40,8 @@ public class CrmContractController {
           Map.entry("orderDate", "orderDate"),
           Map.entry("createdAt", "createdAt"),
           Map.entry("updatedAt", "updatedAt"),
+          Map.entry("deletedAt", "deletedAt"),
+          Map.entry("deletedBy", "deletedBy"),
           Map.entry("contractNumber", "contractNumber"),
           Map.entry("orderValue", "orderValue"),
           Map.entry("collectedAmount", "collectedAmount"),
@@ -66,6 +69,8 @@ public class CrmContractController {
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
           LocalDate paymentTo,
       @RequestParam(required = false) String preset,
+      @RequestParam(required = false) String filters,
+      @RequestParam(defaultValue = "false") boolean deleted,
       @RequestParam(required = false) String sort,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "20") int size) {
@@ -85,6 +90,8 @@ public class CrmContractController {
             paymentFrom,
             paymentTo,
             preset,
+            filters,
+            deleted,
             pageable);
     return ApiResponse.<CrmContractListPayload>builder()
         .code(200)
@@ -125,7 +132,24 @@ public class CrmContractController {
   @DeleteMapping("/{id}")
   public ApiResponse<Void> delete(@PathVariable String id) {
     contractService.delete(id);
-    return ApiResponse.ok(null, "Đã xóa hợp đồng");
+    return ApiResponse.ok(null, "Đã chuyển hợp đồng vào Thùng rác");
+  }
+
+  @PostMapping("/{id}/restore")
+  public ApiResponse<CrmContractDto> restore(@PathVariable String id) {
+    return ApiResponse.ok(contractService.restore(id), "Đã khôi phục hợp đồng");
+  }
+
+  @DeleteMapping("/{id}/permanent")
+  public ApiResponse<Void> permanentDelete(@PathVariable String id) {
+    contractService.permanentDelete(id);
+    return ApiResponse.ok(null, "Đã xóa vĩnh viễn hợp đồng");
+  }
+
+  @PostMapping("/bulk-action")
+  public ApiResponse<Map<String, Integer>> bulkAction(@RequestBody BulkActionRequest req) {
+    int count = contractService.bulkAction(req);
+    return ApiResponse.ok(Map.of("affected", count), "Đã thực hiện thao tác hàng loạt");
   }
 
   @GetMapping("/{id}/cashflows")

@@ -285,6 +285,10 @@ class CrmOpportunityServiceTest {
             "system",
             "system",
             null,
+            null,
+            List.of(),
+            false,
+            null,
             null);
 
     when(contractService.create(any(ContractUpsertRequest.class))).thenReturn(fakeContract);
@@ -301,5 +305,40 @@ class CrmOpportunityServiceTest {
     assertThat(reqCaptor.getValue().revenueStatus()).isEqualTo("Bản nháp");
     assertThat(reqCaptor.getValue().bookingDate()).isNotNull();
     assertThat(reqCaptor.getValue().items()).hasSize(1);
+  }
+
+  @Test
+  void softDeleteRestorePermanentDeleteAndBulkActionsWorkOnOpportunities() {
+    CrmOpportunity opp =
+        CrmOpportunity.builder()
+            .id("opp-del")
+            .code("CH260099")
+            .opportunityName("Cơ hội thử nghiệm")
+            .tags("[\"SHTT\"]")
+            .build();
+    when(opportunityRepository.findById("opp-del")).thenReturn(Optional.of(opp));
+    when(opportunityRepository.save(any(CrmOpportunity.class)))
+        .thenAnswer(inv -> inv.getArgument(0));
+    when(itemRepository.findByOpportunityIdOrderBySortOrderAsc("opp-del")).thenReturn(List.of());
+
+    opportunityService.delete("opp-del");
+    assertThat(opp.isDeleted()).isTrue();
+    assertThat(opp.getDeletedAt()).isNotNull();
+
+    CrmOpportunityDto restored = opportunityService.restore("opp-del");
+    assertThat(restored.deleted()).isFalse();
+    assertThat(restored.deletedAt()).isNull();
+
+    when(opportunityRepository.findAllById(List.of("opp-del"))).thenReturn(List.of(opp));
+    int tagged =
+        opportunityService.bulkAction(
+            new org.law_app.crm.web.EnterpriseCrmDtos.BulkActionRequest(
+                List.of("opp-del"), "ADD_TAG", null, null, null, "VIP"));
+    assertThat(tagged).isEqualTo(1);
+    assertThat(opp.getTags()).contains("VIP");
+
+    opportunityService.permanentDelete("opp-del");
+    verify(itemRepository).deleteByOpportunityId("opp-del");
+    verify(opportunityRepository).delete(opp);
   }
 }

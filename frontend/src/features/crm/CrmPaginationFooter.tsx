@@ -1,5 +1,11 @@
 import React from 'react';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  ChevronsLeft,
+  ChevronsRight,
+  SlidersHorizontal,
+} from 'lucide-react';
 import { CRM_PAGE_SIZES } from './constants';
 
 export interface CrmFooterKpiItem {
@@ -16,6 +22,7 @@ export interface CrmPaginationFooterProps {
   onPageChange: (nextPage: number) => void;
   onPageSizeChange: (nextSize: number) => void;
   kpis?: CrmFooterKpiItem[];
+  onConfigureSummary?: () => void;
 }
 
 export default function CrmPaginationFooter({
@@ -26,6 +33,7 @@ export default function CrmPaginationFooter({
   onPageChange,
   onPageSizeChange,
   kpis = [],
+  onConfigureSummary,
 }: CrmPaginationFooterProps) {
   const computedTotalPages = Math.max(
     1,
@@ -37,9 +45,21 @@ export default function CrmPaginationFooter({
 
   return (
     <div className="flex min-h-[48px] shrink-0 flex-wrap items-center justify-between gap-3 border-t border-brand-line bg-white px-3.5 py-2 text-xs">
-      <div className="flex flex-wrap items-center gap-x-5 gap-y-1">
+      <div className="flex flex-wrap items-center gap-x-4 gap-y-1">
+        {onConfigureSummary && (
+          <button
+            type="button"
+            onClick={onConfigureSummary}
+            aria-label="Tùy chỉnh trường hiển thị tổng"
+            title="Tùy chỉnh trường hiển thị tổng"
+            className="inline-flex h-7 w-7 items-center justify-center rounded border border-brand-line bg-white text-brand-muted hover:bg-brand-surface hover:text-brand-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+          >
+            <SlidersHorizontal size={13} aria-hidden="true" />
+          </button>
+        )}
+
         <span className="text-brand-ink">
-          Tổng số: <strong className="font-bold tabular-nums">{totalElements}</strong> bản ghi
+          Tổng số <strong className="font-bold tabular-nums">{totalElements}</strong>
         </span>
 
         {kpis.map((kpi) => {
@@ -54,7 +74,7 @@ export default function CrmPaginationFooter({
           return (
             <div
               key={kpi.label}
-              className="flex items-center gap-1.5 border-l border-brand-line pl-4"
+              className="flex items-center gap-1.5 border-l border-brand-line pl-3.5"
             >
               <span className="text-brand-muted">{kpi.label}:</span>
               <strong className={`font-bold tabular-nums ${valColor}`}>{kpi.value}</strong>

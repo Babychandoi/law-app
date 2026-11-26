@@ -9,6 +9,7 @@ import org.law_app.crm.service.CrmSupport;
 import org.law_app.crm.web.CrmCaseController.Meta;
 import org.law_app.crm.web.EnterpriseCrmDtos.AccountContactCreateRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.AccountUpsertRequest;
+import org.law_app.crm.web.EnterpriseCrmDtos.BulkActionRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.BulkImportRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.CrmAccountContactDto;
 import org.law_app.crm.web.EnterpriseCrmDtos.CrmAccountDto;
@@ -32,14 +33,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class CrmAccountController {
 
   private static final Map<String, String> SORTABLE =
-      Map.of(
-          "createdAt", "createdAt",
-          "updatedAt", "updatedAt",
-          "code", "code",
-          "customerName", "customerName",
-          "customerStatus", "customerStatus",
-          "rankLabel", "rankLabel",
-          "annualRevenue", "annualRevenue");
+      Map.ofEntries(
+          Map.entry("createdAt", "createdAt"),
+          Map.entry("updatedAt", "updatedAt"),
+          Map.entry("deletedAt", "deletedAt"),
+          Map.entry("deletedBy", "deletedBy"),
+          Map.entry("code", "code"),
+          Map.entry("customerName", "customerName"),
+          Map.entry("customerStatus", "customerStatus"),
+          Map.entry("rankLabel", "rankLabel"),
+          Map.entry("annualRevenue", "annualRevenue"));
 
   private final CrmAccountService accountService;
 
@@ -53,6 +56,8 @@ public class CrmAccountController {
       @RequestParam(required = false) String billingProvince,
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+      @RequestParam(required = false) String filters,
+      @RequestParam(defaultValue = "false") boolean deleted,
       @RequestParam(required = false) String sort,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "20") int size) {
@@ -69,6 +74,8 @@ public class CrmAccountController {
             billingProvince,
             from,
             to,
+            filters,
+            deleted,
             pageable);
     return ApiResponse.<List<CrmAccountDto>>builder()
         .code(200)
@@ -106,7 +113,24 @@ public class CrmAccountController {
   @DeleteMapping("/{id}")
   public ApiResponse<Void> delete(@PathVariable String id) {
     accountService.delete(id);
-    return ApiResponse.ok(null, "Đã xóa khách hàng");
+    return ApiResponse.ok(null, "Đã chuyển khách hàng vào Thùng rác");
+  }
+
+  @PostMapping("/{id}/restore")
+  public ApiResponse<CrmAccountDto> restore(@PathVariable String id) {
+    return ApiResponse.ok(accountService.restore(id), "Đã khôi phục khách hàng");
+  }
+
+  @DeleteMapping("/{id}/permanent")
+  public ApiResponse<Void> permanentDelete(@PathVariable String id) {
+    accountService.permanentDelete(id);
+    return ApiResponse.ok(null, "Đã xóa vĩnh viễn khách hàng");
+  }
+
+  @PostMapping("/bulk-action")
+  public ApiResponse<Map<String, Integer>> bulkAction(@RequestBody BulkActionRequest req) {
+    int count = accountService.bulkAction(req);
+    return ApiResponse.ok(Map.of("affected", count), "Đã thực hiện thao tác hàng loạt");
   }
 
   @PostMapping("/{id}/contacts")

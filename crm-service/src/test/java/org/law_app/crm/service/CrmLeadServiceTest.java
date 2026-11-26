@@ -219,4 +219,31 @@ class CrmLeadServiceTest {
     assertThat(lead.getLastInteractedAt()).isNotNull();
     verify(leadRepository).save(lead);
   }
+
+  @Test
+  void softDeleteRestorePermanentDeleteAndBulkActionsWorkOnLeadsAndAccounts() {
+    CrmLead lead =
+        CrmLead.builder().id("lead-del").code("TN000010").tags("[\"Nhãn hiệu\"]").build();
+    when(leadRepository.findById("lead-del")).thenReturn(Optional.of(lead));
+    when(leadRepository.save(any(CrmLead.class))).thenAnswer(inv -> inv.getArgument(0));
+
+    leadService.delete("lead-del");
+    assertThat(lead.isDeleted()).isTrue();
+    assertThat(lead.getDeletedAt()).isNotNull();
+
+    CrmLeadDto restored = leadService.restore("lead-del");
+    assertThat(restored.deleted()).isFalse();
+    assertThat(restored.deletedAt()).isNull();
+
+    when(leadRepository.findAllById(List.of("lead-del"))).thenReturn(List.of(lead));
+    int affected =
+        leadService.bulkAction(
+            new org.law_app.crm.web.EnterpriseCrmDtos.BulkActionRequest(
+                List.of("lead-del"), "DELETE", null, null, null, null));
+    assertThat(affected).isEqualTo(1);
+    assertThat(lead.isDeleted()).isTrue();
+
+    leadService.permanentDelete("lead-del");
+    verify(leadRepository).delete(lead);
+  }
 }

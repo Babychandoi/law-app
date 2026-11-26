@@ -9,6 +9,7 @@ import type {
   CrmActivityDto,
   CrmActivityWritePayload,
   CrmApiResponse,
+  CrmBulkActionRequest,
   CrmCashflowLedgerType,
   CrmContractCashflowDto,
   CrmContractCashflowWritePayload,
@@ -18,6 +19,7 @@ import type {
   CrmContractSummaryDto,
   CrmContractWritePayload,
   CrmEntityType,
+  CrmFilterRule,
   CrmKanbanColumnDto,
   CrmLeadConvertRequest,
   CrmLeadConvertResponse,
@@ -25,6 +27,7 @@ import type {
   CrmLeadFilter,
   CrmLeadWritePayload,
   CrmLineItemDto,
+  CrmModuleEndpoint,
   CrmOpportunityDto,
   CrmOpportunityFilter,
   CrmOpportunityWritePayload,
@@ -63,6 +66,16 @@ function cleanParams<T extends object>(params: T): Record<string, unknown> {
     }
   });
   return out;
+}
+
+function serializeFilterParams<T extends { filters?: CrmFilterRule[] }>(
+  filter: T
+): Record<string, unknown> {
+  const { filters, ...rest } = filter;
+  return cleanParams({
+    ...rest,
+    filters: filters?.length ? JSON.stringify(filters) : undefined,
+  });
 }
 
 function emptyDateToNull(val?: string | null): string | null {
@@ -173,6 +186,7 @@ function normalizeOpportunity(raw: CrmOpportunityDto): CrmOpportunityDto {
 function normalizeContract(raw: CrmContractDto): CrmContractDto {
   return {
     ...raw,
+    tags: ensureStringArray(raw.tags),
     liquidationValue: toNumber(raw.liquidationValue),
     orderValue: toNumber(raw.orderValue),
     collectedAmount: toNumber(raw.collectedAmount),
@@ -288,10 +302,30 @@ export const crmEnterpriseApi = {
     return res.data.data ?? [];
   },
 
+  // ----- Thao tác hàng loạt & Thùng rác dùng chung (/crm/{module}) -----
+  bulkAction: async (
+    moduleEndpoint: CrmModuleEndpoint,
+    body: CrmBulkActionRequest
+  ): Promise<{ affected?: number }> => {
+    const res = await gatewayClient.post<CrmApiResponse<{ affected?: number }>>(
+      `/crm/${moduleEndpoint}/bulk-action`,
+      body
+    );
+    return res.data.data ?? { affected: body.ids.length };
+  },
+
+  restoreRecord: async (moduleEndpoint: CrmModuleEndpoint, id: string): Promise<void> => {
+    await gatewayClient.post(`/crm/${moduleEndpoint}/${id}/restore`, {});
+  },
+
+  permanentDeleteRecord: async (moduleEndpoint: CrmModuleEndpoint, id: string): Promise<void> => {
+    await gatewayClient.delete(`/crm/${moduleEndpoint}/${id}/permanent`);
+  },
+
   // ----- 1. KH Liên hệ (/crm/leads) -----
   listLeads: async (filter: CrmLeadFilter): Promise<{ rows: CrmLeadDto[]; meta?: PageMeta }> => {
     const res = await gatewayClient.get<CrmApiResponse<CrmLeadDto[]>>('/crm/leads', {
-      params: cleanParams(filter),
+      params: serializeFilterParams(filter),
     });
     return {
       rows: (res.data.data ?? []).map(normalizeLead),
@@ -345,7 +379,7 @@ export const crmEnterpriseApi = {
     filter: CrmAccountFilter
   ): Promise<{ rows: CrmAccountDto[]; meta?: PageMeta }> => {
     const res = await gatewayClient.get<CrmApiResponse<CrmAccountDto[]>>('/crm/accounts', {
-      params: cleanParams(filter),
+      params: serializeFilterParams(filter),
     });
     return {
       rows: (res.data.data ?? []).map(normalizeAccount),
@@ -436,7 +470,7 @@ export const crmEnterpriseApi = {
     filter: CrmOpportunityFilter
   ): Promise<{ rows: CrmOpportunityDto[]; meta?: PageMeta }> => {
     const res = await gatewayClient.get<CrmApiResponse<CrmOpportunityDto[]>>('/crm/opportunities', {
-      params: cleanParams(filter),
+      params: serializeFilterParams(filter),
     });
     return {
       rows: (res.data.data ?? []).map(normalizeOpportunity),
@@ -448,10 +482,12 @@ export const crmEnterpriseApi = {
     keyword?: string;
     assignedTo?: string;
     serviceGroup?: string;
+    stage?: string;
+    filters?: CrmFilterRule[];
   }): Promise<CrmKanbanColumnDto[]> => {
     const res = await gatewayClient.get<CrmApiResponse<CrmKanbanColumnDto[]>>(
       '/crm/opportunities/kanban',
-      { params: cleanParams(params) }
+      { params: serializeFilterParams(params) }
     );
     return (res.data.data ?? []).map((col) => ({
       stage: col.stage,
@@ -526,7 +562,7 @@ export const crmEnterpriseApi = {
   ): Promise<{ rows: CrmContractDto[]; summary: CrmContractSummaryDto; meta?: PageMeta }> => {
     const res = await gatewayClient.get<CrmApiResponse<CrmContractListPayload | CrmContractDto[]>>(
       '/crm/contracts',
-      { params: cleanParams(filter) }
+      { params: serializeFilterParams(filter) }
     );
     const payload = res.data.data;
     const rawRows = Array.isArray(payload) ? payload : (payload?.rows ?? []);
@@ -534,12 +570,42 @@ export const crmEnterpriseApi = {
     const rawSummary = !Array.isArray(payload) ? payload?.summary : undefined;
     const summary: CrmContractSummaryDto = {
       totalRecords: rawSummary?.totalRecords ?? res.data.meta?.totalElements ?? rows.length,
-      totalOrderValue: rawSummary?.totalOrderValue ?? rows.reduce((s, r) => s + r.orderValue, 0),
-      totalCollected: rawSummary?.totalCollected ?? rows.reduce((s, r) => s + r.collectedAmount, 0),
-      totalReceivable:
-        rawSummary?.totalReceivable ?? rows.reduce((s, r) => s + r.receivableAmount, 0),
-      totalEstimatedProfit:
-        rawSummary?.totalEstimatedProfit ?? rows.reduce((s, r) => s + r.estimatedProfit, 0),
+      totalOrderValue: toNumber(
+        rawSummary?.totalOrderValue ?? rows.reduce((s, r) => s + r.orderValue, 0)
+      ),
+      totalCollected: toNumber(
+        rawSummary?.totalCollected ?? rows.reduce((s, r) => s + r.collectedAmount, 0)
+      ),
+      totalReceivable: toNumber(
+        rawSummary?.totalReceivable ?? rows.reduce((s, r) => s + r.receivableAmount, 0)
+      ),
+      totalEstimatedProfit: toNumber(
+        rawSummary?.totalEstimatedProfit ?? rows.reduce((s, r) => s + r.estimatedProfit, 0)
+      ),
+      totalActualExpense: toNumber(
+        rawSummary?.totalActualExpense ?? rows.reduce((s, r) => s + r.actualExpense, 0)
+      ),
+      totalPlannedExpense: toNumber(
+        rawSummary?.totalPlannedExpense ?? rows.reduce((s, r) => s + r.plannedExpense, 0)
+      ),
+      totalPayable: toNumber(
+        rawSummary?.totalPayable ?? rows.reduce((s, r) => s + r.payableAmount, 0)
+      ),
+      totalServiceExpense: toNumber(
+        rawSummary?.totalServiceExpense ?? rows.reduce((s, r) => s + r.serviceExpense, 0)
+      ),
+      totalStateFeeExpense: toNumber(
+        rawSummary?.totalStateFeeExpense ?? rows.reduce((s, r) => s + r.stateFeeExpense, 0)
+      ),
+      totalSupportExpense: toNumber(
+        rawSummary?.totalSupportExpense ?? rows.reduce((s, r) => s + r.supportExpense, 0)
+      ),
+      totalLiquidationValue: toNumber(
+        rawSummary?.totalLiquidationValue ?? rows.reduce((s, r) => s + r.liquidationValue, 0)
+      ),
+      totalUninvoicedAmount: toNumber(
+        rawSummary?.totalUninvoicedAmount ?? rows.reduce((s, r) => s + r.uninvoicedAmount, 0)
+      ),
     };
     return {
       rows,

@@ -1,15 +1,19 @@
 package org.law_app.crm.service;
 
 import static org.law_app.crm.service.CrmSupport.VN_ZONE;
+import static org.law_app.crm.service.CrmSupport.addTagToJsonList;
 import static org.law_app.crm.service.CrmSupport.assignedPredicate;
 import static org.law_app.crm.service.CrmSupport.blankToDefault;
 import static org.law_app.crm.service.CrmSupport.computeLineItem;
 import static org.law_app.crm.service.CrmSupport.currentActorId;
 import static org.law_app.crm.service.CrmSupport.currentActorName;
+import static org.law_app.crm.service.CrmSupport.fromJsonList;
 import static org.law_app.crm.service.CrmSupport.hasText;
 import static org.law_app.crm.service.CrmSupport.money;
 import static org.law_app.crm.service.CrmSupport.newId;
 import static org.law_app.crm.service.CrmSupport.parseTrailingNumber;
+import static org.law_app.crm.service.CrmSupport.removeTagFromJsonList;
+import static org.law_app.crm.service.CrmSupport.toJsonList;
 import static org.law_app.crm.service.CrmSupport.trimOrNull;
 
 import jakarta.persistence.criteria.Predicate;
@@ -21,6 +25,7 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -33,6 +38,7 @@ import org.law_app.crm.repository.CrmAccountRepository;
 import org.law_app.crm.repository.CrmContractCashflowRepository;
 import org.law_app.crm.repository.CrmContractItemRepository;
 import org.law_app.crm.repository.CrmContractRepository;
+import org.law_app.crm.web.EnterpriseCrmDtos.BulkActionRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.CashflowCreateRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.ContractUpsertRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.CrmContractCashflowDto;
@@ -74,10 +80,82 @@ public class CrmContractService {
       LocalDate paymentTo,
       String preset,
       Pageable pageable) {
+    return search(
+        me,
+        keyword,
+        revenueStatus,
+        executionStatus,
+        assignedTo,
+        department,
+        accountId,
+        bookingFrom,
+        bookingTo,
+        paymentFrom,
+        paymentTo,
+        preset,
+        null,
+        false,
+        pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public ContractSearchResult search(
+      String me,
+      String keyword,
+      String revenueStatus,
+      String executionStatus,
+      String assignedTo,
+      String department,
+      String accountId,
+      LocalDate bookingFrom,
+      LocalDate bookingTo,
+      LocalDate paymentFrom,
+      LocalDate paymentTo,
+      String preset,
+      String filters,
+      Pageable pageable) {
+    return search(
+        me,
+        keyword,
+        revenueStatus,
+        executionStatus,
+        assignedTo,
+        department,
+        accountId,
+        bookingFrom,
+        bookingTo,
+        paymentFrom,
+        paymentTo,
+        preset,
+        filters,
+        false,
+        pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public ContractSearchResult search(
+      String me,
+      String keyword,
+      String revenueStatus,
+      String executionStatus,
+      String assignedTo,
+      String department,
+      String accountId,
+      LocalDate bookingFrom,
+      LocalDate bookingTo,
+      LocalDate paymentFrom,
+      LocalDate paymentTo,
+      String preset,
+      String filters,
+      boolean trashed,
+      Pageable pageable) {
+
+    List<CrmDynamicFilterSpec.FilterRule> filterRules = CrmDynamicFilterSpec.parseRules(filters);
 
     Specification<CrmContract> spec =
         (root, query, cb) -> {
           List<Predicate> ps = new ArrayList<>();
+          ps.add(trashed ? cb.isTrue(root.get("deleted")) : cb.isFalse(root.get("deleted")));
           if (hasText(keyword)) {
             String like = "%" + keyword.trim().toLowerCase() + "%";
             ps.add(
@@ -140,6 +218,9 @@ public class CrmContractService {
               default -> {}
             }
           }
+          ps.addAll(
+              CrmDynamicFilterSpec.buildPredicates(
+                  filterRules, CrmDynamicFilterSpec.CONTRACT_FIELDS, root, cb));
           return cb.and(ps.toArray(new Predicate[0]));
         };
 
@@ -154,24 +235,61 @@ public class CrmContractService {
   public CrmContractSummaryDto computeSummary(List<CrmContract> contracts) {
     if (contracts == null || contracts.isEmpty()) {
       return new CrmContractSummaryDto(
-          0L, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO);
+          0L,
+          BigDecimal.ZERO,
+          BigDecimal.ZERO,
+          BigDecimal.ZERO,
+          BigDecimal.ZERO,
+          BigDecimal.ZERO,
+          BigDecimal.ZERO,
+          BigDecimal.ZERO,
+          BigDecimal.ZERO,
+          BigDecimal.ZERO,
+          BigDecimal.ZERO,
+          BigDecimal.ZERO,
+          BigDecimal.ZERO);
     }
     BigDecimal totalOrder = BigDecimal.ZERO;
     BigDecimal totalCollected = BigDecimal.ZERO;
     BigDecimal totalReceivable = BigDecimal.ZERO;
     BigDecimal totalProfit = BigDecimal.ZERO;
+    BigDecimal totalActualExpense = BigDecimal.ZERO;
+    BigDecimal totalPlannedExpense = BigDecimal.ZERO;
+    BigDecimal totalPayable = BigDecimal.ZERO;
+    BigDecimal totalServiceExpense = BigDecimal.ZERO;
+    BigDecimal totalStateFeeExpense = BigDecimal.ZERO;
+    BigDecimal totalSupportExpense = BigDecimal.ZERO;
+    BigDecimal totalLiquidationValue = BigDecimal.ZERO;
+    BigDecimal totalUninvoicedAmount = BigDecimal.ZERO;
+
     for (CrmContract c : contracts) {
       totalOrder = totalOrder.add(money(c.getOrderValue()));
       totalCollected = totalCollected.add(money(c.getCollectedAmount()));
       totalReceivable = totalReceivable.add(money(c.getReceivableAmount()));
       totalProfit = totalProfit.add(money(c.getEstimatedProfit()));
+      totalActualExpense = totalActualExpense.add(money(c.getActualExpense()));
+      totalPlannedExpense = totalPlannedExpense.add(money(c.getPlannedExpense()));
+      totalPayable = totalPayable.add(money(c.getPayableAmount()));
+      totalServiceExpense = totalServiceExpense.add(money(c.getServiceExpense()));
+      totalStateFeeExpense = totalStateFeeExpense.add(money(c.getStateFeeExpense()));
+      totalSupportExpense = totalSupportExpense.add(money(c.getSupportExpense()));
+      totalLiquidationValue = totalLiquidationValue.add(money(c.getLiquidationValue()));
+      totalUninvoicedAmount = totalUninvoicedAmount.add(money(c.getUninvoicedAmount()));
     }
     return new CrmContractSummaryDto(
         contracts.size(),
         money(totalOrder),
         money(totalCollected),
         money(totalReceivable),
-        money(totalProfit));
+        money(totalProfit),
+        money(totalActualExpense),
+        money(totalPlannedExpense),
+        money(totalPayable),
+        money(totalServiceExpense),
+        money(totalStateFeeExpense),
+        money(totalSupportExpense),
+        money(totalLiquidationValue),
+        money(totalUninvoicedAmount));
   }
 
   @Transactional(readOnly = true)
@@ -184,7 +302,9 @@ public class CrmContractService {
   @Transactional(readOnly = true)
   public List<CrmContractDto> listByAccount(String accountId) {
     List<CrmContract> contracts =
-        contractRepo.findByAccountIdOrderByBookingDateDescCreatedAtDesc(accountId);
+        contractRepo.findByAccountIdOrderByBookingDateDescCreatedAtDesc(accountId).stream()
+            .filter(c -> !c.isDeleted())
+            .toList();
     return toDtos(contracts);
   }
 
@@ -247,9 +367,125 @@ public class CrmContractService {
   @Transactional
   public void delete(String id) {
     CrmContract contract = requireContract(id);
+    Instant now = Instant.now();
+    contract.setDeleted(true);
+    contract.setDeletedAt(now);
+    contract.setDeletedBy(currentActorName());
+    contract.setUpdatedAt(now);
+    contract.setUpdatedBy(currentActorId());
+    contractRepo.save(contract);
+  }
+
+  @Transactional
+  public CrmContractDto restore(String id) {
+    CrmContract contract = requireContract(id);
+    contract.setDeleted(false);
+    contract.setDeletedAt(null);
+    contract.setDeletedBy(null);
+    contract.setUpdatedAt(Instant.now());
+    contract.setUpdatedBy(currentActorId());
+    CrmContract saved = contractRepo.save(contract);
+    List<CrmContractItem> items = itemRepo.findByContractIdOrderBySortOrderAsc(id);
+    return toDto(saved, items);
+  }
+
+  @Transactional
+  public void permanentDelete(String id) {
+    CrmContract contract = requireContract(id);
     cashflowRepo.deleteByContractId(id);
     itemRepo.deleteByContractId(id);
     contractRepo.delete(contract);
+  }
+
+  @Transactional
+  public int bulkAction(BulkActionRequest req) {
+    if (req == null || req.ids() == null || req.ids().isEmpty() || !hasText(req.action())) {
+      return 0;
+    }
+    List<String> ids =
+        req.ids().stream().filter(CrmSupport::hasText).map(String::trim).distinct().toList();
+    if (ids.isEmpty()) {
+      return 0;
+    }
+    String action = req.action().trim().toUpperCase(Locale.ROOT);
+    if (("ADD_TAG".equals(action) || "REMOVE_TAG".equals(action)) && !hasText(req.tag())) {
+      return 0;
+    }
+
+    List<CrmContract> rows = contractRepo.findAllById(ids);
+    Instant now = Instant.now();
+    String actorId = currentActorId();
+    String actorName = currentActorName();
+    int affected = 0;
+
+    for (CrmContract contract : rows) {
+      switch (action) {
+        case "ASSIGN" -> {
+          contract.setAssignedUserId(trimOrNull(req.assignedUserId()));
+          contract.setAssignedUserName(trimOrNull(req.assignedUserName()));
+          contract.setUpdatedAt(now);
+          contract.setUpdatedBy(actorId);
+          contractRepo.save(contract);
+          affected++;
+        }
+        case "SHARE" -> {
+          contract.setShared(req.shared() != null ? req.shared() : true);
+          contract.setUpdatedAt(now);
+          contract.setUpdatedBy(actorId);
+          contractRepo.save(contract);
+          affected++;
+        }
+        case "UNSHARE" -> {
+          contract.setShared(false);
+          contract.setUpdatedAt(now);
+          contract.setUpdatedBy(actorId);
+          contractRepo.save(contract);
+          affected++;
+        }
+        case "ADD_TAG" -> {
+          contract.setTags(addTagToJsonList(contract.getTags(), req.tag()));
+          contract.setUpdatedAt(now);
+          contract.setUpdatedBy(actorId);
+          contractRepo.save(contract);
+          affected++;
+        }
+        case "REMOVE_TAG" -> {
+          contract.setTags(removeTagFromJsonList(contract.getTags(), req.tag()));
+          contract.setUpdatedAt(now);
+          contract.setUpdatedBy(actorId);
+          contractRepo.save(contract);
+          affected++;
+        }
+        case "DELETE" -> {
+          contract.setDeleted(true);
+          contract.setDeletedAt(now);
+          contract.setDeletedBy(actorName);
+          contract.setUpdatedAt(now);
+          contract.setUpdatedBy(actorId);
+          contractRepo.save(contract);
+          affected++;
+        }
+        case "RESTORE" -> {
+          contract.setDeleted(false);
+          contract.setDeletedAt(null);
+          contract.setDeletedBy(null);
+          contract.setUpdatedAt(now);
+          contract.setUpdatedBy(actorId);
+          contractRepo.save(contract);
+          affected++;
+        }
+        case "PERMANENT_DELETE" -> {
+          cashflowRepo.deleteByContractId(contract.getId());
+          itemRepo.deleteByContractId(contract.getId());
+          contractRepo.delete(contract);
+          affected++;
+        }
+        default ->
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "Unsupported bulk action: " + req.action());
+      }
+    }
+    return affected;
   }
 
   @Transactional(readOnly = true)
@@ -525,6 +761,9 @@ public class CrmContractService {
       contract.setSyncPriceAfterDiscount(req.syncPriceAfterDiscount());
     }
     contract.setNotes(trimOrNull(req.notes()));
+    if (isCreate || req.tags() != null) {
+      contract.setTags(toJsonList(req.tags()));
+    }
   }
 
   private List<CrmContractItem> replaceItems(
@@ -675,7 +914,11 @@ public class CrmContractService {
         c.getCreatedBy(),
         c.getUpdatedBy(),
         c.getCreatedAt(),
-        c.getUpdatedAt());
+        c.getUpdatedAt(),
+        fromJsonList(c.getTags()),
+        c.isDeleted(),
+        c.getDeletedAt(),
+        c.getDeletedBy());
   }
 
   private CrmLineItemDto toItemDto(CrmContractItem i) {

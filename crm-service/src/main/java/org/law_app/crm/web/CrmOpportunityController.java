@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.law_app.crm.service.CrmOpportunityService;
 import org.law_app.crm.service.CrmSupport;
 import org.law_app.crm.web.CrmCaseController.Meta;
+import org.law_app.crm.web.EnterpriseCrmDtos.BulkActionRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.BulkImportRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.CrmContractDto;
 import org.law_app.crm.web.EnterpriseCrmDtos.CrmKanbanColumnDto;
@@ -32,14 +33,16 @@ import org.springframework.web.bind.annotation.RestController;
 public class CrmOpportunityController {
 
   private static final Map<String, String> SORTABLE =
-      Map.of(
-          "createdAt", "createdAt",
-          "updatedAt", "updatedAt",
-          "code", "code",
-          "opportunityName", "opportunityName",
-          "expectedRevenue", "expectedRevenue",
-          "expectedCloseDate", "expectedCloseDate",
-          "stage", "stage");
+      Map.ofEntries(
+          Map.entry("createdAt", "createdAt"),
+          Map.entry("updatedAt", "updatedAt"),
+          Map.entry("deletedAt", "deletedAt"),
+          Map.entry("deletedBy", "deletedBy"),
+          Map.entry("code", "code"),
+          Map.entry("opportunityName", "opportunityName"),
+          Map.entry("expectedRevenue", "expectedRevenue"),
+          Map.entry("expectedCloseDate", "expectedCloseDate"),
+          Map.entry("stage", "stage"));
 
   private final CrmOpportunityService opportunityService;
 
@@ -52,6 +55,8 @@ public class CrmOpportunityController {
       @RequestParam(required = false) String accountId,
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+      @RequestParam(required = false) String filters,
+      @RequestParam(defaultValue = "false") boolean deleted,
       @RequestParam(required = false) String sort,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "20") int size) {
@@ -67,6 +72,8 @@ public class CrmOpportunityController {
             accountId,
             from,
             to,
+            filters,
+            deleted,
             pageable);
     return ApiResponse.<List<CrmOpportunityDto>>builder()
         .code(200)
@@ -84,9 +91,12 @@ public class CrmOpportunityController {
   public ApiResponse<List<CrmKanbanColumnDto>> kanban(
       @RequestParam(required = false) String keyword,
       @RequestParam(required = false) String assignedTo,
-      @RequestParam(required = false) String serviceGroup) {
+      @RequestParam(required = false) String serviceGroup,
+      @RequestParam(required = false) String filters,
+      @RequestParam(defaultValue = "false") boolean deleted) {
     return ApiResponse.ok(
-        opportunityService.kanban(CurrentUser.id(), keyword, assignedTo, serviceGroup));
+        opportunityService.kanban(
+            CurrentUser.id(), keyword, assignedTo, serviceGroup, filters, deleted));
   }
 
   @GetMapping("/{id}")
@@ -116,7 +126,24 @@ public class CrmOpportunityController {
   @DeleteMapping("/{id}")
   public ApiResponse<Void> delete(@PathVariable String id) {
     opportunityService.delete(id);
-    return ApiResponse.ok(null, "Đã xóa cơ hội hợp đồng");
+    return ApiResponse.ok(null, "Đã chuyển cơ hội hợp đồng vào Thùng rác");
+  }
+
+  @PostMapping("/{id}/restore")
+  public ApiResponse<CrmOpportunityDto> restore(@PathVariable String id) {
+    return ApiResponse.ok(opportunityService.restore(id), "Đã khôi phục cơ hội hợp đồng");
+  }
+
+  @DeleteMapping("/{id}/permanent")
+  public ApiResponse<Void> permanentDelete(@PathVariable String id) {
+    opportunityService.permanentDelete(id);
+    return ApiResponse.ok(null, "Đã xóa vĩnh viễn cơ hội hợp đồng");
+  }
+
+  @PostMapping("/bulk-action")
+  public ApiResponse<Map<String, Integer>> bulkAction(@RequestBody BulkActionRequest req) {
+    int count = opportunityService.bulkAction(req);
+    return ApiResponse.ok(Map.of("affected", count), "Đã thực hiện thao tác hàng loạt");
   }
 
   @PostMapping("/{id}/convert-contract")

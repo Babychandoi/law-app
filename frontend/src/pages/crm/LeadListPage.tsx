@@ -10,47 +10,49 @@ import {
   Plus,
   RefreshCw,
   Search,
+  Settings,
   Trash2,
   Upload,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import useConfirm from '../../component/common/ui/useConfirm';
 import crmEnterpriseApi from '../../features/crm/api';
-import CrmColumnPicker, {
-  type CrmColumnOption,
-  usePersistedColumns,
-} from '../../features/crm/CrmColumnPicker';
+import CrmColumnPicker, { type CrmColumnOption } from '../../features/crm/CrmColumnPicker';
 import CrmConvertLeadModal from '../../features/crm/CrmConvertLeadModal';
-import CrmFilterPanel, { type CrmFilterFieldConfig } from '../../features/crm/CrmFilterPanel';
+import CrmFilterPanel from '../../features/crm/CrmFilterPanel';
 import CrmImportModal, { type CrmImportFieldMapping } from '../../features/crm/CrmImportModal';
+import CrmMoreActionsMenu, {
+  type CrmActionRecordSummary,
+} from '../../features/crm/CrmMoreActionsMenu';
 import CrmPaginationFooter from '../../features/crm/CrmPaginationFooter';
 import CrmQuickActivityPanel from '../../features/crm/CrmQuickActivityPanel';
+import CrmQuickEditBar, { buildQuickStatsGroups } from '../../features/crm/CrmQuickEditBar';
 import CrmStatusBadge, { CrmAssigneePill, CrmTagList } from '../../features/crm/CrmStatusBadge';
+import CrmViewDesignerModal from '../../features/crm/CrmViewDesignerModal';
+import CrmViewModeDropdown, { type CrmViewMode } from '../../features/crm/CrmViewModeDropdown';
+import CrmViewSelector from '../../features/crm/CrmViewSelector';
 import {
   CRM_LEAD_SOURCES,
   CRM_PROVINCES,
-  CRM_SERVICE_GROUPS,
   LEAD_CUSTOMER_STATUSES,
   LEAD_SAVED_PRESETS,
 } from '../../features/crm/constants';
+import { buildLeadFilterFields, extractAssigneeOptions } from '../../features/crm/filterConfigs';
 import { exportRowsToCsv, formatDateVi } from '../../features/crm/formatters';
-import type { CrmLeadDto, PageMeta } from '../../features/crm/types';
+import type {
+  CrmFilterRule,
+  CrmLeadDto,
+  CrmLeadWritePayload,
+  PageMeta,
+} from '../../features/crm/types';
+import {
+  LEAD_ALL_COLUMNS,
+  LEAD_DEFAULT_COLUMN_KEYS,
+  LEAD_SORT_FIELDS,
+  LEAD_SYSTEM_VIEWS,
+  useCrmSavedViews,
+} from '../../features/crm/viewConfigs';
 import { CRM_BASE, useCrmWorkspace } from './CrmWorkspaceLayout';
-
-const LEAD_COLUMNS: CrmColumnOption[] = [
-  { key: 'tags', label: 'Thẻ' },
-  { key: 'createdAt', label: 'Ngày tạo' },
-  { key: 'customerStatus', label: 'Trạng thái khách hàng' },
-  { key: 'assignedUserName', label: 'Người phụ trách' },
-  { key: 'fullName', label: 'Họ và tên', locked: true },
-  { key: 'phone', label: 'Điện thoại', locked: true },
-  { key: 'serviceGroups', label: 'Nhóm dịch vụ' },
-  { key: 'demandDetail', label: 'Chi tiết nhu cầu KH' },
-  { key: 'organizationName', label: 'Tổ chức' },
-  { key: 'province', label: 'Tỉnh/Thành phố' },
-  { key: 'leadSource', label: 'Nguồn gốc KH' },
-  { key: 'ownerUserName', label: 'Chủ sở hữu' },
-];
 
 const LEAD_IMPORT_MAPPINGS: CrmImportFieldMapping[] = [
   {
@@ -97,17 +99,42 @@ const LEAD_IMPORT_MAPPINGS: CrmImportFieldMapping[] = [
   },
 ];
 
+const EMPTY_SUMMARY_KEYS: string[] = [];
+
 export default function LeadListPage() {
   const navigate = useNavigate();
-  const { staffList } = useCrmWorkspace();
+  const { me, staffList } = useCrmWorkspace();
   const { confirm, confirmDialog } = useConfirm();
+
+  const {
+    views,
+    activeView,
+    setActiveViewId,
+    pinnedViewId,
+    setPinnedViewId,
+    toggleFavoriteView,
+    saveView,
+    deleteView,
+    toggleColumnOnActiveView,
+    resetActiveViewToDefault,
+  } = useCrmSavedViews(
+    'luatpoip.crm.lead',
+    LEAD_SYSTEM_VIEWS,
+    LEAD_ALL_COLUMNS,
+    LEAD_DEFAULT_COLUMN_KEYS,
+    EMPTY_SUMMARY_KEYS,
+    'createdAt'
+  );
+
+  const [viewMode, setViewMode] = useState<CrmViewMode>('list');
+  const [draggedLeadId, setDraggedLeadId] = useState<string | null>(null);
 
   const [rows, setRows] = useState<CrmLeadDto[]>([]);
   const [meta, setMeta] = useState<PageMeta | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [keyword, setKeyword] = useState('');
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
-  const [filterValues, setFilterValues] = useState<Record<string, string>>({});
+  const [filterRules, setFilterRules] = useState<CrmFilterRule[]>([]);
   const [activePreset, setActivePreset] = useState('');
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
@@ -118,11 +145,14 @@ export default function LeadListPage() {
   const [showActivity, setShowActivity] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [convertTarget, setConvertTarget] = useState<CrmLeadDto | null>(null);
+  const [designerState, setDesignerState] = useState<{
+    open: boolean;
+    mode: 'edit' | 'create';
+  }>({ open: false, mode: 'edit' });
 
-  const { visibleKeys, toggleColumn, resetColumns } = usePersistedColumns(
-    'luatpoip.crm.lead.columns',
-    LEAD_COLUMNS
-  );
+  // Quick-Edit state
+  const [dirtyMap, setDirtyMap] = useState<Record<string, CrmLeadWritePayload>>({});
+  const [savingQuickEdit, setSavingQuickEdit] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -131,6 +161,20 @@ export default function LeadListPage() {
     }, 250);
     return () => clearTimeout(t);
   }, [keyword]);
+
+  const combinedFilters = useMemo<CrmFilterRule[]>(() => {
+    const merged: CrmFilterRule[] = [];
+    if (activeView.rules?.length) {
+      merged.push(...activeView.rules);
+    }
+    if (activeView.onlyMine && me?.fullName) {
+      merged.push({ field: 'assignedUserName', op: 'EQ', value: me.fullName });
+    }
+    if (filterRules.length > 0) {
+      merged.push(...filterRules);
+    }
+    return merged;
+  }, [activeView, me, filterRules]);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -146,21 +190,21 @@ export default function LeadListPage() {
                 ? '4/ Tiếp tục chăm sóc'
                 : undefined;
 
+      const effectiveSize = viewMode === 'kanban' ? Math.max(pageSize, 100) : pageSize;
+      const effectivePage = viewMode === 'kanban' ? 0 : page;
+
       const res = await crmEnterpriseApi.listLeads({
         keyword: debouncedKeyword || undefined,
-        customerStatus: filterValues.customerStatus || presetStatus,
-        leadSource: filterValues.leadSource || undefined,
-        assignedTo: filterValues.assignedTo || undefined,
-        serviceGroup: filterValues.serviceGroup || undefined,
-        province: filterValues.province || undefined,
-        from: filterValues.from || undefined,
-        to: filterValues.to || undefined,
-        page,
-        size: pageSize,
+        customerStatus: presetStatus,
+        filters: combinedFilters.length > 0 ? combinedFilters : undefined,
+        sort: `${activeView.sortField},${activeView.sortDir}`,
+        page: effectivePage,
+        size: effectiveSize,
       });
       setRows(res.rows);
       setMeta(res.meta);
       setSelectedIds([]);
+      setDirtyMap({});
       setActiveLead((prev) =>
         prev
           ? (res.rows.find((r) => r.id === prev.id) ?? res.rows[0] ?? null)
@@ -171,53 +215,115 @@ export default function LeadListPage() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedKeyword, filterValues, activePreset, page, pageSize]);
+  }, [
+    viewMode,
+    debouncedKeyword,
+    activePreset,
+    combinedFilters,
+    activeView.sortField,
+    activeView.sortDir,
+    page,
+    pageSize,
+  ]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
 
-  const filterFields = useMemo<CrmFilterFieldConfig[]>(
-    () => [
-      {
-        key: 'customerStatus',
-        label: 'Trạng thái khách hàng',
-        type: 'select',
-        options: LEAD_CUSTOMER_STATUSES,
-      },
-      {
-        key: 'leadSource',
-        label: 'Nguồn gốc KH',
-        type: 'select',
-        options: CRM_LEAD_SOURCES,
-      },
-      {
-        key: 'assignedTo',
-        label: 'Người phụ trách',
-        type: 'select',
-        options: staffList.map((u) => ({ value: u.id, label: u.fullName || u.username })),
-      },
-      {
-        key: 'serviceGroup',
-        label: 'Nhóm dịch vụ',
-        type: 'select',
-        options: CRM_SERVICE_GROUPS,
-      },
-      {
-        key: 'province',
-        label: 'Tỉnh/Thành phố',
-        type: 'select',
-        options: CRM_PROVINCES,
-      },
-      {
-        key: 'from',
-        toKey: 'to',
-        label: 'Ngày tạo',
-        type: 'dateRange',
-      },
-    ],
-    [staffList]
+  const assigneeOptions = useMemo(
+    () =>
+      extractAssigneeOptions(
+        staffList,
+        rows.map((r) => r.assignedUserName)
+      ),
+    [staffList, rows]
   );
+
+  const filterFields = useMemo(() => buildLeadFilterFields(assigneeOptions), [assigneeOptions]);
+
+  const activeColumns = useMemo<CrmColumnOption[]>(() => {
+    const resolved = activeView.columns
+      .map((key) => LEAD_ALL_COLUMNS.find((c) => c.key === key))
+      .filter((c): c is CrmColumnOption => Boolean(c));
+    return resolved.length > 0 ? resolved : LEAD_ALL_COLUMNS.slice(0, 12);
+  }, [activeView.columns]);
+
+  const quickStats = useMemo(
+    () =>
+      buildQuickStatsGroups(rows, {
+        statusLabel: 'Theo Trạng thái KH Liên hệ',
+        getStatus: (r) => r.customerStatus,
+        getAssignee: (r) => r.assignedUserName,
+        getSource: (r) => r.leadSource,
+      }),
+    [rows]
+  );
+
+  const setDirtyField = <K extends keyof CrmLeadWritePayload>(
+    row: CrmLeadDto,
+    key: K,
+    value: CrmLeadWritePayload[K]
+  ) => {
+    setDirtyMap((prev) => {
+      const existing = prev[row.id] ?? {};
+      const nextPatch: CrmLeadWritePayload = {
+        ...existing,
+        [key]: value,
+      };
+      if (key === 'fullName') {
+        nextPatch.customerName = String(value || '');
+      }
+      if (key === 'assignedUserName') {
+        const matched = staffList.find((u) => (u.fullName || u.username) === String(value || ''));
+        nextPatch.assignedUserId = matched ? matched.id : row.assignedUserId;
+      }
+      return {
+        ...prev,
+        [row.id]: nextPatch,
+      };
+    });
+  };
+
+  const dirtyIds = Object.keys(dirtyMap);
+
+  const handleSaveQuickEdit = async () => {
+    if (dirtyIds.length === 0) return;
+    setSavingQuickEdit(true);
+    try {
+      await Promise.all(
+        dirtyIds.map((id) => {
+          const original = rows.find((r) => r.id === id);
+          const patch = dirtyMap[id];
+          if (!original || !patch) return Promise.resolve();
+          return crmEnterpriseApi.updateLead(id, {
+            ...original,
+            ...patch,
+          });
+        })
+      );
+      toast.success(`Đã cập nhật nhanh ${dirtyIds.length} KH Liên hệ`);
+      setDirtyMap({});
+      await loadData();
+    } catch {
+      toast.error('Không thể lưu một số thay đổi trên KH Liên hệ');
+    } finally {
+      setSavingQuickEdit(false);
+    }
+  };
+
+  const handleMoveLeadStatus = async (lead: CrmLeadDto, nextStatus: string) => {
+    if (lead.customerStatus === nextStatus) return;
+    try {
+      await crmEnterpriseApi.updateLead(lead.id, {
+        ...lead,
+        customerStatus: nextStatus,
+      });
+      toast.success(`Đã chuyển sang "${nextStatus}"`);
+      loadData();
+    } catch {
+      toast.error('Không thể cập nhật trạng thái KH Liên hệ');
+    }
+  };
 
   const toggleSelectAll = () => {
     if (selectedIds.length === rows.length) {
@@ -286,35 +392,322 @@ export default function LeadListPage() {
     );
   };
 
-  const isColVisible = (key: string) => visibleKeys.includes(key);
+  const kanbanColumns = useMemo(
+    () =>
+      LEAD_CUSTOMER_STATUSES.map((status) => {
+        const colItems = rows.filter((r) => r.customerStatus === status);
+        return {
+          status,
+          count: colItems.length,
+          items: colItems,
+        };
+      }),
+    [rows]
+  );
+
+  const actionSummaries = useMemo<CrmActionRecordSummary[]>(
+    () =>
+      rows.map((r) => ({
+        id: r.id,
+        code: r.code,
+        title: r.fullName || r.customerName,
+        subtitle: r.organizationName || r.phone,
+        status: r.customerStatus,
+        assignedUserName: r.assignedUserName,
+        updatedAt: r.updatedAt || r.createdAt,
+      })),
+    [rows]
+  );
+
+  const fetchDeletedLeads = useCallback(async (): Promise<CrmActionRecordSummary[]> => {
+    const res = await crmEnterpriseApi.listLeads({ deleted: true, page: 0, size: 100 });
+    return res.rows.map((r) => ({
+      id: r.id,
+      code: r.code,
+      title: r.fullName || r.customerName,
+      subtitle: r.organizationName || r.phone,
+      status: r.customerStatus,
+      assignedUserName: r.assignedUserName,
+      updatedAt: r.updatedAt || r.createdAt,
+    }));
+  }, []);
+
+  const renderCell = (row: CrmLeadDto, colKey: string) => {
+    const patch = dirtyMap[row.id] ?? {};
+    const isQuickEdit = viewMode === 'quickEdit';
+
+    switch (colKey) {
+      case 'tags':
+        return (
+          <td key={colKey} className="px-3 py-2">
+            <CrmTagList tags={row.tags} />
+          </td>
+        );
+
+      case 'createdAt':
+      case 'birthDate':
+      case 'lastInteractedAt':
+        return (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 tabular-nums text-brand-muted">
+            {formatDateVi(row[colKey])}
+          </td>
+        );
+
+      case 'customerStatus':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <select
+              aria-label={`Trạng thái KH Liên hệ ${row.fullName || row.code}`}
+              value={patch.customerStatus ?? row.customerStatus}
+              onChange={(e) => setDirtyField(row, 'customerStatus', e.target.value)}
+              className="h-7 rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              {LEAD_CUSTOMER_STATUSES.map((st) => (
+                <option key={st} value={st}>
+                  {st}
+                </option>
+              ))}
+            </select>
+          </td>
+        ) : (
+          <td key={colKey} className="px-3 py-2">
+            <CrmStatusBadge status={row.customerStatus} />
+          </td>
+        );
+
+      case 'assignedUserName': {
+        const curAssignee =
+          patch.assignedUserName !== undefined
+            ? (patch.assignedUserName ?? '')
+            : (row.assignedUserName ?? '');
+        const selectOpts = Array.from(new Set([curAssignee, ...assigneeOptions].filter(Boolean)));
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <select
+              aria-label={`Người phụ trách ${row.fullName || row.code}`}
+              value={curAssignee}
+              onChange={(e) => setDirtyField(row, 'assignedUserName', e.target.value)}
+              className="h-7 min-w-[140px] rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              <option value="">-- Chưa phân công --</option>
+              {selectOpts.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </td>
+        ) : (
+          <td key={colKey} className="px-3 py-2">
+            <CrmAssigneePill name={row.assignedUserName} />
+          </td>
+        );
+      }
+
+      case 'fullName':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <input
+              type="text"
+              aria-label={`Họ và tên ${row.code}`}
+              value={
+                patch.fullName !== undefined
+                  ? patch.fullName
+                  : row.fullName || row.customerName || ''
+              }
+              onChange={(e) => setDirtyField(row, 'fullName', e.target.value)}
+              className="h-7 w-full min-w-[160px] rounded border border-brand-line bg-white px-2 text-xs font-medium text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td key={colKey} className="px-3 py-2">
+            <Link
+              to={`${CRM_BASE}/lead/${row.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="font-semibold text-brand-primary hover:underline"
+            >
+              {row.fullName || row.customerName}
+            </Link>
+            <div className="text-[11px] tabular-nums text-brand-muted">{row.code}</div>
+          </td>
+        );
+
+      case 'phone':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <input
+              type="text"
+              aria-label={`Điện thoại ${row.code}`}
+              value={patch.phone !== undefined ? patch.phone : row.phone || ''}
+              onChange={(e) => setDirtyField(row, 'phone', e.target.value)}
+              className="h-7 w-[124px] rounded border border-brand-line bg-white px-2 text-xs tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td
+            key={colKey}
+            onClick={(e) => e.stopPropagation()}
+            className="whitespace-nowrap px-3 py-2 tabular-nums"
+          >
+            {row.phone ? (
+              <a
+                href={`tel:${row.phone}`}
+                className="inline-flex items-center gap-1.5 font-medium text-brand-ink hover:text-brand-primary"
+              >
+                <Phone size={13} className="text-brand-primary" aria-hidden="true" />
+                <span>{row.phone}</span>
+              </a>
+            ) : (
+              <span className="text-brand-muted">—</span>
+            )}
+          </td>
+        );
+
+      case 'serviceGroups':
+        return (
+          <td key={colKey} className="max-w-[200px] truncate px-3 py-2 text-brand-ink">
+            {row.serviceGroups?.length ? row.serviceGroups.join(', ') : '—'}
+          </td>
+        );
+
+      case 'demandDetail':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <input
+              type="text"
+              aria-label={`Chi tiết nhu cầu KH ${row.code}`}
+              value={
+                patch.demandDetail !== undefined
+                  ? (patch.demandDetail ?? '')
+                  : (row.demandDetail ?? '')
+              }
+              onChange={(e) => setDirtyField(row, 'demandDetail', e.target.value)}
+              className="h-7 w-full min-w-[180px] rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td key={colKey} className="max-w-[260px] truncate px-3 py-2 text-brand-ink">
+            {row.demandDetail || '—'}
+          </td>
+        );
+
+      case 'organizationName':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <input
+              type="text"
+              aria-label={`Tổ chức ${row.code}`}
+              value={
+                patch.organizationName !== undefined
+                  ? (patch.organizationName ?? '')
+                  : (row.organizationName ?? '')
+              }
+              onChange={(e) => setDirtyField(row, 'organizationName', e.target.value)}
+              className="h-7 w-full min-w-[160px] rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td key={colKey} className="max-w-[180px] truncate px-3 py-2 text-brand-ink">
+            {row.organizationName || '—'}
+          </td>
+        );
+
+      case 'province':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <select
+              aria-label={`Tỉnh/Thành phố ${row.code}`}
+              value={patch.province !== undefined ? (patch.province ?? '') : (row.province ?? '')}
+              onChange={(e) => setDirtyField(row, 'province', e.target.value)}
+              className="h-7 rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              <option value="">-- Chọn tỉnh/TP --</option>
+              {CRM_PROVINCES.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+          </td>
+        ) : (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 text-brand-ink">
+            {row.province || '—'}
+          </td>
+        );
+
+      case 'leadSource':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <select
+              aria-label={`Nguồn gốc KH ${row.code}`}
+              value={
+                patch.leadSource !== undefined ? (patch.leadSource ?? '') : (row.leadSource ?? '')
+              }
+              onChange={(e) => setDirtyField(row, 'leadSource', e.target.value)}
+              className="h-7 rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              <option value="">-- Chọn nguồn --</option>
+              {CRM_LEAD_SOURCES.map((src) => (
+                <option key={src} value={src}>
+                  {src}
+                </option>
+              ))}
+            </select>
+          </td>
+        ) : (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 text-brand-muted">
+            {row.leadSource || '—'}
+          </td>
+        );
+
+      case 'shared':
+        return (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 text-brand-muted">
+            {row.shared ? 'Có' : 'Không'}
+          </td>
+        );
+
+      default: {
+        const val = (row as unknown as Record<string, unknown>)[colKey];
+        return (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 text-brand-ink">
+            {val ? String(val) : '—'}
+          </td>
+        );
+      }
+    }
+  };
 
   return (
     <div className="flex h-full flex-col overflow-hidden px-3 pb-3 pt-2.5 sm:px-4">
       {confirmDialog}
 
-      {/* Sub-header (56px) */}
+      {/* Sub-header */}
       <div className="mb-2.5 flex min-h-[44px] flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <h1 className="text-lg font-semibold text-brand-ink">Tất cả KH Liên hệ</h1>
-          <select
-            aria-label="Chế độ lọc nhanh KH Liên hệ"
-            value={activePreset}
-            onChange={(e) => {
-              setActivePreset(e.target.value);
-              setPage(0);
-            }}
-            className="h-8 rounded-md border border-brand-line bg-white px-2.5 text-xs font-medium text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-          >
-            <option value="">Tất cả bản ghi</option>
-            {LEAD_SAVED_PRESETS.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <CrmViewSelector
+          views={views}
+          activeView={activeView}
+          pinnedViewId={pinnedViewId}
+          onSelectView={(v) => {
+            setActiveViewId(v.id);
+            setPage(0);
+          }}
+          onToggleFavorite={toggleFavoriteView}
+          onPinView={setPinnedViewId}
+          onEditView={() => setDesignerState({ open: true, mode: 'edit' })}
+          onCreateView={() => setDesignerState({ open: true, mode: 'create' })}
+        />
 
         <div className="flex flex-wrap items-center gap-2">
+          <CrmViewModeDropdown
+            value={viewMode}
+            onChange={(nextMode) => {
+              setViewMode(nextMode);
+              if (nextMode !== 'quickEdit') setDirtyMap({});
+            }}
+            ariaLabel="Chuyển chế độ xem KH Liên hệ"
+          />
+
           <button
             type="button"
             onClick={() => setShowImport(true)}
@@ -324,14 +717,16 @@ export default function LeadListPage() {
             <span>Nhập từ Excel</span>
           </button>
 
-          <button
-            type="button"
-            onClick={handleExportCsv}
-            className="inline-flex h-8 items-center gap-1.5 rounded-md border border-brand-line bg-white px-3 text-xs font-medium text-brand-ink hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-          >
-            <Download size={14} className="text-brand-muted" aria-hidden="true" />
-            <span className="hidden sm:inline">Xuất CSV</span>
-          </button>
+          {viewMode !== 'kanban' && (
+            <button
+              type="button"
+              onClick={handleExportCsv}
+              className="inline-flex h-8 items-center gap-1.5 rounded-md border border-brand-line bg-white px-3 text-xs font-medium text-brand-ink hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              <Download size={14} className="text-brand-muted" aria-hidden="true" />
+              <span className="hidden sm:inline">Xuất CSV</span>
+            </button>
+          )}
 
           <Link
             to={`${CRM_BASE}/lead/new`}
@@ -340,10 +735,21 @@ export default function LeadListPage() {
             <Plus size={15} aria-hidden="true" />
             <span>Thêm</span>
           </Link>
+
+          <CrmMoreActionsMenu
+            moduleEndpoint="leads"
+            moduleLabel="KH Liên hệ"
+            records={actionSummaries}
+            selectedIds={selectedIds}
+            staffList={staffList}
+            quickStats={quickStats}
+            fetchDeletedRecords={fetchDeletedLeads}
+            onReload={loadData}
+          />
         </div>
       </div>
 
-      {/* Content Area: Table Card + Right Docked Panels */}
+      {/* Content Area: Table/Kanban Card + Right Docked Panels */}
       <div className="flex min-h-0 flex-1 gap-2.5 overflow-hidden">
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden rounded-lg border border-brand-line bg-white">
           {/* Table Toolbar */}
@@ -393,27 +799,41 @@ export default function LeadListPage() {
                 <RefreshCw size={14} aria-hidden="true" />
               </button>
 
-              <CrmColumnPicker
-                columns={LEAD_COLUMNS}
-                visibleKeys={visibleKeys}
-                onToggle={toggleColumn}
-                onReset={resetColumns}
-              />
+              {viewMode !== 'kanban' && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setDesignerState({ open: true, mode: 'edit' })}
+                    aria-label="Thiết lập giao diện bảng KH Liên hệ"
+                    title="Sửa giao diện"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-brand-line bg-white text-brand-muted hover:bg-brand-surface hover:text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                  >
+                    <Settings size={14} aria-hidden="true" />
+                  </button>
 
-              <button
-                type="button"
-                onClick={() => setShowActivity((v) => !v)}
-                aria-pressed={showActivity}
-                aria-label="Bật tắt khung xem nhanh hoạt động"
-                className={`inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
-                  showActivity
-                    ? 'border-brand-primary bg-brand-primary text-white'
-                    : 'border-brand-line bg-white text-brand-ink hover:bg-brand-surface'
-                }`}
-              >
-                <Activity size={14} aria-hidden="true" />
-                <span className="hidden md:inline">Hoạt động</span>
-              </button>
+                  <CrmColumnPicker
+                    columns={LEAD_ALL_COLUMNS}
+                    visibleKeys={activeView.columns}
+                    onToggle={toggleColumnOnActiveView}
+                    onReset={resetActiveViewToDefault}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowActivity((v) => !v)}
+                    aria-pressed={showActivity}
+                    aria-label="Bật tắt khung xem nhanh hoạt động"
+                    className={`inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
+                      showActivity
+                        ? 'border-brand-primary bg-brand-primary text-white'
+                        : 'border-brand-line bg-white text-brand-ink hover:bg-brand-surface'
+                    }`}
+                  >
+                    <Activity size={14} aria-hidden="true" />
+                    <span className="hidden md:inline">Hoạt động</span>
+                  </button>
+                </>
+              )}
 
               <button
                 type="button"
@@ -432,265 +852,275 @@ export default function LeadListPage() {
             </div>
           </div>
 
-          {/* Scrollable Dense Table */}
-          <div className="min-h-0 flex-1 overflow-auto">
-            <table className="min-w-[1480px] w-full border-collapse text-left text-xs">
-              <thead className="sticky top-0 z-20 border-b border-brand-line bg-brand-surface text-brand-ink">
-                <tr>
-                  <th className="sticky left-0 z-30 w-10 border-r border-brand-line bg-brand-surface px-3 py-2.5 text-center">
-                    <input
-                      type="checkbox"
-                      checked={rows.length > 0 && selectedIds.length === rows.length}
-                      onChange={toggleSelectAll}
-                      aria-label="Chọn tất cả KH Liên hệ trên trang"
-                      className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
-                    />
-                  </th>
-                  {isColVisible('tags') && <th className="px-3 py-2.5 font-bold">Thẻ</th>}
-                  {isColVisible('createdAt') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Ngày tạo</th>
-                  )}
-                  {isColVisible('customerStatus') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">
-                      Trạng thái khách hàng
-                    </th>
-                  )}
-                  {isColVisible('assignedUserName') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Người phụ trách</th>
-                  )}
-                  {isColVisible('fullName') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Họ và tên</th>
-                  )}
-                  {isColVisible('phone') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Điện thoại</th>
-                  )}
-                  {isColVisible('serviceGroups') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Nhóm dịch vụ</th>
-                  )}
-                  {isColVisible('demandDetail') && (
-                    <th className="min-w-[220px] px-3 py-2.5 font-bold">Chi tiết nhu cầu KH</th>
-                  )}
-                  {isColVisible('organizationName') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Tổ chức</th>
-                  )}
-                  {isColVisible('province') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Tỉnh/Thành phố</th>
-                  )}
-                  {isColVisible('leadSource') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Nguồn gốc KH</th>
-                  )}
-                  {isColVisible('ownerUserName') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Chủ sở hữu</th>
-                  )}
-                  <th className="sticky right-0 z-30 w-28 border-l border-brand-line bg-brand-surface px-2.5 py-2.5 text-center font-bold">
-                    Thao tác
-                  </th>
-                </tr>
-              </thead>
+          {viewMode === 'quickEdit' && (
+            <CrmQuickEditBar
+              dirtyCount={dirtyIds.length}
+              saving={savingQuickEdit}
+              onCancel={() => {
+                if (dirtyIds.length > 0) setDirtyMap({});
+                else setViewMode('list');
+              }}
+              onSave={handleSaveQuickEdit}
+            />
+          )}
 
-              <tbody className="divide-y divide-brand-line">
-                {loading ? (
-                  Array.from({ length: 6 }).map((_, idx) => (
-                    <tr key={idx}>
-                      <td colSpan={14} className="px-4 py-3">
-                        <div className="h-4 w-full animate-pulse rounded bg-brand-surface" />
-                      </td>
-                    </tr>
-                  ))
-                ) : rows.length === 0 ? (
-                  <tr>
-                    <td colSpan={14} className="px-6 py-14 text-center">
-                      <p className="text-sm font-semibold text-brand-ink">
-                        Chưa có KH Liên hệ phù hợp điều kiện lọc
-                      </p>
-                      <p className="mt-1 text-xs text-brand-muted">
-                        Nhấn nút &ldquo;+ Thêm&rdquo; hoặc &ldquo;Nhập từ Excel&rdquo; để tiếp nhận
-                        đầu mối tư vấn pháp lý mới.
-                      </p>
-                    </td>
-                  </tr>
-                ) : (
-                  rows.map((row) => {
-                    const isSelected = selectedIds.includes(row.id);
-                    const isCurrent = activeLead?.id === row.id;
-                    return (
-                      <tr
-                        key={row.id}
-                        onClick={() => setActiveLead(row)}
-                        className={`group cursor-pointer transition-colors ${
-                          isSelected || isCurrent
-                            ? 'bg-brand-surface'
-                            : 'bg-white hover:bg-brand-surface/60'
-                        }`}
-                      >
-                        <td
-                          onClick={(e) => e.stopPropagation()}
-                          className="sticky left-0 z-10 border-r border-brand-line bg-inherit px-3 py-2 text-center"
+          {viewMode === 'kanban' ? (
+            <div className="flex min-h-0 flex-1 gap-3 overflow-x-auto bg-brand-surface/50 p-3">
+              {kanbanColumns.map((col) => (
+                <div
+                  key={col.status}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (draggedLeadId) {
+                      const found = rows.find((r) => r.id === draggedLeadId);
+                      if (found) {
+                        handleMoveLeadStatus(found, col.status);
+                      }
+                      setDraggedLeadId(null);
+                    }
+                  }}
+                  className="flex h-full w-[280px] shrink-0 flex-col rounded-lg border border-brand-line bg-white"
+                >
+                  <div className="flex items-center justify-between gap-2 border-b border-brand-line bg-brand-surface px-3 py-2.5">
+                    <h2 className="truncate text-xs font-bold text-brand-ink">{col.status}</h2>
+                    <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-bold tabular-nums text-brand-primary">
+                      {col.count}
+                    </span>
+                  </div>
+
+                  <div className="flex-1 space-y-2.5 overflow-y-auto p-2.5">
+                    {col.items.length === 0 ? (
+                      <div className="rounded-md border border-dashed border-brand-line p-4 text-center text-[11px] text-brand-muted">
+                        Kéo thả KH Liên hệ vào cột này
+                      </div>
+                    ) : (
+                      col.items.map((item) => (
+                        <article
+                          key={item.id}
+                          draggable
+                          onDragStart={() => setDraggedLeadId(item.id)}
+                          onDragEnd={() => setDraggedLeadId(null)}
+                          className="space-y-2 rounded-lg border border-brand-line bg-white p-3 transition-shadow hover:shadow-card"
                         >
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => toggleSelectRow(row.id)}
-                            aria-label={`Chọn KH Liên hệ ${row.fullName || row.code}`}
-                            className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
-                          />
-                        </td>
-
-                        {isColVisible('tags') && (
-                          <td className="px-3 py-2">
-                            <CrmTagList tags={row.tags} />
-                          </td>
-                        )}
-
-                        {isColVisible('createdAt') && (
-                          <td className="whitespace-nowrap px-3 py-2 tabular-nums text-brand-muted">
-                            {formatDateVi(row.createdAt)}
-                          </td>
-                        )}
-
-                        {isColVisible('customerStatus') && (
-                          <td className="px-3 py-2">
-                            <CrmStatusBadge status={row.customerStatus} />
-                          </td>
-                        )}
-
-                        {isColVisible('assignedUserName') && (
-                          <td className="px-3 py-2">
-                            <CrmAssigneePill name={row.assignedUserName} />
-                          </td>
-                        )}
-
-                        {isColVisible('fullName') && (
-                          <td className="px-3 py-2">
+                          <div className="flex items-start justify-between gap-2">
                             <Link
-                              to={`${CRM_BASE}/lead/${row.id}`}
-                              onClick={(e) => e.stopPropagation()}
-                              className="font-semibold text-brand-primary hover:underline"
+                              to={`${CRM_BASE}/lead/${item.id}`}
+                              className="text-xs font-semibold text-brand-primary hover:underline"
                             >
-                              {row.fullName || row.customerName}
+                              {item.fullName || item.customerName}
                             </Link>
-                            <div className="text-[11px] tabular-nums text-brand-muted">
-                              {row.code}
+                            <span className="shrink-0 text-[10px] tabular-nums text-brand-muted">
+                              {item.code}
+                            </span>
+                          </div>
+
+                          {item.phone && (
+                            <a
+                              href={`tel:${item.phone}`}
+                              className="inline-flex items-center gap-1.5 text-xs font-medium tabular-nums text-brand-ink hover:text-brand-primary"
+                            >
+                              <Phone size={12} className="text-brand-primary" aria-hidden="true" />
+                              <span>{item.phone}</span>
+                            </a>
+                          )}
+
+                          {item.organizationName && (
+                            <div className="truncate text-[11px] text-brand-ink">
+                              {item.organizationName}
                             </div>
-                          </td>
-                        )}
+                          )}
 
-                        {isColVisible('phone') && (
-                          <td
-                            onClick={(e) => e.stopPropagation()}
-                            className="whitespace-nowrap px-3 py-2 tabular-nums"
-                          >
-                            {row.phone ? (
-                              <a
-                                href={`tel:${row.phone}`}
-                                className="inline-flex items-center gap-1.5 font-medium text-brand-ink hover:text-brand-primary"
-                              >
-                                <Phone
-                                  size={13}
-                                  className="text-brand-primary"
-                                  aria-hidden="true"
-                                />
-                                <span>{row.phone}</span>
-                              </a>
-                            ) : (
-                              <span className="text-brand-muted">—</span>
-                            )}
-                          </td>
-                        )}
+                          {item.serviceGroups?.length > 0 && (
+                            <div className="truncate text-[11px] text-brand-muted">
+                              {item.serviceGroups.join(', ')}
+                            </div>
+                          )}
 
-                        {isColVisible('serviceGroups') && (
-                          <td className="max-w-[200px] truncate px-3 py-2 text-brand-ink">
-                            {row.serviceGroups?.length ? row.serviceGroups.join(', ') : '—'}
-                          </td>
-                        )}
+                          {item.assignedUserName && (
+                            <div>
+                              <CrmAssigneePill name={item.assignedUserName} />
+                            </div>
+                          )}
 
-                        {isColVisible('demandDetail') && (
-                          <td className="max-w-[260px] truncate px-3 py-2 text-brand-ink">
-                            {row.demandDetail || '—'}
-                          </td>
-                        )}
+                          <div className="flex items-center justify-between gap-1.5 border-t border-brand-line pt-2">
+                            <select
+                              aria-label={`Chuyển trạng thái cho ${item.fullName || item.code}`}
+                              value={item.customerStatus}
+                              onChange={(e) => handleMoveLeadStatus(item, e.target.value)}
+                              className="min-w-0 flex-1 rounded border border-brand-line bg-brand-surface px-1.5 py-1 text-[11px] text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                            >
+                              {LEAD_CUSTOMER_STATUSES.map((st) => (
+                                <option key={st} value={st}>
+                                  {st}
+                                </option>
+                              ))}
+                            </select>
 
-                        {isColVisible('organizationName') && (
-                          <td className="max-w-[180px] truncate px-3 py-2 text-brand-ink">
-                            {row.organizationName || '—'}
-                          </td>
-                        )}
-
-                        {isColVisible('province') && (
-                          <td className="whitespace-nowrap px-3 py-2 text-brand-ink">
-                            {row.province || '—'}
-                          </td>
-                        )}
-
-                        {isColVisible('leadSource') && (
-                          <td className="whitespace-nowrap px-3 py-2 text-brand-muted">
-                            {row.leadSource || '—'}
-                          </td>
-                        )}
-
-                        {isColVisible('ownerUserName') && (
-                          <td className="whitespace-nowrap px-3 py-2 text-brand-muted">
-                            {row.ownerUserName || '—'}
-                          </td>
-                        )}
-
-                        <td
-                          onClick={(e) => e.stopPropagation()}
-                          className="sticky right-0 z-10 border-l border-brand-line bg-inherit px-2 py-2"
-                        >
-                          <div className="flex items-center justify-center gap-1">
-                            {!row.convertedAccountId && (
+                            {!item.convertedAccountId && (
                               <button
                                 type="button"
-                                onClick={() => setConvertTarget(row)}
-                                aria-label={`Chuyển đổi ${row.fullName || row.code}`}
+                                onClick={() => setConvertTarget(item)}
+                                aria-label={`Chuyển đổi ${item.fullName || item.code}`}
                                 title="Chuyển đổi sang Khách hàng"
-                                className="rounded p-1 text-brand-primary hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                                className="rounded border border-brand-line p-1 text-brand-primary hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
                               >
-                                <ArrowRightLeft size={14} aria-hidden="true" />
+                                <ArrowRightLeft size={13} aria-hidden="true" />
                               </button>
                             )}
-                            <Link
-                              to={`${CRM_BASE}/lead/${row.id}/edit`}
-                              aria-label={`Sửa ${row.fullName || row.code}`}
-                              title="Sửa"
-                              className="rounded p-1 text-brand-ink hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-                            >
-                              <Pencil size={14} aria-hidden="true" />
-                            </Link>
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteSingle(row)}
-                              aria-label={`Xóa ${row.fullName || row.code}`}
-                              title="Xóa"
-                              className="rounded p-1 text-brand-muted hover:bg-[#ffe4e6] hover:text-[#9f1239] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-                            >
-                              <Trash2 size={14} aria-hidden="true" />
-                            </button>
                           </div>
+                        </article>
+                      ))
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              {/* Scrollable Dense Table */}
+              <div className="min-h-0 flex-1 overflow-auto">
+                <table className="min-w-[1480px] w-full border-collapse text-left text-xs">
+                  <thead className="sticky top-0 z-20 border-b border-brand-line bg-brand-surface text-brand-ink">
+                    <tr>
+                      <th className="sticky left-0 z-30 w-10 border-r border-brand-line bg-brand-surface px-3 py-2.5 text-center">
+                        <input
+                          type="checkbox"
+                          checked={rows.length > 0 && selectedIds.length === rows.length}
+                          onChange={toggleSelectAll}
+                          aria-label="Chọn tất cả KH Liên hệ trên trang"
+                          className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
+                        />
+                      </th>
+                      {activeColumns.map((col) => (
+                        <th
+                          key={col.key}
+                          className={`whitespace-nowrap px-3 py-2.5 font-bold ${
+                            col.key === 'demandDetail' ? 'min-w-[220px]' : ''
+                          }`}
+                        >
+                          {col.label}
+                        </th>
+                      ))}
+                      <th className="sticky right-0 z-30 w-28 border-l border-brand-line bg-brand-surface px-2.5 py-2.5 text-center font-bold">
+                        Thao tác
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="divide-y divide-brand-line">
+                    {loading ? (
+                      Array.from({ length: 6 }).map((_, idx) => (
+                        <tr key={idx}>
+                          <td colSpan={activeColumns.length + 2} className="px-4 py-3">
+                            <div className="h-4 w-full animate-pulse rounded bg-brand-surface" />
+                          </td>
+                        </tr>
+                      ))
+                    ) : rows.length === 0 ? (
+                      <tr>
+                        <td colSpan={activeColumns.length + 2} className="px-6 py-14 text-center">
+                          <p className="text-sm font-semibold text-brand-ink">
+                            Chưa có KH Liên hệ phù hợp điều kiện lọc
+                          </p>
+                          <p className="mt-1 text-xs text-brand-muted">
+                            Nhấn nút &ldquo;+ Thêm&rdquo; hoặc &ldquo;Nhập từ Excel&rdquo; để tiếp
+                            nhận đầu mối tư vấn pháp lý mới.
+                          </p>
                         </td>
                       </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+                    ) : (
+                      rows.map((row) => {
+                        const isSelected = selectedIds.includes(row.id);
+                        const isCurrent = activeLead?.id === row.id;
+                        const isDirty = Boolean(dirtyMap[row.id]);
+                        return (
+                          <tr
+                            key={row.id}
+                            onClick={() => setActiveLead(row)}
+                            className={`group cursor-pointer transition-colors ${
+                              isDirty
+                                ? 'bg-brand-accentSoft/40'
+                                : isSelected || isCurrent
+                                  ? 'bg-brand-surface'
+                                  : 'bg-white hover:bg-brand-surface/60'
+                            }`}
+                          >
+                            <td
+                              onClick={(e) => e.stopPropagation()}
+                              className="sticky left-0 z-10 border-r border-brand-line bg-inherit px-3 py-2 text-center"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => toggleSelectRow(row.id)}
+                                aria-label={`Chọn KH Liên hệ ${row.fullName || row.code}`}
+                                className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
+                              />
+                            </td>
 
-          <CrmPaginationFooter
-            totalElements={meta?.totalElements ?? rows.length}
-            page={page}
-            pageSize={pageSize}
-            totalPages={meta?.totalPages}
-            onPageChange={setPage}
-            onPageSizeChange={(sz) => {
-              setPageSize(sz);
-              setPage(0);
-            }}
-          />
+                            {activeColumns.map((col) => renderCell(row, col.key))}
+
+                            <td
+                              onClick={(e) => e.stopPropagation()}
+                              className="sticky right-0 z-10 border-l border-brand-line bg-inherit px-2 py-2"
+                            >
+                              <div className="flex items-center justify-center gap-1">
+                                {!row.convertedAccountId && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setConvertTarget(row)}
+                                    aria-label={`Chuyển đổi ${row.fullName || row.code}`}
+                                    title="Chuyển đổi sang Khách hàng"
+                                    className="rounded p-1 text-brand-primary hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                                  >
+                                    <ArrowRightLeft size={14} aria-hidden="true" />
+                                  </button>
+                                )}
+                                <Link
+                                  to={`${CRM_BASE}/lead/${row.id}/edit`}
+                                  aria-label={`Sửa ${row.fullName || row.code}`}
+                                  title="Sửa"
+                                  className="rounded p-1 text-brand-ink hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                                >
+                                  <Pencil size={14} aria-hidden="true" />
+                                </Link>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteSingle(row)}
+                                  aria-label={`Xóa ${row.fullName || row.code}`}
+                                  title="Xóa"
+                                  className="rounded p-1 text-brand-muted hover:bg-[#ffe4e6] hover:text-[#9f1239] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                                >
+                                  <Trash2 size={14} aria-hidden="true" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              <CrmPaginationFooter
+                totalElements={meta?.totalElements ?? rows.length}
+                page={page}
+                pageSize={pageSize}
+                totalPages={meta?.totalPages}
+                onPageChange={setPage}
+                onPageSizeChange={(sz) => {
+                  setPageSize(sz);
+                  setPage(0);
+                }}
+                onConfigureSummary={() => setDesignerState({ open: true, mode: 'edit' })}
+              />
+            </>
+          )}
         </div>
 
-        {showActivity && (
+        {viewMode !== 'kanban' && showActivity && (
           <CrmQuickActivityPanel
             docked
             entityType="LEAD"
@@ -711,18 +1141,33 @@ export default function LeadListPage() {
             setPage(0);
           }}
           fields={filterFields}
-          values={filterValues}
-          onApply={(next) => {
-            setFilterValues(next);
+          rules={filterRules}
+          onApplyRules={(nextRules) => {
+            setFilterRules(nextRules);
             setPage(0);
           }}
           onReset={() => {
-            setFilterValues({});
+            setFilterRules([]);
             setActivePreset('');
             setPage(0);
           }}
+          storageKey="luatpoip.crm.lead.savedFilters"
+          quickStats={quickStats}
         />
       </div>
+
+      <CrmViewDesignerModal
+        open={designerState.open}
+        mode={designerState.mode}
+        view={activeView}
+        allColumns={LEAD_ALL_COLUMNS}
+        defaultColumnKeys={LEAD_DEFAULT_COLUMN_KEYS}
+        sortFields={LEAD_SORT_FIELDS}
+        defaultSortField="createdAt"
+        onClose={() => setDesignerState((prev) => ({ ...prev, open: false }))}
+        onSave={saveView}
+        onDelete={deleteView}
+      />
 
       <CrmImportModal
         open={showImport}

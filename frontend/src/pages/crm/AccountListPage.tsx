@@ -10,46 +10,47 @@ import {
   Plus,
   RefreshCw,
   Search,
+  Settings,
   Trash2,
   Upload,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import useConfirm from '../../component/common/ui/useConfirm';
 import crmEnterpriseApi from '../../features/crm/api';
-import CrmColumnPicker, {
-  type CrmColumnOption,
-  usePersistedColumns,
-} from '../../features/crm/CrmColumnPicker';
-import CrmFilterPanel, { type CrmFilterFieldConfig } from '../../features/crm/CrmFilterPanel';
+import CrmColumnPicker, { type CrmColumnOption } from '../../features/crm/CrmColumnPicker';
+import CrmFilterPanel from '../../features/crm/CrmFilterPanel';
 import CrmImportModal, { type CrmImportFieldMapping } from '../../features/crm/CrmImportModal';
+import CrmMoreActionsMenu, {
+  type CrmActionRecordSummary,
+} from '../../features/crm/CrmMoreActionsMenu';
 import CrmPaginationFooter from '../../features/crm/CrmPaginationFooter';
 import CrmQuickActivityPanel from '../../features/crm/CrmQuickActivityPanel';
-import CrmStatusBadge, { CrmAssigneePill } from '../../features/crm/CrmStatusBadge';
+import CrmQuickEditBar, { buildQuickStatsGroups } from '../../features/crm/CrmQuickEditBar';
+import CrmStatusBadge, { CrmAssigneePill, CrmTagList } from '../../features/crm/CrmStatusBadge';
+import CrmViewDesignerModal from '../../features/crm/CrmViewDesignerModal';
+import CrmViewModeDropdown, { type CrmViewMode } from '../../features/crm/CrmViewModeDropdown';
+import CrmViewSelector from '../../features/crm/CrmViewSelector';
 import {
-  ACCOUNT_CARE_STATUSES,
   ACCOUNT_CUSTOMER_STATUSES,
   ACCOUNT_SAVED_PRESETS,
   CRM_PROVINCES,
-  CRM_SERVICE_GROUPS,
 } from '../../features/crm/constants';
-import { exportRowsToCsv, formatDateVi } from '../../features/crm/formatters';
-import type { CrmAccountDto, PageMeta } from '../../features/crm/types';
+import { buildAccountFilterFields, extractAssigneeOptions } from '../../features/crm/filterConfigs';
+import { exportRowsToCsv, formatDateVi, formatVnd } from '../../features/crm/formatters';
+import type {
+  CrmAccountDto,
+  CrmAccountWritePayload,
+  CrmFilterRule,
+  PageMeta,
+} from '../../features/crm/types';
+import {
+  ACCOUNT_ALL_COLUMNS,
+  ACCOUNT_DEFAULT_COLUMN_KEYS,
+  ACCOUNT_SORT_FIELDS,
+  ACCOUNT_SYSTEM_VIEWS,
+  useCrmSavedViews,
+} from '../../features/crm/viewConfigs';
 import { CRM_BASE, useCrmWorkspace } from './CrmWorkspaceLayout';
-
-const ACCOUNT_COLUMNS: CrmColumnOption[] = [
-  { key: 'createdAt', label: 'Ngày tạo' },
-  { key: 'customerStatus', label: 'Trạng thái khách hàng' },
-  { key: 'serviceGroups', label: 'Nhóm dịch vụ' },
-  { key: 'demandDetail', label: 'Chi tiết nhu cầu KH' },
-  { key: 'assignedUserName', label: 'Người phụ trách' },
-  { key: 'customerName', label: 'Tên khách hàng', locked: true },
-  { key: 'relatedUsers', label: 'Người liên quan' },
-  { key: 'phone', label: 'Điện thoại', locked: true },
-  { key: 'servicesSummary', label: 'Dịch vụ' },
-  { key: 'careStatuses', label: 'Tình trạng chăm sóc KH' },
-  { key: 'ownerUserName', label: 'Chủ sở hữu' },
-  { key: 'billingProvince', label: 'Tỉnh/Thành phố (Hóa đơn)' },
-];
 
 const ACCOUNT_IMPORT_MAPPINGS: CrmImportFieldMapping[] = [
   {
@@ -91,16 +92,41 @@ const ACCOUNT_IMPORT_MAPPINGS: CrmImportFieldMapping[] = [
   },
 ];
 
+const EMPTY_SUMMARY_KEYS: string[] = [];
+
 export default function AccountListPage() {
-  const { staffList } = useCrmWorkspace();
+  const { me, staffList } = useCrmWorkspace();
   const { confirm, confirmDialog } = useConfirm();
+
+  const {
+    views,
+    activeView,
+    setActiveViewId,
+    pinnedViewId,
+    setPinnedViewId,
+    toggleFavoriteView,
+    saveView,
+    deleteView,
+    toggleColumnOnActiveView,
+    resetActiveViewToDefault,
+  } = useCrmSavedViews(
+    'luatpoip.crm.account',
+    ACCOUNT_SYSTEM_VIEWS,
+    ACCOUNT_ALL_COLUMNS,
+    ACCOUNT_DEFAULT_COLUMN_KEYS,
+    EMPTY_SUMMARY_KEYS,
+    'createdAt'
+  );
+
+  const [viewMode, setViewMode] = useState<CrmViewMode>('list');
+  const [draggedAccountId, setDraggedAccountId] = useState<string | null>(null);
 
   const [rows, setRows] = useState<CrmAccountDto[]>([]);
   const [meta, setMeta] = useState<PageMeta | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [keyword, setKeyword] = useState('');
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
-  const [filterValues, setFilterValues] = useState<Record<string, string>>({});
+  const [filterRules, setFilterRules] = useState<CrmFilterRule[]>([]);
   const [activePreset, setActivePreset] = useState('');
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
@@ -110,11 +136,14 @@ export default function AccountListPage() {
   const [showFilter, setShowFilter] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
   const [showImport, setShowImport] = useState(false);
+  const [designerState, setDesignerState] = useState<{
+    open: boolean;
+    mode: 'edit' | 'create';
+  }>({ open: false, mode: 'edit' });
 
-  const { visibleKeys, toggleColumn, resetColumns } = usePersistedColumns(
-    'luatpoip.crm.account.columns',
-    ACCOUNT_COLUMNS
-  );
+  // Quick-Edit state
+  const [dirtyMap, setDirtyMap] = useState<Record<string, CrmAccountWritePayload>>({});
+  const [savingQuickEdit, setSavingQuickEdit] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -123,6 +152,20 @@ export default function AccountListPage() {
     }, 250);
     return () => clearTimeout(t);
   }, [keyword]);
+
+  const combinedFilters = useMemo<CrmFilterRule[]>(() => {
+    const merged: CrmFilterRule[] = [];
+    if (activeView.rules?.length) {
+      merged.push(...activeView.rules);
+    }
+    if (activeView.onlyMine && me?.fullName) {
+      merged.push({ field: 'assignedUserName', op: 'EQ', value: me.fullName });
+    }
+    if (filterRules.length > 0) {
+      merged.push(...filterRules);
+    }
+    return merged;
+  }, [activeView, me, filterRules]);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -136,21 +179,21 @@ export default function AccountListPage() {
               ? 'Tiềm năng'
               : undefined;
 
+      const effectiveSize = viewMode === 'kanban' ? Math.max(pageSize, 100) : pageSize;
+      const effectivePage = viewMode === 'kanban' ? 0 : page;
+
       const res = await crmEnterpriseApi.listAccounts({
         keyword: debouncedKeyword || undefined,
-        customerStatus: filterValues.customerStatus || presetStatus,
-        careStatus: filterValues.careStatus || undefined,
-        assignedTo: filterValues.assignedTo || undefined,
-        serviceGroup: filterValues.serviceGroup || undefined,
-        billingProvince: filterValues.billingProvince || undefined,
-        from: filterValues.from || undefined,
-        to: filterValues.to || undefined,
-        page,
-        size: pageSize,
+        customerStatus: presetStatus,
+        filters: combinedFilters.length > 0 ? combinedFilters : undefined,
+        sort: `${activeView.sortField},${activeView.sortDir}`,
+        page: effectivePage,
+        size: effectiveSize,
       });
       setRows(res.rows);
       setMeta(res.meta);
       setSelectedIds([]);
+      setDirtyMap({});
       setActiveAccount((prev) =>
         prev
           ? (res.rows.find((r) => r.id === prev.id) ?? res.rows[0] ?? null)
@@ -161,53 +204,112 @@ export default function AccountListPage() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedKeyword, filterValues, activePreset, page, pageSize]);
+  }, [
+    viewMode,
+    debouncedKeyword,
+    activePreset,
+    combinedFilters,
+    activeView.sortField,
+    activeView.sortDir,
+    page,
+    pageSize,
+  ]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
 
-  const filterFields = useMemo<CrmFilterFieldConfig[]>(
-    () => [
-      {
-        key: 'customerStatus',
-        label: 'Trạng thái khách hàng',
-        type: 'select',
-        options: ACCOUNT_CUSTOMER_STATUSES,
-      },
-      {
-        key: 'careStatus',
-        label: 'Tình trạng chăm sóc KH',
-        type: 'select',
-        options: ACCOUNT_CARE_STATUSES,
-      },
-      {
-        key: 'assignedTo',
-        label: 'Người phụ trách',
-        type: 'select',
-        options: staffList.map((u) => ({ value: u.id, label: u.fullName || u.username })),
-      },
-      {
-        key: 'serviceGroup',
-        label: 'Nhóm dịch vụ',
-        type: 'select',
-        options: CRM_SERVICE_GROUPS,
-      },
-      {
-        key: 'billingProvince',
-        label: 'Tỉnh/TP (Hóa đơn)',
-        type: 'select',
-        options: CRM_PROVINCES,
-      },
-      {
-        key: 'from',
-        toKey: 'to',
-        label: 'Ngày tạo',
-        type: 'dateRange',
-      },
-    ],
-    [staffList]
+  const assigneeOptions = useMemo(
+    () =>
+      extractAssigneeOptions(
+        staffList,
+        rows.map((r) => r.assignedUserName)
+      ),
+    [staffList, rows]
   );
+
+  const filterFields = useMemo(() => buildAccountFilterFields(assigneeOptions), [assigneeOptions]);
+
+  const activeColumns = useMemo<CrmColumnOption[]>(() => {
+    const resolved = activeView.columns
+      .map((key) => ACCOUNT_ALL_COLUMNS.find((c) => c.key === key))
+      .filter((c): c is CrmColumnOption => Boolean(c));
+    return resolved.length > 0 ? resolved : ACCOUNT_ALL_COLUMNS.slice(0, 12);
+  }, [activeView.columns]);
+
+  const quickStats = useMemo(
+    () =>
+      buildQuickStatsGroups(rows, {
+        statusLabel: 'Theo Trạng thái Khách hàng',
+        getStatus: (r) => r.customerStatus,
+        getAssignee: (r) => r.assignedUserName,
+        getSource: (r) => r.leadSource,
+      }),
+    [rows]
+  );
+
+  const setDirtyField = <K extends keyof CrmAccountWritePayload>(
+    row: CrmAccountDto,
+    key: K,
+    value: CrmAccountWritePayload[K]
+  ) => {
+    setDirtyMap((prev) => {
+      const existing = prev[row.id] ?? {};
+      const nextPatch: CrmAccountWritePayload = {
+        ...existing,
+        [key]: value,
+      };
+      if (key === 'assignedUserName') {
+        const matched = staffList.find((u) => (u.fullName || u.username) === String(value || ''));
+        nextPatch.assignedUserId = matched ? matched.id : row.assignedUserId;
+      }
+      return {
+        ...prev,
+        [row.id]: nextPatch,
+      };
+    });
+  };
+
+  const dirtyIds = Object.keys(dirtyMap);
+
+  const handleSaveQuickEdit = async () => {
+    if (dirtyIds.length === 0) return;
+    setSavingQuickEdit(true);
+    try {
+      await Promise.all(
+        dirtyIds.map((id) => {
+          const original = rows.find((r) => r.id === id);
+          const patch = dirtyMap[id];
+          if (!original || !patch) return Promise.resolve();
+          return crmEnterpriseApi.updateAccount(id, {
+            ...original,
+            ...patch,
+          });
+        })
+      );
+      toast.success(`Đã cập nhật nhanh ${dirtyIds.length} khách hàng`);
+      setDirtyMap({});
+      await loadData();
+    } catch {
+      toast.error('Không thể lưu một số thay đổi trên Khách hàng');
+    } finally {
+      setSavingQuickEdit(false);
+    }
+  };
+
+  const handleMoveAccountStatus = async (account: CrmAccountDto, nextStatus: string) => {
+    if (account.customerStatus === nextStatus) return;
+    try {
+      await crmEnterpriseApi.updateAccount(account.id, {
+        ...account,
+        customerStatus: nextStatus,
+      });
+      toast.success(`Đã chuyển sang "${nextStatus}"`);
+      loadData();
+    } catch {
+      toast.error('Không thể cập nhật trạng thái Khách hàng');
+    }
+  };
 
   const toggleSelectAll = () => {
     if (selectedIds.length === rows.length) setSelectedIds([]);
@@ -271,7 +373,305 @@ export default function AccountListPage() {
     );
   };
 
-  const isColVisible = (key: string) => visibleKeys.includes(key);
+  const kanbanColumns = useMemo(
+    () =>
+      ACCOUNT_CUSTOMER_STATUSES.map((status) => {
+        const colItems = rows.filter((r) => r.customerStatus === status);
+        return {
+          status,
+          count: colItems.length,
+          items: colItems,
+        };
+      }),
+    [rows]
+  );
+
+  const actionSummaries = useMemo<CrmActionRecordSummary[]>(
+    () =>
+      rows.map((r) => ({
+        id: r.id,
+        code: r.code,
+        title: r.customerName,
+        subtitle: r.taxCode ? `MST: ${r.taxCode}` : r.phone,
+        status: r.customerStatus,
+        assignedUserName: r.assignedUserName,
+        updatedAt: r.updatedAt || r.createdAt,
+      })),
+    [rows]
+  );
+
+  const fetchDeletedAccounts = useCallback(async (): Promise<CrmActionRecordSummary[]> => {
+    const res = await crmEnterpriseApi.listAccounts({ deleted: true, page: 0, size: 100 });
+    return res.rows.map((r) => ({
+      id: r.id,
+      code: r.code,
+      title: r.customerName,
+      subtitle: r.taxCode ? `MST: ${r.taxCode}` : r.phone,
+      status: r.customerStatus,
+      assignedUserName: r.assignedUserName,
+      updatedAt: r.updatedAt || r.createdAt,
+    }));
+  }, []);
+
+  const renderCell = (row: CrmAccountDto, colKey: string) => {
+    const patch = dirtyMap[row.id] ?? {};
+    const isQuickEdit = viewMode === 'quickEdit';
+
+    switch (colKey) {
+      case 'createdAt':
+      case 'foundedDate':
+        return (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 tabular-nums text-brand-muted">
+            {formatDateVi(row[colKey])}
+          </td>
+        );
+
+      case 'customerStatus':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <select
+              aria-label={`Trạng thái khách hàng ${row.customerName}`}
+              value={patch.customerStatus ?? row.customerStatus}
+              onChange={(e) => setDirtyField(row, 'customerStatus', e.target.value)}
+              className="h-7 rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              {ACCOUNT_CUSTOMER_STATUSES.map((st) => (
+                <option key={st} value={st}>
+                  {st}
+                </option>
+              ))}
+            </select>
+          </td>
+        ) : (
+          <td key={colKey} className="px-3 py-2">
+            <CrmStatusBadge status={row.customerStatus} />
+          </td>
+        );
+
+      case 'serviceGroups':
+        return (
+          <td key={colKey} className="max-w-[180px] truncate px-3 py-2 text-brand-ink">
+            {row.serviceGroups?.length ? row.serviceGroups.join(', ') : '—'}
+          </td>
+        );
+
+      case 'demandDetail':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <input
+              type="text"
+              aria-label={`Chi tiết nhu cầu KH ${row.customerName}`}
+              value={
+                patch.demandDetail !== undefined
+                  ? (patch.demandDetail ?? '')
+                  : (row.demandDetail ?? '')
+              }
+              onChange={(e) => setDirtyField(row, 'demandDetail', e.target.value)}
+              className="h-7 w-full min-w-[180px] rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td key={colKey} className="max-w-[240px] truncate px-3 py-2 text-brand-ink">
+            {row.demandDetail || '—'}
+          </td>
+        );
+
+      case 'assignedUserName': {
+        const curAssignee =
+          patch.assignedUserName !== undefined
+            ? (patch.assignedUserName ?? '')
+            : (row.assignedUserName ?? '');
+        const selectOpts = Array.from(new Set([curAssignee, ...assigneeOptions].filter(Boolean)));
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <select
+              aria-label={`Người phụ trách ${row.customerName}`}
+              value={curAssignee}
+              onChange={(e) => setDirtyField(row, 'assignedUserName', e.target.value)}
+              className="h-7 min-w-[140px] rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              <option value="">-- Chưa phân công --</option>
+              {selectOpts.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </td>
+        ) : (
+          <td key={colKey} className="px-3 py-2">
+            <CrmAssigneePill name={row.assignedUserName} />
+          </td>
+        );
+      }
+
+      case 'customerName':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <input
+              type="text"
+              aria-label={`Tên khách hàng ${row.code}`}
+              value={patch.customerName !== undefined ? patch.customerName : row.customerName || ''}
+              onChange={(e) => setDirtyField(row, 'customerName', e.target.value)}
+              className="h-7 w-full min-w-[180px] rounded border border-brand-line bg-white px-2 text-xs font-medium text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td key={colKey} className="px-3 py-2">
+            <Link
+              to={`${CRM_BASE}/account/${row.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="font-semibold text-brand-primary hover:underline"
+            >
+              {row.customerName}
+            </Link>
+            <div className="flex items-center gap-2 text-[11px] tabular-nums text-brand-muted">
+              <span>{row.code}</span>
+              {row.taxCode && <span>· MST: {row.taxCode}</span>}
+            </div>
+          </td>
+        );
+
+      case 'relatedUsers':
+        return (
+          <td key={colKey} className="max-w-[160px] truncate px-3 py-2 text-brand-muted">
+            {row.relatedUsers?.length ? row.relatedUsers.join(', ') : '—'}
+          </td>
+        );
+
+      case 'phone':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <input
+              type="text"
+              aria-label={`Điện thoại ${row.code}`}
+              value={patch.phone !== undefined ? patch.phone : row.phone || ''}
+              onChange={(e) => setDirtyField(row, 'phone', e.target.value)}
+              className="h-7 w-[124px] rounded border border-brand-line bg-white px-2 text-xs tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td
+            key={colKey}
+            onClick={(e) => e.stopPropagation()}
+            className="whitespace-nowrap px-3 py-2 tabular-nums"
+          >
+            {row.phone ? (
+              <a
+                href={`tel:${row.phone}`}
+                className="inline-flex items-center gap-1.5 font-medium text-brand-ink hover:text-brand-primary"
+              >
+                <Phone size={13} className="text-brand-primary" aria-hidden="true" />
+                <span>{row.phone}</span>
+              </a>
+            ) : (
+              '—'
+            )}
+          </td>
+        );
+
+      case 'servicesSummary':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <input
+              type="text"
+              aria-label={`Dịch vụ ${row.code}`}
+              value={
+                patch.servicesSummary !== undefined
+                  ? (patch.servicesSummary ?? '')
+                  : (row.servicesSummary ?? '')
+              }
+              onChange={(e) => setDirtyField(row, 'servicesSummary', e.target.value)}
+              className="h-7 w-full min-w-[160px] rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td key={colKey} className="max-w-[180px] truncate px-3 py-2 text-brand-ink">
+            {row.servicesSummary || '—'}
+          </td>
+        );
+
+      case 'careStatuses':
+        return (
+          <td key={colKey} className="px-3 py-2">
+            {row.careStatuses?.length ? (
+              <CrmStatusBadge status={row.careStatuses[0]} />
+            ) : (
+              <span className="text-brand-muted">—</span>
+            )}
+          </td>
+        );
+
+      case 'billingProvince':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <select
+              aria-label={`Tỉnh/Thành phố (Hóa đơn) ${row.code}`}
+              value={
+                patch.billingProvince !== undefined
+                  ? (patch.billingProvince ?? '')
+                  : (row.billingProvince ?? '')
+              }
+              onChange={(e) => setDirtyField(row, 'billingProvince', e.target.value)}
+              className="h-7 rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              <option value="">-- Chọn tỉnh/TP --</option>
+              {CRM_PROVINCES.map((p) => (
+                <option key={p} value={p}>
+                  {p}
+                </option>
+              ))}
+            </select>
+          </td>
+        ) : (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 text-brand-ink">
+            {row.billingProvince || '—'}
+          </td>
+        );
+
+      case 'tags':
+        return (
+          <td key={colKey} className="px-3 py-2">
+            <CrmTagList tags={row.tags} />
+          </td>
+        );
+
+      case 'industries':
+        return (
+          <td key={colKey} className="max-w-[180px] truncate px-3 py-2 text-brand-ink">
+            {row.industries?.length ? row.industries.join(', ') : '—'}
+          </td>
+        );
+
+      case 'annualRevenue':
+        return (
+          <td
+            key={colKey}
+            className="whitespace-nowrap px-3 py-2 text-right tabular-nums text-brand-ink"
+          >
+            {row.annualRevenue ? formatVnd(row.annualRevenue) : '—'}
+          </td>
+        );
+
+      case 'shared':
+      case 'individual':
+      case 'partner':
+        return (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 text-brand-muted">
+            {row[colKey] ? 'Có' : 'Không'}
+          </td>
+        );
+
+      default: {
+        const val = (row as unknown as Record<string, unknown>)[colKey];
+        return (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 text-brand-ink">
+            {val ? String(val) : '—'}
+          </td>
+        );
+      }
+    }
+  };
 
   return (
     <div className="flex h-full flex-col overflow-hidden px-3 pb-3 pt-2.5 sm:px-4">
@@ -279,27 +679,30 @@ export default function AccountListPage() {
 
       {/* Sub-header */}
       <div className="mb-2.5 flex min-h-[44px] flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <h1 className="text-lg font-semibold text-brand-ink">Tất cả Khách hàng</h1>
-          <select
-            aria-label="Chế độ lọc nhanh Khách hàng"
-            value={activePreset}
-            onChange={(e) => {
-              setActivePreset(e.target.value);
-              setPage(0);
-            }}
-            className="h-8 rounded-md border border-brand-line bg-white px-2.5 text-xs font-medium text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-          >
-            <option value="">Tất cả khách hàng</option>
-            {ACCOUNT_SAVED_PRESETS.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <CrmViewSelector
+          views={views}
+          activeView={activeView}
+          pinnedViewId={pinnedViewId}
+          onSelectView={(v) => {
+            setActiveViewId(v.id);
+            setPage(0);
+          }}
+          onToggleFavorite={toggleFavoriteView}
+          onPinView={setPinnedViewId}
+          onEditView={() => setDesignerState({ open: true, mode: 'edit' })}
+          onCreateView={() => setDesignerState({ open: true, mode: 'create' })}
+        />
 
         <div className="flex flex-wrap items-center gap-2">
+          <CrmViewModeDropdown
+            value={viewMode}
+            onChange={(nextMode) => {
+              setViewMode(nextMode);
+              if (nextMode !== 'quickEdit') setDirtyMap({});
+            }}
+            ariaLabel="Chuyển chế độ xem Khách hàng"
+          />
+
           <button
             type="button"
             onClick={() => setShowImport(true)}
@@ -309,14 +712,16 @@ export default function AccountListPage() {
             <span>Nhập từ Excel</span>
           </button>
 
-          <button
-            type="button"
-            onClick={handleExportCsv}
-            className="inline-flex h-8 items-center gap-1.5 rounded-md border border-brand-line bg-white px-3 text-xs font-medium text-brand-ink hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-          >
-            <Download size={14} className="text-brand-muted" aria-hidden="true" />
-            <span className="hidden sm:inline">Xuất CSV</span>
-          </button>
+          {viewMode !== 'kanban' && (
+            <button
+              type="button"
+              onClick={handleExportCsv}
+              className="inline-flex h-8 items-center gap-1.5 rounded-md border border-brand-line bg-white px-3 text-xs font-medium text-brand-ink hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              <Download size={14} className="text-brand-muted" aria-hidden="true" />
+              <span className="hidden sm:inline">Xuất CSV</span>
+            </button>
+          )}
 
           <Link
             to={`${CRM_BASE}/account/new`}
@@ -325,6 +730,17 @@ export default function AccountListPage() {
             <Plus size={15} aria-hidden="true" />
             <span>Thêm</span>
           </Link>
+
+          <CrmMoreActionsMenu
+            moduleEndpoint="accounts"
+            moduleLabel="Khách hàng"
+            records={actionSummaries}
+            selectedIds={selectedIds}
+            staffList={staffList}
+            quickStats={quickStats}
+            fetchDeletedRecords={fetchDeletedAccounts}
+            onReload={loadData}
+          />
         </div>
       </div>
 
@@ -376,27 +792,41 @@ export default function AccountListPage() {
                 <RefreshCw size={14} aria-hidden="true" />
               </button>
 
-              <CrmColumnPicker
-                columns={ACCOUNT_COLUMNS}
-                visibleKeys={visibleKeys}
-                onToggle={toggleColumn}
-                onReset={resetColumns}
-              />
+              {viewMode !== 'kanban' && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setDesignerState({ open: true, mode: 'edit' })}
+                    aria-label="Thiết lập giao diện bảng Khách hàng"
+                    title="Sửa giao diện"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-brand-line bg-white text-brand-muted hover:bg-brand-surface hover:text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                  >
+                    <Settings size={14} aria-hidden="true" />
+                  </button>
 
-              <button
-                type="button"
-                onClick={() => setShowActivity((v) => !v)}
-                aria-pressed={showActivity}
-                aria-label="Bật tắt khung xem nhanh hoạt động"
-                className={`inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
-                  showActivity
-                    ? 'border-brand-primary bg-brand-primary text-white'
-                    : 'border-brand-line bg-white text-brand-ink hover:bg-brand-surface'
-                }`}
-              >
-                <Activity size={14} aria-hidden="true" />
-                <span className="hidden md:inline">Hoạt động</span>
-              </button>
+                  <CrmColumnPicker
+                    columns={ACCOUNT_ALL_COLUMNS}
+                    visibleKeys={activeView.columns}
+                    onToggle={toggleColumnOnActiveView}
+                    onReset={resetActiveViewToDefault}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowActivity((v) => !v)}
+                    aria-pressed={showActivity}
+                    aria-label="Bật tắt khung xem nhanh hoạt động"
+                    className={`inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
+                      showActivity
+                        ? 'border-brand-primary bg-brand-primary text-white'
+                        : 'border-brand-line bg-white text-brand-ink hover:bg-brand-surface'
+                    }`}
+                  >
+                    <Activity size={14} aria-hidden="true" />
+                    <span className="hidden md:inline">Hoạt động</span>
+                  </button>
+                </>
+              )}
 
               <button
                 type="button"
@@ -415,272 +845,273 @@ export default function AccountListPage() {
             </div>
           </div>
 
-          {/* 12-column Table */}
-          <div className="min-h-0 flex-1 overflow-auto">
-            <table className="min-w-[1560px] w-full border-collapse text-left text-xs">
-              <thead className="sticky top-0 z-20 border-b border-brand-line bg-brand-surface text-brand-ink">
-                <tr>
-                  <th className="sticky left-0 z-30 w-10 border-r border-brand-line bg-brand-surface px-3 py-2.5 text-center">
-                    <input
-                      type="checkbox"
-                      checked={rows.length > 0 && selectedIds.length === rows.length}
-                      onChange={toggleSelectAll}
-                      aria-label="Chọn tất cả Khách hàng trên trang"
-                      className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
-                    />
-                  </th>
-                  {isColVisible('createdAt') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Ngày tạo</th>
-                  )}
-                  {isColVisible('customerStatus') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">
-                      Trạng thái khách hàng
-                    </th>
-                  )}
-                  {isColVisible('serviceGroups') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Nhóm dịch vụ</th>
-                  )}
-                  {isColVisible('demandDetail') && (
-                    <th className="min-w-[220px] px-3 py-2.5 font-bold">Chi tiết nhu cầu KH</th>
-                  )}
-                  {isColVisible('assignedUserName') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Người phụ trách</th>
-                  )}
-                  {isColVisible('customerName') && (
-                    <th className="min-w-[210px] px-3 py-2.5 font-bold">Tên khách hàng</th>
-                  )}
-                  {isColVisible('relatedUsers') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Người liên quan</th>
-                  )}
-                  {isColVisible('phone') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Điện thoại</th>
-                  )}
-                  {isColVisible('servicesSummary') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Dịch vụ</th>
-                  )}
-                  {isColVisible('careStatuses') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">
-                      Tình trạng chăm sóc KH
-                    </th>
-                  )}
-                  {isColVisible('ownerUserName') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Chủ sở hữu</th>
-                  )}
-                  {isColVisible('billingProvince') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">
-                      Tỉnh/Thành phố (Hóa đơn)
-                    </th>
-                  )}
-                  <th className="sticky right-0 z-30 w-28 border-l border-brand-line bg-brand-surface px-2.5 py-2.5 text-center font-bold">
-                    Thao tác
-                  </th>
-                </tr>
-              </thead>
+          {viewMode === 'quickEdit' && (
+            <CrmQuickEditBar
+              dirtyCount={dirtyIds.length}
+              saving={savingQuickEdit}
+              onCancel={() => {
+                if (dirtyIds.length > 0) setDirtyMap({});
+                else setViewMode('list');
+              }}
+              onSave={handleSaveQuickEdit}
+            />
+          )}
 
-              <tbody className="divide-y divide-brand-line">
-                {loading ? (
-                  Array.from({ length: 6 }).map((_, idx) => (
-                    <tr key={idx}>
-                      <td colSpan={14} className="px-4 py-3">
-                        <div className="h-4 w-full animate-pulse rounded bg-brand-surface" />
-                      </td>
-                    </tr>
-                  ))
-                ) : rows.length === 0 ? (
-                  <tr>
-                    <td colSpan={14} className="px-6 py-14 text-center">
-                      <p className="text-sm font-semibold text-brand-ink">
-                        Chưa có Khách hàng phù hợp điều kiện tìm kiếm
-                      </p>
-                      <p className="mt-1 text-xs text-brand-muted">
-                        Tạo mới khách hàng hoặc chuyển đổi từ phân hệ KH Liên hệ để quản lý 360°.
-                      </p>
-                    </td>
-                  </tr>
-                ) : (
-                  rows.map((row) => {
-                    const isSelected = selectedIds.includes(row.id);
-                    const isCurrent = activeAccount?.id === row.id;
-                    return (
-                      <tr
-                        key={row.id}
-                        onClick={() => setActiveAccount(row)}
-                        className={`cursor-pointer transition-colors ${
-                          isSelected || isCurrent
-                            ? 'bg-brand-surface'
-                            : 'bg-white hover:bg-brand-surface/60'
-                        }`}
-                      >
-                        <td
-                          onClick={(e) => e.stopPropagation()}
-                          className="sticky left-0 z-10 border-r border-brand-line bg-inherit px-3 py-2 text-center"
+          {viewMode === 'kanban' ? (
+            <div className="flex min-h-0 flex-1 gap-3 overflow-x-auto bg-brand-surface/50 p-3">
+              {kanbanColumns.map((col) => (
+                <div
+                  key={col.status}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (draggedAccountId) {
+                      const found = rows.find((r) => r.id === draggedAccountId);
+                      if (found) {
+                        handleMoveAccountStatus(found, col.status);
+                      }
+                      setDraggedAccountId(null);
+                    }
+                  }}
+                  className="flex h-full w-[290px] shrink-0 flex-col rounded-lg border border-brand-line bg-white"
+                >
+                  <div className="flex items-center justify-between gap-2 border-b border-brand-line bg-brand-surface px-3 py-2.5">
+                    <h2 className="truncate text-xs font-bold text-brand-ink">{col.status}</h2>
+                    <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-bold tabular-nums text-brand-primary">
+                      {col.count}
+                    </span>
+                  </div>
+
+                  <div className="flex-1 space-y-2.5 overflow-y-auto p-2.5">
+                    {col.items.length === 0 ? (
+                      <div className="rounded-md border border-dashed border-brand-line p-4 text-center text-[11px] text-brand-muted">
+                        Kéo thả khách hàng vào cột này
+                      </div>
+                    ) : (
+                      col.items.map((item) => (
+                        <article
+                          key={item.id}
+                          draggable
+                          onDragStart={() => setDraggedAccountId(item.id)}
+                          onDragEnd={() => setDraggedAccountId(null)}
+                          className="space-y-2 rounded-lg border border-brand-line bg-white p-3 transition-shadow hover:shadow-card"
                         >
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => toggleSelectRow(row.id)}
-                            aria-label={`Chọn khách hàng ${row.customerName}`}
-                            className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
-                          />
-                        </td>
-
-                        {isColVisible('createdAt') && (
-                          <td className="whitespace-nowrap px-3 py-2 tabular-nums text-brand-muted">
-                            {formatDateVi(row.createdAt)}
-                          </td>
-                        )}
-
-                        {isColVisible('customerStatus') && (
-                          <td className="px-3 py-2">
-                            <CrmStatusBadge status={row.customerStatus} />
-                          </td>
-                        )}
-
-                        {isColVisible('serviceGroups') && (
-                          <td className="max-w-[180px] truncate px-3 py-2 text-brand-ink">
-                            {row.serviceGroups?.length ? row.serviceGroups.join(', ') : '—'}
-                          </td>
-                        )}
-
-                        {isColVisible('demandDetail') && (
-                          <td className="max-w-[240px] truncate px-3 py-2 text-brand-ink">
-                            {row.demandDetail || '—'}
-                          </td>
-                        )}
-
-                        {isColVisible('assignedUserName') && (
-                          <td className="px-3 py-2">
-                            <CrmAssigneePill name={row.assignedUserName} />
-                          </td>
-                        )}
-
-                        {isColVisible('customerName') && (
-                          <td className="px-3 py-2">
+                          <div className="flex items-start justify-between gap-2">
                             <Link
-                              to={`${CRM_BASE}/account/${row.id}`}
-                              onClick={(e) => e.stopPropagation()}
-                              className="font-semibold text-brand-primary hover:underline"
+                              to={`${CRM_BASE}/account/${item.id}`}
+                              className="text-xs font-semibold text-brand-primary hover:underline"
                             >
-                              {row.customerName}
+                              {item.customerName}
                             </Link>
-                            <div className="flex items-center gap-2 text-[11px] tabular-nums text-brand-muted">
-                              <span>{row.code}</span>
-                              {row.taxCode && <span>· MST: {row.taxCode}</span>}
-                            </div>
-                          </td>
-                        )}
-
-                        {isColVisible('relatedUsers') && (
-                          <td className="max-w-[160px] truncate px-3 py-2 text-brand-muted">
-                            {row.relatedUsers?.length ? row.relatedUsers.join(', ') : '—'}
-                          </td>
-                        )}
-
-                        {isColVisible('phone') && (
-                          <td
-                            onClick={(e) => e.stopPropagation()}
-                            className="whitespace-nowrap px-3 py-2 tabular-nums"
-                          >
-                            {row.phone ? (
-                              <a
-                                href={`tel:${row.phone}`}
-                                className="inline-flex items-center gap-1.5 font-medium text-brand-ink hover:text-brand-primary"
-                              >
-                                <Phone
-                                  size={13}
-                                  className="text-brand-primary"
-                                  aria-hidden="true"
-                                />
-                                <span>{row.phone}</span>
-                              </a>
-                            ) : (
-                              '—'
-                            )}
-                          </td>
-                        )}
-
-                        {isColVisible('servicesSummary') && (
-                          <td className="max-w-[180px] truncate px-3 py-2 text-brand-ink">
-                            {row.servicesSummary || '—'}
-                          </td>
-                        )}
-
-                        {isColVisible('careStatuses') && (
-                          <td className="px-3 py-2">
-                            {row.careStatuses?.length ? (
-                              <CrmStatusBadge status={row.careStatuses[0]} />
-                            ) : (
-                              <span className="text-brand-muted">—</span>
-                            )}
-                          </td>
-                        )}
-
-                        {isColVisible('ownerUserName') && (
-                          <td className="whitespace-nowrap px-3 py-2 text-brand-muted">
-                            {row.ownerUserName || '—'}
-                          </td>
-                        )}
-
-                        {isColVisible('billingProvince') && (
-                          <td className="whitespace-nowrap px-3 py-2 text-brand-ink">
-                            {row.billingProvince || '—'}
-                          </td>
-                        )}
-
-                        <td
-                          onClick={(e) => e.stopPropagation()}
-                          className="sticky right-0 z-10 border-l border-brand-line bg-inherit px-2 py-2"
-                        >
-                          <div className="flex items-center justify-center gap-1">
-                            <Link
-                              to={`${CRM_BASE}/sale-order/new?accountId=${row.id}`}
-                              aria-label={`Sinh hợp đồng cho ${row.customerName}`}
-                              title="Sinh hợp đồng"
-                              className="rounded p-1 text-brand-primary hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-                            >
-                              <FilePlus2 size={14} aria-hidden="true" />
-                            </Link>
-                            <Link
-                              to={`${CRM_BASE}/account/${row.id}/edit`}
-                              aria-label={`Sửa khách hàng ${row.customerName}`}
-                              title="Sửa"
-                              className="rounded p-1 text-brand-ink hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-                            >
-                              <Pencil size={14} aria-hidden="true" />
-                            </Link>
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteSingle(row)}
-                              aria-label={`Xóa khách hàng ${row.customerName}`}
-                              title="Xóa"
-                              className="rounded p-1 text-brand-muted hover:bg-[#ffe4e6] hover:text-[#9f1239] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-                            >
-                              <Trash2 size={14} aria-hidden="true" />
-                            </button>
+                            <span className="shrink-0 text-[10px] tabular-nums text-brand-muted">
+                              {item.code}
+                            </span>
                           </div>
+
+                          {item.taxCode && (
+                            <div className="text-[11px] tabular-nums text-brand-muted">
+                              MST: {item.taxCode}
+                            </div>
+                          )}
+
+                          {item.phone && (
+                            <a
+                              href={`tel:${item.phone}`}
+                              className="inline-flex items-center gap-1.5 text-xs font-medium tabular-nums text-brand-ink hover:text-brand-primary"
+                            >
+                              <Phone size={12} className="text-brand-primary" aria-hidden="true" />
+                              <span>{item.phone}</span>
+                            </a>
+                          )}
+
+                          {item.serviceGroups?.length > 0 && (
+                            <div className="truncate text-[11px] text-brand-muted">
+                              {item.serviceGroups.join(', ')}
+                            </div>
+                          )}
+
+                          {item.assignedUserName && (
+                            <div>
+                              <CrmAssigneePill name={item.assignedUserName} />
+                            </div>
+                          )}
+
+                          <div className="flex items-center justify-between gap-1.5 border-t border-brand-line pt-2">
+                            <select
+                              aria-label={`Chuyển trạng thái cho ${item.customerName}`}
+                              value={item.customerStatus}
+                              onChange={(e) => handleMoveAccountStatus(item, e.target.value)}
+                              className="min-w-0 flex-1 rounded border border-brand-line bg-brand-surface px-1.5 py-1 text-[11px] text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                            >
+                              {ACCOUNT_CUSTOMER_STATUSES.map((st) => (
+                                <option key={st} value={st}>
+                                  {st}
+                                </option>
+                              ))}
+                            </select>
+
+                            <Link
+                              to={`${CRM_BASE}/sale-order/new?accountId=${item.id}`}
+                              aria-label={`Sinh hợp đồng cho ${item.customerName}`}
+                              title="Sinh hợp đồng"
+                              className="rounded border border-brand-line p-1 text-brand-primary hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                            >
+                              <FilePlus2 size={13} aria-hidden="true" />
+                            </Link>
+                          </div>
+                        </article>
+                      ))
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              {/* Dynamic Account Table */}
+              <div className="min-h-0 flex-1 overflow-auto">
+                <table className="min-w-[1560px] w-full border-collapse text-left text-xs">
+                  <thead className="sticky top-0 z-20 border-b border-brand-line bg-brand-surface text-brand-ink">
+                    <tr>
+                      <th className="sticky left-0 z-30 w-10 border-r border-brand-line bg-brand-surface px-3 py-2.5 text-center">
+                        <input
+                          type="checkbox"
+                          checked={rows.length > 0 && selectedIds.length === rows.length}
+                          onChange={toggleSelectAll}
+                          aria-label="Chọn tất cả Khách hàng trên trang"
+                          className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
+                        />
+                      </th>
+                      {activeColumns.map((col) => (
+                        <th
+                          key={col.key}
+                          className={`whitespace-nowrap px-3 py-2.5 font-bold ${
+                            col.key === 'annualRevenue' ? 'text-right' : ''
+                          } ${
+                            col.key === 'demandDetail' || col.key === 'customerName'
+                              ? 'min-w-[210px]'
+                              : ''
+                          }`}
+                        >
+                          {col.label}
+                        </th>
+                      ))}
+                      <th className="sticky right-0 z-30 w-28 border-l border-brand-line bg-brand-surface px-2.5 py-2.5 text-center font-bold">
+                        Thao tác
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="divide-y divide-brand-line">
+                    {loading ? (
+                      Array.from({ length: 6 }).map((_, idx) => (
+                        <tr key={idx}>
+                          <td colSpan={activeColumns.length + 2} className="px-4 py-3">
+                            <div className="h-4 w-full animate-pulse rounded bg-brand-surface" />
+                          </td>
+                        </tr>
+                      ))
+                    ) : rows.length === 0 ? (
+                      <tr>
+                        <td colSpan={activeColumns.length + 2} className="px-6 py-14 text-center">
+                          <p className="text-sm font-semibold text-brand-ink">
+                            Chưa có Khách hàng phù hợp điều kiện tìm kiếm
+                          </p>
+                          <p className="mt-1 text-xs text-brand-muted">
+                            Tạo mới khách hàng hoặc chuyển đổi từ phân hệ KH Liên hệ để quản lý
+                            360°.
+                          </p>
                         </td>
                       </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+                    ) : (
+                      rows.map((row) => {
+                        const isSelected = selectedIds.includes(row.id);
+                        const isCurrent = activeAccount?.id === row.id;
+                        const isDirty = Boolean(dirtyMap[row.id]);
+                        return (
+                          <tr
+                            key={row.id}
+                            onClick={() => setActiveAccount(row)}
+                            className={`cursor-pointer transition-colors ${
+                              isDirty
+                                ? 'bg-brand-accentSoft/40'
+                                : isSelected || isCurrent
+                                  ? 'bg-brand-surface'
+                                  : 'bg-white hover:bg-brand-surface/60'
+                            }`}
+                          >
+                            <td
+                              onClick={(e) => e.stopPropagation()}
+                              className="sticky left-0 z-10 border-r border-brand-line bg-inherit px-3 py-2 text-center"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() => toggleSelectRow(row.id)}
+                                aria-label={`Chọn khách hàng ${row.customerName}`}
+                                className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
+                              />
+                            </td>
 
-          <CrmPaginationFooter
-            totalElements={meta?.totalElements ?? rows.length}
-            page={page}
-            pageSize={pageSize}
-            totalPages={meta?.totalPages}
-            onPageChange={setPage}
-            onPageSizeChange={(sz) => {
-              setPageSize(sz);
-              setPage(0);
-            }}
-          />
+                            {activeColumns.map((col) => renderCell(row, col.key))}
+
+                            <td
+                              onClick={(e) => e.stopPropagation()}
+                              className="sticky right-0 z-10 border-l border-brand-line bg-inherit px-2 py-2"
+                            >
+                              <div className="flex items-center justify-center gap-1">
+                                <Link
+                                  to={`${CRM_BASE}/sale-order/new?accountId=${row.id}`}
+                                  aria-label={`Sinh hợp đồng cho ${row.customerName}`}
+                                  title="Sinh hợp đồng"
+                                  className="rounded p-1 text-brand-primary hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                                >
+                                  <FilePlus2 size={14} aria-hidden="true" />
+                                </Link>
+                                <Link
+                                  to={`${CRM_BASE}/account/${row.id}/edit`}
+                                  aria-label={`Sửa khách hàng ${row.customerName}`}
+                                  title="Sửa"
+                                  className="rounded p-1 text-brand-ink hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                                >
+                                  <Pencil size={14} aria-hidden="true" />
+                                </Link>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteSingle(row)}
+                                  aria-label={`Xóa khách hàng ${row.customerName}`}
+                                  title="Xóa"
+                                  className="rounded p-1 text-brand-muted hover:bg-[#ffe4e6] hover:text-[#9f1239] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                                >
+                                  <Trash2 size={14} aria-hidden="true" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              <CrmPaginationFooter
+                totalElements={meta?.totalElements ?? rows.length}
+                page={page}
+                pageSize={pageSize}
+                totalPages={meta?.totalPages}
+                onPageChange={setPage}
+                onPageSizeChange={(sz) => {
+                  setPageSize(sz);
+                  setPage(0);
+                }}
+                onConfigureSummary={() => setDesignerState({ open: true, mode: 'edit' })}
+              />
+            </>
+          )}
         </div>
 
-        {showActivity && (
+        {viewMode !== 'kanban' && showActivity && (
           <CrmQuickActivityPanel
             docked
             entityType="ACCOUNT"
@@ -701,18 +1132,33 @@ export default function AccountListPage() {
             setPage(0);
           }}
           fields={filterFields}
-          values={filterValues}
-          onApply={(next) => {
-            setFilterValues(next);
+          rules={filterRules}
+          onApplyRules={(nextRules) => {
+            setFilterRules(nextRules);
             setPage(0);
           }}
           onReset={() => {
-            setFilterValues({});
+            setFilterRules([]);
             setActivePreset('');
             setPage(0);
           }}
+          storageKey="luatpoip.crm.account.savedFilters"
+          quickStats={quickStats}
         />
       </div>
+
+      <CrmViewDesignerModal
+        open={designerState.open}
+        mode={designerState.mode}
+        view={activeView}
+        allColumns={ACCOUNT_ALL_COLUMNS}
+        defaultColumnKeys={ACCOUNT_DEFAULT_COLUMN_KEYS}
+        sortFields={ACCOUNT_SORT_FIELDS}
+        defaultSortField="createdAt"
+        onClose={() => setDesignerState((prev) => ({ ...prev, open: false }))}
+        onSave={saveView}
+        onDelete={deleteView}
+      />
 
       <CrmImportModal
         open={showImport}

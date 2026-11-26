@@ -10,49 +10,76 @@ import {
   Plus,
   RefreshCw,
   Search,
+  Settings,
   Trash2,
   Upload,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import useConfirm from '../../component/common/ui/useConfirm';
 import crmEnterpriseApi from '../../features/crm/api';
-import CrmColumnPicker, {
-  type CrmColumnOption,
-  usePersistedColumns,
-} from '../../features/crm/CrmColumnPicker';
-import CrmFilterPanel, { type CrmFilterFieldConfig } from '../../features/crm/CrmFilterPanel';
+import CrmColumnPicker, { type CrmColumnOption } from '../../features/crm/CrmColumnPicker';
+import CrmFilterPanel from '../../features/crm/CrmFilterPanel';
 import CrmImportModal, { type CrmImportFieldMapping } from '../../features/crm/CrmImportModal';
-import CrmPaginationFooter from '../../features/crm/CrmPaginationFooter';
+import CrmMoreActionsMenu, {
+  type CrmActionRecordSummary,
+} from '../../features/crm/CrmMoreActionsMenu';
+import CrmPaginationFooter, { type CrmFooterKpiItem } from '../../features/crm/CrmPaginationFooter';
 import CrmQuickActivityPanel from '../../features/crm/CrmQuickActivityPanel';
-import CrmStatusBadge, { CrmAssigneePill } from '../../features/crm/CrmStatusBadge';
+import CrmQuickEditBar, { buildQuickStatsGroups } from '../../features/crm/CrmQuickEditBar';
+import CrmStatusBadge, { CrmAssigneePill, CrmTagList } from '../../features/crm/CrmStatusBadge';
+import CrmViewDesignerModal from '../../features/crm/CrmViewDesignerModal';
+import CrmViewModeDropdown, { type CrmViewMode } from '../../features/crm/CrmViewModeDropdown';
+import CrmViewSelector from '../../features/crm/CrmViewSelector';
 import {
   CONTRACT_SAVED_PRESETS,
   CRM_DEPARTMENTS,
   EXECUTION_STATUSES,
   REVENUE_STATUSES,
 } from '../../features/crm/constants';
-import { exportRowsToCsv, formatDateVi, formatVnd } from '../../features/crm/formatters';
-import type { CrmContractDto, CrmContractSummaryDto, PageMeta } from '../../features/crm/types';
+import {
+  buildContractFilterFields,
+  extractAssigneeOptions,
+} from '../../features/crm/filterConfigs';
+import {
+  exportRowsToCsv,
+  formatDateVi,
+  formatVnd,
+  toDateInputValue,
+} from '../../features/crm/formatters';
+import type {
+  CrmContractDto,
+  CrmContractSummaryDto,
+  CrmContractWritePayload,
+  CrmFilterRule,
+  PageMeta,
+} from '../../features/crm/types';
+import {
+  CONTRACT_ALL_COLUMNS,
+  CONTRACT_ALL_SUMMARY_FIELDS,
+  CONTRACT_DEFAULT_COLUMN_KEYS,
+  CONTRACT_DEFAULT_SUMMARY_KEYS,
+  CONTRACT_SORT_FIELDS,
+  CONTRACT_SYSTEM_VIEWS,
+  useCrmSavedViews,
+} from '../../features/crm/viewConfigs';
 import { CRM_BASE, useCrmWorkspace } from './CrmWorkspaceLayout';
 
-const CONTRACT_COLUMNS: CrmColumnOption[] = [
-  { key: 'bookingDate', label: 'Ngày ghi sổ' },
-  { key: 'paymentDate', label: 'Ngày thanh toán' },
-  { key: 'goodsSummary', label: 'Hàng hóa' },
-  { key: 'revenueStatus', label: 'Tình trạng ghi doanh số' },
-  { key: 'executionStatus', label: 'Tình trạng thực hiện HĐ' },
-  { key: 'assignedUserName', label: 'Người phụ trách' },
-  { key: 'contractNumber', label: 'Số Hợp đồng', locked: true },
-  { key: 'accountName', label: 'Khách hàng', locked: true },
-  { key: 'orderValue', label: 'Giá trị đơn hàng' },
-  { key: 'collectedAmount', label: 'Thực thu' },
-  { key: 'actualExpense', label: 'Thực chi' },
-  { key: 'plannedExpense', label: 'Dự kiến chi' },
-  { key: 'receivableAmount', label: 'Còn phải thu' },
-  { key: 'payableAmount', label: 'Còn phải chi' },
-  { key: 'estimatedProfit', label: 'Dự kiến lãi lỗ' },
-  { key: 'department', label: 'Bộ phận phụ trách' },
-];
+type ContractKanbanGroup = 'executionStatus' | 'revenueStatus';
+
+const RIGHT_ALIGNED_KEYS = new Set([
+  'orderValue',
+  'collectedAmount',
+  'actualExpense',
+  'plannedExpense',
+  'receivableAmount',
+  'payableAmount',
+  'estimatedProfit',
+  'serviceExpense',
+  'stateFeeExpense',
+  'supportExpense',
+  'liquidationValue',
+  'uninvoicedAmount',
+]);
 
 const CONTRACT_IMPORT_MAPPINGS: CrmImportFieldMapping[] = [
   {
@@ -99,8 +126,32 @@ const CONTRACT_IMPORT_MAPPINGS: CrmImportFieldMapping[] = [
 ];
 
 export default function ContractListPage() {
-  const { staffList } = useCrmWorkspace();
+  const { me, staffList } = useCrmWorkspace();
   const { confirm, confirmDialog } = useConfirm();
+
+  const {
+    views,
+    activeView,
+    setActiveViewId,
+    pinnedViewId,
+    setPinnedViewId,
+    toggleFavoriteView,
+    saveView,
+    deleteView,
+    toggleColumnOnActiveView,
+    resetActiveViewToDefault,
+  } = useCrmSavedViews(
+    'luatpoip.crm.contract',
+    CONTRACT_SYSTEM_VIEWS,
+    CONTRACT_ALL_COLUMNS,
+    CONTRACT_DEFAULT_COLUMN_KEYS,
+    CONTRACT_DEFAULT_SUMMARY_KEYS,
+    'bookingDate'
+  );
+
+  const [viewMode, setViewMode] = useState<CrmViewMode>('list');
+  const [kanbanGroupBy, setKanbanGroupBy] = useState<ContractKanbanGroup>('executionStatus');
+  const [draggedContractId, setDraggedContractId] = useState<string | null>(null);
 
   const [rows, setRows] = useState<CrmContractDto[]>([]);
   const [summary, setSummary] = useState<CrmContractSummaryDto>({
@@ -114,7 +165,7 @@ export default function ContractListPage() {
   const [loading, setLoading] = useState(true);
   const [keyword, setKeyword] = useState('');
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
-  const [filterValues, setFilterValues] = useState<Record<string, string>>({});
+  const [filterRules, setFilterRules] = useState<CrmFilterRule[]>([]);
   const [activePreset, setActivePreset] = useState('');
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
@@ -124,11 +175,14 @@ export default function ContractListPage() {
   const [showFilter, setShowFilter] = useState(false);
   const [showActivity, setShowActivity] = useState(false);
   const [showImport, setShowImport] = useState(false);
+  const [designerState, setDesignerState] = useState<{
+    open: boolean;
+    mode: 'edit' | 'create';
+  }>({ open: false, mode: 'edit' });
 
-  const { visibleKeys, toggleColumn, resetColumns } = usePersistedColumns(
-    'luatpoip.crm.contract.columns',
-    CONTRACT_COLUMNS
-  );
+  // Quick-Edit state
+  const [dirtyMap, setDirtyMap] = useState<Record<string, CrmContractWritePayload>>({});
+  const [savingQuickEdit, setSavingQuickEdit] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -138,27 +192,38 @@ export default function ContractListPage() {
     return () => clearTimeout(t);
   }, [keyword]);
 
+  const combinedFilters = useMemo<CrmFilterRule[]>(() => {
+    const merged: CrmFilterRule[] = [];
+    if (activeView.rules?.length) {
+      merged.push(...activeView.rules);
+    }
+    if (activeView.onlyMine && me?.fullName) {
+      merged.push({ field: 'assignedUserName', op: 'EQ', value: me.fullName });
+    }
+    if (filterRules.length > 0) {
+      merged.push(...filterRules);
+    }
+    return merged;
+  }, [activeView, me, filterRules]);
+
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
+      const effectiveSize = viewMode === 'kanban' ? Math.max(pageSize, 100) : pageSize;
+      const effectivePage = viewMode === 'kanban' ? 0 : page;
       const res = await crmEnterpriseApi.listContracts({
         keyword: debouncedKeyword || undefined,
-        revenueStatus: filterValues.revenueStatus || undefined,
-        executionStatus: filterValues.executionStatus || undefined,
-        assignedTo: filterValues.assignedTo || undefined,
-        department: filterValues.department || undefined,
-        bookingFrom: filterValues.bookingFrom || undefined,
-        bookingTo: filterValues.bookingTo || undefined,
-        paymentFrom: filterValues.paymentFrom || undefined,
-        paymentTo: filterValues.paymentTo || undefined,
-        preset: activePreset || undefined,
-        page,
-        size: pageSize,
+        preset: activePreset || activeView.preset || undefined,
+        filters: combinedFilters.length > 0 ? combinedFilters : undefined,
+        sort: `${activeView.sortField},${activeView.sortDir}`,
+        page: effectivePage,
+        size: effectiveSize,
       });
       setRows(res.rows);
       setSummary(res.summary);
       setMeta(res.meta);
       setSelectedIds([]);
+      setDirtyMap({});
       setActiveContract((prev) =>
         prev
           ? (res.rows.find((r) => r.id === prev.id) ?? res.rows[0] ?? null)
@@ -169,53 +234,212 @@ export default function ContractListPage() {
     } finally {
       setLoading(false);
     }
-  }, [debouncedKeyword, filterValues, activePreset, page, pageSize]);
+  }, [
+    viewMode,
+    debouncedKeyword,
+    activePreset,
+    activeView.preset,
+    activeView.sortField,
+    activeView.sortDir,
+    combinedFilters,
+    page,
+    pageSize,
+  ]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
 
-  const filterFields = useMemo<CrmFilterFieldConfig[]>(
-    () => [
-      {
-        key: 'revenueStatus',
-        label: 'Tình trạng ghi doanh số',
-        type: 'select',
-        options: REVENUE_STATUSES,
-      },
-      {
-        key: 'executionStatus',
-        label: 'Tình trạng thực hiện HĐ',
-        type: 'select',
-        options: EXECUTION_STATUSES,
-      },
-      {
-        key: 'assignedTo',
-        label: 'Người phụ trách',
-        type: 'select',
-        options: staffList.map((u) => ({ value: u.id, label: u.fullName || u.username })),
-      },
-      {
-        key: 'department',
-        label: 'Bộ phận phụ trách',
-        type: 'select',
-        options: CRM_DEPARTMENTS,
-      },
-      {
-        key: 'bookingFrom',
-        toKey: 'bookingTo',
-        label: 'Ngày ghi sổ',
-        type: 'dateRange',
-      },
-      {
-        key: 'paymentFrom',
-        toKey: 'paymentTo',
-        label: 'Ngày thanh toán',
-        type: 'dateRange',
-      },
-    ],
-    [staffList]
+  const assigneeOptions = useMemo(
+    () =>
+      extractAssigneeOptions(
+        staffList,
+        rows.map((r) => r.assignedUserName)
+      ),
+    [staffList, rows]
   );
+
+  const filterFields = useMemo(() => buildContractFilterFields(assigneeOptions), [assigneeOptions]);
+
+  const activeColumns = useMemo<CrmColumnOption[]>(() => {
+    const resolved = activeView.columns
+      .map((key) => CONTRACT_ALL_COLUMNS.find((c) => c.key === key))
+      .filter((c): c is CrmColumnOption => Boolean(c));
+    return resolved.length > 0 ? resolved : CONTRACT_ALL_COLUMNS.slice(0, 16);
+  }, [activeView.columns]);
+
+  const quickStats = useMemo(
+    () =>
+      buildQuickStatsGroups(rows, {
+        statusLabel: 'Theo Tình trạng thực hiện HĐ',
+        getStatus: (r) => r.executionStatus,
+        getAssignee: (r) => r.assignedUserName,
+        getSource: (r) => r.leadSource,
+        getAmount: (r) => r.orderValue,
+      }),
+    [rows]
+  );
+
+  const footerKpis = useMemo<CrmFooterKpiItem[]>(() => {
+    const summaryLookup: Record<
+      string,
+      { label: string; amount: number; tone?: CrmFooterKpiItem['tone'] }
+    > = {
+      orderValue: {
+        label: 'Giá trị đơn hàng',
+        amount: summary.totalOrderValue ?? 0,
+        tone: 'default',
+      },
+      collectedAmount: {
+        label: 'Thực thu',
+        amount: summary.totalCollected ?? 0,
+        tone: 'emerald',
+      },
+      receivableAmount: {
+        label: 'Còn phải thu',
+        amount: summary.totalReceivable ?? 0,
+        tone: 'rose',
+      },
+      estimatedProfit: {
+        label: 'Dự kiến lãi lỗ',
+        amount: summary.totalEstimatedProfit ?? 0,
+        tone: (summary.totalEstimatedProfit ?? 0) >= 0 ? 'teal' : 'rose',
+      },
+      actualExpense: {
+        label: 'Thực chi',
+        amount: summary.totalActualExpense ?? 0,
+        tone: 'default',
+      },
+      plannedExpense: {
+        label: 'Dự kiến chi',
+        amount: summary.totalPlannedExpense ?? 0,
+        tone: 'default',
+      },
+      payableAmount: {
+        label: 'Còn phải chi',
+        amount: summary.totalPayable ?? 0,
+        tone: 'rose',
+      },
+      serviceExpense: {
+        label: 'Chi dịch vụ',
+        amount: summary.totalServiceExpense ?? 0,
+        tone: 'default',
+      },
+      stateFeeExpense: {
+        label: 'Chi nhà nước',
+        amount: summary.totalStateFeeExpense ?? 0,
+        tone: 'default',
+      },
+      supportExpense: {
+        label: 'Chi hỗ trợ',
+        amount: summary.totalSupportExpense ?? 0,
+        tone: 'default',
+      },
+      liquidationValue: {
+        label: 'Giá trị thanh lý',
+        amount: summary.totalLiquidationValue ?? 0,
+        tone: 'default',
+      },
+      uninvoicedAmount: {
+        label: 'Giá trị chưa xuất hóa đơn',
+        amount: summary.totalUninvoicedAmount ?? 0,
+        tone: 'default',
+      },
+    };
+
+    const keys =
+      activeView.summaryKeys.length > 0 ? activeView.summaryKeys : CONTRACT_DEFAULT_SUMMARY_KEYS;
+    return keys
+      .map((k) => summaryLookup[k])
+      .filter((item): item is NonNullable<typeof item> => Boolean(item))
+      .map((item) => ({
+        label: item.label,
+        value: formatVnd(item.amount),
+        tone: item.tone,
+      }));
+  }, [summary, activeView.summaryKeys]);
+
+  const setDirtyField = <K extends keyof CrmContractWritePayload>(
+    row: CrmContractDto,
+    key: K,
+    value: CrmContractWritePayload[K]
+  ) => {
+    setDirtyMap((prev) => {
+      const existing = prev[row.id] ?? {};
+      const nextPatch: CrmContractWritePayload = {
+        ...existing,
+        [key]: value,
+      };
+      if (key === 'assignedUserName') {
+        const matched = staffList.find((u) => (u.fullName || u.username) === String(value || ''));
+        nextPatch.assignedUserId = matched ? matched.id : row.assignedUserId;
+      }
+      return {
+        ...prev,
+        [row.id]: nextPatch,
+      };
+    });
+  };
+
+  const dirtyIds = Object.keys(dirtyMap);
+
+  const handleSaveQuickEdit = async () => {
+    if (dirtyIds.length === 0) return;
+    setSavingQuickEdit(true);
+    try {
+      await Promise.all(
+        dirtyIds.map((id) => {
+          const original = rows.find((r) => r.id === id);
+          const patch = dirtyMap[id];
+          if (!original || !patch) return Promise.resolve();
+          const orderVal = Number(patch.orderValue ?? original.orderValue ?? 0);
+          const collectedVal = Number(patch.collectedAmount ?? original.collectedAmount ?? 0);
+          const actualExp = Number(patch.actualExpense ?? original.actualExpense ?? 0);
+          const plannedExp = Number(patch.plannedExpense ?? original.plannedExpense ?? 0);
+
+          return crmEnterpriseApi.updateContract(id, {
+            ...original,
+            ...patch,
+            orderValue: orderVal,
+            collectedAmount: collectedVal,
+            actualExpense: actualExp,
+            plannedExpense: plannedExp,
+            receivableAmount: orderVal - collectedVal,
+            payableAmount: Math.max(0, plannedExp - actualExp),
+            estimatedProfit: orderVal - Math.max(plannedExp, actualExp),
+            items: undefined,
+          });
+        })
+      );
+      toast.success(`Đã cập nhật nhanh ${dirtyIds.length} hợp đồng`);
+      setDirtyMap({});
+      await loadData();
+    } catch {
+      toast.error('Không thể lưu một số thay đổi trên Hợp đồng');
+    } finally {
+      setSavingQuickEdit(false);
+    }
+  };
+
+  const handleMoveContractKanban = async (contract: CrmContractDto, nextStage: string) => {
+    try {
+      if (kanbanGroupBy === 'revenueStatus') {
+        if (contract.revenueStatus === nextStage) return;
+        await crmEnterpriseApi.updateContractRevenueStatus(contract.id, nextStage);
+      } else {
+        if (contract.executionStatus === nextStage) return;
+        await crmEnterpriseApi.updateContract(contract.id, {
+          ...contract,
+          executionStatus: nextStage,
+          items: undefined,
+        });
+      }
+      toast.success(`Đã chuyển sang "${nextStage}"`);
+      loadData();
+    } catch {
+      toast.error('Không thể cập nhật trạng thái Hợp đồng');
+    }
+  };
 
   const handleBulkProposeRevenue = async () => {
     if (selectedIds.length === 0) return;
@@ -290,7 +514,443 @@ export default function ContractListPage() {
     );
   };
 
-  const isColVisible = (key: string) => visibleKeys.includes(key);
+  const kanbanStageList = kanbanGroupBy === 'revenueStatus' ? REVENUE_STATUSES : EXECUTION_STATUSES;
+
+  const kanbanColumns = useMemo(
+    () =>
+      kanbanStageList.map((stage) => {
+        const colItems = rows.filter((r) =>
+          kanbanGroupBy === 'revenueStatus'
+            ? r.revenueStatus === stage
+            : r.executionStatus === stage
+        );
+        const totalOrderValue = colItems.reduce((sum, item) => sum + item.orderValue, 0);
+        return {
+          stage,
+          count: colItems.length,
+          totalOrderValue,
+          items: colItems,
+        };
+      }),
+    [kanbanStageList, rows, kanbanGroupBy]
+  );
+
+  const actionSummaries = useMemo<CrmActionRecordSummary[]>(
+    () =>
+      rows.map((r) => ({
+        id: r.id,
+        code: r.contractNumber,
+        title: r.accountName || r.contractNumber,
+        subtitle: r.goodsSummary,
+        status: r.executionStatus,
+        assignedUserName: r.assignedUserName,
+        amount: r.orderValue,
+        updatedAt: r.updatedAt || r.bookingDate,
+      })),
+    [rows]
+  );
+
+  const fetchDeletedContracts = useCallback(async (): Promise<CrmActionRecordSummary[]> => {
+    const res = await crmEnterpriseApi.listContracts({ deleted: true, page: 0, size: 100 });
+    return res.rows.map((r) => ({
+      id: r.id,
+      code: r.contractNumber,
+      title: r.accountName || r.contractNumber,
+      subtitle: r.goodsSummary,
+      status: r.executionStatus,
+      assignedUserName: r.assignedUserName,
+      amount: r.orderValue,
+      updatedAt: r.updatedAt || r.bookingDate,
+    }));
+  }, []);
+
+  const renderCell = (row: CrmContractDto, colKey: string) => {
+    const patch = dirtyMap[row.id] ?? {};
+    const isQuickEdit = viewMode === 'quickEdit';
+
+    const orderVal = Number(patch.orderValue ?? row.orderValue ?? 0);
+    const collectedVal = Number(patch.collectedAmount ?? row.collectedAmount ?? 0);
+    const actualExp = Number(patch.actualExpense ?? row.actualExpense ?? 0);
+    const plannedExp = Number(patch.plannedExpense ?? row.plannedExpense ?? 0);
+    const liveReceivable =
+      patch.orderValue !== undefined || patch.collectedAmount !== undefined
+        ? orderVal - collectedVal
+        : row.receivableAmount;
+    const livePayable =
+      patch.plannedExpense !== undefined || patch.actualExpense !== undefined
+        ? Math.max(0, plannedExp - actualExp)
+        : row.payableAmount;
+    const liveProfit =
+      patch.orderValue !== undefined ||
+      patch.plannedExpense !== undefined ||
+      patch.actualExpense !== undefined
+        ? orderVal - Math.max(plannedExp, actualExp)
+        : row.estimatedProfit;
+
+    switch (colKey) {
+      case 'bookingDate':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <input
+              type="date"
+              aria-label={`Ngày ghi sổ ${row.contractNumber}`}
+              value={toDateInputValue(
+                patch.bookingDate !== undefined ? patch.bookingDate : row.bookingDate
+              )}
+              onChange={(e) => setDirtyField(row, 'bookingDate', e.target.value)}
+              className="h-7 w-[128px] rounded border border-brand-line bg-white px-1.5 text-xs tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 tabular-nums text-brand-ink">
+            {formatDateVi(row.bookingDate)}
+          </td>
+        );
+
+      case 'paymentDate':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <input
+              type="date"
+              aria-label={`Ngày thanh toán ${row.contractNumber}`}
+              value={toDateInputValue(
+                patch.paymentDate !== undefined ? patch.paymentDate : row.paymentDate
+              )}
+              onChange={(e) => setDirtyField(row, 'paymentDate', e.target.value)}
+              className="h-7 w-[128px] rounded border border-brand-line bg-white px-1.5 text-xs tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 tabular-nums text-brand-muted">
+            {formatDateVi(row.paymentDate)}
+          </td>
+        );
+
+      case 'goodsSummary':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <input
+              type="text"
+              aria-label={`Hàng hóa ${row.contractNumber}`}
+              value={
+                patch.goodsSummary !== undefined
+                  ? (patch.goodsSummary ?? '')
+                  : (row.goodsSummary ?? '')
+              }
+              onChange={(e) => setDirtyField(row, 'goodsSummary', e.target.value)}
+              className="h-7 w-full min-w-[180px] rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td key={colKey} className="max-w-[240px] truncate px-3 py-2 text-brand-ink">
+            {row.goodsSummary || row.items?.map((i) => i.description).join(', ') || '—'}
+          </td>
+        );
+
+      case 'revenueStatus':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <select
+              aria-label={`Tình trạng ghi doanh số ${row.contractNumber}`}
+              value={patch.revenueStatus ?? row.revenueStatus}
+              onChange={(e) => setDirtyField(row, 'revenueStatus', e.target.value)}
+              className="h-7 rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              {REVENUE_STATUSES.map((st) => (
+                <option key={st} value={st}>
+                  {st}
+                </option>
+              ))}
+            </select>
+          </td>
+        ) : (
+          <td key={colKey} className="px-3 py-2">
+            <CrmStatusBadge status={row.revenueStatus} />
+          </td>
+        );
+
+      case 'executionStatus':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <select
+              aria-label={`Tình trạng thực hiện HĐ ${row.contractNumber}`}
+              value={patch.executionStatus ?? row.executionStatus}
+              onChange={(e) => setDirtyField(row, 'executionStatus', e.target.value)}
+              className="h-7 rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              {EXECUTION_STATUSES.map((st) => (
+                <option key={st} value={st}>
+                  {st}
+                </option>
+              ))}
+            </select>
+          </td>
+        ) : (
+          <td key={colKey} className="px-3 py-2">
+            <CrmStatusBadge status={row.executionStatus} />
+          </td>
+        );
+
+      case 'assignedUserName': {
+        const curAssignee =
+          patch.assignedUserName !== undefined
+            ? (patch.assignedUserName ?? '')
+            : (row.assignedUserName ?? '');
+        const selectOpts = Array.from(new Set([curAssignee, ...assigneeOptions].filter(Boolean)));
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <select
+              aria-label={`Người phụ trách ${row.contractNumber}`}
+              value={curAssignee}
+              onChange={(e) => setDirtyField(row, 'assignedUserName', e.target.value)}
+              className="h-7 min-w-[140px] rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              <option value="">-- Chưa phân công --</option>
+              {selectOpts.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </td>
+        ) : (
+          <td key={colKey} className="px-3 py-2">
+            <CrmAssigneePill name={row.assignedUserName} />
+          </td>
+        );
+      }
+
+      case 'contractNumber':
+        return (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2">
+            <Link
+              to={`${CRM_BASE}/sale-order/${row.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="font-bold tabular-nums text-brand-primary hover:underline"
+            >
+              {row.contractNumber}
+            </Link>
+          </td>
+        );
+
+      case 'accountName':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <input
+              type="text"
+              aria-label={`Khách hàng ${row.contractNumber}`}
+              value={
+                patch.accountName !== undefined
+                  ? (patch.accountName ?? '')
+                  : (row.accountName ?? '')
+              }
+              onChange={(e) => setDirtyField(row, 'accountName', e.target.value)}
+              className="h-7 w-full min-w-[175px] rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td key={colKey} className="max-w-[230px] truncate px-3 py-2">
+            {row.accountId ? (
+              <Link
+                to={`${CRM_BASE}/account/${row.accountId}`}
+                onClick={(e) => e.stopPropagation()}
+                className="font-medium text-brand-ink hover:text-brand-primary hover:underline"
+              >
+                {row.accountName || '—'}
+              </Link>
+            ) : (
+              <span className="text-brand-ink">{row.accountName || '—'}</span>
+            )}
+          </td>
+        );
+
+      case 'orderValue':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5 text-right">
+            <input
+              type="number"
+              aria-label={`Giá trị đơn hàng ${row.contractNumber}`}
+              value={orderVal}
+              onChange={(e) => setDirtyField(row, 'orderValue', Number(e.target.value))}
+              className="h-7 w-[118px] rounded border border-brand-line bg-white px-2 text-right text-xs font-semibold tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td
+            key={colKey}
+            className="whitespace-nowrap px-3 py-2 text-right font-semibold tabular-nums text-brand-ink"
+          >
+            {formatVnd(row.orderValue)}
+          </td>
+        );
+
+      case 'collectedAmount':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5 text-right">
+            <input
+              type="number"
+              aria-label={`Thực thu ${row.contractNumber}`}
+              value={collectedVal}
+              onChange={(e) => setDirtyField(row, 'collectedAmount', Number(e.target.value))}
+              className="h-7 w-[118px] rounded border border-brand-line bg-white px-2 text-right text-xs font-semibold tabular-nums text-[#065f46] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td
+            key={colKey}
+            className="whitespace-nowrap px-3 py-2 text-right font-semibold tabular-nums text-[#065f46]"
+          >
+            {formatVnd(row.collectedAmount)}
+          </td>
+        );
+
+      case 'actualExpense':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5 text-right">
+            <input
+              type="number"
+              aria-label={`Thực chi ${row.contractNumber}`}
+              value={actualExp}
+              onChange={(e) => setDirtyField(row, 'actualExpense', Number(e.target.value))}
+              className="h-7 w-[112px] rounded border border-brand-line bg-white px-2 text-right text-xs tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td
+            key={colKey}
+            className="whitespace-nowrap px-3 py-2 text-right tabular-nums text-brand-ink"
+          >
+            {formatVnd(row.actualExpense)}
+          </td>
+        );
+
+      case 'plannedExpense':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5 text-right">
+            <input
+              type="number"
+              aria-label={`Dự kiến chi ${row.contractNumber}`}
+              value={plannedExp}
+              onChange={(e) => setDirtyField(row, 'plannedExpense', Number(e.target.value))}
+              className="h-7 w-[112px] rounded border border-brand-line bg-white px-2 text-right text-xs tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td
+            key={colKey}
+            className="whitespace-nowrap px-3 py-2 text-right tabular-nums text-brand-muted"
+          >
+            {formatVnd(row.plannedExpense)}
+          </td>
+        );
+
+      case 'receivableAmount':
+        return (
+          <td
+            key={colKey}
+            className="whitespace-nowrap px-3 py-2 text-right font-medium tabular-nums text-[#9f1239]"
+          >
+            {formatVnd(liveReceivable)}
+          </td>
+        );
+
+      case 'payableAmount':
+        return (
+          <td
+            key={colKey}
+            className="whitespace-nowrap px-3 py-2 text-right tabular-nums text-brand-muted"
+          >
+            {formatVnd(livePayable)}
+          </td>
+        );
+
+      case 'estimatedProfit':
+        return (
+          <td
+            key={colKey}
+            className={`whitespace-nowrap px-3 py-2 text-right font-bold tabular-nums ${
+              liveProfit >= 0 ? 'text-[#065f46]' : 'text-[#9f1239]'
+            }`}
+          >
+            {formatVnd(liveProfit)}
+          </td>
+        );
+
+      case 'department':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <select
+              aria-label={`Bộ phận phụ trách ${row.contractNumber}`}
+              value={
+                patch.department !== undefined ? (patch.department ?? '') : (row.department ?? '')
+              }
+              onChange={(e) => setDirtyField(row, 'department', e.target.value)}
+              className="h-7 min-w-[150px] rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              <option value="">-- Chọn bộ phận --</option>
+              {CRM_DEPARTMENTS.map((dep) => (
+                <option key={dep} value={dep}>
+                  {dep}
+                </option>
+              ))}
+            </select>
+          </td>
+        ) : (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 text-brand-muted">
+            {row.department || '—'}
+          </td>
+        );
+
+      // Extended columns
+      case 'serviceExpense':
+      case 'stateFeeExpense':
+      case 'supportExpense':
+      case 'liquidationValue':
+      case 'uninvoicedAmount':
+        return (
+          <td
+            key={colKey}
+            className="whitespace-nowrap px-3 py-2 text-right tabular-nums text-brand-ink"
+          >
+            {formatVnd(row[colKey])}
+          </td>
+        );
+
+      case 'submissionDate':
+      case 'handoverDeadline':
+      case 'productionDeadline':
+      case 'orderDate':
+      case 'createdAt':
+        return (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 tabular-nums text-brand-muted">
+            {formatDateVi(row[colKey])}
+          </td>
+        );
+
+      case 'tags':
+        return (
+          <td key={colKey} className="px-3 py-2">
+            <CrmTagList tags={row.tags} />
+          </td>
+        );
+
+      case 'shared':
+        return (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 text-brand-muted">
+            {row.shared ? 'Có' : 'Không'}
+          </td>
+        );
+
+      default: {
+        const rawVal = (row as unknown as Record<string, unknown>)[colKey];
+        return (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 text-brand-ink">
+            {rawVal ? String(rawVal) : '—'}
+          </td>
+        );
+      }
+    }
+  };
 
   return (
     <div className="flex h-full flex-col overflow-hidden px-3 pb-3 pt-2.5 sm:px-4">
@@ -298,27 +958,30 @@ export default function ContractListPage() {
 
       {/* Sub-header */}
       <div className="mb-2.5 flex min-h-[44px] flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <h1 className="text-lg font-semibold text-brand-ink">Tất cả Hợp đồng</h1>
-          <select
-            aria-label="Bộ lọc lưu sẵn cho Hợp đồng"
-            value={activePreset}
-            onChange={(e) => {
-              setActivePreset(e.target.value);
-              setPage(0);
-            }}
-            className="h-8 rounded-md border border-brand-line bg-white px-2.5 text-xs font-medium text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-          >
-            <option value="">Tất cả hợp đồng</option>
-            {CONTRACT_SAVED_PRESETS.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.label}
-              </option>
-            ))}
-          </select>
-        </div>
+        <CrmViewSelector
+          views={views}
+          activeView={activeView}
+          pinnedViewId={pinnedViewId}
+          onSelectView={(v) => {
+            setActiveViewId(v.id);
+            setPage(0);
+          }}
+          onToggleFavorite={toggleFavoriteView}
+          onPinView={setPinnedViewId}
+          onEditView={() => setDesignerState({ open: true, mode: 'edit' })}
+          onCreateView={() => setDesignerState({ open: true, mode: 'create' })}
+        />
 
         <div className="flex flex-wrap items-center gap-2">
+          <CrmViewModeDropdown
+            value={viewMode}
+            onChange={(nextMode) => {
+              setViewMode(nextMode);
+              if (nextMode !== 'quickEdit') setDirtyMap({});
+            }}
+            ariaLabel="Chuyển chế độ xem Hợp đồng"
+          />
+
           <button
             type="button"
             onClick={() => setShowImport(true)}
@@ -328,14 +991,16 @@ export default function ContractListPage() {
             <span>Nhập từ Excel</span>
           </button>
 
-          <button
-            type="button"
-            onClick={handleExportCsv}
-            className="inline-flex h-8 items-center gap-1.5 rounded-md border border-brand-line bg-white px-3 text-xs font-medium text-brand-ink hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-          >
-            <Download size={14} className="text-brand-muted" aria-hidden="true" />
-            <span className="hidden sm:inline">Xuất CSV</span>
-          </button>
+          {viewMode !== 'kanban' && (
+            <button
+              type="button"
+              onClick={handleExportCsv}
+              className="inline-flex h-8 items-center gap-1.5 rounded-md border border-brand-line bg-white px-3 text-xs font-medium text-brand-ink hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              <Download size={14} className="text-brand-muted" aria-hidden="true" />
+              <span className="hidden sm:inline">Xuất CSV</span>
+            </button>
+          )}
 
           <Link
             to={`${CRM_BASE}/sale-order/new`}
@@ -344,6 +1009,17 @@ export default function ContractListPage() {
             <Plus size={15} aria-hidden="true" />
             <span>Thêm</span>
           </Link>
+
+          <CrmMoreActionsMenu
+            moduleEndpoint="contracts"
+            moduleLabel="Hợp đồng"
+            records={actionSummaries}
+            selectedIds={selectedIds}
+            staffList={staffList}
+            quickStats={quickStats}
+            fetchDeletedRecords={fetchDeletedContracts}
+            onReload={loadData}
+          />
         </div>
       </div>
 
@@ -368,6 +1044,18 @@ export default function ContractListPage() {
                   className="h-8 w-full rounded-md border border-brand-line bg-brand-surface pl-8 pr-3 text-xs text-brand-ink placeholder:text-brand-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
                 />
               </div>
+
+              {viewMode === 'kanban' && (
+                <select
+                  aria-label="Nhóm KanBan Hợp đồng theo"
+                  value={kanbanGroupBy}
+                  onChange={(e) => setKanbanGroupBy(e.target.value as ContractKanbanGroup)}
+                  className="h-8 rounded-md border border-brand-line bg-white px-2.5 text-xs font-medium text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                >
+                  <option value="executionStatus">Nhóm theo: Tình trạng thực hiện HĐ</option>
+                  <option value="revenueStatus">Nhóm theo: Tình trạng ghi doanh số</option>
+                </select>
+              )}
 
               {selectedIds.length > 0 && (
                 <div className="flex items-center gap-2.5 rounded-md bg-brand-surface px-2.5 py-1 text-xs">
@@ -404,27 +1092,41 @@ export default function ContractListPage() {
                 <RefreshCw size={14} aria-hidden="true" />
               </button>
 
-              <CrmColumnPicker
-                columns={CONTRACT_COLUMNS}
-                visibleKeys={visibleKeys}
-                onToggle={toggleColumn}
-                onReset={resetColumns}
-              />
+              {viewMode !== 'kanban' && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setDesignerState({ open: true, mode: 'edit' })}
+                    aria-label="Thiết lập giao diện bảng Hợp đồng"
+                    title="Sửa giao diện"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-brand-line bg-white text-brand-muted hover:bg-brand-surface hover:text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                  >
+                    <Settings size={14} aria-hidden="true" />
+                  </button>
 
-              <button
-                type="button"
-                onClick={() => setShowActivity((v) => !v)}
-                aria-pressed={showActivity}
-                aria-label="Bật tắt khung xem nhanh hoạt động"
-                className={`inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
-                  showActivity
-                    ? 'border-brand-primary bg-brand-primary text-white'
-                    : 'border-brand-line bg-white text-brand-ink hover:bg-brand-surface'
-                }`}
-              >
-                <Activity size={14} aria-hidden="true" />
-                <span className="hidden md:inline">Hoạt động</span>
-              </button>
+                  <CrmColumnPicker
+                    columns={CONTRACT_ALL_COLUMNS}
+                    visibleKeys={activeView.columns}
+                    onToggle={toggleColumnOnActiveView}
+                    onReset={resetActiveViewToDefault}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() => setShowActivity((v) => !v)}
+                    aria-pressed={showActivity}
+                    aria-label="Bật tắt khung xem nhanh hoạt động"
+                    className={`inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
+                      showActivity
+                        ? 'border-brand-primary bg-brand-primary text-white'
+                        : 'border-brand-line bg-white text-brand-ink hover:bg-brand-surface'
+                    }`}
+                  >
+                    <Activity size={14} aria-hidden="true" />
+                    <span className="hidden md:inline">Hoạt động</span>
+                  </button>
+                </>
+              )}
 
               <button
                 type="button"
@@ -443,341 +1145,292 @@ export default function ContractListPage() {
             </div>
           </div>
 
-          {/* 16-column MISA Contract Table */}
-          <div className="min-h-0 flex-1 overflow-auto">
-            <table className="min-w-[2050px] w-full border-collapse text-left text-xs">
-              <thead className="sticky top-0 z-20 border-b border-brand-line bg-brand-surface text-brand-ink">
-                <tr>
-                  <th className="sticky left-0 z-30 w-10 border-r border-brand-line bg-brand-surface px-3 py-2.5 text-center">
-                    <input
-                      type="checkbox"
-                      checked={rows.length > 0 && selectedIds.length === rows.length}
-                      onChange={() =>
-                        setSelectedIds(
-                          selectedIds.length === rows.length ? [] : rows.map((r) => r.id)
-                        )
+          {viewMode === 'quickEdit' && (
+            <CrmQuickEditBar
+              dirtyCount={dirtyIds.length}
+              saving={savingQuickEdit}
+              onCancel={() => {
+                if (dirtyIds.length > 0) {
+                  setDirtyMap({});
+                } else {
+                  setViewMode('list');
+                }
+              }}
+              onSave={handleSaveQuickEdit}
+            />
+          )}
+
+          {viewMode === 'kanban' ? (
+            <div className="flex min-h-0 flex-1 gap-3 overflow-x-auto bg-brand-surface/50 p-3">
+              {kanbanColumns.map((col) => (
+                <div
+                  key={col.stage}
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    if (draggedContractId) {
+                      const found = rows.find((r) => r.id === draggedContractId);
+                      if (found) {
+                        handleMoveContractKanban(found, col.stage);
                       }
-                      aria-label="Chọn tất cả Hợp đồng trên trang"
-                      className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
-                    />
-                  </th>
-                  {isColVisible('bookingDate') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Ngày ghi sổ</th>
-                  )}
-                  {isColVisible('paymentDate') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Ngày thanh toán</th>
-                  )}
-                  {isColVisible('goodsSummary') && (
-                    <th className="min-w-[210px] px-3 py-2.5 font-bold">Hàng hóa</th>
-                  )}
-                  {isColVisible('revenueStatus') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">
-                      Tình trạng ghi doanh số
-                    </th>
-                  )}
-                  {isColVisible('executionStatus') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">
-                      Tình trạng thực hiện HĐ
-                    </th>
-                  )}
-                  {isColVisible('assignedUserName') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Người phụ trách</th>
-                  )}
-                  {isColVisible('contractNumber') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Số Hợp đồng</th>
-                  )}
-                  {isColVisible('accountName') && (
-                    <th className="min-w-[210px] px-3 py-2.5 font-bold">Khách hàng</th>
-                  )}
-                  {isColVisible('orderValue') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 text-right font-bold">
-                      Giá trị đơn hàng
-                    </th>
-                  )}
-                  {isColVisible('collectedAmount') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 text-right font-bold">Thực thu</th>
-                  )}
-                  {isColVisible('actualExpense') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 text-right font-bold">Thực chi</th>
-                  )}
-                  {isColVisible('plannedExpense') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 text-right font-bold">
-                      Dự kiến chi
-                    </th>
-                  )}
-                  {isColVisible('receivableAmount') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 text-right font-bold">
-                      Còn phải thu
-                    </th>
-                  )}
-                  {isColVisible('payableAmount') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 text-right font-bold">
-                      Còn phải chi
-                    </th>
-                  )}
-                  {isColVisible('estimatedProfit') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 text-right font-bold">
-                      Dự kiến lãi lỗ
-                    </th>
-                  )}
-                  {isColVisible('department') && (
-                    <th className="whitespace-nowrap px-3 py-2.5 font-bold">Bộ phận phụ trách</th>
-                  )}
-                  <th className="sticky right-0 z-30 w-28 border-l border-brand-line bg-brand-surface px-2.5 py-2.5 text-center font-bold">
-                    Thao tác
-                  </th>
-                </tr>
-              </thead>
+                      setDraggedContractId(null);
+                    }
+                  }}
+                  className="flex h-full w-[290px] shrink-0 flex-col rounded-lg border border-brand-line bg-white"
+                >
+                  <div className="border-b border-brand-line bg-brand-surface px-3 py-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <h2 className="truncate text-xs font-bold text-brand-ink">{col.stage}</h2>
+                      <span className="rounded-full bg-white px-2 py-0.5 text-[11px] font-bold tabular-nums text-brand-primary">
+                        {col.count}
+                      </span>
+                    </div>
+                    <div className="mt-1 text-[11px] font-semibold tabular-nums text-brand-muted">
+                      Tổng giá trị:{' '}
+                      <span className="text-brand-ink">{formatVnd(col.totalOrderValue, true)}</span>
+                    </div>
+                  </div>
 
-              <tbody className="divide-y divide-brand-line">
-                {loading ? (
-                  Array.from({ length: 6 }).map((_, idx) => (
-                    <tr key={idx}>
-                      <td colSpan={18} className="px-4 py-3">
-                        <div className="h-4 w-full animate-pulse rounded bg-brand-surface" />
-                      </td>
-                    </tr>
-                  ))
-                ) : rows.length === 0 ? (
-                  <tr>
-                    <td colSpan={18} className="px-6 py-14 text-center">
-                      <p className="text-sm font-semibold text-brand-ink">
-                        Chưa có Hợp đồng phù hợp điều kiện lọc
-                      </p>
-                      <p className="mt-1 text-xs text-brand-muted">
-                        Nhấn &ldquo;+ Thêm&rdquo; để lập hợp đồng dịch vụ pháp lý hoặc sinh tự động
-                        từ Cơ hội HĐ / Khách hàng.
-                      </p>
-                    </td>
-                  </tr>
-                ) : (
-                  rows.map((row) => {
-                    const isSelected = selectedIds.includes(row.id);
-                    const isCurrent = activeContract?.id === row.id;
-                    return (
-                      <tr
-                        key={row.id}
-                        onClick={() => setActiveContract(row)}
-                        className={`cursor-pointer transition-colors ${
-                          isSelected || isCurrent
-                            ? 'bg-brand-surface'
-                            : 'bg-white hover:bg-brand-surface/60'
-                        }`}
-                      >
-                        <td
-                          onClick={(e) => e.stopPropagation()}
-                          className="sticky left-0 z-10 border-r border-brand-line bg-inherit px-3 py-2 text-center"
-                        >
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() =>
-                              setSelectedIds((prev) =>
-                                prev.includes(row.id)
-                                  ? prev.filter((x) => x !== row.id)
-                                  : [...prev, row.id]
-                              )
-                            }
-                            aria-label={`Chọn hợp đồng ${row.contractNumber}`}
-                            className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
-                          />
-                        </td>
-
-                        {isColVisible('bookingDate') && (
-                          <td className="whitespace-nowrap px-3 py-2 tabular-nums text-brand-ink">
-                            {formatDateVi(row.bookingDate)}
-                          </td>
-                        )}
-
-                        {isColVisible('paymentDate') && (
-                          <td className="whitespace-nowrap px-3 py-2 tabular-nums text-brand-muted">
-                            {formatDateVi(row.paymentDate)}
-                          </td>
-                        )}
-
-                        {isColVisible('goodsSummary') && (
-                          <td className="max-w-[240px] truncate px-3 py-2 text-brand-ink">
-                            {row.goodsSummary ||
-                              row.items?.map((i) => i.description).join(', ') ||
-                              '—'}
-                          </td>
-                        )}
-
-                        {isColVisible('revenueStatus') && (
-                          <td className="px-3 py-2">
-                            <CrmStatusBadge status={row.revenueStatus} />
-                          </td>
-                        )}
-
-                        {isColVisible('executionStatus') && (
-                          <td className="px-3 py-2">
-                            <CrmStatusBadge status={row.executionStatus} />
-                          </td>
-                        )}
-
-                        {isColVisible('assignedUserName') && (
-                          <td className="px-3 py-2">
-                            <CrmAssigneePill name={row.assignedUserName} />
-                          </td>
-                        )}
-
-                        {isColVisible('contractNumber') && (
-                          <td className="whitespace-nowrap px-3 py-2">
-                            <Link
-                              to={`${CRM_BASE}/sale-order/${row.id}`}
-                              onClick={(e) => e.stopPropagation()}
-                              className="font-bold tabular-nums text-brand-primary hover:underline"
-                            >
-                              {row.contractNumber}
-                            </Link>
-                          </td>
-                        )}
-
-                        {isColVisible('accountName') && (
-                          <td className="max-w-[230px] truncate px-3 py-2">
-                            {row.accountId ? (
-                              <Link
-                                to={`${CRM_BASE}/account/${row.accountId}`}
-                                onClick={(e) => e.stopPropagation()}
-                                className="font-medium text-brand-ink hover:text-brand-primary hover:underline"
-                              >
-                                {row.accountName || '—'}
-                              </Link>
-                            ) : (
-                              <span className="text-brand-ink">{row.accountName || '—'}</span>
-                            )}
-                          </td>
-                        )}
-
-                        {isColVisible('orderValue') && (
-                          <td className="whitespace-nowrap px-3 py-2 text-right font-semibold tabular-nums text-brand-ink">
-                            {formatVnd(row.orderValue)}
-                          </td>
-                        )}
-
-                        {isColVisible('collectedAmount') && (
-                          <td className="whitespace-nowrap px-3 py-2 text-right font-semibold tabular-nums text-[#065f46]">
-                            {formatVnd(row.collectedAmount)}
-                          </td>
-                        )}
-
-                        {isColVisible('actualExpense') && (
-                          <td className="whitespace-nowrap px-3 py-2 text-right tabular-nums text-brand-ink">
-                            {formatVnd(row.actualExpense)}
-                          </td>
-                        )}
-
-                        {isColVisible('plannedExpense') && (
-                          <td className="whitespace-nowrap px-3 py-2 text-right tabular-nums text-brand-muted">
-                            {formatVnd(row.plannedExpense)}
-                          </td>
-                        )}
-
-                        {isColVisible('receivableAmount') && (
-                          <td className="whitespace-nowrap px-3 py-2 text-right font-medium tabular-nums text-[#9f1239]">
-                            {formatVnd(row.receivableAmount)}
-                          </td>
-                        )}
-
-                        {isColVisible('payableAmount') && (
-                          <td className="whitespace-nowrap px-3 py-2 text-right tabular-nums text-brand-muted">
-                            {formatVnd(row.payableAmount)}
-                          </td>
-                        )}
-
-                        {isColVisible('estimatedProfit') && (
-                          <td
-                            className={`whitespace-nowrap px-3 py-2 text-right font-bold tabular-nums ${
-                              row.estimatedProfit >= 0 ? 'text-[#065f46]' : 'text-[#9f1239]'
-                            }`}
+                  <div className="flex-1 space-y-2.5 overflow-y-auto p-2.5">
+                    {col.items.length === 0 ? (
+                      <div className="rounded-md border border-dashed border-brand-line p-4 text-center text-[11px] text-brand-muted">
+                        Kéo thả hợp đồng vào cột này
+                      </div>
+                    ) : (
+                      col.items.map((item) => {
+                        const curStage =
+                          kanbanGroupBy === 'revenueStatus'
+                            ? item.revenueStatus
+                            : item.executionStatus;
+                        return (
+                          <article
+                            key={item.id}
+                            draggable
+                            onDragStart={() => setDraggedContractId(item.id)}
+                            onDragEnd={() => setDraggedContractId(null)}
+                            className="space-y-2 rounded-lg border border-brand-line bg-white p-3 transition-shadow hover:shadow-card"
                           >
-                            {formatVnd(row.estimatedProfit)}
-                          </td>
-                        )}
+                            <div className="flex items-start justify-between gap-2">
+                              <Link
+                                to={`${CRM_BASE}/sale-order/${item.id}`}
+                                className="text-xs font-bold tabular-nums text-brand-primary hover:underline"
+                              >
+                                {item.contractNumber}
+                              </Link>
+                              <span className="shrink-0 text-[11px] tabular-nums text-brand-muted">
+                                {formatDateVi(item.bookingDate)}
+                              </span>
+                            </div>
 
-                        {isColVisible('department') && (
-                          <td className="whitespace-nowrap px-3 py-2 text-brand-muted">
-                            {row.department || '—'}
-                          </td>
-                        )}
+                            {item.accountName && (
+                              <div className="truncate text-xs font-semibold text-brand-ink">
+                                {item.accountName}
+                              </div>
+                            )}
 
-                        <td
-                          onClick={(e) => e.stopPropagation()}
-                          className="sticky right-0 z-10 border-l border-brand-line bg-inherit px-2 py-2"
+                            {item.goodsSummary && (
+                              <div className="line-clamp-2 text-[11px] text-brand-muted">
+                                {item.goodsSummary}
+                              </div>
+                            )}
+
+                            <div className="flex flex-wrap items-center justify-between gap-1 text-xs">
+                              <strong className="font-bold tabular-nums text-[#065f46]">
+                                {formatVnd(item.orderValue, true)}
+                              </strong>
+                              {item.receivableAmount > 0 && (
+                                <span className="text-[11px] font-semibold tabular-nums text-[#9f1239]">
+                                  Nợ: {formatVnd(item.receivableAmount, true)}
+                                </span>
+                              )}
+                            </div>
+
+                            {item.assignedUserName && (
+                              <div>
+                                <CrmAssigneePill name={item.assignedUserName} />
+                              </div>
+                            )}
+
+                            <div className="border-t border-brand-line pt-2">
+                              <select
+                                aria-label={`Chuyển trạng thái cho ${item.contractNumber}`}
+                                value={curStage}
+                                onChange={(e) => handleMoveContractKanban(item, e.target.value)}
+                                className="w-full rounded border border-brand-line bg-brand-surface px-2 py-1 text-[11px] text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                              >
+                                {kanbanStageList.map((st) => (
+                                  <option key={st} value={st}>
+                                    {st}
+                                  </option>
+                                ))}
+                              </select>
+                            </div>
+                          </article>
+                        );
+                      })
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <>
+              {/* Dynamic MISA Contract Table */}
+              <div className="min-h-0 flex-1 overflow-auto">
+                <table className="min-w-[2050px] w-full border-collapse text-left text-xs">
+                  <thead className="sticky top-0 z-20 border-b border-brand-line bg-brand-surface text-brand-ink">
+                    <tr>
+                      <th className="sticky left-0 z-30 w-10 border-r border-brand-line bg-brand-surface px-3 py-2.5 text-center">
+                        <input
+                          type="checkbox"
+                          checked={rows.length > 0 && selectedIds.length === rows.length}
+                          onChange={() =>
+                            setSelectedIds(
+                              selectedIds.length === rows.length ? [] : rows.map((r) => r.id)
+                            )
+                          }
+                          aria-label="Chọn tất cả Hợp đồng trên trang"
+                          className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
+                        />
+                      </th>
+                      {activeColumns.map((col) => (
+                        <th
+                          key={col.key}
+                          className={`whitespace-nowrap px-3 py-2.5 font-bold ${
+                            RIGHT_ALIGNED_KEYS.has(col.key) ? 'text-right' : ''
+                          } ${
+                            col.key === 'goodsSummary' || col.key === 'accountName'
+                              ? 'min-w-[210px]'
+                              : ''
+                          }`}
                         >
-                          <div className="flex items-center justify-center gap-1">
-                            <Link
-                              to={`${CRM_BASE}/sale-order/${row.id}`}
-                              aria-label={`Xem hợp đồng ${row.contractNumber}`}
-                              title="Xem chi tiết & Thu chi"
-                              className="rounded p-1 text-brand-primary hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-                            >
-                              <Eye size={14} aria-hidden="true" />
-                            </Link>
-                            <Link
-                              to={`${CRM_BASE}/sale-order/${row.id}/edit`}
-                              aria-label={`Sửa hợp đồng ${row.contractNumber}`}
-                              title="Sửa"
-                              className="rounded p-1 text-brand-ink hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-                            >
-                              <Pencil size={14} aria-hidden="true" />
-                            </Link>
-                            <button
-                              type="button"
-                              onClick={() => handleDeleteSingle(row)}
-                              aria-label={`Xóa hợp đồng ${row.contractNumber}`}
-                              title="Xóa"
-                              className="rounded p-1 text-brand-muted hover:bg-[#ffe4e6] hover:text-[#9f1239] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-                            >
-                              <Trash2 size={14} aria-hidden="true" />
-                            </button>
-                          </div>
+                          {col.label}
+                        </th>
+                      ))}
+                      <th className="sticky right-0 z-30 w-28 border-l border-brand-line bg-brand-surface px-2.5 py-2.5 text-center font-bold">
+                        Thao tác
+                      </th>
+                    </tr>
+                  </thead>
+
+                  <tbody className="divide-y divide-brand-line">
+                    {loading ? (
+                      Array.from({ length: 6 }).map((_, idx) => (
+                        <tr key={idx}>
+                          <td colSpan={activeColumns.length + 2} className="px-4 py-3">
+                            <div className="h-4 w-full animate-pulse rounded bg-brand-surface" />
+                          </td>
+                        </tr>
+                      ))
+                    ) : rows.length === 0 ? (
+                      <tr>
+                        <td colSpan={activeColumns.length + 2} className="px-6 py-14 text-center">
+                          <p className="text-sm font-semibold text-brand-ink">
+                            Chưa có Hợp đồng phù hợp điều kiện lọc
+                          </p>
+                          <p className="mt-1 text-xs text-brand-muted">
+                            Nhấn &ldquo;+ Thêm&rdquo; để lập hợp đồng dịch vụ pháp lý hoặc sinh tự
+                            động từ Cơ hội HĐ / Khách hàng.
+                          </p>
                         </td>
                       </tr>
-                    );
-                  })
-                )}
-              </tbody>
-            </table>
-          </div>
+                    ) : (
+                      rows.map((row) => {
+                        const isSelected = selectedIds.includes(row.id);
+                        const isCurrent = activeContract?.id === row.id;
+                        const isDirty = Boolean(dirtyMap[row.id]);
+                        return (
+                          <tr
+                            key={row.id}
+                            onClick={() => setActiveContract(row)}
+                            className={`cursor-pointer transition-colors ${
+                              isDirty
+                                ? 'bg-brand-accentSoft/40'
+                                : isSelected || isCurrent
+                                  ? 'bg-brand-surface'
+                                  : 'bg-white hover:bg-brand-surface/60'
+                            }`}
+                          >
+                            <td
+                              onClick={(e) => e.stopPropagation()}
+                              className="sticky left-0 z-10 border-r border-brand-line bg-inherit px-3 py-2 text-center"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={isSelected}
+                                onChange={() =>
+                                  setSelectedIds((prev) =>
+                                    prev.includes(row.id)
+                                      ? prev.filter((x) => x !== row.id)
+                                      : [...prev, row.id]
+                                  )
+                                }
+                                aria-label={`Chọn hợp đồng ${row.contractNumber}`}
+                                className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
+                              />
+                            </td>
 
-          {/* Bottom Real-Time KPI Summary & Pagination Footer */}
-          <CrmPaginationFooter
-            totalElements={summary.totalRecords || meta?.totalElements || rows.length}
-            page={page}
-            pageSize={pageSize}
-            totalPages={meta?.totalPages}
-            onPageChange={setPage}
-            onPageSizeChange={(sz) => {
-              setPageSize(sz);
-              setPage(0);
-            }}
-            kpis={[
-              {
-                label: 'Giá trị đơn hàng',
-                value: formatVnd(summary.totalOrderValue),
-                tone: 'default',
-              },
-              {
-                label: 'Thực thu',
-                value: formatVnd(summary.totalCollected),
-                tone: 'emerald',
-              },
-              {
-                label: 'Còn phải thu',
-                value: formatVnd(summary.totalReceivable),
-                tone: 'rose',
-              },
-              {
-                label: 'Dự kiến lãi lỗ',
-                value: formatVnd(summary.totalEstimatedProfit),
-                tone: summary.totalEstimatedProfit >= 0 ? 'teal' : 'rose',
-              },
-            ]}
-          />
+                            {activeColumns.map((col) => renderCell(row, col.key))}
+
+                            <td
+                              onClick={(e) => e.stopPropagation()}
+                              className="sticky right-0 z-10 border-l border-brand-line bg-inherit px-2 py-2"
+                            >
+                              <div className="flex items-center justify-center gap-1">
+                                <Link
+                                  to={`${CRM_BASE}/sale-order/${row.id}`}
+                                  aria-label={`Xem hợp đồng ${row.contractNumber}`}
+                                  title="Xem chi tiết & Thu chi"
+                                  className="rounded p-1 text-brand-primary hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                                >
+                                  <Eye size={14} aria-hidden="true" />
+                                </Link>
+                                <Link
+                                  to={`${CRM_BASE}/sale-order/${row.id}/edit`}
+                                  aria-label={`Sửa hợp đồng ${row.contractNumber}`}
+                                  title="Sửa"
+                                  className="rounded p-1 text-brand-ink hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                                >
+                                  <Pencil size={14} aria-hidden="true" />
+                                </Link>
+                                <button
+                                  type="button"
+                                  onClick={() => handleDeleteSingle(row)}
+                                  aria-label={`Xóa hợp đồng ${row.contractNumber}`}
+                                  title="Xóa"
+                                  className="rounded p-1 text-brand-muted hover:bg-[#ffe4e6] hover:text-[#9f1239] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                                >
+                                  <Trash2 size={14} aria-hidden="true" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Bottom Real-Time KPI Summary & Pagination Footer */}
+              <CrmPaginationFooter
+                totalElements={summary.totalRecords || meta?.totalElements || rows.length}
+                page={page}
+                pageSize={pageSize}
+                totalPages={meta?.totalPages}
+                onPageChange={setPage}
+                onPageSizeChange={(sz) => {
+                  setPageSize(sz);
+                  setPage(0);
+                }}
+                kpis={footerKpis}
+                onConfigureSummary={() => setDesignerState({ open: true, mode: 'edit' })}
+              />
+            </>
+          )}
         </div>
 
-        {showActivity && (
+        {viewMode !== 'kanban' && showActivity && (
           <CrmQuickActivityPanel
             docked
             entityType="CONTRACT"
@@ -797,18 +1450,35 @@ export default function ContractListPage() {
             setPage(0);
           }}
           fields={filterFields}
-          values={filterValues}
-          onApply={(next) => {
-            setFilterValues(next);
+          rules={filterRules}
+          onApplyRules={(nextRules) => {
+            setFilterRules(nextRules);
             setPage(0);
           }}
           onReset={() => {
-            setFilterValues({});
+            setFilterRules([]);
             setActivePreset('');
             setPage(0);
           }}
+          storageKey="luatpoip.crm.contract.savedFilters"
+          quickStats={quickStats}
         />
       </div>
+
+      <CrmViewDesignerModal
+        open={designerState.open}
+        mode={designerState.mode}
+        view={activeView}
+        allColumns={CONTRACT_ALL_COLUMNS}
+        defaultColumnKeys={CONTRACT_DEFAULT_COLUMN_KEYS}
+        allSummaryFields={CONTRACT_ALL_SUMMARY_FIELDS}
+        defaultSummaryKeys={CONTRACT_DEFAULT_SUMMARY_KEYS}
+        sortFields={CONTRACT_SORT_FIELDS}
+        defaultSortField="bookingDate"
+        onClose={() => setDesignerState((prev) => ({ ...prev, open: false }))}
+        onSave={saveView}
+        onDelete={deleteView}
+      />
 
       <CrmImportModal
         open={showImport}

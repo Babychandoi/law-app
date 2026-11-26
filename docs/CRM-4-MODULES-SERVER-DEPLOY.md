@@ -157,13 +157,15 @@ AI trên server thực hiện kiểm tra xác thực & luồng 4 phân hệ qua 
 
    XSRF=$(awk '/XSRF-TOKEN/ {print $7}' /tmp/crm_cookies.txt | tail -n 1)
 
-   # 2) Kiểm tra danh sách 4 phân hệ & API cũ vẫn trả code 200
+   # 2) Kiểm tra danh sách 4 phân hệ, bộ lọc động (?filters=), thùng rác (?deleted=true) & API cũ vẫn trả code 200
    for ep in "/crm/cases?page=0&size=5" \
              "/crm/leads?page=0&size=5" \
+             "/crm/leads?deleted=true&page=0&size=5" \
              "/crm/accounts?page=0&size=5" \
              "/crm/opportunities?page=0&size=5" \
              "/crm/opportunities/kanban" \
-             "/crm/contracts?page=0&size=5"; do
+             "/crm/contracts?page=0&size=5" \
+             "/crm/contracts?filters=%5B%7B%22field%22%3A%22orderValue%22%2C%22op%22%3A%22GTE%22%2C%22value%22%3A%220%22%7D%5D&page=0&size=5"; do
      echo "=== GET $ep ==="
      curl -s -b /tmp/crm_cookies.txt "https://gateway.luatpoip.com${ep}" | head -c 240; echo
    done
@@ -184,10 +186,16 @@ AI trên server thực hiện kiểm tra xác thực & luồng 4 phân hệ qua 
 
 Sau khi AI trên server báo hoàn tất Bước 1–5, mở trình duyệt đăng nhập `/2025/luatpoip/admin/login` và kiểm tra nhanh:
 - [ ] Vào **Quản lý CRM (4 phân hệ)** ở menu trái (`/2025/luatpoip/crm/sale-order`): Sidebar thu gọn/mở rộng mượt, hiển thị đúng 4 mục `KH Liên hệ`, `Khách hàng`, `Cơ hội HĐ`, `Hợp đồng`.
-- [ ] **KH Liên hệ**: Hiển thị các khách đăng ký tư vấn từ Website đã được đồng bộ tự động; bấm `Chuyển đổi` tạo được `Khách hàng` + `Cơ hội HĐ`.
-- [ ] **Khách hàng 360°**: Xem chi tiết khách hàng thấy đúng KPI tổng hợp, danh sách Liên hệ, Cơ hội và Hợp đồng liên quan; bấm `Sinh hợp đồng` mở form tạo Hợp đồng gắn sẵn khách hàng.
-- [ ] **Cơ hội HĐ**: Chuyển qua lại giữa `Danh sách` và `KanBan` (đủ 7 giai đoạn từ `1/ Liên hệ tư vấn & báo phí` đến `7/ KH thanh toán lần 1`), chuyển bước hoặc bấm `Sinh hợp đồng`.
-- [ ] **Hợp đồng & Thu chi**: Bảng đủ 16 cột ghim trái/phải, chân trang cộng đúng 4 chỉ số (`Giá trị đơn hàng`, `Thực thu`, `Còn phải thu`, `Dự kiến lãi lỗ`); vào tab `Thu chi` thêm khoản `Thực thu` / `Dự kiến chi` / `Thực chi` thấy số liệu lãi lỗ và công nợ cập nhật ngay lập tức.
+- [ ] **3 Chế độ xem (`Danh sách` · `KanBan` · `Sửa nhanh`) trên cả 4 phân hệ**:
+  - `Danh sách`: Bảng rộng cuộn ngang ghim cột Checkbox trái & Thao tác phải.
+  - `KanBan`: Kéo thả thẻ chuyển trạng thái/giai đoạn trên cả 4 phân hệ (trên Hợp đồng có thể nhóm theo *Tình trạng thực hiện HĐ* hoặc *Tình trạng ghi doanh số*).
+  - `Sửa nhanh`: Chỉnh sửa trực tiếp trên các ô bảng và bấm `Lưu thay đổi` hàng loạt.
+- [ ] **Menu chọn Giao diện (`YÊU THÍCH` · `CHIA SẺ VỚI TÔI` · `TẠO BỞI TÔI` · `+ Thêm giao diện`) & Màn hình `← Sửa giao diện`**:
+  - Bấm `Sửa` cạnh tiêu đề mở bảng chọn 2 cột `Có sẵn` ↔ `Được chọn` cho cả **Cột hiển thị** và **Trường tính Tổng KPI đáy bảng** (12 chỉ số tiền tệ trên Hợp đồng) + **Sắp xếp dữ liệu theo** (*Tăng dần / Giảm dần*).
+- [ ] **Bộ lọc bên phải (`ĐÃ LƯU` + `TIÊU CHÍ LỌC` + `── Xem thêm ──` + Biểu đồ nhanh)**:
+  - Hiển thị đủ toàn bộ cột chính (16 cột trên Hợp đồng, 12 trên KH Liên hệ & Khách hàng, 9 trên Cơ hội HĐ), bấm `Xem thêm` mở rộng thêm 10–26 trường phụ, hỗ trợ toán tử lọc chi tiết và lưu bộ lọc riêng.
+- [ ] **Menu mở rộng `...` góc phải (7 chức năng)**:
+  - `Thống kê nhanh`, `Bàn giao công việc`, `Xóa hàng loạt`, `Quản lý chia sẻ`, `Quản lý thẻ`, `In` và **`Thùng rác`** (xóa mềm, khôi phục hoặc xóa vĩnh viễn).
 
 ---
 

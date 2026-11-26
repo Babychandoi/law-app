@@ -101,8 +101,8 @@ export const LEAD_CUSTOMER_STATUSES: string[] = [
 
 export const ACCOUNT_CUSTOMER_STATUSES: string[] = [
   'Đã chốt hợp đồng',
-  'Tiềm năng',
   'Nhu cầu cao/Gấp',
+  'Tiềm năng',
   'Không còn tiềm năng',
 ];
 

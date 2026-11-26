@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.law_app.crm.service.CrmLeadService;
 import org.law_app.crm.service.CrmSupport;
 import org.law_app.crm.web.CrmCaseController.Meta;
+import org.law_app.crm.web.EnterpriseCrmDtos.BulkActionRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.BulkImportRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.CrmLeadDto;
 import org.law_app.crm.web.EnterpriseCrmDtos.LeadConvertRequest;
@@ -31,15 +32,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class CrmLeadController {
 
   private static final Map<String, String> SORTABLE =
-      Map.of(
-          "createdAt", "createdAt",
-          "updatedAt", "updatedAt",
-          "code", "code",
-          "customerName", "customerName",
-          "fullName", "fullName",
-          "customerStatus", "customerStatus",
-          "leadSource", "leadSource",
-          "lastInteractedAt", "lastInteractedAt");
+      Map.ofEntries(
+          Map.entry("createdAt", "createdAt"),
+          Map.entry("updatedAt", "updatedAt"),
+          Map.entry("deletedAt", "deletedAt"),
+          Map.entry("deletedBy", "deletedBy"),
+          Map.entry("code", "code"),
+          Map.entry("customerName", "customerName"),
+          Map.entry("fullName", "fullName"),
+          Map.entry("customerStatus", "customerStatus"),
+          Map.entry("leadSource", "leadSource"),
+          Map.entry("lastInteractedAt", "lastInteractedAt"));
 
   private final CrmLeadService leadService;
 
@@ -53,6 +56,8 @@ public class CrmLeadController {
       @RequestParam(required = false) String province,
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
       @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+      @RequestParam(required = false) String filters,
+      @RequestParam(defaultValue = "false") boolean deleted,
       @RequestParam(required = false) String sort,
       @RequestParam(defaultValue = "0") int page,
       @RequestParam(defaultValue = "20") int size) {
@@ -69,6 +74,8 @@ public class CrmLeadController {
             province,
             from,
             to,
+            filters,
+            deleted,
             pageable);
     return ApiResponse.<List<CrmLeadDto>>builder()
         .code(200)
@@ -101,7 +108,24 @@ public class CrmLeadController {
   @DeleteMapping("/{id}")
   public ApiResponse<Void> delete(@PathVariable String id) {
     leadService.delete(id);
-    return ApiResponse.ok(null, "Đã xóa tiềm năng liên hệ");
+    return ApiResponse.ok(null, "Đã chuyển tiềm năng liên hệ vào Thùng rác");
+  }
+
+  @PostMapping("/{id}/restore")
+  public ApiResponse<CrmLeadDto> restore(@PathVariable String id) {
+    return ApiResponse.ok(leadService.restore(id), "Đã khôi phục tiềm năng liên hệ");
+  }
+
+  @DeleteMapping("/{id}/permanent")
+  public ApiResponse<Void> permanentDelete(@PathVariable String id) {
+    leadService.permanentDelete(id);
+    return ApiResponse.ok(null, "Đã xóa vĩnh viễn tiềm năng liên hệ");
+  }
+
+  @PostMapping("/bulk-action")
+  public ApiResponse<Map<String, Integer>> bulkAction(@RequestBody BulkActionRequest req) {
+    int count = leadService.bulkAction(req);
+    return ApiResponse.ok(Map.of("affected", count), "Đã thực hiện thao tác hàng loạt");
   }
 
   @PostMapping("/{id}/convert")

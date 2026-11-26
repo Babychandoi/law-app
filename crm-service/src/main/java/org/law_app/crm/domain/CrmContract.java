@@ -186,9 +186,20 @@ public class CrmContract {
   @Column(length = 100)
   private String updatedBy;
 
+  @Column(name = "tags_json", length = 2000)
+  private String tags;
+
   @Column(name = "created_at")
   private Instant createdAt;
 
   @Column(name = "updated_at")
   private Instant updatedAt;
+
+  @Column(nullable = false, columnDefinition = "boolean default false")
+  private boolean deleted;
+
+  private Instant deletedAt;
+
+  @Column(length = 255)
+  private String deletedBy;
 }

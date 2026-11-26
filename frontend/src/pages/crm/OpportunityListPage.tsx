@@ -5,49 +5,58 @@ import {
   Download,
   FileCheck2,
   Filter,
-  Kanban,
-  List,
   Pencil,
   Plus,
   RefreshCw,
   Search,
+  Settings,
   Trash2,
   Upload,
 } from 'lucide-react';
 import { toast } from 'react-toastify';
 import useConfirm from '../../component/common/ui/useConfirm';
 import crmEnterpriseApi from '../../features/crm/api';
-import CrmColumnPicker, {
-  type CrmColumnOption,
-  usePersistedColumns,
-} from '../../features/crm/CrmColumnPicker';
-import CrmFilterPanel, { type CrmFilterFieldConfig } from '../../features/crm/CrmFilterPanel';
+import CrmColumnPicker, { type CrmColumnOption } from '../../features/crm/CrmColumnPicker';
+import CrmFilterPanel from '../../features/crm/CrmFilterPanel';
 import CrmImportModal, { type CrmImportFieldMapping } from '../../features/crm/CrmImportModal';
-import CrmPaginationFooter from '../../features/crm/CrmPaginationFooter';
+import CrmMoreActionsMenu, {
+  type CrmActionRecordSummary,
+} from '../../features/crm/CrmMoreActionsMenu';
+import CrmPaginationFooter, { type CrmFooterKpiItem } from '../../features/crm/CrmPaginationFooter';
 import CrmQuickActivityPanel from '../../features/crm/CrmQuickActivityPanel';
+import CrmQuickEditBar, { buildQuickStatsGroups } from '../../features/crm/CrmQuickEditBar';
 import CrmStatusBadge, { CrmAssigneePill, CrmTagList } from '../../features/crm/CrmStatusBadge';
+import CrmViewDesignerModal from '../../features/crm/CrmViewDesignerModal';
+import CrmViewModeDropdown, { type CrmViewMode } from '../../features/crm/CrmViewModeDropdown';
+import CrmViewSelector from '../../features/crm/CrmViewSelector';
+import { OPPORTUNITY_SAVED_PRESETS, OPPORTUNITY_STAGES } from '../../features/crm/constants';
 import {
-  CRM_SERVICE_GROUPS,
-  OPPORTUNITY_SAVED_PRESETS,
-  OPPORTUNITY_STAGES,
-} from '../../features/crm/constants';
-import { exportRowsToCsv, formatDateVi, formatVnd } from '../../features/crm/formatters';
-import type { CrmKanbanColumnDto, CrmOpportunityDto, PageMeta } from '../../features/crm/types';
+  buildOpportunityFilterFields,
+  extractAssigneeOptions,
+} from '../../features/crm/filterConfigs';
+import {
+  exportRowsToCsv,
+  formatDateVi,
+  formatVnd,
+  toDateInputValue,
+} from '../../features/crm/formatters';
+import type {
+  CrmFilterRule,
+  CrmKanbanColumnDto,
+  CrmOpportunityDto,
+  CrmOpportunityWritePayload,
+  PageMeta,
+} from '../../features/crm/types';
+import {
+  OPPORTUNITY_ALL_COLUMNS,
+  OPPORTUNITY_ALL_SUMMARY_FIELDS,
+  OPPORTUNITY_DEFAULT_COLUMN_KEYS,
+  OPPORTUNITY_DEFAULT_SUMMARY_KEYS,
+  OPPORTUNITY_SORT_FIELDS,
+  OPPORTUNITY_SYSTEM_VIEWS,
+  useCrmSavedViews,
+} from '../../features/crm/viewConfigs';
 import { CRM_BASE, useCrmWorkspace } from './CrmWorkspaceLayout';
-
-type OppViewMode = 'list' | 'kanban';
-
-const OPPORTUNITY_COLUMNS: CrmColumnOption[] = [
-  { key: 'tags', label: 'Thẻ' },
-  { key: 'opportunityName', label: 'Tên cơ hội', locked: true },
-  { key: 'contactName', label: 'Liên hệ' },
-  { key: 'expectedRevenue', label: 'Số tiền', locked: true },
-  { key: 'stage', label: 'Giai đoạn' },
-  { key: 'expectedCloseDate', label: 'Ngày kỳ vọng/kết thúc' },
-  { key: 'serviceGroups', label: 'Loại hàng hóa' },
-  { key: 'assignedUserName', label: 'Người thực hiện' },
-  { key: 'createdAt', label: 'Ngày tạo' },
-];
 
 const OPPORTUNITY_IMPORT_MAPPINGS: CrmImportFieldMapping[] = [
   {
@@ -85,17 +94,37 @@ const OPPORTUNITY_IMPORT_MAPPINGS: CrmImportFieldMapping[] = [
 
 export default function OpportunityListPage() {
   const navigate = useNavigate();
-  const { staffList } = useCrmWorkspace();
+  const { me, staffList } = useCrmWorkspace();
   const { confirm, confirmDialog } = useConfirm();
 
-  const [viewMode, setViewMode] = useState<OppViewMode>('list');
+  const {
+    views,
+    activeView,
+    setActiveViewId,
+    pinnedViewId,
+    setPinnedViewId,
+    toggleFavoriteView,
+    saveView,
+    deleteView,
+    toggleColumnOnActiveView,
+    resetActiveViewToDefault,
+  } = useCrmSavedViews(
+    'luatpoip.crm.opportunity',
+    OPPORTUNITY_SYSTEM_VIEWS,
+    OPPORTUNITY_ALL_COLUMNS,
+    OPPORTUNITY_DEFAULT_COLUMN_KEYS,
+    OPPORTUNITY_DEFAULT_SUMMARY_KEYS,
+    'createdAt'
+  );
+
+  const [viewMode, setViewMode] = useState<CrmViewMode>('list');
   const [rows, setRows] = useState<CrmOpportunityDto[]>([]);
   const [kanbanColumns, setKanbanColumns] = useState<CrmKanbanColumnDto[]>([]);
   const [meta, setMeta] = useState<PageMeta | undefined>(undefined);
   const [loading, setLoading] = useState(true);
   const [keyword, setKeyword] = useState('');
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
-  const [filterValues, setFilterValues] = useState<Record<string, string>>({});
+  const [filterRules, setFilterRules] = useState<CrmFilterRule[]>([]);
   const [activePreset, setActivePreset] = useState('');
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
@@ -106,11 +135,14 @@ export default function OpportunityListPage() {
   const [showActivity, setShowActivity] = useState(false);
   const [showImport, setShowImport] = useState(false);
   const [draggedOppId, setDraggedOppId] = useState<string | null>(null);
+  const [designerState, setDesignerState] = useState<{
+    open: boolean;
+    mode: 'edit' | 'create';
+  }>({ open: false, mode: 'edit' });
 
-  const { visibleKeys, toggleColumn, resetColumns } = usePersistedColumns(
-    'luatpoip.crm.opportunity.columns',
-    OPPORTUNITY_COLUMNS
-  );
+  // Quick-Edit state
+  const [dirtyMap, setDirtyMap] = useState<Record<string, CrmOpportunityWritePayload>>({});
+  const [savingQuickEdit, setSavingQuickEdit] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -119,6 +151,20 @@ export default function OpportunityListPage() {
     }, 250);
     return () => clearTimeout(t);
   }, [keyword]);
+
+  const combinedFilters = useMemo<CrmFilterRule[]>(() => {
+    const merged: CrmFilterRule[] = [];
+    if (activeView.rules?.length) {
+      merged.push(...activeView.rules);
+    }
+    if (activeView.onlyMine && me?.fullName) {
+      merged.push({ field: 'assignedUserName', op: 'EQ', value: me.fullName });
+    }
+    if (filterRules.length > 0) {
+      merged.push(...filterRules);
+    }
+    return merged;
+  }, [activeView, me, filterRules]);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -135,8 +181,8 @@ export default function OpportunityListPage() {
       if (viewMode === 'kanban') {
         const cols = await crmEnterpriseApi.getOpportunityKanban({
           keyword: debouncedKeyword || undefined,
-          assignedTo: filterValues.assignedTo || undefined,
-          serviceGroup: filterValues.serviceGroup || undefined,
+          stage: presetStage,
+          filters: combinedFilters.length > 0 ? combinedFilters : undefined,
         });
         const merged: CrmKanbanColumnDto[] = OPPORTUNITY_STAGES.map((stage) => {
           const found = cols.find((c) => c.stage === stage);
@@ -153,17 +199,16 @@ export default function OpportunityListPage() {
       } else {
         const res = await crmEnterpriseApi.listOpportunities({
           keyword: debouncedKeyword || undefined,
-          stage: filterValues.stage || presetStage,
-          assignedTo: filterValues.assignedTo || undefined,
-          serviceGroup: filterValues.serviceGroup || undefined,
-          from: filterValues.from || undefined,
-          to: filterValues.to || undefined,
+          stage: presetStage,
+          filters: combinedFilters.length > 0 ? combinedFilters : undefined,
+          sort: `${activeView.sortField},${activeView.sortDir}`,
           page,
           size: pageSize,
         });
         setRows(res.rows);
         setMeta(res.meta);
         setSelectedIds([]);
+        setDirtyMap({});
         setActiveOpp((prev) =>
           prev
             ? (res.rows.find((r) => r.id === prev.id) ?? res.rows[0] ?? null)
@@ -175,41 +220,120 @@ export default function OpportunityListPage() {
     } finally {
       setLoading(false);
     }
-  }, [viewMode, debouncedKeyword, filterValues, activePreset, page, pageSize]);
+  }, [
+    viewMode,
+    debouncedKeyword,
+    activePreset,
+    combinedFilters,
+    activeView.sortField,
+    activeView.sortDir,
+    page,
+    pageSize,
+  ]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
 
-  const filterFields = useMemo<CrmFilterFieldConfig[]>(
-    () => [
-      {
-        key: 'stage',
-        label: 'Giai đoạn',
-        type: 'select',
-        options: OPPORTUNITY_STAGES,
-      },
-      {
-        key: 'assignedTo',
-        label: 'Người thực hiện',
-        type: 'select',
-        options: staffList.map((u) => ({ value: u.id, label: u.fullName || u.username })),
-      },
-      {
-        key: 'serviceGroup',
-        label: 'Nhóm dịch vụ',
-        type: 'select',
-        options: CRM_SERVICE_GROUPS,
-      },
-      {
-        key: 'from',
-        toKey: 'to',
-        label: 'Ngày tạo',
-        type: 'dateRange',
-      },
-    ],
-    [staffList]
+  const allLoadedItems = useMemo(
+    () => (viewMode === 'kanban' ? kanbanColumns.flatMap((c) => c.items) : rows),
+    [viewMode, kanbanColumns, rows]
   );
+
+  const assigneeOptions = useMemo(
+    () =>
+      extractAssigneeOptions(
+        staffList,
+        allLoadedItems.map((r) => r.assignedUserName)
+      ),
+    [staffList, allLoadedItems]
+  );
+
+  const filterFields = useMemo(
+    () => buildOpportunityFilterFields(assigneeOptions),
+    [assigneeOptions]
+  );
+
+  const activeColumns = useMemo<CrmColumnOption[]>(() => {
+    const resolved = activeView.columns
+      .map((key) => OPPORTUNITY_ALL_COLUMNS.find((c) => c.key === key))
+      .filter((c): c is CrmColumnOption => Boolean(c));
+    return resolved.length > 0 ? resolved : OPPORTUNITY_ALL_COLUMNS.slice(0, 9);
+  }, [activeView.columns]);
+
+  const quickStats = useMemo(
+    () =>
+      buildQuickStatsGroups(allLoadedItems, {
+        statusLabel: 'Theo Giai đoạn Cơ hội HĐ',
+        getStatus: (r) => r.stage,
+        getAssignee: (r) => r.assignedUserName,
+        getSource: (r) => r.leadSource,
+        getAmount: (r) => r.expectedRevenue,
+      }),
+    [allLoadedItems]
+  );
+
+  const footerKpis = useMemo<CrmFooterKpiItem[]>(() => {
+    if (!activeView.summaryKeys.includes('expectedRevenue')) return [];
+    const sumExpected = rows.reduce((acc, item) => acc + item.expectedRevenue, 0);
+    return [
+      {
+        label: 'Số tiền kỳ vọng',
+        value: formatVnd(sumExpected),
+        tone: 'emerald',
+      },
+    ];
+  }, [rows, activeView.summaryKeys]);
+
+  const setDirtyField = <K extends keyof CrmOpportunityWritePayload>(
+    row: CrmOpportunityDto,
+    key: K,
+    value: CrmOpportunityWritePayload[K]
+  ) => {
+    setDirtyMap((prev) => {
+      const existing = prev[row.id] ?? {};
+      const nextPatch: CrmOpportunityWritePayload = {
+        ...existing,
+        [key]: value,
+      };
+      if (key === 'assignedUserName') {
+        const matched = staffList.find((u) => (u.fullName || u.username) === String(value || ''));
+        nextPatch.assignedUserId = matched ? matched.id : row.assignedUserId;
+      }
+      return {
+        ...prev,
+        [row.id]: nextPatch,
+      };
+    });
+  };
+
+  const dirtyIds = Object.keys(dirtyMap);
+
+  const handleSaveQuickEdit = async () => {
+    if (dirtyIds.length === 0) return;
+    setSavingQuickEdit(true);
+    try {
+      await Promise.all(
+        dirtyIds.map((id) => {
+          const original = rows.find((r) => r.id === id);
+          const patch = dirtyMap[id];
+          if (!original || !patch) return Promise.resolve();
+          return crmEnterpriseApi.updateOpportunity(id, {
+            ...original,
+            ...patch,
+            items: undefined,
+          });
+        })
+      );
+      toast.success(`Đã cập nhật nhanh ${dirtyIds.length} cơ hội HĐ`);
+      setDirtyMap({});
+      await loadData();
+    } catch {
+      toast.error('Không thể lưu một số thay đổi trên Cơ hội HĐ');
+    } finally {
+      setSavingQuickEdit(false);
+    }
+  };
 
   const handleMoveStage = async (oppId: string, nextStage: string) => {
     try {
@@ -268,7 +392,235 @@ export default function OpportunityListPage() {
     );
   };
 
-  const isColVisible = (key: string) => visibleKeys.includes(key);
+  const actionSummaries = useMemo<CrmActionRecordSummary[]>(
+    () =>
+      allLoadedItems.map((r) => ({
+        id: r.id,
+        code: r.code,
+        title: r.opportunityName,
+        subtitle: r.accountName || r.contactName,
+        status: r.stage,
+        assignedUserName: r.assignedUserName,
+        amount: r.expectedRevenue,
+        updatedAt: r.updatedAt || r.createdAt,
+      })),
+    [allLoadedItems]
+  );
+
+  const fetchDeletedOpportunities = useCallback(async (): Promise<CrmActionRecordSummary[]> => {
+    const res = await crmEnterpriseApi.listOpportunities({ deleted: true, page: 0, size: 100 });
+    return res.rows.map((r) => ({
+      id: r.id,
+      code: r.code,
+      title: r.opportunityName,
+      subtitle: r.accountName || r.contactName,
+      status: r.stage,
+      assignedUserName: r.assignedUserName,
+      amount: r.expectedRevenue,
+      updatedAt: r.updatedAt || r.createdAt,
+    }));
+  }, []);
+
+  const renderCell = (row: CrmOpportunityDto, colKey: string) => {
+    const patch = dirtyMap[row.id] ?? {};
+    const isQuickEdit = viewMode === 'quickEdit';
+
+    switch (colKey) {
+      case 'tags':
+        return (
+          <td key={colKey} className="px-3 py-2">
+            <CrmTagList tags={row.tags} />
+          </td>
+        );
+
+      case 'opportunityName':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <input
+              type="text"
+              aria-label={`Tên cơ hội ${row.code}`}
+              value={
+                patch.opportunityName !== undefined
+                  ? patch.opportunityName
+                  : row.opportunityName || ''
+              }
+              onChange={(e) => setDirtyField(row, 'opportunityName', e.target.value)}
+              className="h-7 w-full min-w-[200px] rounded border border-brand-line bg-white px-2 text-xs font-medium text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td key={colKey} className="px-3 py-2">
+            <Link
+              to={`${CRM_BASE}/opportunity/${row.id}`}
+              onClick={(e) => e.stopPropagation()}
+              className="font-semibold text-brand-primary hover:underline"
+            >
+              {row.opportunityName}
+            </Link>
+            <div className="text-[11px] tabular-nums text-brand-muted">
+              {row.code}
+              {row.accountName ? ` · ${row.accountName}` : ''}
+            </div>
+          </td>
+        );
+
+      case 'contactName':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <input
+              type="text"
+              aria-label={`Liên hệ ${row.code}`}
+              value={
+                patch.contactName !== undefined
+                  ? (patch.contactName ?? '')
+                  : (row.contactName ?? '')
+              }
+              onChange={(e) => setDirtyField(row, 'contactName', e.target.value)}
+              className="h-7 w-[150px] rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td key={colKey} className="px-3 py-2 text-brand-ink">
+            <div>{row.contactName || '—'}</div>
+            {row.contactPhone && (
+              <div className="text-[11px] tabular-nums text-brand-muted">{row.contactPhone}</div>
+            )}
+          </td>
+        );
+
+      case 'expectedRevenue':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5 text-right">
+            <input
+              type="number"
+              aria-label={`Số tiền ${row.code}`}
+              value={
+                patch.expectedRevenue !== undefined ? patch.expectedRevenue : row.expectedRevenue
+              }
+              onChange={(e) => setDirtyField(row, 'expectedRevenue', Number(e.target.value))}
+              className="h-7 w-[120px] rounded border border-brand-line bg-white px-2 text-right text-xs font-semibold tabular-nums text-[#065f46] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td
+            key={colKey}
+            className="whitespace-nowrap px-3 py-2 text-right font-semibold tabular-nums text-[#065f46]"
+          >
+            {formatVnd(row.expectedRevenue)}
+          </td>
+        );
+
+      case 'stage':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <select
+              aria-label={`Giai đoạn ${row.code}`}
+              value={patch.stage ?? row.stage}
+              onChange={(e) => setDirtyField(row, 'stage', e.target.value)}
+              className="h-7 rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              {OPPORTUNITY_STAGES.map((st) => (
+                <option key={st} value={st}>
+                  {st}
+                </option>
+              ))}
+            </select>
+          </td>
+        ) : (
+          <td key={colKey} className="px-3 py-2">
+            <CrmStatusBadge status={row.stage} />
+          </td>
+        );
+
+      case 'expectedCloseDate':
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <input
+              type="date"
+              aria-label={`Ngày kỳ vọng ${row.code}`}
+              value={toDateInputValue(
+                patch.expectedCloseDate !== undefined
+                  ? patch.expectedCloseDate
+                  : row.expectedCloseDate
+              )}
+              onChange={(e) => setDirtyField(row, 'expectedCloseDate', e.target.value)}
+              className="h-7 w-[128px] rounded border border-brand-line bg-white px-1.5 text-xs tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            />
+          </td>
+        ) : (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 tabular-nums text-brand-ink">
+            {formatDateVi(row.expectedCloseDate)}
+          </td>
+        );
+
+      case 'serviceGroups':
+        return (
+          <td key={colKey} className="max-w-[200px] truncate px-3 py-2 text-brand-ink">
+            {row.serviceGroups?.length ? row.serviceGroups.join(', ') : '—'}
+          </td>
+        );
+
+      case 'assignedUserName': {
+        const curAssignee =
+          patch.assignedUserName !== undefined
+            ? (patch.assignedUserName ?? '')
+            : (row.assignedUserName ?? '');
+        const selectOpts = Array.from(new Set([curAssignee, ...assigneeOptions].filter(Boolean)));
+        return isQuickEdit ? (
+          <td key={colKey} onClick={(e) => e.stopPropagation()} className="px-2 py-1.5">
+            <select
+              aria-label={`Người thực hiện ${row.code}`}
+              value={curAssignee}
+              onChange={(e) => setDirtyField(row, 'assignedUserName', e.target.value)}
+              className="h-7 min-w-[140px] rounded border border-brand-line bg-white px-2 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+            >
+              <option value="">-- Chưa phân công --</option>
+              {selectOpts.map((name) => (
+                <option key={name} value={name}>
+                  {name}
+                </option>
+              ))}
+            </select>
+          </td>
+        ) : (
+          <td key={colKey} className="px-3 py-2">
+            <CrmAssigneePill name={row.assignedUserName} />
+          </td>
+        );
+      }
+
+      case 'createdAt':
+      case 'updatedAt':
+        return (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 tabular-nums text-brand-muted">
+            {formatDateVi(row[colKey])}
+          </td>
+        );
+
+      case 'opportunityTypes':
+        return (
+          <td key={colKey} className="max-w-[200px] truncate px-3 py-2 text-brand-ink">
+            {row.opportunityTypes?.length ? row.opportunityTypes.join(', ') : '—'}
+          </td>
+        );
+
+      case 'shared':
+        return (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 text-brand-muted">
+            {row.shared ? 'Có' : 'Không'}
+          </td>
+        );
+
+      default: {
+        const val = (row as unknown as Record<string, unknown>)[colKey];
+        return (
+          <td key={colKey} className="whitespace-nowrap px-3 py-2 text-brand-ink">
+            {val ? String(val) : '—'}
+          </td>
+        );
+      }
+    }
+  };
 
   return (
     <div className="flex h-full flex-col overflow-hidden px-3 pb-3 pt-2.5 sm:px-4">
@@ -276,45 +628,30 @@ export default function OpportunityListPage() {
 
       {/* Sub-header */}
       <div className="mb-2.5 flex min-h-[44px] flex-wrap items-center justify-between gap-2">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <h1 className="text-lg font-semibold text-brand-ink">Cơ hội Hợp đồng</h1>
-
-          {/* View Switcher: Danh sách / KanBan */}
-          <div
-            role="group"
-            aria-label="Chuyển chế độ hiển thị Cơ hội HĐ"
-            className="inline-flex rounded-md border border-brand-line bg-white p-0.5"
-          >
-            <button
-              type="button"
-              onClick={() => setViewMode('list')}
-              aria-pressed={viewMode === 'list'}
-              className={`inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
-                viewMode === 'list'
-                  ? 'bg-brand-primary text-white'
-                  : 'text-brand-ink hover:bg-brand-surface'
-              }`}
-            >
-              <List size={14} aria-hidden="true" />
-              <span>Danh sách</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode('kanban')}
-              aria-pressed={viewMode === 'kanban'}
-              className={`inline-flex items-center gap-1.5 rounded px-2.5 py-1 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
-                viewMode === 'kanban'
-                  ? 'bg-brand-primary text-white'
-                  : 'text-brand-ink hover:bg-brand-surface'
-              }`}
-            >
-              <Kanban size={14} aria-hidden="true" />
-              <span>KanBan</span>
-            </button>
-          </div>
-        </div>
+        <CrmViewSelector
+          views={views}
+          activeView={activeView}
+          pinnedViewId={pinnedViewId}
+          onSelectView={(v) => {
+            setActiveViewId(v.id);
+            setPage(0);
+          }}
+          onToggleFavorite={toggleFavoriteView}
+          onPinView={setPinnedViewId}
+          onEditView={() => setDesignerState({ open: true, mode: 'edit' })}
+          onCreateView={() => setDesignerState({ open: true, mode: 'create' })}
+        />
 
         <div className="flex flex-wrap items-center gap-2">
+          <CrmViewModeDropdown
+            value={viewMode}
+            onChange={(nextMode) => {
+              setViewMode(nextMode);
+              if (nextMode !== 'quickEdit') setDirtyMap({});
+            }}
+            ariaLabel="Chuyển chế độ xem Cơ hội HĐ"
+          />
+
           <button
             type="button"
             onClick={() => setShowImport(true)}
@@ -324,7 +661,7 @@ export default function OpportunityListPage() {
             <span>Nhập từ Excel</span>
           </button>
 
-          {viewMode === 'list' && (
+          {viewMode !== 'kanban' && (
             <button
               type="button"
               onClick={handleExportCsv}
@@ -342,6 +679,17 @@ export default function OpportunityListPage() {
             <Plus size={15} aria-hidden="true" />
             <span>Thêm</span>
           </Link>
+
+          <CrmMoreActionsMenu
+            moduleEndpoint="opportunities"
+            moduleLabel="Cơ hội HĐ"
+            records={actionSummaries}
+            selectedIds={selectedIds}
+            staffList={staffList}
+            quickStats={quickStats}
+            fetchDeletedRecords={fetchDeletedOpportunities}
+            onReload={loadData}
+          />
         </div>
       </div>
 
@@ -376,14 +724,25 @@ export default function OpportunityListPage() {
                 <RefreshCw size={14} aria-hidden="true" />
               </button>
 
-              {viewMode === 'list' && (
+              {viewMode !== 'kanban' && (
                 <>
+                  <button
+                    type="button"
+                    onClick={() => setDesignerState({ open: true, mode: 'edit' })}
+                    aria-label="Thiết lập giao diện bảng Cơ hội HĐ"
+                    title="Sửa giao diện"
+                    className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-brand-line bg-white text-brand-muted hover:bg-brand-surface hover:text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                  >
+                    <Settings size={14} aria-hidden="true" />
+                  </button>
+
                   <CrmColumnPicker
-                    columns={OPPORTUNITY_COLUMNS}
-                    visibleKeys={visibleKeys}
-                    onToggle={toggleColumn}
-                    onReset={resetColumns}
+                    columns={OPPORTUNITY_ALL_COLUMNS}
+                    visibleKeys={activeView.columns}
+                    onToggle={toggleColumnOnActiveView}
+                    onReset={resetActiveViewToDefault}
                   />
+
                   <button
                     type="button"
                     onClick={() => setShowActivity((v) => !v)}
@@ -417,6 +776,18 @@ export default function OpportunityListPage() {
               </button>
             </div>
           </div>
+
+          {viewMode === 'quickEdit' && (
+            <CrmQuickEditBar
+              dirtyCount={dirtyIds.length}
+              saving={savingQuickEdit}
+              onCancel={() => {
+                if (dirtyIds.length > 0) setDirtyMap({});
+                else setViewMode('list');
+              }}
+              onSave={handleSaveQuickEdit}
+            />
+          )}
 
           {/* KanBan View */}
           {viewMode === 'kanban' ? (
@@ -523,7 +894,7 @@ export default function OpportunityListPage() {
             </div>
           ) : (
             <>
-              {/* 9-column List View */}
+              {/* Dynamic Opportunity Table */}
               <div className="min-h-0 flex-1 overflow-auto">
                 <table className="min-w-[1340px] w-full border-collapse text-left text-xs">
                   <thead className="sticky top-0 z-20 border-b border-brand-line bg-brand-surface text-brand-ink">
@@ -541,35 +912,16 @@ export default function OpportunityListPage() {
                           className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
                         />
                       </th>
-                      {isColVisible('tags') && <th className="px-3 py-2.5 font-bold">Thẻ</th>}
-                      {isColVisible('opportunityName') && (
-                        <th className="min-w-[240px] px-3 py-2.5 font-bold">Tên cơ hội</th>
-                      )}
-                      {isColVisible('contactName') && (
-                        <th className="whitespace-nowrap px-3 py-2.5 font-bold">Liên hệ</th>
-                      )}
-                      {isColVisible('expectedRevenue') && (
-                        <th className="whitespace-nowrap px-3 py-2.5 text-right font-bold">
-                          Số tiền
+                      {activeColumns.map((col) => (
+                        <th
+                          key={col.key}
+                          className={`whitespace-nowrap px-3 py-2.5 font-bold ${
+                            col.key === 'expectedRevenue' ? 'text-right' : ''
+                          } ${col.key === 'opportunityName' ? 'min-w-[240px]' : ''}`}
+                        >
+                          {col.label}
                         </th>
-                      )}
-                      {isColVisible('stage') && (
-                        <th className="whitespace-nowrap px-3 py-2.5 font-bold">Giai đoạn</th>
-                      )}
-                      {isColVisible('expectedCloseDate') && (
-                        <th className="whitespace-nowrap px-3 py-2.5 font-bold">
-                          Ngày kỳ vọng/kết thúc
-                        </th>
-                      )}
-                      {isColVisible('serviceGroups') && (
-                        <th className="whitespace-nowrap px-3 py-2.5 font-bold">Loại hàng hóa</th>
-                      )}
-                      {isColVisible('assignedUserName') && (
-                        <th className="whitespace-nowrap px-3 py-2.5 font-bold">Người thực hiện</th>
-                      )}
-                      {isColVisible('createdAt') && (
-                        <th className="whitespace-nowrap px-3 py-2.5 font-bold">Ngày tạo</th>
-                      )}
+                      ))}
                       <th className="sticky right-0 z-30 w-28 border-l border-brand-line bg-brand-surface px-2.5 py-2.5 text-center font-bold">
                         Thao tác
                       </th>
@@ -580,14 +932,14 @@ export default function OpportunityListPage() {
                     {loading ? (
                       Array.from({ length: 6 }).map((_, idx) => (
                         <tr key={idx}>
-                          <td colSpan={11} className="px-4 py-3">
+                          <td colSpan={activeColumns.length + 2} className="px-4 py-3">
                             <div className="h-4 w-full animate-pulse rounded bg-brand-surface" />
                           </td>
                         </tr>
                       ))
                     ) : rows.length === 0 ? (
                       <tr>
-                        <td colSpan={11} className="px-6 py-14 text-center">
+                        <td colSpan={activeColumns.length + 2} className="px-6 py-14 text-center">
                           <p className="text-sm font-semibold text-brand-ink">
                             Chưa có Cơ hội HĐ nào
                           </p>
@@ -601,14 +953,17 @@ export default function OpportunityListPage() {
                       rows.map((row) => {
                         const isSelected = selectedIds.includes(row.id);
                         const isCurrent = activeOpp?.id === row.id;
+                        const isDirty = Boolean(dirtyMap[row.id]);
                         return (
                           <tr
                             key={row.id}
                             onClick={() => setActiveOpp(row)}
                             className={`cursor-pointer transition-colors ${
-                              isSelected || isCurrent
-                                ? 'bg-brand-surface'
-                                : 'bg-white hover:bg-brand-surface/60'
+                              isDirty
+                                ? 'bg-brand-accentSoft/40'
+                                : isSelected || isCurrent
+                                  ? 'bg-brand-surface'
+                                  : 'bg-white hover:bg-brand-surface/60'
                             }`}
                           >
                             <td
@@ -630,74 +985,7 @@ export default function OpportunityListPage() {
                               />
                             </td>
 
-                            {isColVisible('tags') && (
-                              <td className="px-3 py-2">
-                                <CrmTagList tags={row.tags} />
-                              </td>
-                            )}
-
-                            {isColVisible('opportunityName') && (
-                              <td className="px-3 py-2">
-                                <Link
-                                  to={`${CRM_BASE}/opportunity/${row.id}`}
-                                  onClick={(e) => e.stopPropagation()}
-                                  className="font-semibold text-brand-primary hover:underline"
-                                >
-                                  {row.opportunityName}
-                                </Link>
-                                <div className="text-[11px] tabular-nums text-brand-muted">
-                                  {row.code}
-                                  {row.accountName ? ` · ${row.accountName}` : ''}
-                                </div>
-                              </td>
-                            )}
-
-                            {isColVisible('contactName') && (
-                              <td className="px-3 py-2 text-brand-ink">
-                                <div>{row.contactName || '—'}</div>
-                                {row.contactPhone && (
-                                  <div className="text-[11px] tabular-nums text-brand-muted">
-                                    {row.contactPhone}
-                                  </div>
-                                )}
-                              </td>
-                            )}
-
-                            {isColVisible('expectedRevenue') && (
-                              <td className="whitespace-nowrap px-3 py-2 text-right font-semibold tabular-nums text-[#065f46]">
-                                {formatVnd(row.expectedRevenue)}
-                              </td>
-                            )}
-
-                            {isColVisible('stage') && (
-                              <td className="px-3 py-2">
-                                <CrmStatusBadge status={row.stage} />
-                              </td>
-                            )}
-
-                            {isColVisible('expectedCloseDate') && (
-                              <td className="whitespace-nowrap px-3 py-2 tabular-nums text-brand-ink">
-                                {formatDateVi(row.expectedCloseDate)}
-                              </td>
-                            )}
-
-                            {isColVisible('serviceGroups') && (
-                              <td className="max-w-[200px] truncate px-3 py-2 text-brand-ink">
-                                {row.serviceGroups?.length ? row.serviceGroups.join(', ') : '—'}
-                              </td>
-                            )}
-
-                            {isColVisible('assignedUserName') && (
-                              <td className="px-3 py-2">
-                                <CrmAssigneePill name={row.assignedUserName} />
-                              </td>
-                            )}
-
-                            {isColVisible('createdAt') && (
-                              <td className="whitespace-nowrap px-3 py-2 tabular-nums text-brand-muted">
-                                {formatDateVi(row.createdAt)}
-                              </td>
-                            )}
+                            {activeColumns.map((col) => renderCell(row, col.key))}
 
                             <td
                               onClick={(e) => e.stopPropagation()}
@@ -748,12 +1036,14 @@ export default function OpportunityListPage() {
                   setPageSize(sz);
                   setPage(0);
                 }}
+                kpis={footerKpis}
+                onConfigureSummary={() => setDesignerState({ open: true, mode: 'edit' })}
               />
             </>
           )}
         </div>
 
-        {viewMode === 'list' && showActivity && (
+        {viewMode !== 'kanban' && showActivity && (
           <CrmQuickActivityPanel
             docked
             entityType="OPPORTUNITY"
@@ -774,18 +1064,35 @@ export default function OpportunityListPage() {
             setPage(0);
           }}
           fields={filterFields}
-          values={filterValues}
-          onApply={(next) => {
-            setFilterValues(next);
+          rules={filterRules}
+          onApplyRules={(nextRules) => {
+            setFilterRules(nextRules);
             setPage(0);
           }}
           onReset={() => {
-            setFilterValues({});
+            setFilterRules([]);
             setActivePreset('');
             setPage(0);
           }}
+          storageKey="luatpoip.crm.opportunity.savedFilters"
+          quickStats={quickStats}
         />
       </div>
+
+      <CrmViewDesignerModal
+        open={designerState.open}
+        mode={designerState.mode}
+        view={activeView}
+        allColumns={OPPORTUNITY_ALL_COLUMNS}
+        defaultColumnKeys={OPPORTUNITY_DEFAULT_COLUMN_KEYS}
+        allSummaryFields={OPPORTUNITY_ALL_SUMMARY_FIELDS}
+        defaultSummaryKeys={OPPORTUNITY_DEFAULT_SUMMARY_KEYS}
+        sortFields={OPPORTUNITY_SORT_FIELDS}
+        defaultSortField="createdAt"
+        onClose={() => setDesignerState((prev) => ({ ...prev, open: false }))}
+        onSave={saveView}
+        onDelete={deleteView}
+      />
 
       <CrmImportModal
         open={showImport}

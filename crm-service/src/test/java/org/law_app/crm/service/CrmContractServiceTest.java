@@ -155,7 +155,8 @@ class CrmContractServiceTest {
             false,
             true,
             null,
-            List.of(i1, i2));
+            List.of(i1, i2),
+            List.of("SHTT"));
 
     CrmContractDto dto = contractService.create(req);
 
@@ -270,6 +271,14 @@ class CrmContractServiceTest {
             .collectedAmount(new BigDecimal("5000000"))
             .receivableAmount(BigDecimal.ZERO)
             .estimatedProfit(new BigDecimal("3500000"))
+            .actualExpense(new BigDecimal("1200000"))
+            .plannedExpense(new BigDecimal("1500000"))
+            .payableAmount(new BigDecimal("300000"))
+            .serviceExpense(new BigDecimal("500000"))
+            .stateFeeExpense(new BigDecimal("800000"))
+            .supportExpense(new BigDecimal("200000"))
+            .liquidationValue(new BigDecimal("5000000"))
+            .uninvoicedAmount(new BigDecimal("1000000"))
             .build();
     CrmContract c2 =
         CrmContract.builder()
@@ -279,6 +288,14 @@ class CrmContractServiceTest {
             .collectedAmount(new BigDecimal("3000000"))
             .receivableAmount(new BigDecimal("5000000"))
             .estimatedProfit(new BigDecimal("6000000"))
+            .actualExpense(new BigDecimal("1500000"))
+            .plannedExpense(new BigDecimal("2000000"))
+            .payableAmount(new BigDecimal("500000"))
+            .serviceExpense(new BigDecimal("600000"))
+            .stateFeeExpense(new BigDecimal("1000000"))
+            .supportExpense(new BigDecimal("400000"))
+            .liquidationValue(BigDecimal.ZERO)
+            .uninvoicedAmount(new BigDecimal("2500000"))
             .build();
 
     var pageable = PageRequest.of(0, 1);
@@ -289,17 +306,86 @@ class CrmContractServiceTest {
 
     var result =
         contractService.search(
-            "me", null, null, null, null, null, null, null, null, null, null, null, pageable);
+            "me",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            "[{\"field\":\"orderValue\",\"op\":\"GT\",\"value\":\"1000000\"}]",
+            false,
+            pageable);
 
     assertThat(result.payload().rows()).hasSize(1);
-    assertThat(result.payload().summary().totalRecords()).isEqualTo(2L);
-    assertThat(result.payload().summary().totalOrderValue())
-        .isEqualByComparingTo(new BigDecimal("13000000"));
-    assertThat(result.payload().summary().totalCollected())
-        .isEqualByComparingTo(new BigDecimal("8000000"));
-    assertThat(result.payload().summary().totalReceivable())
-        .isEqualByComparingTo(new BigDecimal("5000000"));
-    assertThat(result.payload().summary().totalEstimatedProfit())
-        .isEqualByComparingTo(new BigDecimal("9500000"));
+    var summary = result.payload().summary();
+    assertThat(summary.totalRecords()).isEqualTo(2L);
+    assertThat(summary.totalOrderValue()).isEqualByComparingTo(new BigDecimal("13000000"));
+    assertThat(summary.totalCollected()).isEqualByComparingTo(new BigDecimal("8000000"));
+    assertThat(summary.totalReceivable()).isEqualByComparingTo(new BigDecimal("5000000"));
+    assertThat(summary.totalEstimatedProfit()).isEqualByComparingTo(new BigDecimal("9500000"));
+    assertThat(summary.totalActualExpense()).isEqualByComparingTo(new BigDecimal("2700000"));
+    assertThat(summary.totalPlannedExpense()).isEqualByComparingTo(new BigDecimal("3500000"));
+    assertThat(summary.totalPayable()).isEqualByComparingTo(new BigDecimal("800000"));
+    assertThat(summary.totalServiceExpense()).isEqualByComparingTo(new BigDecimal("1100000"));
+    assertThat(summary.totalStateFeeExpense()).isEqualByComparingTo(new BigDecimal("1800000"));
+    assertThat(summary.totalSupportExpense()).isEqualByComparingTo(new BigDecimal("600000"));
+    assertThat(summary.totalLiquidationValue()).isEqualByComparingTo(new BigDecimal("5000000"));
+    assertThat(summary.totalUninvoicedAmount()).isEqualByComparingTo(new BigDecimal("3500000"));
+  }
+
+  @Test
+  void recycleBinSoftDeleteRestorePermanentDeleteAndBulkActionsWorkOnContracts() {
+    CrmContract contract =
+        CrmContract.builder()
+            .id("c-trash")
+            .contractNumber("PD261099")
+            .tags("[\"SHTT\"]")
+            .shared(false)
+            .build();
+    when(contractRepository.findById("c-trash")).thenReturn(Optional.of(contract));
+    when(contractRepository.save(any(CrmContract.class))).thenAnswer(inv -> inv.getArgument(0));
+    when(itemRepository.findByContractIdOrderBySortOrderAsc("c-trash")).thenReturn(List.of());
+
+    contractService.delete("c-trash");
+    assertThat(contract.isDeleted()).isTrue();
+    assertThat(contract.getDeletedAt()).isNotNull();
+    assertThat(contract.getDeletedBy()).isNotBlank();
+
+    CrmContractDto restored = contractService.restore("c-trash");
+    assertThat(restored.deleted()).isFalse();
+    assertThat(restored.deletedAt()).isNull();
+
+    when(contractRepository.findAllById(List.of("c-trash"))).thenReturn(List.of(contract));
+    contractService.bulkAction(
+        new org.law_app.crm.web.EnterpriseCrmDtos.BulkActionRequest(
+            List.of("c-trash"), "ASSIGN", "staff-9", "Lê Tùng", null, null));
+    assertThat(contract.getAssignedUserId()).isEqualTo("staff-9");
+    assertThat(contract.getAssignedUserName()).isEqualTo("Lê Tùng");
+
+    contractService.bulkAction(
+        new org.law_app.crm.web.EnterpriseCrmDtos.BulkActionRequest(
+            List.of("c-trash"), "SHARE", null, null, true, null));
+    assertThat(contract.isShared()).isTrue();
+
+    contractService.bulkAction(
+        new org.law_app.crm.web.EnterpriseCrmDtos.BulkActionRequest(
+            List.of("c-trash"), "ADD_TAG", null, null, null, "Ưu tiên"));
+    assertThat(contract.getTags()).contains("SHTT", "Ưu tiên");
+
+    contractService.bulkAction(
+        new org.law_app.crm.web.EnterpriseCrmDtos.BulkActionRequest(
+            List.of("c-trash"), "REMOVE_TAG", null, null, null, "shtt"));
+    assertThat(contract.getTags()).doesNotContain("SHTT").contains("Ưu tiên");
+
+    contractService.permanentDelete("c-trash");
+    verify(cashflowRepository).deleteByContractId("c-trash");
+    verify(itemRepository).deleteByContractId("c-trash");
+    verify(contractRepository).delete(contract);
   }
 }

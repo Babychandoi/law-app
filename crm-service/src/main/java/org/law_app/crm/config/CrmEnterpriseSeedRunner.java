@@ -973,6 +973,7 @@ public class CrmEnterpriseSeedRunner implements ApplicationRunner {
         false,
         true,
         "Hợp đồng dịch vụ pháp lý sở hữu trí tuệ & doanh nghiệp Luật Poip Legal.",
-        items);
+        items,
+        acc.tags());
   }
 }

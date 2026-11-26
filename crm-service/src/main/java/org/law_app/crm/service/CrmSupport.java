@@ -192,6 +192,28 @@ public final class CrmSupport {
     return Arrays.stream(trimmed.split(",")).map(String::trim).filter(s -> !s.isEmpty()).toList();
   }
 
+  public static String addTagToJsonList(String rawJson, String tag) {
+    if (!hasText(tag)) {
+      return rawJson;
+    }
+    String cleanTag = tag.trim();
+    List<String> current = new java.util.ArrayList<>(fromJsonList(rawJson));
+    if (current.stream().noneMatch(t -> t.equalsIgnoreCase(cleanTag))) {
+      current.add(cleanTag);
+    }
+    return toJsonList(current);
+  }
+
+  public static String removeTagFromJsonList(String rawJson, String tag) {
+    if (!hasText(tag)) {
+      return rawJson;
+    }
+    String cleanTag = tag.trim();
+    List<String> current = new java.util.ArrayList<>(fromJsonList(rawJson));
+    current.removeIf(t -> t.equalsIgnoreCase(cleanTag));
+    return toJsonList(current);
+  }
+
   public static int parseTrailingNumber(String code, String prefix) {
     if (!hasText(code) || !code.startsWith(prefix)) {
       return 0;

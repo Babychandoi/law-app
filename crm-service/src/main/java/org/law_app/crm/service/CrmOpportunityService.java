@@ -1,16 +1,19 @@
 package org.law_app.crm.service;
 
 import static org.law_app.crm.service.CrmSupport.VN_ZONE;
+import static org.law_app.crm.service.CrmSupport.addTagToJsonList;
 import static org.law_app.crm.service.CrmSupport.assignedPredicate;
 import static org.law_app.crm.service.CrmSupport.blankToDefault;
 import static org.law_app.crm.service.CrmSupport.computeLineItem;
 import static org.law_app.crm.service.CrmSupport.currentActorId;
+import static org.law_app.crm.service.CrmSupport.currentActorName;
 import static org.law_app.crm.service.CrmSupport.endExclusiveInstant;
 import static org.law_app.crm.service.CrmSupport.fromJsonList;
 import static org.law_app.crm.service.CrmSupport.hasText;
 import static org.law_app.crm.service.CrmSupport.money;
 import static org.law_app.crm.service.CrmSupport.newId;
 import static org.law_app.crm.service.CrmSupport.parseTrailingNumber;
+import static org.law_app.crm.service.CrmSupport.removeTagFromJsonList;
 import static org.law_app.crm.service.CrmSupport.startOfDayInstant;
 import static org.law_app.crm.service.CrmSupport.toJsonList;
 import static org.law_app.crm.service.CrmSupport.trimOrNull;
@@ -22,6 +25,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +35,7 @@ import org.law_app.crm.domain.CrmOpportunityItem;
 import org.law_app.crm.repository.CrmAccountRepository;
 import org.law_app.crm.repository.CrmOpportunityItemRepository;
 import org.law_app.crm.repository.CrmOpportunityRepository;
+import org.law_app.crm.web.EnterpriseCrmDtos.BulkActionRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.ContractUpsertRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.CrmContractDto;
 import org.law_app.crm.web.EnterpriseCrmDtos.CrmKanbanColumnDto;
@@ -76,9 +81,53 @@ public class CrmOpportunityService {
       LocalDate from,
       LocalDate to,
       Pageable pageable) {
+    return search(
+        me, keyword, stage, assignedTo, serviceGroup, accountId, from, to, null, false, pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<CrmOpportunityDto> search(
+      String me,
+      String keyword,
+      String stage,
+      String assignedTo,
+      String serviceGroup,
+      String accountId,
+      LocalDate from,
+      LocalDate to,
+      String filters,
+      Pageable pageable) {
+    return search(
+        me,
+        keyword,
+        stage,
+        assignedTo,
+        serviceGroup,
+        accountId,
+        from,
+        to,
+        filters,
+        false,
+        pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<CrmOpportunityDto> search(
+      String me,
+      String keyword,
+      String stage,
+      String assignedTo,
+      String serviceGroup,
+      String accountId,
+      LocalDate from,
+      LocalDate to,
+      String filters,
+      boolean trashed,
+      Pageable pageable) {
 
     Specification<CrmOpportunity> spec =
-        buildSpec(me, keyword, stage, assignedTo, serviceGroup, accountId, from, to);
+        buildSpec(
+            me, keyword, stage, assignedTo, serviceGroup, accountId, from, to, filters, trashed);
     Page<CrmOpportunity> page = opportunityRepo.findAll(spec, pageable);
     if (page.isEmpty()) {
       return page.map(o -> toDto(o, List.of()));
@@ -90,8 +139,25 @@ public class CrmOpportunityService {
   @Transactional(readOnly = true)
   public List<CrmKanbanColumnDto> kanban(
       String me, String keyword, String assignedTo, String serviceGroup) {
+    return kanban(me, keyword, assignedTo, serviceGroup, null, false);
+  }
+
+  @Transactional(readOnly = true)
+  public List<CrmKanbanColumnDto> kanban(
+      String me, String keyword, String assignedTo, String serviceGroup, String filters) {
+    return kanban(me, keyword, assignedTo, serviceGroup, filters, false);
+  }
+
+  @Transactional(readOnly = true)
+  public List<CrmKanbanColumnDto> kanban(
+      String me,
+      String keyword,
+      String assignedTo,
+      String serviceGroup,
+      String filters,
+      boolean trashed) {
     Specification<CrmOpportunity> spec =
-        buildSpec(me, keyword, null, assignedTo, serviceGroup, null, null, null);
+        buildSpec(me, keyword, null, assignedTo, serviceGroup, null, null, null, filters, trashed);
     List<CrmOpportunity> rows =
         opportunityRepo.findAll(spec, Sort.by(Sort.Direction.DESC, "createdAt"));
     Map<String, List<CrmOpportunityItem>> itemsMap = loadItemsMap(rows);
@@ -127,7 +193,10 @@ public class CrmOpportunityService {
 
   @Transactional(readOnly = true)
   public List<CrmOpportunityDto> listByAccount(String accountId) {
-    List<CrmOpportunity> opps = opportunityRepo.findByAccountIdOrderByCreatedAtDesc(accountId);
+    List<CrmOpportunity> opps =
+        opportunityRepo.findByAccountIdOrderByCreatedAtDesc(accountId).stream()
+            .filter(o -> !o.isDeleted())
+            .toList();
     Map<String, List<CrmOpportunityItem>> itemsMap = loadItemsMap(opps);
     return opps.stream().map(o -> toDto(o, itemsMap.getOrDefault(o.getId(), List.of()))).toList();
   }
@@ -183,8 +252,123 @@ public class CrmOpportunityService {
   @Transactional
   public void delete(String id) {
     CrmOpportunity opp = requireOpportunity(id);
+    Instant now = Instant.now();
+    opp.setDeleted(true);
+    opp.setDeletedAt(now);
+    opp.setDeletedBy(currentActorName());
+    opp.setUpdatedAt(now);
+    opp.setUpdatedBy(currentActorId());
+    opportunityRepo.save(opp);
+  }
+
+  @Transactional
+  public CrmOpportunityDto restore(String id) {
+    CrmOpportunity opp = requireOpportunity(id);
+    opp.setDeleted(false);
+    opp.setDeletedAt(null);
+    opp.setDeletedBy(null);
+    opp.setUpdatedAt(Instant.now());
+    opp.setUpdatedBy(currentActorId());
+    CrmOpportunity saved = opportunityRepo.save(opp);
+    List<CrmOpportunityItem> items = itemRepo.findByOpportunityIdOrderBySortOrderAsc(id);
+    return toDto(saved, items);
+  }
+
+  @Transactional
+  public void permanentDelete(String id) {
+    CrmOpportunity opp = requireOpportunity(id);
     itemRepo.deleteByOpportunityId(id);
     opportunityRepo.delete(opp);
+  }
+
+  @Transactional
+  public int bulkAction(BulkActionRequest req) {
+    if (req == null || req.ids() == null || req.ids().isEmpty() || !hasText(req.action())) {
+      return 0;
+    }
+    List<String> ids =
+        req.ids().stream().filter(CrmSupport::hasText).map(String::trim).distinct().toList();
+    if (ids.isEmpty()) {
+      return 0;
+    }
+    String action = req.action().trim().toUpperCase(Locale.ROOT);
+    if (("ADD_TAG".equals(action) || "REMOVE_TAG".equals(action)) && !hasText(req.tag())) {
+      return 0;
+    }
+
+    List<CrmOpportunity> rows = opportunityRepo.findAllById(ids);
+    Instant now = Instant.now();
+    String actorId = currentActorId();
+    String actorName = currentActorName();
+    int affected = 0;
+
+    for (CrmOpportunity opp : rows) {
+      switch (action) {
+        case "ASSIGN" -> {
+          opp.setAssignedUserId(trimOrNull(req.assignedUserId()));
+          opp.setAssignedUserName(trimOrNull(req.assignedUserName()));
+          opp.setUpdatedAt(now);
+          opp.setUpdatedBy(actorId);
+          opportunityRepo.save(opp);
+          affected++;
+        }
+        case "SHARE" -> {
+          opp.setShared(req.shared() != null ? req.shared() : true);
+          opp.setUpdatedAt(now);
+          opp.setUpdatedBy(actorId);
+          opportunityRepo.save(opp);
+          affected++;
+        }
+        case "UNSHARE" -> {
+          opp.setShared(false);
+          opp.setUpdatedAt(now);
+          opp.setUpdatedBy(actorId);
+          opportunityRepo.save(opp);
+          affected++;
+        }
+        case "ADD_TAG" -> {
+          opp.setTags(addTagToJsonList(opp.getTags(), req.tag()));
+          opp.setUpdatedAt(now);
+          opp.setUpdatedBy(actorId);
+          opportunityRepo.save(opp);
+          affected++;
+        }
+        case "REMOVE_TAG" -> {
+          opp.setTags(removeTagFromJsonList(opp.getTags(), req.tag()));
+          opp.setUpdatedAt(now);
+          opp.setUpdatedBy(actorId);
+          opportunityRepo.save(opp);
+          affected++;
+        }
+        case "DELETE" -> {
+          opp.setDeleted(true);
+          opp.setDeletedAt(now);
+          opp.setDeletedBy(actorName);
+          opp.setUpdatedAt(now);
+          opp.setUpdatedBy(actorId);
+          opportunityRepo.save(opp);
+          affected++;
+        }
+        case "RESTORE" -> {
+          opp.setDeleted(false);
+          opp.setDeletedAt(null);
+          opp.setDeletedBy(null);
+          opp.setUpdatedAt(now);
+          opp.setUpdatedBy(actorId);
+          opportunityRepo.save(opp);
+          affected++;
+        }
+        case "PERMANENT_DELETE" -> {
+          itemRepo.deleteByOpportunityId(opp.getId());
+          opportunityRepo.delete(opp);
+          affected++;
+        }
+        default ->
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "Unsupported bulk action: " + req.action());
+      }
+    }
+    return affected;
   }
 
   @Transactional
@@ -249,7 +433,8 @@ public class CrmOpportunityService {
             false,
             false,
             opp.getNotes(),
-            lineItems);
+            lineItems,
+            fromJsonList(opp.getTags()));
 
     CrmContractDto createdContract = contractService.create(contractReq);
     opp.setConvertedContractId(createdContract.id());
@@ -286,9 +471,13 @@ public class CrmOpportunityService {
       String serviceGroup,
       String accountId,
       LocalDate from,
-      LocalDate to) {
+      LocalDate to,
+      String filters,
+      boolean trashed) {
+    List<CrmDynamicFilterSpec.FilterRule> filterRules = CrmDynamicFilterSpec.parseRules(filters);
     return (root, query, cb) -> {
       List<Predicate> ps = new ArrayList<>();
+      ps.add(trashed ? cb.isTrue(root.get("deleted")) : cb.isFalse(root.get("deleted")));
       if (hasText(keyword)) {
         String like = "%" + keyword.trim().toLowerCase() + "%";
         ps.add(
@@ -321,6 +510,9 @@ public class CrmOpportunityService {
       if (to != null) {
         ps.add(cb.lessThan(root.get("createdAt"), endExclusiveInstant(to)));
       }
+      ps.addAll(
+          CrmDynamicFilterSpec.buildPredicates(
+              filterRules, CrmDynamicFilterSpec.OPPORTUNITY_FIELDS, root, cb));
       return cb.and(ps.toArray(new Predicate[0]));
     };
   }
@@ -457,7 +649,10 @@ public class CrmOpportunityService {
         o.getCreatedBy(),
         o.getUpdatedBy(),
         o.getCreatedAt(),
-        o.getUpdatedAt());
+        o.getUpdatedAt(),
+        o.isDeleted(),
+        o.getDeletedAt(),
+        o.getDeletedBy());
   }
 
   private CrmLineItemDto toItemDto(CrmOpportunityItem i) {

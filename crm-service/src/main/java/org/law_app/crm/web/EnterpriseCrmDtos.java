@@ -47,6 +47,15 @@ public final class EnterpriseCrmDtos {
   @JsonIgnoreProperties(ignoreUnknown = true)
   public record BulkImportRequest<T>(List<T> items) {}
 
+  @JsonIgnoreProperties(ignoreUnknown = true)
+  public record BulkActionRequest(
+      List<String> ids,
+      String action,
+      String assignedUserId,
+      String assignedUserName,
+      Boolean shared,
+      String tag) {}
+
   // ==================== 2. MODULE 1: LEADS (KH LIÊN HỆ) ====================
 
   public record CrmLeadDto(
@@ -88,7 +97,10 @@ public final class EnterpriseCrmDtos {
       String createdBy,
       String updatedBy,
       Instant createdAt,
-      Instant updatedAt) {}
+      Instant updatedAt,
+      boolean deleted,
+      Instant deletedAt,
+      String deletedBy) {}
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   public record LeadUpsertRequest(
@@ -178,7 +190,10 @@ public final class EnterpriseCrmDtos {
       String createdBy,
       String updatedBy,
       Instant createdAt,
-      Instant updatedAt) {}
+      Instant updatedAt,
+      boolean deleted,
+      Instant deletedAt,
+      String deletedBy) {}
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   public record AccountUpsertRequest(
@@ -283,7 +298,10 @@ public final class EnterpriseCrmDtos {
       String createdBy,
       String updatedBy,
       Instant createdAt,
-      Instant updatedAt) {}
+      Instant updatedAt,
+      boolean deleted,
+      Instant deletedAt,
+      String deletedBy) {}
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   public record OpportunityUpsertRequest(
@@ -373,7 +391,11 @@ public final class EnterpriseCrmDtos {
       String createdBy,
       String updatedBy,
       Instant createdAt,
-      Instant updatedAt) {}
+      Instant updatedAt,
+      List<String> tags,
+      boolean deleted,
+      Instant deletedAt,
+      String deletedBy) {}
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   public record ContractUpsertRequest(
@@ -425,7 +447,8 @@ public final class EnterpriseCrmDtos {
       Boolean syncPriceAfterDiscount,
       Boolean syncOrderValueFromItems,
       String notes,
-      List<CrmLineItemDto> items) {}
+      List<CrmLineItemDto> items,
+      List<String> tags) {}
 
   @JsonIgnoreProperties(ignoreUnknown = true)
   public record ContractRevenueStatusRequest(String revenueStatus) {}
@@ -435,7 +458,15 @@ public final class EnterpriseCrmDtos {
       BigDecimal totalOrderValue,
       BigDecimal totalCollected,
       BigDecimal totalReceivable,
-      BigDecimal totalEstimatedProfit) {}
+      BigDecimal totalEstimatedProfit,
+      BigDecimal totalActualExpense,
+      BigDecimal totalPlannedExpense,
+      BigDecimal totalPayable,
+      BigDecimal totalServiceExpense,
+      BigDecimal totalStateFeeExpense,
+      BigDecimal totalSupportExpense,
+      BigDecimal totalLiquidationValue,
+      BigDecimal totalUninvoicedAmount) {}
 
   public record CrmContractListPayload(List<CrmContractDto> rows, CrmContractSummaryDto summary) {}
 

@@ -2,6 +2,34 @@ import type { PageMeta, StaffUser } from '../../types/crm';
 
 export type { PageMeta, StaffUser };
 
+export type CrmViewMode = 'list' | 'kanban' | 'quickEdit';
+
+export interface CrmFilterRule {
+  field: string;
+  op: string;
+  value?: string;
+  valueTo?: string;
+}
+
+export type CrmBulkActionType =
+  | 'ASSIGN'
+  | 'DELETE'
+  | 'RESTORE'
+  | 'SHARE'
+  | 'UNSHARE'
+  | 'ADD_TAG'
+  | 'REMOVE_TAG';
+
+export interface CrmBulkActionRequest {
+  ids: string[];
+  action: CrmBulkActionType;
+  assignedUserId?: string;
+  assignedUserName?: string;
+  tag?: string;
+}
+
+export type CrmModuleEndpoint = 'leads' | 'accounts' | 'opportunities' | 'contracts';
+
 export interface CrmApiResponse<T> {
   code: number;
   message?: string;
@@ -74,6 +102,7 @@ export interface CrmLeadDto {
   district?: string | null;
   address?: string | null;
   shared?: boolean;
+  deleted?: boolean;
   department?: string | null;
   convertedAccountId?: string | null;
   convertedOpportunityId?: string | null;
@@ -96,6 +125,8 @@ export interface CrmLeadFilter {
   province?: string;
   from?: string;
   to?: string;
+  filters?: CrmFilterRule[];
+  deleted?: boolean;
   sort?: string;
   page?: number;
   size?: number;
@@ -155,6 +186,7 @@ export interface CrmAccountDto {
   website?: string | null;
   annualRevenue?: number | null;
   shared?: boolean;
+  deleted?: boolean;
   individual?: boolean;
   partner?: boolean;
   referrer?: string | null;
@@ -175,6 +207,8 @@ export interface CrmAccountFilter {
   billingProvince?: string;
   from?: string;
   to?: string;
+  filters?: CrmFilterRule[];
+  deleted?: boolean;
   sort?: string;
   page?: number;
   size?: number;
@@ -231,6 +265,7 @@ export interface CrmOpportunityDto {
   assignedUserId?: string | null;
   assignedUserName?: string | null;
   shared?: boolean;
+  deleted?: boolean;
   referrer?: string | null;
   notes?: string | null;
   convertedContractId?: string | null;
@@ -253,6 +288,8 @@ export interface CrmOpportunityFilter {
   accountId?: string;
   from?: string;
   to?: string;
+  filters?: CrmFilterRule[];
+  deleted?: boolean;
   sort?: string;
   page?: number;
   size?: number;
@@ -272,6 +309,7 @@ export interface CrmKanbanColumnDto {
 export interface CrmContractDto {
   id: string;
   contractNumber: string;
+  tags?: string[];
   accountId?: string | null;
   accountCode?: string | null;
   accountName?: string | null;
@@ -318,6 +356,7 @@ export interface CrmContractDto {
   invoiceAddress?: string | null;
   taxCode?: string | null;
   shared?: boolean;
+  deleted?: boolean;
   referrer?: string | null;
   syncPriceAfterDiscount?: boolean;
   notes?: string | null;
@@ -344,6 +383,8 @@ export interface CrmContractFilter {
   paymentFrom?: string;
   paymentTo?: string;
   preset?: string;
+  filters?: CrmFilterRule[];
+  deleted?: boolean;
   sort?: string;
   page?: number;
   size?: number;
@@ -355,6 +396,14 @@ export interface CrmContractSummaryDto {
   totalCollected: number;
   totalReceivable: number;
   totalEstimatedProfit: number;
+  totalActualExpense?: number;
+  totalPlannedExpense?: number;
+  totalPayable?: number;
+  totalServiceExpense?: number;
+  totalStateFeeExpense?: number;
+  totalSupportExpense?: number;
+  totalLiquidationValue?: number;
+  totalUninvoicedAmount?: number;
 }
 
 export interface CrmContractListPayload {

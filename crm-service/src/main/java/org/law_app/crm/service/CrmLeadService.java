@@ -1,14 +1,17 @@
 package org.law_app.crm.service;
 
 import static org.law_app.crm.service.CrmSupport.VN_ZONE;
+import static org.law_app.crm.service.CrmSupport.addTagToJsonList;
 import static org.law_app.crm.service.CrmSupport.assignedPredicate;
 import static org.law_app.crm.service.CrmSupport.blankToDefault;
 import static org.law_app.crm.service.CrmSupport.currentActorId;
+import static org.law_app.crm.service.CrmSupport.currentActorName;
 import static org.law_app.crm.service.CrmSupport.endExclusiveInstant;
 import static org.law_app.crm.service.CrmSupport.fromJsonList;
 import static org.law_app.crm.service.CrmSupport.hasText;
 import static org.law_app.crm.service.CrmSupport.money;
 import static org.law_app.crm.service.CrmSupport.newId;
+import static org.law_app.crm.service.CrmSupport.removeTagFromJsonList;
 import static org.law_app.crm.service.CrmSupport.startOfDayInstant;
 import static org.law_app.crm.service.CrmSupport.toJsonList;
 import static org.law_app.crm.service.CrmSupport.trimOrNull;
@@ -19,10 +22,12 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.law_app.crm.domain.CrmLead;
 import org.law_app.crm.repository.CrmLeadRepository;
 import org.law_app.crm.web.EnterpriseCrmDtos.AccountUpsertRequest;
+import org.law_app.crm.web.EnterpriseCrmDtos.BulkActionRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.CrmAccountDto;
 import org.law_app.crm.web.EnterpriseCrmDtos.CrmLeadDto;
 import org.law_app.crm.web.EnterpriseCrmDtos.CrmOpportunityDto;
@@ -58,10 +63,70 @@ public class CrmLeadService {
       LocalDate from,
       LocalDate to,
       Pageable pageable) {
+    return search(
+        me,
+        keyword,
+        customerStatus,
+        leadSource,
+        assignedTo,
+        serviceGroup,
+        province,
+        from,
+        to,
+        null,
+        false,
+        pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<CrmLeadDto> search(
+      String me,
+      String keyword,
+      String customerStatus,
+      String leadSource,
+      String assignedTo,
+      String serviceGroup,
+      String province,
+      LocalDate from,
+      LocalDate to,
+      String filters,
+      Pageable pageable) {
+    return search(
+        me,
+        keyword,
+        customerStatus,
+        leadSource,
+        assignedTo,
+        serviceGroup,
+        province,
+        from,
+        to,
+        filters,
+        false,
+        pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<CrmLeadDto> search(
+      String me,
+      String keyword,
+      String customerStatus,
+      String leadSource,
+      String assignedTo,
+      String serviceGroup,
+      String province,
+      LocalDate from,
+      LocalDate to,
+      String filters,
+      boolean trashed,
+      Pageable pageable) {
+
+    List<CrmDynamicFilterSpec.FilterRule> filterRules = CrmDynamicFilterSpec.parseRules(filters);
 
     Specification<CrmLead> spec =
         (root, query, cb) -> {
           List<Predicate> ps = new ArrayList<>();
+          ps.add(trashed ? cb.isTrue(root.get("deleted")) : cb.isFalse(root.get("deleted")));
           if (hasText(keyword)) {
             String like = "%" + keyword.trim().toLowerCase() + "%";
             ps.add(
@@ -101,6 +166,9 @@ public class CrmLeadService {
           if (to != null) {
             ps.add(cb.lessThan(root.get("createdAt"), endExclusiveInstant(to)));
           }
+          ps.addAll(
+              CrmDynamicFilterSpec.buildPredicates(
+                  filterRules, CrmDynamicFilterSpec.LEAD_FIELDS, root, cb));
           return cb.and(ps.toArray(new Predicate[0]));
         };
 
@@ -146,7 +214,119 @@ public class CrmLeadService {
   @Transactional
   public void delete(String id) {
     CrmLead lead = requireLead(id);
+    Instant now = Instant.now();
+    lead.setDeleted(true);
+    lead.setDeletedAt(now);
+    lead.setDeletedBy(currentActorName());
+    lead.setUpdatedAt(now);
+    lead.setUpdatedBy(currentActorId());
+    leadRepo.save(lead);
+  }
+
+  @Transactional
+  public CrmLeadDto restore(String id) {
+    CrmLead lead = requireLead(id);
+    lead.setDeleted(false);
+    lead.setDeletedAt(null);
+    lead.setDeletedBy(null);
+    lead.setUpdatedAt(Instant.now());
+    lead.setUpdatedBy(currentActorId());
+    return toDto(leadRepo.save(lead));
+  }
+
+  @Transactional
+  public void permanentDelete(String id) {
+    CrmLead lead = requireLead(id);
     leadRepo.delete(lead);
+  }
+
+  @Transactional
+  public int bulkAction(BulkActionRequest req) {
+    if (req == null || req.ids() == null || req.ids().isEmpty() || !hasText(req.action())) {
+      return 0;
+    }
+    List<String> ids =
+        req.ids().stream().filter(CrmSupport::hasText).map(String::trim).distinct().toList();
+    if (ids.isEmpty()) {
+      return 0;
+    }
+    String action = req.action().trim().toUpperCase(Locale.ROOT);
+    if (("ADD_TAG".equals(action) || "REMOVE_TAG".equals(action)) && !hasText(req.tag())) {
+      return 0;
+    }
+
+    List<CrmLead> rows = leadRepo.findAllById(ids);
+    Instant now = Instant.now();
+    String actorId = currentActorId();
+    String actorName = currentActorName();
+    int affected = 0;
+
+    for (CrmLead lead : rows) {
+      switch (action) {
+        case "ASSIGN" -> {
+          lead.setAssignedUserId(trimOrNull(req.assignedUserId()));
+          lead.setAssignedUserName(trimOrNull(req.assignedUserName()));
+          lead.setUpdatedAt(now);
+          lead.setUpdatedBy(actorId);
+          leadRepo.save(lead);
+          affected++;
+        }
+        case "SHARE" -> {
+          lead.setShared(req.shared() != null ? req.shared() : true);
+          lead.setUpdatedAt(now);
+          lead.setUpdatedBy(actorId);
+          leadRepo.save(lead);
+          affected++;
+        }
+        case "UNSHARE" -> {
+          lead.setShared(false);
+          lead.setUpdatedAt(now);
+          lead.setUpdatedBy(actorId);
+          leadRepo.save(lead);
+          affected++;
+        }
+        case "ADD_TAG" -> {
+          lead.setTags(addTagToJsonList(lead.getTags(), req.tag()));
+          lead.setUpdatedAt(now);
+          lead.setUpdatedBy(actorId);
+          leadRepo.save(lead);
+          affected++;
+        }
+        case "REMOVE_TAG" -> {
+          lead.setTags(removeTagFromJsonList(lead.getTags(), req.tag()));
+          lead.setUpdatedAt(now);
+          lead.setUpdatedBy(actorId);
+          leadRepo.save(lead);
+          affected++;
+        }
+        case "DELETE" -> {
+          lead.setDeleted(true);
+          lead.setDeletedAt(now);
+          lead.setDeletedBy(actorName);
+          lead.setUpdatedAt(now);
+          lead.setUpdatedBy(actorId);
+          leadRepo.save(lead);
+          affected++;
+        }
+        case "RESTORE" -> {
+          lead.setDeleted(false);
+          lead.setDeletedAt(null);
+          lead.setDeletedBy(null);
+          lead.setUpdatedAt(now);
+          lead.setUpdatedBy(actorId);
+          leadRepo.save(lead);
+          affected++;
+        }
+        case "PERMANENT_DELETE" -> {
+          leadRepo.delete(lead);
+          affected++;
+        }
+        default ->
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "Unsupported bulk action: " + req.action());
+      }
+    }
+    return affected;
   }
 
   @Transactional
@@ -380,6 +560,9 @@ public class CrmLeadService {
         l.getCreatedBy(),
         l.getUpdatedBy(),
         l.getCreatedAt(),
-        l.getUpdatedAt());
+        l.getUpdatedAt(),
+        l.isDeleted(),
+        l.getDeletedAt(),
+        l.getDeletedBy());
   }
 }

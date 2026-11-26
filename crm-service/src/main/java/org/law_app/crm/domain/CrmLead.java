@@ -141,4 +141,12 @@ public class CrmLead {
 
   @Column(name = "updated_at")
   private Instant updatedAt;
+
+  @Column(nullable = false, columnDefinition = "boolean default false")
+  private boolean deleted;
+
+  private Instant deletedAt;
+
+  @Column(length = 255)
+  private String deletedBy;
 }

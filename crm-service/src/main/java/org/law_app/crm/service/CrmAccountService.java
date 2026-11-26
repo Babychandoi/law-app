@@ -1,15 +1,18 @@
 package org.law_app.crm.service;
 
 import static org.law_app.crm.service.CrmSupport.VN_ZONE;
+import static org.law_app.crm.service.CrmSupport.addTagToJsonList;
 import static org.law_app.crm.service.CrmSupport.assignedPredicate;
 import static org.law_app.crm.service.CrmSupport.blankToDefault;
 import static org.law_app.crm.service.CrmSupport.currentActorId;
+import static org.law_app.crm.service.CrmSupport.currentActorName;
 import static org.law_app.crm.service.CrmSupport.endExclusiveInstant;
 import static org.law_app.crm.service.CrmSupport.fromJsonList;
 import static org.law_app.crm.service.CrmSupport.hasText;
 import static org.law_app.crm.service.CrmSupport.money;
 import static org.law_app.crm.service.CrmSupport.newId;
 import static org.law_app.crm.service.CrmSupport.parseTrailingNumber;
+import static org.law_app.crm.service.CrmSupport.removeTagFromJsonList;
 import static org.law_app.crm.service.CrmSupport.startOfDayInstant;
 import static org.law_app.crm.service.CrmSupport.toJsonList;
 import static org.law_app.crm.service.CrmSupport.trimOrNull;
@@ -22,6 +25,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.law_app.crm.domain.CrmAccount;
@@ -31,6 +35,7 @@ import org.law_app.crm.repository.CrmAccountRepository;
 import org.law_app.crm.web.EnterpriseCrmDtos.AccountContactCreateRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.AccountKpisDto;
 import org.law_app.crm.web.EnterpriseCrmDtos.AccountUpsertRequest;
+import org.law_app.crm.web.EnterpriseCrmDtos.BulkActionRequest;
 import org.law_app.crm.web.EnterpriseCrmDtos.CrmAccountContactDto;
 import org.law_app.crm.web.EnterpriseCrmDtos.CrmAccountDto;
 import org.law_app.crm.web.EnterpriseCrmDtos.CrmAccountOverviewDto;
@@ -65,10 +70,70 @@ public class CrmAccountService {
       LocalDate from,
       LocalDate to,
       Pageable pageable) {
+    return search(
+        me,
+        keyword,
+        customerStatus,
+        careStatus,
+        assignedTo,
+        serviceGroup,
+        billingProvince,
+        from,
+        to,
+        null,
+        false,
+        pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<CrmAccountDto> search(
+      String me,
+      String keyword,
+      String customerStatus,
+      String careStatus,
+      String assignedTo,
+      String serviceGroup,
+      String billingProvince,
+      LocalDate from,
+      LocalDate to,
+      String filters,
+      Pageable pageable) {
+    return search(
+        me,
+        keyword,
+        customerStatus,
+        careStatus,
+        assignedTo,
+        serviceGroup,
+        billingProvince,
+        from,
+        to,
+        filters,
+        false,
+        pageable);
+  }
+
+  @Transactional(readOnly = true)
+  public Page<CrmAccountDto> search(
+      String me,
+      String keyword,
+      String customerStatus,
+      String careStatus,
+      String assignedTo,
+      String serviceGroup,
+      String billingProvince,
+      LocalDate from,
+      LocalDate to,
+      String filters,
+      boolean trashed,
+      Pageable pageable) {
+
+    List<CrmDynamicFilterSpec.FilterRule> filterRules = CrmDynamicFilterSpec.parseRules(filters);
 
     Specification<CrmAccount> spec =
         (root, query, cb) -> {
           List<Predicate> ps = new ArrayList<>();
+          ps.add(trashed ? cb.isTrue(root.get("deleted")) : cb.isFalse(root.get("deleted")));
           if (hasText(keyword)) {
             String like = "%" + keyword.trim().toLowerCase() + "%";
             ps.add(
@@ -112,6 +177,9 @@ public class CrmAccountService {
           if (to != null) {
             ps.add(cb.lessThan(root.get("createdAt"), endExclusiveInstant(to)));
           }
+          ps.addAll(
+              CrmDynamicFilterSpec.buildPredicates(
+                  filterRules, CrmDynamicFilterSpec.ACCOUNT_FIELDS, root, cb));
           return cb.and(ps.toArray(new Predicate[0]));
         };
 
@@ -204,8 +272,121 @@ public class CrmAccountService {
   @Transactional
   public void delete(String id) {
     CrmAccount account = requireAccount(id);
+    Instant now = Instant.now();
+    account.setDeleted(true);
+    account.setDeletedAt(now);
+    account.setDeletedBy(currentActorName());
+    account.setUpdatedAt(now);
+    account.setUpdatedBy(currentActorId());
+    accountRepo.save(account);
+  }
+
+  @Transactional
+  public CrmAccountDto restore(String id) {
+    CrmAccount account = requireAccount(id);
+    account.setDeleted(false);
+    account.setDeletedAt(null);
+    account.setDeletedBy(null);
+    account.setUpdatedAt(Instant.now());
+    account.setUpdatedBy(currentActorId());
+    return toDto(accountRepo.save(account));
+  }
+
+  @Transactional
+  public void permanentDelete(String id) {
+    CrmAccount account = requireAccount(id);
     contactRepo.deleteByAccountId(id);
     accountRepo.delete(account);
+  }
+
+  @Transactional
+  public int bulkAction(BulkActionRequest req) {
+    if (req == null || req.ids() == null || req.ids().isEmpty() || !hasText(req.action())) {
+      return 0;
+    }
+    List<String> ids =
+        req.ids().stream().filter(CrmSupport::hasText).map(String::trim).distinct().toList();
+    if (ids.isEmpty()) {
+      return 0;
+    }
+    String action = req.action().trim().toUpperCase(Locale.ROOT);
+    if (("ADD_TAG".equals(action) || "REMOVE_TAG".equals(action)) && !hasText(req.tag())) {
+      return 0;
+    }
+
+    List<CrmAccount> rows = accountRepo.findAllById(ids);
+    Instant now = Instant.now();
+    String actorId = currentActorId();
+    String actorName = currentActorName();
+    int affected = 0;
+
+    for (CrmAccount account : rows) {
+      switch (action) {
+        case "ASSIGN" -> {
+          account.setAssignedUserId(trimOrNull(req.assignedUserId()));
+          account.setAssignedUserName(trimOrNull(req.assignedUserName()));
+          account.setUpdatedAt(now);
+          account.setUpdatedBy(actorId);
+          accountRepo.save(account);
+          affected++;
+        }
+        case "SHARE" -> {
+          account.setShared(req.shared() != null ? req.shared() : true);
+          account.setUpdatedAt(now);
+          account.setUpdatedBy(actorId);
+          accountRepo.save(account);
+          affected++;
+        }
+        case "UNSHARE" -> {
+          account.setShared(false);
+          account.setUpdatedAt(now);
+          account.setUpdatedBy(actorId);
+          accountRepo.save(account);
+          affected++;
+        }
+        case "ADD_TAG" -> {
+          account.setTags(addTagToJsonList(account.getTags(), req.tag()));
+          account.setUpdatedAt(now);
+          account.setUpdatedBy(actorId);
+          accountRepo.save(account);
+          affected++;
+        }
+        case "REMOVE_TAG" -> {
+          account.setTags(removeTagFromJsonList(account.getTags(), req.tag()));
+          account.setUpdatedAt(now);
+          account.setUpdatedBy(actorId);
+          accountRepo.save(account);
+          affected++;
+        }
+        case "DELETE" -> {
+          account.setDeleted(true);
+          account.setDeletedAt(now);
+          account.setDeletedBy(actorName);
+          account.setUpdatedAt(now);
+          account.setUpdatedBy(actorId);
+          accountRepo.save(account);
+          affected++;
+        }
+        case "RESTORE" -> {
+          account.setDeleted(false);
+          account.setDeletedAt(null);
+          account.setDeletedBy(null);
+          account.setUpdatedAt(now);
+          account.setUpdatedBy(actorId);
+          accountRepo.save(account);
+          affected++;
+        }
+        case "PERMANENT_DELETE" -> {
+          contactRepo.deleteByAccountId(account.getId());
+          accountRepo.delete(account);
+          affected++;
+        }
+        default ->
+            throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST, "Unsupported bulk action: " + req.action());
+      }
+    }
+    return affected;
   }
 
   @Transactional
@@ -418,7 +599,10 @@ public class CrmAccountService {
         a.getCreatedBy(),
         a.getUpdatedBy(),
         a.getCreatedAt(),
-        a.getUpdatedAt());
+        a.getUpdatedAt(),
+        a.isDeleted(),
+        a.getDeletedAt(),
+        a.getDeletedBy());
   }
 
   private CrmAccountContactDto toContactDto(CrmAccountContact c) {
