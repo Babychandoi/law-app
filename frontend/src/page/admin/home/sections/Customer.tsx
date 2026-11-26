@@ -13,6 +13,7 @@ import {
 import { getServiceHome } from '../../../../service/service';
 import { toast } from 'react-toastify';
 import { Button, DataTable, PageHeader, type Column } from '../../../../component/common/ui';
+import { CrmDemandDetailCard } from '../../../../features/crm/CrmDemandDisplay';
 
 type CustomerStatus = 'NEW' | 'RECEIVED' | 'PROCESSING' | 'COMPLETED' | 'CANCELED';
 
@@ -547,7 +548,7 @@ const CustomerManagement: React.FC = () => {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Mô tả</label>
-              <p className="text-sm text-gray-900">{selectedCustomer.description}</p>
+              <CrmDemandDetailCard value={selectedCustomer.description} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>

@@ -18,6 +18,7 @@ import { toast } from 'react-toastify';
 import useConfirm from '../../component/common/ui/useConfirm';
 import crmEnterpriseApi from '../../features/crm/api';
 import CrmColumnPicker, { type CrmColumnOption } from '../../features/crm/CrmColumnPicker';
+import { CrmDemandTableCell } from '../../features/crm/CrmDemandDisplay';
 import CrmFilterPanel from '../../features/crm/CrmFilterPanel';
 import CrmImportModal, { type CrmImportFieldMapping } from '../../features/crm/CrmImportModal';
 import CrmMoreActionsMenu, {
@@ -471,8 +472,8 @@ export default function AccountListPage() {
             />
           </td>
         ) : (
-          <td key={colKey} className="max-w-[240px] truncate px-3 py-2 text-brand-ink">
-            {row.demandDetail || '—'}
+          <td key={colKey} className="px-3 py-2">
+            <CrmDemandTableCell value={row.demandDetail} maxWidthClass="max-w-[260px]" />
           </td>
         );
 

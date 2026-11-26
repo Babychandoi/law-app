@@ -15,6 +15,7 @@ import Spinner from '../../component/common/ui/Spinner';
 import useConfirm from '../../component/common/ui/useConfirm';
 import crmEnterpriseApi from '../../features/crm/api';
 import CrmConvertLeadModal from '../../features/crm/CrmConvertLeadModal';
+import { CrmDemandDetailCard } from '../../features/crm/CrmDemandDisplay';
 import CrmQuickActivityPanel from '../../features/crm/CrmQuickActivityPanel';
 import CrmStatusBadge, { CrmAssigneePill, CrmTagList } from '../../features/crm/CrmStatusBadge';
 import { formatDateTimeVi, formatDateVi } from '../../features/crm/formatters';
@@ -140,7 +141,7 @@ export default function LeadDetailPage() {
       build('Thông tin nhu cầu KH', [
         {
           label: 'Chi tiết nhu cầu KH',
-          value: <span className="whitespace-pre-line">{lead.demandDetail || '—'}</span>,
+          value: <CrmDemandDetailCard value={lead.demandDetail} />,
           rawText: lead.demandDetail || '',
         },
       ]),
@@ -150,7 +151,7 @@ export default function LeadDetailPage() {
           value: lead.organizationName || '—',
           rawText: lead.organizationName || '',
         },
-        { label: 'Giới tính', value: lead.gender || 'Nữ', rawText: lead.gender || 'Nữ' },
+        { label: 'Giới tính', value: lead.gender || '—', rawText: lead.gender || '' },
         {
           label: 'Zalo',
           value: <span className="tabular-nums">{lead.zalo || '—'}</span>,
@@ -385,9 +386,9 @@ export default function LeadDetailPage() {
                 <h2 className="text-sm font-semibold text-brand-ink">
                   Nội dung nhu cầu tư vấn pháp lý của khách hàng
                 </h2>
-                <div className="rounded-lg border border-brand-line bg-brand-surface p-4 text-xs leading-relaxed text-brand-ink">
+                <div className="rounded-lg border border-brand-line bg-brand-surface/50 p-4 text-xs leading-relaxed text-brand-ink">
                   {lead.demandDetail ? (
-                    <p className="whitespace-pre-line">{lead.demandDetail}</p>
+                    <CrmDemandDetailCard value={lead.demandDetail} />
                   ) : (
                     <p className="text-brand-muted">Chưa ghi nhận chi tiết nhu cầu.</p>
                   )}

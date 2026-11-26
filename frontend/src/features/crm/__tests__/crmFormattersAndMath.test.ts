@@ -1,4 +1,5 @@
 import { normalizeCashflow, normalizeFlowType } from '../api';
+import { parseLeadDemandDetail } from '../demandNormalizer';
 import {
   CRM_LEAD_SOURCES,
   EXECUTION_STATUSES,
@@ -139,5 +140,30 @@ describe('CRM formatters, line-item math, and tabular import parser', () => {
     expect(formatStaffActor('u-2', staff)).toBe('Trần Thị Kiều Oanh');
     expect(formatStaffActor('00000000-0000-0000-0000-000000000000', staff)).toBe('Chuyên viên');
     expect(formatStaffActor('system', staff)).toBe('Hệ thống');
+  });
+
+  test('parseLeadDemandDetail normalizes raw landing-page UTM strings and backend-normalized text', () => {
+    const raw =
+      '[Nguồn: LP-tong-dich-vu-ads] [Đối tượng: Cá nhân] [Dịch vụ: Bảo hộ kiểu dáng công nghiệp] Kiếm tiền [Chiến dịch: utm_source=facebook; utm_medium=paid_social; utm_campaign=poip_nhan_hieu_toan_quoc; utm_content=nh01_tracuu; utm_term=120252505886800047]';
+
+    const parsedRaw = parseLeadDemandDetail(raw);
+    expect(parsedRaw.structured).toBe(true);
+    expect(parsedRaw.headline).toBe('Kiếm tiền');
+    expect(parsedRaw.customerNote).toBe('Kiếm tiền');
+    expect(parsedRaw.customerType).toBe('Cá nhân');
+    expect(parsedRaw.serviceName).toBe('Bảo hộ kiểu dáng công nghiệp');
+    expect(parsedRaw.landingSource).toBe('LP-tong-dich-vu-ads');
+    expect(parsedRaw.channelLabel).toBe('Facebook Ads (Paid Social)');
+    expect(parsedRaw.campaignName).toBe('poip_nhan_hieu_toan_quoc');
+    expect(parsedRaw.adContent).toBe('nh01_tracuu');
+    expect(parsedRaw.adTerm).toBe('120252505886800047');
+    expect(parsedRaw.subline).toContain('Facebook Ads (Paid Social)');
+
+    const reparsed = parseLeadDemandDetail(parsedRaw.normalizedText);
+    expect(reparsed.structured).toBe(true);
+    expect(reparsed.headline).toBe('Kiếm tiền');
+    expect(reparsed.customerNote).toBe('Kiếm tiền');
+    expect(reparsed.campaignName).toBe('poip_nhan_hieu_toan_quoc');
+    expect(reparsed.adTerm).toBe('120252505886800047');
   });
 });

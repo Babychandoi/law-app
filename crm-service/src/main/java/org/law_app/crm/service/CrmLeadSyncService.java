@@ -38,23 +38,24 @@ public class CrmLeadSyncService {
             : (hasText(event.getCustomerEmail())
                 ? event.getCustomerEmail().trim()
                 : "Khách hàng Website");
-    List<String> groups =
-        hasText(event.getServiceName()) ? List.of(event.getServiceName().trim()) : List.of();
     Instant createdAt =
         event.getCreatedAt() != null ? event.getCreatedAt().toInstant() : Instant.now();
+    var intake =
+        CrmLeadDescriptionNormalizer.normalize(event.getDescription(), event.getServiceName());
 
     CrmLead lead =
         CrmLead.builder()
             .id(newId())
             .code(nextLeadCode(leadRepo))
             .sourceCaseId(event.getCaseId())
+            .tags(toJsonList(intake.suggestedTags()))
             .customerName(name)
             .fullName(name)
             .phone(event.getCustomerPhone())
             .personalEmail(event.getCustomerEmail())
-            .serviceGroups(toJsonList(groups))
-            .demandDetail(event.getDescription())
-            .leadSource("6/ Website")
+            .serviceGroups(toJsonList(intake.suggestedServiceGroups()))
+            .demandDetail(intake.normalizedDemandDetail())
+            .leadSource(intake.suggestedLeadSource())
             .customerStatus("3/ Tiềm năng")
             .country("Việt Nam")
             .createdBy("system")
@@ -81,10 +82,28 @@ public class CrmLeadSyncService {
       var existingOpt = leadRepo.findBySourceCaseId(c.getId());
       if (existingOpt.isPresent()) {
         CrmLead existing = existingOpt.get();
-        if ("system".equals(existing.getCreatedBy())
-            && "system".equals(existing.getUpdatedBy())
-            && "Nữ".equals(existing.getGender())) {
-          existing.setGender(null);
+        boolean dirty = false;
+        if ("system".equals(existing.getCreatedBy()) && "system".equals(existing.getUpdatedBy())) {
+          if ("Nữ".equals(existing.getGender())) {
+            existing.setGender(null);
+            dirty = true;
+          }
+          if (CrmLeadDescriptionNormalizer.hasRawBracketMetadata(existing.getDemandDetail())) {
+            var intake =
+                CrmLeadDescriptionNormalizer.normalize(
+                    existing.getDemandDetail(), c.getServiceName());
+            existing.setDemandDetail(intake.normalizedDemandDetail());
+            existing.setLeadSource(intake.suggestedLeadSource());
+            if (!intake.suggestedServiceGroups().isEmpty()) {
+              existing.setServiceGroups(toJsonList(intake.suggestedServiceGroups()));
+            }
+            if (!hasText(existing.getTags()) && !intake.suggestedTags().isEmpty()) {
+              existing.setTags(toJsonList(intake.suggestedTags()));
+            }
+            dirty = true;
+          }
+        }
+        if (dirty) {
           leadRepo.save(existing);
         }
         continue;
@@ -95,24 +114,24 @@ public class CrmLeadSyncService {
               : (hasText(c.getCustomerEmail())
                   ? c.getCustomerEmail().trim()
                   : "Khách hàng Website");
-      List<String> groups =
-          hasText(c.getServiceName()) ? List.of(c.getServiceName().trim()) : List.of();
       Instant createdAt =
           c.getCaseCreatedAt() != null ? c.getCaseCreatedAt().toInstant() : Instant.now();
+      var intake = CrmLeadDescriptionNormalizer.normalize(c.getDescription(), c.getServiceName());
 
       CrmLead lead =
           CrmLead.builder()
               .id(newId())
               .code(nextLeadCode(leadRepo))
               .sourceCaseId(c.getId())
+              .tags(toJsonList(intake.suggestedTags()))
               .customerName(name)
               .fullName(name)
               .phone(c.getCustomerPhone())
               .personalEmail(c.getCustomerEmail())
-              .serviceGroups(toJsonList(groups))
-              .demandDetail(c.getDescription())
+              .serviceGroups(toJsonList(intake.suggestedServiceGroups()))
+              .demandDetail(intake.normalizedDemandDetail())
               .assignedUserId(c.getAssignedUserId())
-              .leadSource("6/ Website")
+              .leadSource(intake.suggestedLeadSource())
               .customerStatus("3/ Tiềm năng")
               .country("Việt Nam")
               .createdBy("system")

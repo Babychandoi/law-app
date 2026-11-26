@@ -17,6 +17,7 @@ import { toast } from 'react-toastify';
 import Spinner from '../../component/common/ui/Spinner';
 import useConfirm from '../../component/common/ui/useConfirm';
 import crmEnterpriseApi from '../../features/crm/api';
+import { CrmDemandDetailCard } from '../../features/crm/CrmDemandDisplay';
 import CrmQuickActivityPanel from '../../features/crm/CrmQuickActivityPanel';
 import CrmStatusBadge, { CrmAssigneePill, CrmTagList } from '../../features/crm/CrmStatusBadge';
 import { formatDateTimeVi, formatDateVi, formatVnd } from '../../features/crm/formatters';
@@ -228,7 +229,7 @@ export default function AccountDetailPage() {
         items: filterItems([
           {
             label: 'Chi tiết nhu cầu KH',
-            value: <span className="whitespace-pre-line">{account.demandDetail || '—'}</span>,
+            value: <CrmDemandDetailCard value={account.demandDetail} />,
             rawText: account.demandDetail || '',
           },
         ]),

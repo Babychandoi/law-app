@@ -498,9 +498,23 @@ public class CrmLeadService {
             : (hasText(req.assignedUserName())
                 ? req.assignedUserName().trim()
                 : lead.getOwnerUserName()));
-    lead.setLeadSource(blankToDefault(req.leadSource(), "6/ Website"));
+    String rawDemand = trimOrNull(req.demandDetail());
+    if (CrmLeadDescriptionNormalizer.hasRawBracketMetadata(rawDemand)) {
+      var intake = CrmLeadDescriptionNormalizer.normalize(rawDemand, null);
+      lead.setDemandDetail(intake.normalizedDemandDetail());
+      lead.setLeadSource(blankToDefault(req.leadSource(), intake.suggestedLeadSource()));
+      if ((req.tags() == null || req.tags().isEmpty()) && !intake.suggestedTags().isEmpty()) {
+        lead.setTags(toJsonList(intake.suggestedTags()));
+      }
+      if ((req.serviceGroups() == null || req.serviceGroups().isEmpty())
+          && !intake.suggestedServiceGroups().isEmpty()) {
+        lead.setServiceGroups(toJsonList(intake.suggestedServiceGroups()));
+      }
+    } else {
+      lead.setLeadSource(blankToDefault(req.leadSource(), "6/ Website"));
+      lead.setDemandDetail(rawDemand);
+    }
     lead.setCustomerStatus(blankToDefault(req.customerStatus(), "3/ Tiềm năng"));
-    lead.setDemandDetail(trimOrNull(req.demandDetail()));
     lead.setOrganizationName(trimOrNull(req.organizationName()));
     lead.setGender(trimOrNull(req.gender()));
     lead.setZalo(trimOrNull(req.zalo()));

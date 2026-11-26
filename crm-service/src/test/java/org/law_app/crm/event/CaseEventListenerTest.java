@@ -123,7 +123,7 @@ class CaseEventListenerTest {
     assertThat(created.getPhone()).isEqualTo("0909888777");
     assertThat(created.getPersonalEmail()).isEqualTo("mai.nt@example.vn");
     assertThat(CrmSupport.fromJsonList(created.getServiceGroups()))
-        .isEqualTo(List.of("Đăng ký nhãn hiệu"));
+        .isEqualTo(List.of("Sở hữu trí tuệ", "Đăng ký nhãn hiệu"));
     assertThat(created.getDemandDetail()).isEqualTo("Tư vấn đăng ký nhãn hiệu nhóm 35");
     assertThat(created.getLeadSource()).isEqualTo("6/ Website");
     assertThat(created.getCustomerStatus()).isEqualTo("3/ Tiềm năng");
@@ -131,8 +131,13 @@ class CaseEventListenerTest {
   }
 
   @Test
-  void backfillClearsLegacyDefaultGenderOnlyForUntouchedSystemLeads() {
-    CrmCase c1 = CrmCase.builder().id("case-sys").name("Đỗ Quốc Phong").build();
+  void backfillClearsLegacyDefaultGenderAndNormalizesBracketedDemandOnlyForUntouchedSystemLeads() {
+    CrmCase c1 =
+        CrmCase.builder()
+            .id("case-sys")
+            .name("Đỗ Quốc Phong")
+            .serviceName("Bảo hộ kiểu dáng công nghiệp")
+            .build();
     CrmCase c2 = CrmCase.builder().id("case-human").name("Trần Thị Hà").build();
 
     CrmLead sysLead =
@@ -140,6 +145,12 @@ class CaseEventListenerTest {
             .id("lead-sys")
             .code("TN000001")
             .sourceCaseId("case-sys")
+            .demandDetail(
+                "[Nguồn: LP-tong-dich-vu-ads] [Đối tượng: Cá nhân] "
+                    + "[Dịch vụ: Bảo hộ kiểu dáng công nghiệp] Kiếm tiền "
+                    + "[Chiến dịch: utm_source=facebook; utm_medium=paid_social; "
+                    + "utm_campaign=poip_nhan_hieu_toan_quoc]")
+            .leadSource("6/ Website")
             .gender("Nữ")
             .createdBy("system")
             .updatedBy("system")
@@ -162,6 +173,10 @@ class CaseEventListenerTest {
 
     assertThat(inserted).isZero();
     assertThat(sysLead.getGender()).isNull();
+    assertThat(sysLead.getLeadSource()).isEqualTo("1/ Quảng cáo");
+    assertThat(sysLead.getDemandDetail()).startsWith("Nội dung KH: Kiếm tiền");
+    assertThat(CrmSupport.fromJsonList(sysLead.getTags()))
+        .containsExactly("Facebook Ads", "Cá nhân");
     assertThat(editedLead.getGender()).isEqualTo("Nữ");
     verify(leadRepository).save(sysLead);
     verify(leadRepository, never()).save(editedLead);

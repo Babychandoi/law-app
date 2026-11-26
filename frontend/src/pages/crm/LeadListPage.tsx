@@ -19,6 +19,7 @@ import useConfirm from '../../component/common/ui/useConfirm';
 import crmEnterpriseApi from '../../features/crm/api';
 import CrmColumnPicker, { type CrmColumnOption } from '../../features/crm/CrmColumnPicker';
 import CrmConvertLeadModal from '../../features/crm/CrmConvertLeadModal';
+import { CrmDemandTableCell } from '../../features/crm/CrmDemandDisplay';
 import CrmFilterPanel from '../../features/crm/CrmFilterPanel';
 import CrmImportModal, { type CrmImportFieldMapping } from '../../features/crm/CrmImportModal';
 import CrmMoreActionsMenu, {
@@ -586,8 +587,8 @@ export default function LeadListPage() {
             />
           </td>
         ) : (
-          <td key={colKey} className="max-w-[260px] truncate px-3 py-2 text-brand-ink">
-            {row.demandDetail || '—'}
+          <td key={colKey} className="px-3 py-2">
+            <CrmDemandTableCell value={row.demandDetail} maxWidthClass="max-w-[280px]" />
           </td>
         );
 
