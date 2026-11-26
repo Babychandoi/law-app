@@ -1280,7 +1280,7 @@ export default function ContractListPage() {
                 <table className="min-w-[2050px] w-full border-collapse text-left text-xs">
                   <thead className="sticky top-0 z-20 border-b border-brand-line bg-brand-surface text-brand-ink">
                     <tr>
-                      <th className="sticky left-0 z-30 w-10 border-r border-brand-line bg-brand-surface px-3 py-2.5 text-center">
+                      <th className="crm-sticky-left sticky left-0 z-30 w-10 border-r border-brand-line bg-brand-surface px-3 py-2.5 text-center">
                         <input
                           type="checkbox"
                           checked={rows.length > 0 && selectedIds.length === rows.length}
@@ -1307,7 +1307,7 @@ export default function ContractListPage() {
                           {col.label}
                         </th>
                       ))}
-                      <th className="sticky right-0 z-30 w-28 border-l border-brand-line bg-brand-surface px-2.5 py-2.5 text-center font-bold">
+                      <th className="crm-sticky-right sticky right-0 z-30 w-28 border-l border-brand-line bg-brand-surface px-2.5 py-2.5 text-center font-bold">
                         Thao tác
                       </th>
                     </tr>
@@ -1345,15 +1345,15 @@ export default function ContractListPage() {
                             onClick={() => setActiveContract(row)}
                             className={`cursor-pointer transition-colors ${
                               isDirty
-                                ? 'bg-brand-accentSoft/40'
+                                ? 'bg-[#fff8e1]'
                                 : isSelected || isCurrent
                                   ? 'bg-brand-surface'
-                                  : 'bg-white hover:bg-brand-surface/60'
+                                  : 'bg-white hover:bg-[#f6fbf9]'
                             }`}
                           >
                             <td
                               onClick={(e) => e.stopPropagation()}
-                              className="sticky left-0 z-10 border-r border-brand-line bg-inherit px-3 py-2 text-center"
+                              className="crm-sticky-left sticky left-0 z-10 border-r border-brand-line bg-inherit px-3 py-2 text-center"
                             >
                               <input
                                 type="checkbox"
@@ -1374,7 +1374,7 @@ export default function ContractListPage() {
 
                             <td
                               onClick={(e) => e.stopPropagation()}
-                              className="sticky right-0 z-10 border-l border-brand-line bg-inherit px-2 py-2"
+                              className="crm-sticky-right sticky right-0 z-10 border-l border-brand-line bg-inherit px-2 py-2"
                             >
                               <div className="flex items-center justify-center gap-1">
                                 <Link

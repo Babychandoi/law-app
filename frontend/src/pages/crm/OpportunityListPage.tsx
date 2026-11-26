@@ -748,11 +748,10 @@ export default function OpportunityListPage() {
                     onClick={() => setShowActivity((v) => !v)}
                     aria-pressed={showActivity}
                     aria-label="Bật tắt khung xem nhanh hoạt động"
-                    className={`inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
-                      showActivity
+                    className={`inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${showActivity
                         ? 'border-brand-primary bg-brand-primary text-white'
                         : 'border-brand-line bg-white text-brand-ink hover:bg-brand-surface'
-                    }`}
+                      }`}
                   >
                     <Activity size={14} aria-hidden="true" />
                     <span className="hidden md:inline">Hoạt động</span>
@@ -765,11 +764,10 @@ export default function OpportunityListPage() {
                 onClick={() => setShowFilter((v) => !v)}
                 aria-pressed={showFilter}
                 aria-label="Hiện hoặc ẩn bộ lọc"
-                className={`inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${
-                  showFilter
+                className={`inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary ${showFilter
                     ? 'border-brand-primary bg-brand-primary text-white'
                     : 'border-brand-line bg-white text-brand-ink hover:bg-brand-surface'
-                }`}
+                  }`}
               >
                 <Filter size={14} aria-hidden="true" />
                 <span className="hidden md:inline">Hiện bộ lọc</span>
@@ -899,211 +897,209 @@ export default function OpportunityListPage() {
                 <table className="min-w-[1340px] w-full border-collapse text-left text-xs">
                   <thead className="sticky top-0 z-20 border-b border-brand-line bg-brand-surface text-brand-ink">
                     <tr>
-                      <th className="sticky left-0 z-30 w-10 border-r border-brand-line bg-brand-surface px-3 py-2.5 text-center">
-                        <input
-                          type="checkbox"
-                          checked={rows.length > 0 && selectedIds.length === rows.length}
-                          onChange={() =>
-                            setSelectedIds(
-                              selectedIds.length === rows.length ? [] : rows.map((r) => r.id)
-                            )
-                          }
-                          aria-label="Chọn tất cả Cơ hội HĐ"
-                          className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
-                        />
-                      </th>
-                      {activeColumns.map((col) => (
-                        <th
-                          key={col.key}
-                          className={`whitespace-nowrap px-3 py-2.5 font-bold ${
-                            col.key === 'expectedRevenue' ? 'text-right' : ''
-                          } ${col.key === 'opportunityName' ? 'min-w-[240px]' : ''}`}
-                        >
-                          {col.label}
+                        <th className="crm-sticky-left sticky left-0 z-30 w-10 border-r border-brand-line bg-brand-surface px-3 py-2.5 text-center">
+                          <input
+                            type="checkbox"
+                            checked={rows.length > 0 && selectedIds.length === rows.length}
+                            onChange={() =>
+                              setSelectedIds(
+                                selectedIds.length === rows.length ? [] : rows.map((r) => r.id)
+                              )
+                            }
+                            aria-label="Chọn tất cả Cơ hội HĐ"
+                            className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
+                          />
                         </th>
-                      ))}
-                      <th className="sticky right-0 z-30 w-28 border-l border-brand-line bg-brand-surface px-2.5 py-2.5 text-center font-bold">
-                        Thao tác
-                      </th>
-                    </tr>
-                  </thead>
-
-                  <tbody className="divide-y divide-brand-line">
-                    {loading ? (
-                      Array.from({ length: 6 }).map((_, idx) => (
-                        <tr key={idx}>
-                          <td colSpan={activeColumns.length + 2} className="px-4 py-3">
-                            <div className="h-4 w-full animate-pulse rounded bg-brand-surface" />
-                          </td>
-                        </tr>
-                      ))
-                    ) : rows.length === 0 ? (
-                      <tr>
-                        <td colSpan={activeColumns.length + 2} className="px-6 py-14 text-center">
-                          <p className="text-sm font-semibold text-brand-ink">
-                            Chưa có Cơ hội HĐ nào
-                          </p>
-                          <p className="mt-1 text-xs text-brand-muted">
-                            Tạo mới Cơ hội HĐ hoặc chuyển sang chế độ KanBan để theo dõi 7 bước tư
-                            vấn hồ sơ.
-                          </p>
-                        </td>
-                      </tr>
-                    ) : (
-                      rows.map((row) => {
-                        const isSelected = selectedIds.includes(row.id);
-                        const isCurrent = activeOpp?.id === row.id;
-                        const isDirty = Boolean(dirtyMap[row.id]);
-                        return (
-                          <tr
-                            key={row.id}
-                            onClick={() => setActiveOpp(row)}
-                            className={`cursor-pointer transition-colors ${
-                              isDirty
-                                ? 'bg-brand-accentSoft/40'
-                                : isSelected || isCurrent
-                                  ? 'bg-brand-surface'
-                                  : 'bg-white hover:bg-brand-surface/60'
-                            }`}
+                        {activeColumns.map((col) => (
+                          <th
+                            key={col.key}
+                            className={`whitespace-nowrap px-3 py-2.5 font-bold ${col.key === 'expectedRevenue' ? 'text-right' : ''
+                              } ${col.key === 'opportunityName' ? 'min-w-[240px]' : ''}`}
                           >
-                            <td
-                              onClick={(e) => e.stopPropagation()}
-                              className="sticky left-0 z-10 border-r border-brand-line bg-inherit px-3 py-2 text-center"
-                            >
-                              <input
-                                type="checkbox"
-                                checked={isSelected}
-                                onChange={() =>
-                                  setSelectedIds((prev) =>
-                                    prev.includes(row.id)
-                                      ? prev.filter((x) => x !== row.id)
-                                      : [...prev, row.id]
-                                  )
-                                }
-                                aria-label={`Chọn cơ hội ${row.opportunityName}`}
-                                className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
-                              />
-                            </td>
+                            {col.label}
+                          </th>
+                        ))}
+                          <th className="crm-sticky-right sticky right-0 z-30 w-28 border-l border-brand-line bg-brand-surface px-2.5 py-2.5 text-center font-bold">
+                            Thao tác
+                          </th>
+                        </tr>
+                      </thead>
 
-                            {activeColumns.map((col) => renderCell(row, col.key))}
-
-                            <td
-                              onClick={(e) => e.stopPropagation()}
-                              className="sticky right-0 z-10 border-l border-brand-line bg-inherit px-2 py-2"
-                            >
-                              <div className="flex items-center justify-center gap-1">
-                                <button
-                                  type="button"
-                                  onClick={() => handleConvertContract(row)}
-                                  aria-label={`Sinh hợp đồng từ ${row.opportunityName}`}
-                                  title="Sinh hợp đồng"
-                                  className="rounded p-1 text-brand-primary hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-                                >
-                                  <FileCheck2 size={14} aria-hidden="true" />
-                                </button>
-                                <Link
-                                  to={`${CRM_BASE}/opportunity/${row.id}/edit`}
-                                  aria-label={`Sửa ${row.opportunityName}`}
-                                  className="rounded p-1 text-brand-ink hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-                                >
-                                  <Pencil size={14} aria-hidden="true" />
-                                </Link>
-                                <button
-                                  type="button"
-                                  onClick={() => handleDeleteSingle(row)}
-                                  aria-label={`Xóa ${row.opportunityName}`}
-                                  className="rounded p-1 text-brand-muted hover:bg-[#ffe4e6] hover:text-[#9f1239] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
-                                >
-                                  <Trash2 size={14} aria-hidden="true" />
-                                </button>
-                              </div>
+                      <tbody className="divide-y divide-brand-line">
+                        {loading ? (
+                          Array.from({ length: 6 }).map((_, idx) => (
+                            <tr key={idx}>
+                              <td colSpan={activeColumns.length + 2} className="px-4 py-3">
+                                <div className="h-4 w-full animate-pulse rounded bg-brand-surface" />
+                              </td>
+                            </tr>
+                          ))
+                        ) : rows.length === 0 ? (
+                          <tr>
+                            <td colSpan={activeColumns.length + 2} className="px-6 py-14 text-center">
+                              <p className="text-sm font-semibold text-brand-ink">
+                                Chưa có Cơ hội HĐ nào
+                              </p>
+                              <p className="mt-1 text-xs text-brand-muted">
+                                Tạo mới Cơ hội HĐ hoặc chuyển sang chế độ KanBan để theo dõi 7 bước tư
+                                vấn hồ sơ.
+                              </p>
                             </td>
                           </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
+                        ) : (
+                          rows.map((row) => {
+                            const isSelected = selectedIds.includes(row.id);
+                            const isCurrent = activeOpp?.id === row.id;
+                            const isDirty = Boolean(dirtyMap[row.id]);
+                            return (
+                              <tr
+                                key={row.id}
+                                onClick={() => setActiveOpp(row)}
+                                className={`cursor-pointer transition-colors ${isDirty
+                                      ? 'bg-[#fff8e1]'
+                                      : isSelected || isCurrent
+                                        ? 'bg-brand-surface'
+                                    : 'bg-white hover:bg-[#f6fbf9]'
+                                  }`}
+                              >
+                                <td
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="crm-sticky-left sticky left-0 z-10 border-r border-brand-line bg-inherit px-3 py-2 text-center"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={isSelected}
+                                    onChange={() =>
+                                      setSelectedIds((prev) =>
+                                        prev.includes(row.id)
+                                          ? prev.filter((x) => x !== row.id)
+                                          : [...prev, row.id]
+                                      )
+                                    }
+                                    aria-label={`Chọn cơ hội ${row.opportunityName}`}
+                                    className="h-3.5 w-3.5 rounded border-brand-line text-brand-primary focus:ring-brand-primary"
+                                  />
+                                </td>
+
+                                {activeColumns.map((col) => renderCell(row, col.key))}
+
+                                <td
+                                  onClick={(e) => e.stopPropagation()}
+                                  className="crm-sticky-right sticky right-0 z-10 border-l border-brand-line bg-inherit px-2 py-2"
+                                >
+                                  <div className="flex items-center justify-center gap-1">
+                                    <button
+                                      type="button"
+                                      onClick={() => handleConvertContract(row)}
+                                      aria-label={`Sinh hợp đồng từ ${row.opportunityName}`}
+                                      title="Sinh hợp đồng"
+                                      className="rounded p-1 text-brand-primary hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                                    >
+                                      <FileCheck2 size={14} aria-hidden="true" />
+                                    </button>
+                                    <Link
+                                      to={`${CRM_BASE}/opportunity/${row.id}/edit`}
+                                      aria-label={`Sửa ${row.opportunityName}`}
+                                      className="rounded p-1 text-brand-ink hover:bg-brand-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                                    >
+                                      <Pencil size={14} aria-hidden="true" />
+                                    </Link>
+                                    <button
+                                      type="button"
+                                      onClick={() => handleDeleteSingle(row)}
+                                      aria-label={`Xóa ${row.opportunityName}`}
+                                      className="rounded p-1 text-brand-muted hover:bg-[#ffe4e6] hover:text-[#9f1239] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
+                                    >
+                                      <Trash2 size={14} aria-hidden="true" />
+                                    </button>
+                                  </div>
+                                </td>
+                              </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <CrmPaginationFooter
+                    totalElements={meta?.totalElements ?? rows.length}
+                    page={page}
+                    pageSize={pageSize}
+                    totalPages={meta?.totalPages}
+                    onPageChange={setPage}
+                    onPageSizeChange={(sz) => {
+                      setPageSize(sz);
+                      setPage(0);
+                    }}
+                    kpis={footerKpis}
+                    onConfigureSummary={() => setDesignerState({ open: true, mode: 'edit' })}
+                  />
+                </>
+          )}
               </div>
 
-              <CrmPaginationFooter
-                totalElements={meta?.totalElements ?? rows.length}
-                page={page}
-                pageSize={pageSize}
-                totalPages={meta?.totalPages}
-                onPageChange={setPage}
-                onPageSizeChange={(sz) => {
-                  setPageSize(sz);
+              {viewMode !== 'kanban' && showActivity && (
+                <CrmQuickActivityPanel
+                  docked
+                  entityType="OPPORTUNITY"
+                  entityId={activeOpp?.id}
+                  entityLabel={activeOpp?.opportunityName}
+                  entityPhone={activeOpp?.contactPhone}
+                  onClose={() => setShowActivity(false)}
+                />
+              )}
+
+              <CrmFilterPanel
+                open={showFilter}
+                onClose={() => setShowFilter(false)}
+                presets={OPPORTUNITY_SAVED_PRESETS}
+                activePresetId={activePreset}
+                onSelectPreset={(id) => {
+                  setActivePreset(id);
                   setPage(0);
                 }}
-                kpis={footerKpis}
-                onConfigureSummary={() => setDesignerState({ open: true, mode: 'edit' })}
+                fields={filterFields}
+                rules={filterRules}
+                onApplyRules={(nextRules) => {
+                  setFilterRules(nextRules);
+                  setPage(0);
+                }}
+                onReset={() => {
+                  setFilterRules([]);
+                  setActivePreset('');
+                  setPage(0);
+                }}
+                storageKey="luatpoip.crm.opportunity.savedFilters"
+                quickStats={quickStats}
               />
-            </>
-          )}
-        </div>
+            </div>
 
-        {viewMode !== 'kanban' && showActivity && (
-          <CrmQuickActivityPanel
-            docked
-            entityType="OPPORTUNITY"
-            entityId={activeOpp?.id}
-            entityLabel={activeOpp?.opportunityName}
-            entityPhone={activeOpp?.contactPhone}
-            onClose={() => setShowActivity(false)}
+          <CrmViewDesignerModal
+            open={designerState.open}
+            mode={designerState.mode}
+            view={activeView}
+            allColumns={OPPORTUNITY_ALL_COLUMNS}
+            defaultColumnKeys={OPPORTUNITY_DEFAULT_COLUMN_KEYS}
+            allSummaryFields={OPPORTUNITY_ALL_SUMMARY_FIELDS}
+            defaultSummaryKeys={OPPORTUNITY_DEFAULT_SUMMARY_KEYS}
+            sortFields={OPPORTUNITY_SORT_FIELDS}
+            defaultSortField="createdAt"
+            onClose={() => setDesignerState((prev) => ({ ...prev, open: false }))}
+            onSave={saveView}
+            onDelete={deleteView}
           />
-        )}
 
-        <CrmFilterPanel
-          open={showFilter}
-          onClose={() => setShowFilter(false)}
-          presets={OPPORTUNITY_SAVED_PRESETS}
-          activePresetId={activePreset}
-          onSelectPreset={(id) => {
-            setActivePreset(id);
-            setPage(0);
-          }}
-          fields={filterFields}
-          rules={filterRules}
-          onApplyRules={(nextRules) => {
-            setFilterRules(nextRules);
-            setPage(0);
-          }}
-          onReset={() => {
-            setFilterRules([]);
-            setActivePreset('');
-            setPage(0);
-          }}
-          storageKey="luatpoip.crm.opportunity.savedFilters"
-          quickStats={quickStats}
-        />
-      </div>
-
-      <CrmViewDesignerModal
-        open={designerState.open}
-        mode={designerState.mode}
-        view={activeView}
-        allColumns={OPPORTUNITY_ALL_COLUMNS}
-        defaultColumnKeys={OPPORTUNITY_DEFAULT_COLUMN_KEYS}
-        allSummaryFields={OPPORTUNITY_ALL_SUMMARY_FIELDS}
-        defaultSummaryKeys={OPPORTUNITY_DEFAULT_SUMMARY_KEYS}
-        sortFields={OPPORTUNITY_SORT_FIELDS}
-        defaultSortField="createdAt"
-        onClose={() => setDesignerState((prev) => ({ ...prev, open: false }))}
-        onSave={saveView}
-        onDelete={deleteView}
-      />
-
-      <CrmImportModal
-        open={showImport}
-        title="Nhập danh sách Cơ hội HĐ từ Excel / CSV"
-        sampleCsvHeader="Tên cơ hội,Khách hàng,Liên hệ,Số tiền,Giai đoạn,Ngày kỳ vọng/kết thúc"
-        sampleCsvRow="Đăng ký nhãn hiệu độc quyền 3 nhóm,Công ty Cổ phần Sao Việt,Trần Minh Quân,15000000,1/ Liên hệ tư vấn & báo phí,2026-12-15"
-        mappings={OPPORTUNITY_IMPORT_MAPPINGS}
-        onClose={() => setShowImport(false)}
-        onImport={(items) => crmEnterpriseApi.importOpportunities(items)}
-        onSuccess={loadData}
-      />
-    </div>
-  );
+          <CrmImportModal
+            open={showImport}
+            title="Nhập danh sách Cơ hội HĐ từ Excel / CSV"
+            sampleCsvHeader="Tên cơ hội,Khách hàng,Liên hệ,Số tiền,Giai đoạn,Ngày kỳ vọng/kết thúc"
+            sampleCsvRow="Đăng ký nhãn hiệu độc quyền 3 nhóm,Công ty Cổ phần Sao Việt,Trần Minh Quân,15000000,1/ Liên hệ tư vấn & báo phí,2026-12-15"
+            mappings={OPPORTUNITY_IMPORT_MAPPINGS}
+            onClose={() => setShowImport(false)}
+            onImport={(items) => crmEnterpriseApi.importOpportunities(items)}
+            onSuccess={loadData}
+          />
+        </div>
+        );
 }

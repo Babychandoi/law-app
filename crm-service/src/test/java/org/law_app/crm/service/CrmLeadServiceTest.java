@@ -111,7 +111,7 @@ class CrmLeadServiceTest {
     assertThat(dto.code()).isEqualTo("TN000005");
     assertThat(dto.customerName()).isEqualTo("Trần Minh Khôi");
     assertThat(dto.fullName()).isEqualTo("Trần Minh Khôi");
-    assertThat(dto.gender()).isEqualTo("Nữ");
+    assertThat(dto.gender()).isNull();
     assertThat(dto.country()).isEqualTo("Việt Nam");
     assertThat(dto.customerStatus()).isEqualTo("3/ Tiềm năng");
     assertThat(dto.ownerUserId()).isEqualTo("staff-1");

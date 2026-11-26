@@ -56,7 +56,6 @@ public class CrmLeadSyncService {
             .demandDetail(event.getDescription())
             .leadSource("6/ Website")
             .customerStatus("3/ Tiềm năng")
-            .gender("Nữ")
             .country("Việt Nam")
             .createdBy("system")
             .updatedBy("system")
@@ -76,7 +75,18 @@ public class CrmLeadSyncService {
     }
     int count = 0;
     for (CrmCase c : cases) {
-      if (c == null || !hasText(c.getId()) || leadRepo.existsBySourceCaseId(c.getId())) {
+      if (c == null || !hasText(c.getId())) {
+        continue;
+      }
+      var existingOpt = leadRepo.findBySourceCaseId(c.getId());
+      if (existingOpt.isPresent()) {
+        CrmLead existing = existingOpt.get();
+        if ("system".equals(existing.getCreatedBy())
+            && "system".equals(existing.getUpdatedBy())
+            && "Nữ".equals(existing.getGender())) {
+          existing.setGender(null);
+          leadRepo.save(existing);
+        }
         continue;
       }
       String name =
@@ -104,7 +114,6 @@ public class CrmLeadSyncService {
               .assignedUserId(c.getAssignedUserId())
               .leadSource("6/ Website")
               .customerStatus("3/ Tiềm năng")
-              .gender("Nữ")
               .country("Việt Nam")
               .createdBy("system")
               .updatedBy("system")

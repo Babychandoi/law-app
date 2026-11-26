@@ -35,7 +35,7 @@ const INITIAL_LEAD: CrmLeadWritePayload = {
   customerStatus: LEAD_CUSTOMER_STATUSES[2],
   demandDetail: '',
   organizationName: '',
-  gender: 'Nữ',
+  gender: '',
   zalo: '',
   website: '',
   birthDate: '',
@@ -79,7 +79,7 @@ export default function LeadFormPage() {
         setForm({
           ...data,
           birthDate: toDateInputValue(data.birthDate),
-          gender: data.gender || 'Nữ',
+          gender: data.gender || '',
           country: data.country || 'Việt Nam',
         });
       })
@@ -117,6 +117,7 @@ export default function LeadFormPage() {
       phone: form.phone.trim(),
       assignedUserName: assignedStaff?.fullName || form.assignedUserName,
       ownerUserName: ownerStaff?.fullName || form.ownerUserName,
+      gender: form.gender || undefined,
       birthDate: form.birthDate || null,
     };
 
@@ -466,14 +467,15 @@ export default function LeadFormPage() {
                   htmlFor="lead-gender"
                   className="mb-1 block text-xs font-semibold text-brand-ink"
                 >
-                  Giới tính <span className="text-[#9f1239]">*</span>
+                  Giới tính
                 </label>
                 <select
                   id="lead-gender"
-                  value={form.gender || 'Nữ'}
+                  value={form.gender || ''}
                   onChange={(e) => setField('gender', e.target.value)}
                   className="w-full rounded-md border border-brand-line bg-white px-3 py-1.5 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
                 >
+                  <option value="">-- Chưa xác định --</option>
                   {CRM_GENDERS.map((g) => (
                     <option key={g} value={g}>
                       {g}

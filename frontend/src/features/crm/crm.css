@@ -24,3 +24,15 @@
 .crm-workspace ::-webkit-scrollbar-thumb:hover {
   background: #0f766e;
 }
+
+.crm-sticky-left {
+  box-shadow:
+    1px 0 0 0 #d8e6e1,
+    4px 0 8px -4px rgba(27, 42, 58, 0.08);
+}
+
+.crm-sticky-right {
+  box-shadow:
+    -1px 0 0 0 #d8e6e1,
+    -6px 0 12px -4px rgba(27, 42, 58, 0.1);
+}

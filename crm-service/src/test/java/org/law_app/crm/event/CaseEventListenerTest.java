@@ -127,5 +127,43 @@ class CaseEventListenerTest {
     assertThat(created.getDemandDetail()).isEqualTo("Tư vấn đăng ký nhãn hiệu nhóm 35");
     assertThat(created.getLeadSource()).isEqualTo("6/ Website");
     assertThat(created.getCustomerStatus()).isEqualTo("3/ Tiềm năng");
+    assertThat(created.getGender()).isNull();
+  }
+
+  @Test
+  void backfillClearsLegacyDefaultGenderOnlyForUntouchedSystemLeads() {
+    CrmCase c1 = CrmCase.builder().id("case-sys").name("Đỗ Quốc Phong").build();
+    CrmCase c2 = CrmCase.builder().id("case-human").name("Trần Thị Hà").build();
+
+    CrmLead sysLead =
+        CrmLead.builder()
+            .id("lead-sys")
+            .code("TN000001")
+            .sourceCaseId("case-sys")
+            .gender("Nữ")
+            .createdBy("system")
+            .updatedBy("system")
+            .build();
+    CrmLead editedLead =
+        CrmLead.builder()
+            .id("lead-human")
+            .code("TN000002")
+            .sourceCaseId("case-human")
+            .gender("Nữ")
+            .createdBy("system")
+            .updatedBy("staff-1")
+            .build();
+
+    when(leadRepository.findBySourceCaseId("case-sys")).thenReturn(Optional.of(sysLead));
+    when(leadRepository.findBySourceCaseId("case-human")).thenReturn(Optional.of(editedLead));
+
+    CrmLeadSyncService leadSyncService = new CrmLeadSyncService(leadRepository);
+    int inserted = leadSyncService.backfillFromCases(List.of(c1, c2));
+
+    assertThat(inserted).isZero();
+    assertThat(sysLead.getGender()).isNull();
+    assertThat(editedLead.getGender()).isEqualTo("Nữ");
+    verify(leadRepository).save(sysLead);
+    verify(leadRepository, never()).save(editedLead);
   }
 }

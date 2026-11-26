@@ -502,7 +502,7 @@ public class CrmLeadService {
     lead.setCustomerStatus(blankToDefault(req.customerStatus(), "3/ Tiềm năng"));
     lead.setDemandDetail(trimOrNull(req.demandDetail()));
     lead.setOrganizationName(trimOrNull(req.organizationName()));
-    lead.setGender(blankToDefault(req.gender(), "Nữ"));
+    lead.setGender(trimOrNull(req.gender()));
     lead.setZalo(trimOrNull(req.zalo()));
     lead.setWebsite(trimOrNull(req.website()));
     lead.setBirthDate(req.birthDate());
