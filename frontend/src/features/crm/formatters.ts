@@ -316,3 +316,23 @@ export function exportRowsToCsv<T>(
   }
   return content;
 }
+
+const UUID_ACTOR_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export function formatStaffActor(
+  rawActor: string | null | undefined,
+  staffList?: { id: string; username?: string | null; fullName?: string | null }[],
+  fallback = 'Chuyên viên'
+): string {
+  if (!rawActor || !rawActor.trim()) return fallback;
+  const trimmed = rawActor.trim();
+  if (trimmed.toLowerCase() === 'system') return 'Hệ thống';
+  const matched = staffList?.find((u) => u.id === trimmed || u.username === trimmed);
+  if (matched) {
+    return matched.fullName || matched.username || fallback;
+  }
+  if (UUID_ACTOR_RE.test(trimmed)) {
+    return fallback;
+  }
+  return trimmed;
+}

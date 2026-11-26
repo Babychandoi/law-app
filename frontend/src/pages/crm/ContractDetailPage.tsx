@@ -23,6 +23,7 @@ import { CASHFLOW_TYPES, EXPENSE_CATEGORIES, PAYMENT_METHODS } from '../../featu
 import {
   formatDateTimeVi,
   formatDateVi,
+  formatStaffActor,
   formatVnd,
   toDateInputValue,
 } from '../../features/crm/formatters';
@@ -31,13 +32,14 @@ import type {
   CrmContractCashflowDto,
   CrmContractDto,
 } from '../../features/crm/types';
-import { CRM_BASE } from './CrmWorkspaceLayout';
+import { CRM_BASE, useCrmWorkspace } from './CrmWorkspaceLayout';
 
 type ContractDetailTab = 'services' | 'detail' | 'cashflow' | 'activities';
 
 export default function ContractDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { staffList } = useCrmWorkspace();
   const { confirm, confirmDialog } = useConfirm();
 
   const [contract, setContract] = useState<CrmContractDto | null>(null);
@@ -737,7 +739,7 @@ export default function ContractDetailPage() {
                           id="cf-amount"
                           type="number"
                           min={1}
-                          step="10000"
+                          step="any"
                           required
                           value={cfAmount || ''}
                           onChange={(e) => setCfAmount(Number(e.target.value))}
@@ -888,7 +890,11 @@ export default function ContractDetailPage() {
                                 {formatVnd(cf.amount, true)}
                               </td>
                               <td className="px-3 py-2 text-brand-muted">
-                                {cf.createdByName || 'Kế toán / Chuyên viên'}
+                                {formatStaffActor(
+                                  cf.createdByName,
+                                  staffList,
+                                  'Kế toán / Chuyên viên'
+                                )}
                               </td>
                               <td className="px-3 py-2 text-center">
                                 <button

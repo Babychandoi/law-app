@@ -472,4 +472,5 @@ export interface CrmActivityWritePayload {
   content?: string;
   dueAt?: string;
   completed?: boolean;
+  createdByName?: string;
 }

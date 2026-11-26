@@ -295,7 +295,7 @@ export default function OpportunityFormPage() {
                   id="opp-revenue"
                   type="number"
                   min={0}
-                  step="100000"
+                  step="any"
                   value={form.expectedRevenue ?? 0}
                   onChange={(e) => setField('expectedRevenue', Number(e.target.value))}
                   className="w-full rounded-md border border-brand-line bg-white px-3 py-1.5 text-xs tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"

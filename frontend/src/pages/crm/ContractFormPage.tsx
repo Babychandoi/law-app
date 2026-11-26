@@ -436,7 +436,7 @@ export default function ContractFormPage() {
                   id="ct-orderVal"
                   type="number"
                   min={0}
-                  step="100000"
+                  step="any"
                   value={form.orderValue ?? 0}
                   onChange={(e) => setField('orderValue', Number(e.target.value))}
                   className="w-full rounded-md border border-brand-line bg-white px-3 py-1.5 text-xs font-semibold tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
@@ -454,7 +454,7 @@ export default function ContractFormPage() {
                   id="ct-liqVal"
                   type="number"
                   min={0}
-                  step="100000"
+                  step="any"
                   value={form.liquidationValue ?? 0}
                   onChange={(e) => setField('liquidationValue', Number(e.target.value))}
                   className="w-full rounded-md border border-brand-line bg-white px-3 py-1.5 text-xs tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
@@ -734,7 +734,7 @@ export default function ContractFormPage() {
                   id="ct-collected"
                   type="number"
                   min={0}
-                  step="100000"
+                  step="any"
                   value={form.collectedAmount ?? 0}
                   onChange={(e) => setField('collectedAmount', Number(e.target.value))}
                   className="w-full rounded-md border border-brand-line bg-white px-3 py-1.5 text-xs tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
@@ -752,7 +752,7 @@ export default function ContractFormPage() {
                   id="ct-plannedExp"
                   type="number"
                   min={0}
-                  step="50000"
+                  step="any"
                   value={form.plannedExpense ?? 0}
                   onChange={(e) => setField('plannedExpense', Number(e.target.value))}
                   className="w-full rounded-md border border-brand-line bg-white px-3 py-1.5 text-xs tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
@@ -786,7 +786,7 @@ export default function ContractFormPage() {
                   id="ct-serviceExp"
                   type="number"
                   min={0}
-                  step="50000"
+                  step="any"
                   value={form.serviceExpense ?? 0}
                   onChange={(e) => setField('serviceExpense', Number(e.target.value))}
                   className="w-full rounded-md border border-brand-line bg-white px-3 py-1.5 text-xs tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
@@ -804,7 +804,7 @@ export default function ContractFormPage() {
                   id="ct-stateExp"
                   type="number"
                   min={0}
-                  step="50000"
+                  step="any"
                   value={form.stateFeeExpense ?? 0}
                   onChange={(e) => setField('stateFeeExpense', Number(e.target.value))}
                   className="w-full rounded-md border border-brand-line bg-white px-3 py-1.5 text-xs tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
@@ -822,7 +822,7 @@ export default function ContractFormPage() {
                   id="ct-supportExp"
                   type="number"
                   min={0}
-                  step="50000"
+                  step="any"
                   value={form.supportExpense ?? 0}
                   onChange={(e) => setField('supportExpense', Number(e.target.value))}
                   className="w-full rounded-md border border-brand-line bg-white px-3 py-1.5 text-xs tabular-nums text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"

@@ -1,9 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { Calendar, CheckCircle2, CheckSquare, Circle, Mail, Phone, Trash2, X } from 'lucide-react';
 import { toast } from 'react-toastify';
 import crmEnterpriseApi from './api';
-import { formatDateTimeVi } from './formatters';
-import type { CrmActivityDto, CrmActivityType, CrmEntityType } from './types';
+import { formatDateTimeVi, formatStaffActor } from './formatters';
+import type { CrmActivityDto, CrmActivityType, CrmEntityType, StaffUser } from './types';
 
 export interface CrmQuickActivityPanelProps {
   entityType: CrmEntityType;
@@ -34,6 +35,15 @@ export default function CrmQuickActivityPanel({
   docked = false,
   onClose,
 }: CrmQuickActivityPanelProps) {
+  const outletCtx = useOutletContext<
+    | {
+        me?: { fullName?: string | null; username?: string | null } | null;
+        staffList?: StaffUser[];
+      }
+    | undefined
+  >();
+  const staffList = outletCtx?.staffList;
+  const actorDisplayName = outletCtx?.me?.fullName || outletCtx?.me?.username || undefined;
   const [activities, setActivities] = useState<CrmActivityDto[]>([]);
   const [loading, setLoading] = useState(false);
   const [composerType, setComposerType] = useState<CrmActivityType | null>(null);
@@ -91,6 +101,7 @@ export default function CrmQuickActivityPanel({
         title: title.trim(),
         content: content.trim() || undefined,
         dueAt: dueAt ? new Date(dueAt).toISOString() : undefined,
+        createdByName: actorDisplayName,
       });
       toast.success('Đã lưu hoạt động chăm sóc');
       setComposerType(null);
@@ -326,7 +337,7 @@ export default function CrmQuickActivityPanel({
                     <p className="mt-1 whitespace-pre-line pl-5 text-brand-muted">{act.content}</p>
                   )}
                   <div className="mt-1.5 flex flex-wrap items-center justify-between gap-1 pl-5 text-[11px] tabular-nums text-brand-muted">
-                    <span>{act.createdByName || 'Chuyên viên'}</span>
+                    <span>{formatStaffActor(act.createdByName, staffList, 'Chuyên viên')}</span>
                     <span>
                       {act.dueAt
                         ? `Hẹn: ${formatDateTimeVi(act.dueAt)}`

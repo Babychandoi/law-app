@@ -380,10 +380,11 @@ export default function AccountFormPage() {
                 </label>
                 <select
                   id="acc-rank"
-                  value={form.rankLabel || 'Tiêu chuẩn'}
+                  value={form.rankLabel || ''}
                   onChange={(e) => setField('rankLabel', e.target.value)}
                   className="w-full rounded-md border border-brand-line bg-white px-3 py-1.5 text-xs text-brand-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-primary"
                 >
+                  <option value="">-- Chưa xếp hạng --</option>
                   {ACCOUNT_RANKS.map((r) => (
                     <option key={r} value={r}>
                       {r}

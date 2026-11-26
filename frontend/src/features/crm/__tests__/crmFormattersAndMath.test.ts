@@ -1,5 +1,6 @@
 import { normalizeCashflow, normalizeFlowType } from '../api';
 import {
+  CRM_LEAD_SOURCES,
   EXECUTION_STATUSES,
   LEAD_CUSTOMER_STATUSES,
   OPPORTUNITY_STAGES,
@@ -11,6 +12,7 @@ import {
   calculateLineItem,
   calculateLineItemsTotal,
   formatDateVi,
+  formatStaffActor,
   formatVnd,
   parseTabularPaste,
   toDateInputValue,
@@ -125,5 +127,17 @@ describe('CRM formatters, line-item math, and tabular import parser', () => {
     expect(thucChi.flowType).toBe('THUC_CHI');
     expect(thucChi.title).toBe('Nộp lệ phí Cục SHTT');
     expect(thucChi.expenseCategory).toBe('Chi nhà nước');
+  });
+
+  test('CRM_LEAD_SOURCES uses canonical 6/ Website and formatStaffActor resolves UUIDs cleanly', () => {
+    expect(CRM_LEAD_SOURCES).toContain('6/ Website');
+    const staff = [
+      { id: '6db21baf-57cb-4ab0-8d07-c861f21f24df', username: 'adminToTo', fullName: null },
+      { id: 'u-2', username: 'ma2002nd', fullName: 'Trần Thị Kiều Oanh' },
+    ];
+    expect(formatStaffActor('6db21baf-57cb-4ab0-8d07-c861f21f24df', staff)).toBe('adminToTo');
+    expect(formatStaffActor('u-2', staff)).toBe('Trần Thị Kiều Oanh');
+    expect(formatStaffActor('00000000-0000-0000-0000-000000000000', staff)).toBe('Chuyên viên');
+    expect(formatStaffActor('system', staff)).toBe('Hệ thống');
   });
 });

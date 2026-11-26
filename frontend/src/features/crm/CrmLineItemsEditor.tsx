@@ -260,7 +260,7 @@ export default function CrmLineItemsEditor({
                       <input
                         type="number"
                         min={0}
-                        step="1"
+                        step="any"
                         aria-label={`Số lượng dòng ${idx + 1}`}
                         value={row.quantity}
                         onChange={(e) => updateRow(idx, { quantity: Number(e.target.value) })}
@@ -275,7 +275,7 @@ export default function CrmLineItemsEditor({
                       <input
                         type="number"
                         min={0}
-                        step="10000"
+                        step="any"
                         aria-label={`Đơn giá dòng ${idx + 1}`}
                         value={row.unitPrice}
                         onChange={(e) => updateRow(idx, { unitPrice: Number(e.target.value) })}
@@ -294,7 +294,7 @@ export default function CrmLineItemsEditor({
                         type="number"
                         min={0}
                         max={100}
-                        step="0.5"
+                        step="any"
                         aria-label={`Tỷ lệ chiết khấu dòng ${idx + 1}`}
                         value={row.discountRate}
                         onChange={(e) =>

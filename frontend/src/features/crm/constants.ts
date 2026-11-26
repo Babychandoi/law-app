@@ -24,7 +24,7 @@ export const CRM_LEAD_SOURCES: string[] = [
   '3/ Kết nối sự kiện',
   '4/ Nhân sự công ty',
   '5/ Đối tác',
-  '6/ Website / Landing Page',
+  '6/ Website',
 ];
 
 export const CRM_GENDERS: string[] = ['Nữ', 'Nam', 'Khác'];

@@ -46,19 +46,41 @@ const BundleList = lazy(() => import('../page/documents/BundleList'));
 const BundleEditor = lazy(() => import('../page/documents/BundleEditor'));
 const GenerateBundle = lazy(() => import('../page/documents/GenerateBundle'));
 const ClauseLibrary = lazy(() => import('../page/documents/ClauseLibrary'));
-const CrmWorkspaceLayout = lazy(() => import('../pages/crm/CrmWorkspaceLayout'));
-const LeadListPage = lazy(() => import('../pages/crm/LeadListPage'));
-const LeadDetailPage = lazy(() => import('../pages/crm/LeadDetailPage'));
-const LeadFormPage = lazy(() => import('../pages/crm/LeadFormPage'));
-const AccountListPage = lazy(() => import('../pages/crm/AccountListPage'));
-const AccountDetailPage = lazy(() => import('../pages/crm/AccountDetailPage'));
-const AccountFormPage = lazy(() => import('../pages/crm/AccountFormPage'));
-const OpportunityListPage = lazy(() => import('../pages/crm/OpportunityListPage'));
-const OpportunityDetailPage = lazy(() => import('../pages/crm/OpportunityDetailPage'));
-const OpportunityFormPage = lazy(() => import('../pages/crm/OpportunityFormPage'));
-const ContractListPage = lazy(() => import('../pages/crm/ContractListPage'));
-const ContractDetailPage = lazy(() => import('../pages/crm/ContractDetailPage'));
-const ContractFormPage = lazy(() => import('../pages/crm/ContractFormPage'));
+function retryImport<T>(importer: () => Promise<T>): () => Promise<T> {
+  return async () => {
+    try {
+      return await importer();
+    } catch {
+      await new Promise((resolve) => setTimeout(resolve, 400));
+      try {
+        return await importer();
+      } catch (retryError) {
+        if (typeof window !== 'undefined' && window.sessionStorage) {
+          const key = `chunk_retry_${window.location.pathname}`;
+          if (!window.sessionStorage.getItem(key)) {
+            window.sessionStorage.setItem(key, '1');
+            window.location.reload();
+          }
+        }
+        throw retryError;
+      }
+    }
+  };
+}
+
+const CrmWorkspaceLayout = lazy(retryImport(() => import('../pages/crm/CrmWorkspaceLayout')));
+const LeadListPage = lazy(retryImport(() => import('../pages/crm/LeadListPage')));
+const LeadDetailPage = lazy(retryImport(() => import('../pages/crm/LeadDetailPage')));
+const LeadFormPage = lazy(retryImport(() => import('../pages/crm/LeadFormPage')));
+const AccountListPage = lazy(retryImport(() => import('../pages/crm/AccountListPage')));
+const AccountDetailPage = lazy(retryImport(() => import('../pages/crm/AccountDetailPage')));
+const AccountFormPage = lazy(retryImport(() => import('../pages/crm/AccountFormPage')));
+const OpportunityListPage = lazy(retryImport(() => import('../pages/crm/OpportunityListPage')));
+const OpportunityDetailPage = lazy(retryImport(() => import('../pages/crm/OpportunityDetailPage')));
+const OpportunityFormPage = lazy(retryImport(() => import('../pages/crm/OpportunityFormPage')));
+const ContractListPage = lazy(retryImport(() => import('../pages/crm/ContractListPage')));
+const ContractDetailPage = lazy(retryImport(() => import('../pages/crm/ContractDetailPage')));
+const ContractFormPage = lazy(retryImport(() => import('../pages/crm/ContractFormPage')));
 
 function RouteFallback() {
   return (
